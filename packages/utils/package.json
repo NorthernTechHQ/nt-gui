@@ -20,7 +20,7 @@
   "devDependencies": {
     "@northern.tech/eslint-config": "*",
     "@northern.tech/typescript-config": "*",
-    "eslint": "^8.57.0",
+    "eslint": "^9.13.0",
     "tsup": "8.3.0"
   },
   "peerDependencies": {
