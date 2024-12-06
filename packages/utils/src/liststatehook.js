@@ -33,7 +33,7 @@ import {
   parseTenantsQuery
 } from './locationutils';
 
-const processors = {
+export const defaultProcessors = {
   auditlogs: {
     format: formatAuditlogs,
     locate: () => undefined,
@@ -66,7 +66,7 @@ const processors = {
   }
 };
 
-export const useLocationParams = (key, extras) => {
+export const useLocationParams = (key, extras, processors = defaultProcessors) => {
   let [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();

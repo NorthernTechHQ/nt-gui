@@ -266,7 +266,7 @@ export const formatAuditlogs = ({ pageState }, { today, tonight }) => {
   return params.toString();
 };
 
-const parseDateParams = (params, today, tonight) => {
+export const parseDateParams = (params, today, tonight) => {
   let endDate = tonight;
   if (params.get('endDate')) {
     endDate = getISOStringBoundaries(new Date(params.get('endDate'))).end;
