@@ -13,8 +13,7 @@
 //    limitations under the License.
 import React, { useEffect, useState } from 'react';
 
-import { Autocomplete, TextField } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { Autocomplete, TextField, useTheme } from '@mui/material';
 
 import { TIMEOUTS } from '@northern.tech/store/constants';
 import { useDebounce } from '@northern.tech/utils/debouncehook';

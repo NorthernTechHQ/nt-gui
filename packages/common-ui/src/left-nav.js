@@ -15,8 +15,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 // material ui
-import { List, ListItem, ListItemIcon, ListItemText, ListSubheader } from '@mui/material';
-import { listItemTextClasses } from '@mui/material/ListItemText';
+import { List, ListItem, ListItemIcon, ListItemText, ListSubheader, listItemTextClasses } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
 import { isDarkMode } from '@northern.tech/store/utils';

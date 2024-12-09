@@ -11,86 +11,112 @@
     "url": "git+https://github.com/NorthernTechHQ/nt-gui.git"
   },
   "exports": {
-    "./*": {
-      "types": "./dist/*.d.ts",
-      "import": "./dist/*.mjs",
-      "require": "./dist/*.js"
-    },
-    "./organizationSlice": {
-      "types": "./dist/organizationSlice/index.d.ts",
-      "import": "./dist/organizationSlice/index.mjs",
-      "require": "./dist/organizationSlice/index.js"
-    },
-    "./organizationSlice/*": {
-      "types": "./dist/organizationSlice/*.d.ts",
-      "import": "./dist/organizationSlice/*.mjs",
-      "require": "./dist/organizationSlice/*.js"
-    },
-    "./deploymentsSlice": {
-      "types": "./dist/deploymentsSlice/index.d.ts",
-      "import": "./dist/deploymentsSlice/index.mjs",
-      "require": "./dist/deploymentsSlice/index.js"
-    },
-    "./deploymentsSlice/*": {
-      "types": "./dist/deploymentsSlice/*.d.ts",
-      "import": "./dist/deploymentsSlice/*.mjs",
-      "require": "./dist/deploymentsSlice/*.js"
-    },
-    "./devicesSlice": {
-      "types": "./dist/devicesSlice/index.d.ts",
-      "import": "./dist/devicesSlice/index.mjs",
-      "require": "./dist/devicesSlice/index.js"
-    },
-    "./devicesSlice/*": {
-      "types": "./dist/devicesSlice/*.d.ts",
-      "import": "./dist/devicesSlice/*.mjs",
-      "require": "./dist/devicesSlice/*.js"
+    "./api/types/*": {
+      "types": "./dist/api/types/*.ts",
+      "import": "./dist/api/types/*.ts"
     },
     "./appSlice": {
       "types": "./dist/appSlice/index.d.ts",
-      "import": "./dist/appSlice/index.mjs",
-      "require": "./dist/appSlice/index.js"
+      "import": "./dist/appSlice/index.js",
+      "require": "./dist/appSlice/index.cjs"
     },
     "./appSlice/*": {
       "types": "./dist/appSlice/*.d.ts",
-      "import": "./dist/appSlice/*.mjs",
-      "require": "./dist/appSlice/*.js"
+      "import": "./dist/appSlice/*.js",
+      "require": "./dist/appSlice/*.cjs"
+    },
+    "./deploymentsSlice": {
+      "types": "./dist/deploymentsSlice/index.d.ts",
+      "import": "./dist/deploymentsSlice/index.js",
+      "require": "./dist/deploymentsSlice/index.cjs"
+    },
+    "./deploymentsSlice/*": {
+      "types": "./dist/deploymentsSlice/*.d.ts",
+      "import": "./dist/deploymentsSlice/*.js",
+      "require": "./dist/deploymentsSlice/*.cjs"
+    },
+    "./devicesSlice": {
+      "types": "./dist/devicesSlice/index.d.ts",
+      "import": "./dist/devicesSlice/index.js",
+      "require": "./dist/devicesSlice/index.cjs"
+    },
+    "./devicesSlice/*": {
+      "types": "./dist/devicesSlice/*.d.ts",
+      "import": "./dist/devicesSlice/*.js",
+      "require": "./dist/devicesSlice/*.cjs"
     },
     "./monitorSlice": {
       "types": "./dist/monitorSlice/index.d.ts",
-      "import": "./dist/monitorSlice/index.mjs",
-      "require": "./dist/monitorSlice/index.js"
+      "import": "./dist/monitorSlice/index.js",
+      "require": "./dist/monitorSlice/index.cjs"
     },
     "./monitorSlice/*": {
       "types": "./dist/monitorSlice/*.d.ts",
-      "import": "./dist/monitorSlice/*.mjs",
-      "require": "./dist/monitorSlice/*.js"
+      "import": "./dist/monitorSlice/*.js",
+      "require": "./dist/monitorSlice/*.cjs"
     },
     "./onboardingSlice": {
       "types": "./dist/onboardingSlice/index.d.ts",
-      "import": "./dist/onboardingSlice/index.mjs",
-      "require": "./dist/onboardingSlice/index.js"
+      "import": "./dist/onboardingSlice/index.js",
+      "require": "./dist/onboardingSlice/index.cjs"
     },
     "./onboardingSlice/*": {
       "types": "./dist/onboardingSlice/*.d.ts",
-      "import": "./dist/onboardingSlice/*.mjs",
-      "require": "./dist/onboardingSlice/*.js"
+      "import": "./dist/onboardingSlice/*.js",
+      "require": "./dist/onboardingSlice/*.cjs"
     },
-    "./api/types/*": {
-      "types": "./dist/api/types/*.ts",
-      "import": "./dist/api/types/*.ts",
-      "require": "./dist/api/types/*.ts"
+    "./organizationSlice": {
+      "types": "./dist/organizationSlice/index.d.ts",
+      "import": "./dist/organizationSlice/index.js",
+      "require": "./dist/organizationSlice/index.cjs"
+    },
+    "./organizationSlice/*": {
+      "types": "./dist/organizationSlice/*.d.ts",
+      "import": "./dist/organizationSlice/*.js",
+      "require": "./dist/organizationSlice/*.cjs"
+    },
+    "./releasesSlice": {
+      "types": "./dist/releasesSlice/index.d.ts",
+      "import": "./dist/releasesSlice/index.js",
+      "require": "./dist/releasesSlice/index.cjs"
+    },
+    "./releasesSlice/*": {
+      "types": "./dist/releasesSlice/*.d.ts",
+      "import": "./dist/releasesSlice/*.js",
+      "require": "./dist/releasesSlice/*.cjs"
+    },
+    "./usersSlice": {
+      "types": "./dist/usersSlice/index.d.ts",
+      "import": "./dist/usersSlice/index.js",
+      "require": "./dist/usersSlice/index.cjs"
+    },
+    "./usersSlice/*": {
+      "types": "./dist/usersSlice/*.d.ts",
+      "import": "./dist/usersSlice/*.js",
+      "require": "./dist/usersSlice/*.cjs"
+    },
+    "./**/*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "require": "./dist/*.cjs"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "require": "./dist/*.cjs"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup && cp -r src/api/types dist/api/types",
+    "build": "tsup-node && cp -r src/api/types dist/api/",
     "lint": "eslint . --ext .js,.ts,.tsx",
     "publish": "npm publish",
     "pre-publish": "npm publish --tag next"
   },
+  "sideEffects": false,
+  "type": "module",
   "devDependencies": {
     "@northern.tech/eslint-config": "*",
     "@northern.tech/typescript-config": "*",
@@ -99,12 +125,10 @@
     "eslint": "^8.57.0"
   },
   "dependencies": {
-    "@northern.tech/utils": "*"
-  },
-  "peerDependencies": {
     "@emotion/react": "^11.x",
     "@emotion/styled": "^11.x",
     "@mdi/js": "^7.x",
+    "@northern.tech/utils": "*",
     "@mui/icons-material": "^6.x",
     "@reduxjs/toolkit": "^2.x",
     "axios": "^1.x",

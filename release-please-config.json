@@ -14,9 +14,6 @@
     "packages/eslint-config": {
       "release-type": "node"
     },
-    "packages/helptips": {
-      "release-type": "node"
-    },
     "packages/prettier-config": {
       "release-type": "node"
     },

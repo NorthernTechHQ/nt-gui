@@ -1,5 +1,4 @@
 export * from './debouncehook';
-export * from './deploymentdevicehook';
 export * from './helpers';
 export * from './liststatehook';
 export * from './locationutils';

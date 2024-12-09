@@ -14,8 +14,7 @@
 import React, { createRef, useEffect, useState } from 'react';
 
 import { Clear as ClearIcon, Add as ContentAddIcon } from '@mui/icons-material';
-import { Fab, FormControl, FormHelperText, IconButton, Input } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { Fab, FormControl, FormHelperText, IconButton, Input, useTheme } from '@mui/material';
 
 const emptyInput = { helptip: null, key: '', value: '' };
 

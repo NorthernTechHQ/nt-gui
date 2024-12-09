@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { getDevicesById } from '@northern.tech/store/selectors';
 import { getDeviceById } from '@northern.tech/store/thunks';
-import isUUID from 'validator/lib/isUUID';
+import { isUUID } from 'validator';
 
 export const useDeploymentDevice = deploymentName => {
   const isLoading = useRef(false);

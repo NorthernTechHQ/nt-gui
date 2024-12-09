@@ -48,14 +48,13 @@ import { commonErrorFallback, commonErrorHandler } from '@northern.tech/store/st
 import { getDeviceMonitorConfig, getLatestDeviceAlerts, getSingleDeployment, saveGlobalSettings } from '@northern.tech/store/thunks';
 import {
   convertDeviceListStateToFilters,
-  extractErrorMessage,
   filtersFilter,
   mapDeviceAttributes,
   mapFiltersToTerms,
   mapTermsToFilters,
   progress
 } from '@northern.tech/store/utils';
-import { attributeDuplicateFilter, deepCompare, getSnackbarMessage } from '@northern.tech/utils/helpers';
+import { attributeDuplicateFilter, deepCompare, extractErrorMessage, getSnackbarMessage } from '@northern.tech/utils/helpers';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { isCancel } from 'axios';
 import pluralize from 'pluralize';

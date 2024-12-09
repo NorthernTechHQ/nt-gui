@@ -13,10 +13,14 @@
   "files": [
     "base.json",
     "react-app.json",
-    "react-library.json"
+    "react-library.json",
+    "tsup-config.js"
   ],
+  "dependencies": {
+    "tsup": "8.3.5"
+  },
   "scripts": {
-    "build": "tsup base.json react-app.json react-library.json",
+    "build": "tsup base.json react-app.json react-library.json tsup-config.js",
     "publish": "npm publish",
     "pre-publish": "npm publish --tag next"
   }

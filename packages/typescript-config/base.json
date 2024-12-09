@@ -19,8 +19,6 @@
       "dom.iterable",
       "esnext"
     ],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": false,
@@ -31,7 +29,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "esnext"
+    "moduleResolution": "bundler"
   },
   "include": [
     "${configDir}/**/*.cjs",

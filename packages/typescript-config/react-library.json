@@ -12,9 +12,8 @@
       "dom.iterable",
       "esnext"
     ],
-    "module": "ESNext",
     "noEmit": true,
     "resolveJsonModule": true,
-    "target": "es6"
+    "target": "ESNext"
   }
 }

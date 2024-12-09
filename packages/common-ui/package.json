@@ -11,41 +11,53 @@
     "url": "git+https://github.com/NorthernTechHQ/nt-gui.git"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "tsup-node",
     "lint": "eslint .",
     "publish": "npm publish",
     "pre-publish": "npm publish --tag next"
   },
+  "sideEffects": false,
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    },
-    "./forms": {
-      "types": "./dist/forms/index.d.ts",
-      "import": "./dist/forms/index.mjs",
-      "require": "./dist/forms/index.js"
-    },
-    "./forms/*": {
-      "types": "./dist/forms/*.d.ts",
-      "import": "./dist/forms/*.mjs",
-      "require": "./dist/forms/*.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./dialogs": {
       "types": "./dist/dialogs/index.d.ts",
-      "import": "./dist/dialogs/index.mjs",
-      "require": "./dist/dialogs/index.js"
+      "import": "./dist/dialogs/index.js",
+      "require": "./dist/dialogs/index.cjs"
     },
     "./dialogs/*": {
       "types": "./dist/dialogs/*.d.ts",
-      "import": "./dist/dialogs/*.mjs",
-      "require": "./dist/dialogs/*.js"
+      "import": "./dist/dialogs/*.js",
+      "require": "./dist/dialogs/*.cjs"
+    },
+    "./forms": {
+      "types": "./dist/forms/index.d.ts",
+      "import": "./dist/forms/index.js",
+      "require": "./dist/forms/index.cjs"
+    },
+    "./forms/*": {
+      "types": "./dist/forms/*.d.ts",
+      "import": "./dist/forms/*.js",
+      "require": "./dist/forms/*.cjs"
+    },
+    "./helptips": {
+      "types": "./dist/helptips/index.d.ts",
+      "import": "./dist/helptips/index.js",
+      "require": "./dist/helptips/index.cjs"
+    },
+    "./helptips/*": {
+      "types": "./dist/helptips/*.d.ts",
+      "import": "./dist/helptips/*.js",
+      "require": "./dist/helptips/*.cjs"
     },
     "./*": {
       "types": "./dist/*.d.ts",
-      "import": "./dist/*.mjs",
-      "require": "./dist/*.js"
+      "import": "./dist/*.js",
+      "require": "./dist/*.cjs"
     }
   },
   "files": [
@@ -61,12 +73,11 @@
     "redux-mock-store": "1.5.5",
     "tsup": "8.3.0"
   },
-  "peerDependencies": {
+  "dependencies": {
     "@mdi/js": "7.x",
     "@mui/icons-material": "6.x",
     "@mui/material": "6.x",
     "@mui/x-date-pickers": "7.x",
-    "@northern.tech/helptips": "*",
     "@northern.tech/store": "*",
     "@northern.tech/utils": "*",
     "@xterm/addon-fit": "0.10.x",

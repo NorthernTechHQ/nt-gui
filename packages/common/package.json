@@ -41,19 +41,20 @@
     "tsup": "8.3.0",
     "typescript": "5.6.3"
   },
-  "peerDependencies": {
-    "react": "^18.x",
+  "dependencies": {
+    "@mui/icons-material": "^6.x",
+    "@mui/material": "^6.x",
     "@northern.tech/common-ui": "*",
     "@northern.tech/helptips": "*",
     "@northern.tech/store": "*",
     "@northern.tech/utils": "*",
-    "@mui/icons-material": "^6.x",
-    "@mui/material": "^6.x",
-    "tss-react": "^4.x",
-    "react-redux": "^9.x",
-    "react-router-dom": "^6.x",
     "dayjs": "^1.x",
     "msgpack5": "^6.x",
+    "react": "^18.x",
+    "react-dom": "^18.x",
+    "react-redux": "^9.x",
+    "react-router-dom": "^6.x",
+    "tss-react": "^4.x",
     "universal-cookie": "^7.x"
   }
 }

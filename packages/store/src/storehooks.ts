@@ -15,8 +15,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { extractErrorMessage } from '@northern.tech/utils/helpers';
 import dayjs from 'dayjs';
-import durationDayJs from 'dayjs/plugin/duration';
+import durationDayJs from 'dayjs/plugin/duration.js';
 import Cookies from 'universal-cookie';
 
 import storeActions from './actions';
@@ -53,7 +54,7 @@ import {
   saveGlobalSettings,
   saveUserSettings
 } from './thunks';
-import { extractErrorMessage, getComparisonCompatibleVersion, stringToBoolean } from './utils';
+import { getComparisonCompatibleVersion, stringToBoolean } from './utils';
 
 const cookies = new Cookies();
 dayjs.extend(durationDayJs);
@@ -120,7 +121,7 @@ export const parseEnvironmentInfo = () => (dispatch, getState) => {
     dispatch(storeActions.setOnboardingComplete(onboardingComplete)),
     dispatch(storeActions.setDemoArtifactPort(demoArtifactPort)),
     dispatch(storeActions.setFeatures(environmentFeatures)),
-    dispatch(storeActions.setVersionInformation({ docsVersion: versionInfo.docs, value: versionInfo.remainder })),
+    dispatch(storeActions.setVersionInformation({ ...versionInfo.remainder, docsVersion: versionInfo.docs })),
     dispatch(storeActions.setEnvironmentData(environmentData)),
     dispatch(getLatestReleaseInfo())
   ]);

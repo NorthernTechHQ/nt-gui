@@ -12,7 +12,8 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { TIMEOUTS } from '@northern.tech/store/constants';
-import { extractErrorMessage, preformatWithRequestID } from '@northern.tech/store/utils';
+
+import { extractErrorMessage, preformatWithRequestID } from './helpers';
 
 let timers = {};
 

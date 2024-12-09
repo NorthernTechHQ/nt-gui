@@ -23,7 +23,7 @@ import { getDeviceAuth, getDeviceById, saveGlobalSettings } from '@northern.tech
 import { mapTermsToFilters } from '@northern.tech/store/utils';
 import { deepCompare, isEmpty, standardizePhases, startTimeSort } from '@northern.tech/utils/helpers';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import isUUID from 'validator/lib/isUUID';
+import { isUUID } from 'validator';
 
 import { actions, sliceName } from '.';
 import { DEPLOYMENT_ROUTES, DEPLOYMENT_STATES, DEPLOYMENT_TYPES, deploymentPrototype, deploymentsApiUrl, deploymentsApiUrlV2 } from './constants';
