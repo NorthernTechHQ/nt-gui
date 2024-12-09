@@ -16,7 +16,6 @@ import React from 'react';
 import { Sort as SortIcon } from '@mui/icons-material';
 import { makeStyles } from 'tss-react/mui';
 
-import DetailsIndicator from '@northern.tech/common-ui/detailsindicator';
 import Loader from '@northern.tech/common-ui/loader';
 import Pagination from '@northern.tech/common-ui/pagination';
 import { SORTING_OPTIONS } from '@northern.tech/store/constants';
@@ -60,9 +59,9 @@ export const AuditLogsList = ({
   onChangeRowsPerPage,
   onChangeSorting,
   selectionState,
-  onIssueSelection,
   userCapabilities,
-  auditLogColumns
+  auditLogColumns,
+  onIssueSelection
 }) => {
   const { page, perPage, sort = {}, total: count, isLoading } = selectionState;
   const { classes } = useStyles();
@@ -86,15 +85,16 @@ export const AuditLogsList = ({
         </div>
         <div className="auditlogs-list">
           {items.map(item => {
-            const allowsExpansion = !!item.change || item.action.includes('terminal') || item.action.includes('portforward');
+            const allowsExpansion = onIssueSelection && (!!item.change || item.action.includes('terminal') || item.action.includes('portforward'));
             return (
               <div
                 className={`auditlogs-list-item ${allowsExpansion ? 'clickable' : ''}`}
                 key={`event-${item.time}`}
-                onClick={() => onIssueSelection(allowsExpansion ? item : undefined)}
+                onClick={() => {
+                  onIssueSelection ? onIssueSelection(allowsExpansion ? item : undefined) : null;
+                }}
               >
                 {auditLogColumns.map((column, index) => column.render(item, index, userCapabilities))}
-                {allowsExpansion ? <DetailsIndicator /> : <div />}
               </div>
             );
           })}

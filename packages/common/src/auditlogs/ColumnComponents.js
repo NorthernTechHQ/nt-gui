@@ -14,9 +14,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import DetailsIndicator from '@northern.tech/common-ui/detailsindicator';
 import DeviceIdentityDisplay from '@northern.tech/common-ui/deviceidentity';
 import Time from '@northern.tech/common-ui/time';
-import { DEPLOYMENT_ROUTES, auditlogTypes, canAccess } from '@northern.tech/store/constants';
+import { AUDIT_LOGS_TYPES, DEPLOYMENT_ROUTES, canAccess } from '@northern.tech/store/constants';
 
 const ArtifactLink = ({ item }) => <Link to={`/releases/${item.object.artifact.name}`}>View artifact</Link>;
 const DeploymentLink = ({ item }) => <Link to={`${DEPLOYMENT_ROUTES.finished.route}?open=true&id=${item.object.id}`}>View deployment</Link>;
@@ -87,24 +88,32 @@ const actorMap = {
   device: 'id'
 };
 
-export const UserDescriptor = (item, index) => <div key={`${item.time}-${index} `}>{item.actor[actorMap[item.actor.type]]}</div>;
+const generateKey = (item, index) => `${item.time}-${index}`;
+
+export const UserDescriptor = (item, index) => <div key={generateKey(item, index)}>{item.actor[actorMap[item.actor.type]]}</div>;
 export const ActionDescriptor = (item, index) => (
-  <div className="uppercased" key={`${item.time}-${index}`}>
+  <div className="uppercased" key={generateKey(item, index)}>
     {item.action}
   </div>
 );
 export const TypeDescriptor = (item, index) => (
-  <div className="capitalized" key={`${item.time}-${index}`}>
-    {auditlogTypes[item.object.type]?.title ?? item.object.type}
+  <div className="capitalized" key={generateKey(item, index)}>
+    {AUDIT_LOGS_TYPES[item.object.type]?.title ?? item.object.type}
   </div>
 );
 export const ChangeDescriptor = (item, index) => {
   const FormatterComponent = mapChangeToContent(item).actionFormatter;
-  return <FormatterComponent key={`${item.time}-${index}`} {...item.object} />;
+  return <FormatterComponent key={generateKey(item, index)} {...item.object} />;
 };
 export const ChangeDetailsDescriptor = (item, index, userCapabilities) => {
   const { component: Comp, accessCheck } = mapChangeToContent(item);
-  const key = `${item.time}-${index}`;
+  const key = generateKey(item, index);
   return accessCheck(userCapabilities) ? <Comp key={key} item={item} /> : <div key={key} />;
 };
-export const TimeWrapper = (item, index) => <Time key={`${item.time}-${index}`} value={item.time} />;
+export const TimeWrapper = (item, index) => <Time key={generateKey(item, index)} value={item.time} />;
+
+export const ViewDetails = ({ item, index, onIssueSelection = () => {}, ViewComponent = DetailsIndicator }) => (
+  <div className="clickable" key={generateKey(item, index)} onClick={() => onIssueSelection(item)}>
+    <ViewComponent />
+  </div>
+);

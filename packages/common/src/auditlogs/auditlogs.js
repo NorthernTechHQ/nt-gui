@@ -37,7 +37,7 @@ import dayjs from 'dayjs';
 import historyImage from '../../../../assets/img/history.png';
 import AuditLogsFilter from './AuditLogsFilter';
 import AuditlogsView from './AuditlogsView';
-import { ActionDescriptor, ChangeDescriptor, ChangeDetailsDescriptor, TimeWrapper, TypeDescriptor, UserDescriptor } from './ColumnComponents';
+import { ActionDescriptor, ChangeDescriptor, ChangeDetailsDescriptor, TimeWrapper, TypeDescriptor, UserDescriptor, ViewDetails } from './ColumnComponents';
 import EventDetailsDrawerContentMap from './EventDetailsDrawerContentMap';
 import AuditLogsList from './auditlogslist';
 import EventDetailsFallbackComponent from './eventdetails/FallbackComponent';
@@ -234,7 +234,15 @@ export const AuditLogs = () => {
             { title: 'Type', sortable: false, render: TypeDescriptor },
             { title: 'Changed', sortable: false, render: ChangeDescriptor },
             { title: 'More details', sortable: false, render: ChangeDetailsDescriptor },
-            { title: 'Time', sortable: true, render: TimeWrapper }
+            { title: 'Time', sortable: true, render: TimeWrapper },
+            {
+              title: '',
+              sortable: false,
+              render: (item, index) => {
+                const allowsExpansion = !!item.change || item.action.includes('terminal') || item.action.includes('portforward');
+                return allowsExpansion ? <ViewDetails item={item} index={index} onIssueSelection={onIssueSelection} /> : <div />;
+              }
+            }
           ]}
         />
       )}
