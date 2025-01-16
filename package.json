@@ -10,6 +10,7 @@
     "build": "vite build",
     "dev": "vite dev",
     "lint": "eslint . --ext .ts,.tsx && turbo run lint",
+    "test": "vitest",
     "dev-storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build --docs",
     "preview-storybook": "serve storybook-static",
@@ -32,16 +33,23 @@
     "@storybook/addon-links": "^8.4.7",
     "@storybook/react": "^8.4.7",
     "@storybook/react-vite": "^8.4.7",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
     "@trivago/prettier-plugin-sort-imports": "^5.2.0",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^8.57.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "jsdom": "^26.0.0",
+    "msw": "^2.7.0",
+    "react-idle-timer": "^5.7.2",
     "serve": "^14.2.4",
     "storybook": "^8.2.6",
     "tsup": "8.3.5",
     "turbo": "^2.3.3",
     "typescript": "^5.7.2",
-    "vite": "^6.0.6"
+    "vite": "^6.0.6",
+    "vitest": "^2.1.8"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "*"
