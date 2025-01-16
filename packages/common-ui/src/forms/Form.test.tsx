@@ -16,6 +16,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 
 import { undefineds } from '../../../../tests/mockData';
 import { render } from '../../../../tests/setupTests';
@@ -46,7 +47,7 @@ describe('Form Component', () => {
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });
   it('works correctly with generated passwords', async () => {
-    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
 
     const ui = (
       <Form showButtons submitLabel="submit">
@@ -56,6 +57,6 @@ describe('Form Component', () => {
     const { rerender } = render(ui);
     await user.click(screen.getByRole('button', { name: /generate/i }));
     await waitFor(() => rerender(ui));
-    expect(screen.getByRole('button', { name: /submit/i })).not.toBeDisabled();
+    await waitFor(() => expect(screen.getByRole('button', { name: /submit/i })).not.toBeDisabled());
   });
 });

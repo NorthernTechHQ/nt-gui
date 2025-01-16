@@ -1,6 +1,6 @@
 export * from './dialogs';
 
-export * from './forms/index.js';
+export * from './forms';
 
 export * from './ConfirmModal';
 export { default as Alert } from './Alert';

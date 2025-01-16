@@ -13,6 +13,8 @@
 //    limitations under the License.
 import React from 'react';
 
+import { describe, expect, it } from 'vitest';
+
 import { undefineds } from '../../../tests/mockData';
 import { render } from '../../../tests/setupTests';
 import Alert from './Alert';

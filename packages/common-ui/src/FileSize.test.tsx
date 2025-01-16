@@ -14,6 +14,7 @@ import React from 'react';
 
 import { deepCompare } from '@northern.tech/utils/helpers';
 import { render } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 
 import { undefineds } from '../../../tests/mockData';
 import FileSize from './FileSize';

@@ -14,6 +14,7 @@
 import React from 'react';
 
 import { ATTRIBUTE_SCOPES } from '@northern.tech/store/constants';
+import { describe, expect, it } from 'vitest';
 
 import { defaultState, undefineds } from '../../../tests/mockData';
 import { render } from '../../../tests/setupTests';

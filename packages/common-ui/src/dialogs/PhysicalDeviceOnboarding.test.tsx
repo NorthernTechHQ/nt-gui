@@ -15,6 +15,7 @@ import React from 'react';
 
 import { EXTERNAL_PROVIDER } from '@northern.tech/store/constants';
 import { act, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { token, undefineds } from '../../../../tests/mockData';
 import { render } from '../../../../tests/setupTests';
@@ -28,6 +29,14 @@ describe('PhysicalDeviceOnboarding Component', () => {
       ...window.location,
       hostname: 'hosted.mender.io'
     };
+    const _jest = globalThis.jest;
+
+    globalThis.jest = {
+      ...globalThis.jest,
+      advanceTimersByTime: vi.advanceTimersByTime.bind(vi)
+    };
+
+    return () => void (globalThis.jest = _jest);
   });
   afterEach(() => {
     window.location = {
@@ -41,7 +50,7 @@ describe('PhysicalDeviceOnboarding Component', () => {
       it(`renders ${Component.displayName || Component.name} correctly`, () => {
         const { baseElement } = render(
           <Component
-            advanceOnboarding={jest.fn}
+            advanceOnboarding={vi.fn}
             connectionString="test"
             docsVersion={''}
             hasConvertedImage={true}
@@ -53,7 +62,7 @@ describe('PhysicalDeviceOnboarding Component', () => {
             isHosted={true}
             isDemoMode={false}
             onboardingState={{ complete: false, showTips: true }}
-            onSelect={jest.fn}
+            onSelect={vi.fn}
             selection="raspberrypi7"
             tenantToken="testtoken"
             token={token}
@@ -73,8 +82,8 @@ describe('PhysicalDeviceOnboarding Component', () => {
     expect(view).toEqual(expect.not.stringMatching(undefineds));
     await waitFor(() => expect(store.getState().onboarding.approach === 'physical').toBeTruthy());
     await act(async () => {
-      jest.runOnlyPendingTimers();
-      jest.runAllTicks();
+      vi.runOnlyPendingTimers();
+      vi.runAllTicks();
     });
   });
 });

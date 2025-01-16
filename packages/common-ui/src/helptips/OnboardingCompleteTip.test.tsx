@@ -17,14 +17,15 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { getConfiguredStore } from '@northern.tech/store/store';
 import { act, render as testingLibRender, waitFor } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { defaultState, undefineds } from '../../../tests/mockData';
+import { defaultState, undefineds } from '../../../../tests/mockData';
 import OnboardingCompleteTip from './OnboardingCompleteTip';
 
 describe('OnboardingCompleteTip Component', () => {
   let store;
   beforeEach(() => {
-    jest.spyOn(global, 'encodeURIComponent').mockImplementationOnce(() => 'http%3A%2F%2Ftest.com');
+    vi.spyOn(global, 'encodeURIComponent').mockImplementationOnce(() => 'http%3A%2F%2Ftest.com');
     store = getConfiguredStore({
       preloadedState: {
         ...defaultState,
@@ -54,8 +55,8 @@ describe('OnboardingCompleteTip Component', () => {
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
     await act(async () => {
-      jest.runOnlyPendingTimers();
-      jest.runAllTicks();
+      vi.runOnlyPendingTimers();
+      vi.runAllTicks();
     });
   });
 });

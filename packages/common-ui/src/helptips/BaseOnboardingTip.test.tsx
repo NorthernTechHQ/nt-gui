@@ -13,8 +13,10 @@
 //    limitations under the License.
 import React from 'react';
 
-import { undefineds } from '../../../tests/mockData';
-import { render } from '../../../tests/setupTests';
+import { describe, expect, it } from 'vitest';
+
+import { undefineds } from '../../../../tests/mockData';
+import { render } from '../../../../tests/setupTests';
 import BaseOnboardingTip, { orientations } from './BaseOnoardingTip';
 
 describe('BaseOnboardingTip Component', () => {

@@ -13,8 +13,10 @@
 //    limitations under the License.
 import React from 'react';
 
-import { defaultState } from '../../../tests/mockData';
-import { render } from '../../../tests/setupTests';
+import { describe, expect, it } from 'vitest';
+
+import { defaultState } from '../../../../tests/mockData';
+import { render } from '../../../../tests/setupTests';
 import { HELPTOOLTIPS } from './HelpTooltips';
 
 const preloadedState = {
