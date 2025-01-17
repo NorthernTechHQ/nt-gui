@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { defaultState } from '../../tests/mockData';
+import { defaultState } from '../../../tests/mockData';
 import {
   customSort,
   deepCompare,
@@ -32,6 +32,8 @@ import {
   validatePhases,
   versionCompare
 } from './helpers';
+
+import {describe, it, expect} from 'vitest';
 
 const deploymentCreationTime = defaultState.deployments.byId.d1.created;
 
@@ -399,32 +401,35 @@ describe('standardizePhases function', () => {
 });
 
 describe('getRemainderPercent function', () => {
-  const phases = [
-    { batch_size: 10, not: 'interested' },
-    { batch_size: 10, not: 'interested' },
-    { batch_size: 10, not: 'interested' }
-  ];
-  expect(getRemainderPercent(phases)).toEqual(80);
-  expect(
-    getRemainderPercent([
+  it('remainder Percent calculated correctly', async () => {
+
+    const phases = [
       { batch_size: 10, not: 'interested' },
-      { batch_size: 90, not: 'interested' }
-    ])
-  ).toEqual(90);
-  expect(
-    getRemainderPercent([
       { batch_size: 10, not: 'interested' },
-      { batch_size: 95, not: 'interested' }
-    ])
-  ).toEqual(90);
-  // this will be caught in the phase validation - should still be good to be fixed in the future
-  expect(
-    getRemainderPercent([
-      { batch_size: 50, not: 'interested' },
-      { batch_size: 55, not: 'interested' },
-      { batch_size: 95, not: 'interested' }
-    ])
-  ).toEqual(-5);
+      { batch_size: 10, not: 'interested' }
+    ];
+    expect(getRemainderPercent(phases)).toEqual(80);
+    expect(
+      getRemainderPercent([
+        { batch_size: 10, not: 'interested' },
+        { batch_size: 90, not: 'interested' }
+      ])
+    ).toEqual(90);
+    expect(
+      getRemainderPercent([
+        { batch_size: 10, not: 'interested' },
+        { batch_size: 95, not: 'interested' }
+      ])
+    ).toEqual(90);
+    // this will be caught in the phase validation - should still be good to be fixed in the future
+    expect(
+      getRemainderPercent([
+        { batch_size: 50, not: 'interested' },
+        { batch_size: 55, not: 'interested' },
+        { batch_size: 95, not: 'interested' }
+      ])
+    ).toEqual(-5);
+  })
 });
 
 describe('validatePhases function', () => {
