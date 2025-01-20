@@ -15,7 +15,7 @@
 import { attributeDuplicateFilter, getDemoDeviceAddress as getDemoDeviceAddressHelper } from '@northern.tech/utils/helpers';
 import { createSelector } from '@reduxjs/toolkit';
 
-import { PLANS, defaultReports } from './appSlice/constants';
+import { ADDONS, PLANS, defaultReports } from './appSlice/constants';
 import { getFeatures, getSearchedDevices } from './appSlice/selectors';
 import { ALL_DEVICES, ATTRIBUTE_SCOPES, DEVICE_ISSUE_OPTIONS, DEVICE_LIST_MAXIMUM_LENGTH, UNGROUPED_GROUP } from './commonConstants';
 import { getDeploymentsById, getDeploymentsSelectionState, getSelectedDeploymentDeviceIds } from './deploymentsSlice/selectors';
@@ -101,15 +101,21 @@ export const getUserCapabilities = createSelector([getUserRoles, getIsServicePro
 export const getTenantCapabilities = createSelector(
   [getFeatures, getOrganization, getIsEnterprise],
   (
-    { hasAuditlogs: isAuditlogEnabled, hasDeviceConfig: isDeviceConfigEnabled, hasDeviceConnect: isDeviceConnectEnabled, hasMonitor: isMonitorEnabled },
+    {
+      hasAuditlogs: isAuditlogEnabled,
+      hasDeviceConfig: isDeviceConfigEnabled,
+      hasDeviceConnect: isDeviceConnectEnabled,
+      hasMonitor: isMonitorEnabled,
+      isHosted
+    },
     { addons = [], plan = PLANS.os.id },
     isEnterprise
   ) => {
     const canDelta = isEnterprise || plan === PLANS.professional.id;
     const hasAuditlogs = isAuditlogEnabled && isEnterprise;
-    const hasDeviceConfig = isDeviceConfigEnabled && addons.some(addon => addon.name === 'configure' && Boolean(addon.enabled));
-    const hasDeviceConnect = isDeviceConnectEnabled && (!isEnterprise || addons.some(addon => addon.name === 'troubleshoot' && Boolean(addon.enabled)));
-    const hasMonitor = isMonitorEnabled && addons.some(addon => addon.name === 'monitor' && Boolean(addon.enabled));
+    const hasDeviceConfig = addons.some(addon => addon.name === ADDONS.configure.id && addon.enabled) || (isDeviceConfigEnabled && !isHosted);
+    const hasDeviceConnect = addons.some(addon => addon.name === ADDONS.troubleshoot.id && addon.enabled) || (isDeviceConnectEnabled && !isHosted);
+    const hasMonitor = isMonitorEnabled && addons.some(addon => addon.name === ADDONS.monitor.id && addon.enabled);
     return {
       canDelta,
       canRetry: canDelta,
@@ -257,7 +263,7 @@ export const getAuditlogDevice = createSelector([getAuditLogEntry, getDevicesByI
 export const getRelevantRoles = createSelector([getOrganization, getRolesList], ({ service_provider }, roles) => {
   if (service_provider) {
     return roles.reduce((accu, role) => {
-      if (rolesById[role.id]) {
+      if (rolesById[role.value]) {
         return accu;
       }
       accu.push(role);
@@ -267,7 +273,7 @@ export const getRelevantRoles = createSelector([getOrganization, getRolesList], 
   return Object.keys(rolesById)
     .reverse()
     .reduce((accu, key) => {
-      const index = accu.findIndex(({ id }) => id === key);
+      const index = accu.findIndex(({ value }) => value === key);
       accu = [accu[index], ...accu.filter((item, itemIndex) => index !== itemIndex)];
       return accu;
     }, roles);

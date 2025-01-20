@@ -12,6 +12,8 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 // @ts-nocheck
+import { useDispatch } from 'react-redux';
+
 import { extractErrorMessage, preformatWithRequestID } from '@northern.tech/utils/helpers';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
@@ -31,9 +33,7 @@ const { setSnackbar, uploadProgress } = actions;
 
 // exclude 'pendings-redirect' since this is expected to persist refreshes - the rest should be better to be redone
 const keys = ['sessionDeploymentChecker', settingsKeys.initialized];
-const resetEnvironment = () => {
-  keys.map(key => window.sessionStorage.removeItem(key));
-};
+const resetEnvironment = () => keys.forEach(key => window.sessionStorage.removeItem(key));
 
 resetEnvironment();
 
@@ -64,6 +64,15 @@ export const sessionReducer = (state, action) => {
   return rootReducer(state, action);
 };
 
+const rejectionLoggerMiddleware = () => next => action => {
+  if (action.type.endsWith('/rejected')) {
+    const { error } = action;
+    console.error('Rejection in action:', action);
+    console.error(error.stack);
+  }
+  return next(action);
+};
+
 export const getConfiguredStore = (options = {}) => {
   const { preloadedState = {}, ...config } = options;
   return configureStore({
@@ -80,10 +89,12 @@ export const getConfiguredStore = (options = {}) => {
           ignoredActionPaths: ['uploads', 'snackbar', /payload\..*$/],
           ignoredPaths: ['app.uploadsById', 'app.snackbar', 'organization.externalDeviceIntegrations']
         }
-      })
+      }).concat(rejectionLoggerMiddleware)
   });
 };
 export const store = getConfiguredStore({
   preloadedState: {}
 });
 export type AppDispatch = typeof store.dispatch;
+export const useAppDispatch: () => AppDispatch = useDispatch;
+export type RootState = ReturnType<typeof store.getState>;

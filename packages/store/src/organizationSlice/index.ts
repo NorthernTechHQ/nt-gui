@@ -14,9 +14,11 @@
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TENANT_LIST_DEFAULT } from '@northern.tech/store/constants';
 import { createSlice } from '@reduxjs/toolkit';
 
+import { OrganizationState } from '@northern.tech/store/organizationSlice/types';
+
 export const sliceName = 'organization';
 
-export const initialState = {
+export const initialState: OrganizationState = {
   card: {
     last4: '',
     expiration: { month: 1, year: 2020 },

@@ -14,8 +14,9 @@
 // @ts-nocheck
 import storeActions from '@northern.tech/store/actions';
 import Api from '@northern.tech/store/api/general-api';
-import { Tenant } from '@northern.tech/store/api/types/MenderTypes';
+import { Tenant } from '@northern.tech/store/api/types/Tenant';
 import {
+  AvailablePlans,
   DEVICE_LIST_DEFAULTS,
   SORTING_OPTIONS,
   TENANT_LIST_DEFAULT,
@@ -25,9 +26,10 @@ import {
   iotManagerBaseURL,
   locations
 } from '@northern.tech/store/constants';
+import { BillingProfile } from '@northern.tech/store/organizationSlice/types';
 import { getCurrentSession, getTenantCapabilities, getTenantsList } from '@northern.tech/store/selectors';
 import { commonErrorFallback, commonErrorHandler } from '@northern.tech/store/store';
-import { setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
+import { getDeviceLimit, setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
 import { dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { jwtDecode } from 'jwt-decode';
@@ -118,11 +120,15 @@ export const startUpgrade = createAsyncThunk(`${sliceName}/startUpgrade`, (tenan
 );
 
 export const cancelUpgrade = createAsyncThunk(`${sliceName}/cancelUpgrade`, tenantId => Api.post(`${tenantadmApiUrlv2}/tenants/${tenantId}/upgrade/cancel`));
-
-export const completeUpgrade = createAsyncThunk(`${sliceName}/completeUpgrade`, ({ tenantId, plan }, { dispatch }) =>
-  Api.post(`${tenantadmApiUrlv2}/tenants/${tenantId}/upgrade/complete`, { plan })
+interface completeUpgradePayload {
+  billing_profile: BillingProfile;
+  plan: AvailablePlans;
+  tenantId: string;
+}
+export const completeUpgrade = createAsyncThunk(`${sliceName}/completeUpgrade`, ({ tenantId, plan, billing_profile }: completeUpgradePayload, { dispatch }) =>
+  Api.post(`${tenantadmApiUrlv2}/tenants/${tenantId}/upgrade/complete`, { plan, billing_profile })
     .catch(err => commonErrorHandler(err, `There was an error upgrading your account:`, dispatch))
-    .then(() => Promise.resolve(dispatch(getUserOrganization())))
+    .then(() => Promise.all([dispatch(getDeviceLimit()), dispatch(getUserOrganization())]))
 );
 
 const prepareAuditlogQuery = ({ startDate, endDate, user: userFilter, type, detail: detailFilter, sort = {} }) => {
@@ -184,7 +190,12 @@ export const tenantDataDivergedMessage = 'The system detected there is a change 
 
 export const addTenant = createAsyncThunk(`${sliceName}/createTenant`, (selectionState, { dispatch }) => {
   return Api.post(`${tenantadmApiUrlv2}/tenants`, selectionState)
-    .then(() => Promise.all([dispatch(getTenants()), dispatch(setSnackbar('Tenant was created successfully.'))]))
+    .then(() =>
+      Promise.all([
+        dispatch(setSnackbar('Tenant was created successfully.')),
+        new Promise(resolve => setTimeout(() => resolve(dispatch(getTenants())), TIMEOUTS.oneSecond))
+      ])
+    )
     .catch(err => commonErrorHandler(err, 'There was an error creating tenant', dispatch, commonErrorFallback));
 });
 
@@ -223,17 +234,22 @@ export const editTenantDeviceLimit = createAsyncThunk(`${sliceName}/editDeviceLi
   return Api.put(`${tenantadmApiUrlv2}/tenants/${id}/child`, { device_limit: newLimit, name })
     .catch(err => commonErrorHandler(err, `Device Limit cannot be changed`, dispatch))
     .then(() => {
-      const tasks = [Promise.resolve(dispatch(setSnackbar('Device Limit was changed successfully')))];
-      tasks.push(dispatch(getTenants()));
-      tasks.push(dispatch(getUserOrganization()));
-      return Promise.all(tasks);
+      return Promise.all([
+        dispatch(setSnackbar('Device Limit was changed successfully')),
+        dispatch(getUserOrganization()),
+        new Promise(resolve => setTimeout(() => resolve(dispatch(getTenants())), TIMEOUTS.oneSecond))
+      ]);
     });
 });
 export const removeTenant = createAsyncThunk(`${sliceName}/editDeviceLimit`, ({ id }: { id: string }, { dispatch }) => {
   return Api.post(`${tenantadmApiUrlv2}/tenants/${id}/remove/start`)
     .catch(err => commonErrorHandler(err, `There was an error removing the tenant`, dispatch))
     .then(() =>
-      Promise.all([Promise.resolve(dispatch(setSnackbar('Device Limit was changed successfully'))), dispatch(getTenants()), dispatch(getUserOrganization())])
+      Promise.all([
+        dispatch(setSnackbar('The tenant was removed successfully')),
+        dispatch(getUserOrganization()),
+        new Promise(resolve => setTimeout(() => resolve(dispatch(getTenants())), TIMEOUTS.oneSecond))
+      ])
     );
 });
 export const getUserOrganization = createAsyncThunk(`${sliceName}/getUserOrganization`, (_, { dispatch, getState }) => {
@@ -257,11 +273,25 @@ export const sendSupportMessage = createAsyncThunk(`${sliceName}/sendSupportMess
     .catch(err => commonErrorHandler(err, 'There was an error sending your request', dispatch, commonErrorFallback))
     .then(() => Promise.resolve(dispatch(setSnackbar({ message: 'Your request was sent successfully', autoHideDuration: TIMEOUTS.fiveSeconds }))))
 );
-
-export const requestPlanChange = createAsyncThunk(`${sliceName}/requestPlanChange`, ({ content, tenantId }, { dispatch }) =>
-  Api.post(`${tenantadmApiUrlv2}/tenants/${tenantId}/plan`, content)
-    .catch(err => commonErrorHandler(err, 'There was an error sending your request', dispatch, commonErrorFallback))
-    .then(() => Promise.resolve(dispatch(setSnackbar({ message: 'Your request was sent successfully', autoHideDuration: TIMEOUTS.fiveSeconds }))))
+interface requestPlanChangePayload {
+  tenantId: string;
+  content: {
+    current_plan: string;
+    requested_plan: string;
+    current_addons: string;
+    requested_addons: string;
+    user_message: string;
+  };
+}
+export const requestPlanChange = createAsyncThunk(
+  `${sliceName}/requestPlanChange`,
+  ({ content, tenantId }: requestPlanChangePayload, { dispatch, rejectWithValue }) =>
+    Api.post(`${tenantadmApiUrlv2}/tenants/${tenantId}/plan`, content)
+      .catch(async err => {
+        await commonErrorHandler(err, 'There was an error sending your request', dispatch, commonErrorFallback);
+        rejectWithValue(err);
+      })
+      .then(() => Promise.resolve(dispatch(setSnackbar({ message: 'Your request was sent successfully', autoHideDuration: TIMEOUTS.fiveSeconds }))))
 );
 
 export const downloadLicenseReport = createAsyncThunk(`${sliceName}/downloadLicenseReport`, (_, { dispatch }) =>

@@ -27,14 +27,15 @@ import {
 
 // for some reason these functions can not be stored in the deviceConstants...
 const filterProcessors = {
-  $gt: val => Number(val) || val,
-  $gte: val => Number(val) || val,
-  $lt: val => Number(val) || val,
-  $lte: val => Number(val) || val,
-  $in: val => ('' + val).split(',').map(i => i.trim()),
-  $nin: val => ('' + val).split(',').map(i => i.trim()),
-  $exists: yes,
-  $nexists: () => false
+  [DEVICE_FILTERING_OPTIONS.$gt.key]: val => Number(val) || val,
+  [DEVICE_FILTERING_OPTIONS.$gte.key]: val => Number(val) || val,
+  [DEVICE_FILTERING_OPTIONS.$lt.key]: val => Number(val) || val,
+  [DEVICE_FILTERING_OPTIONS.$lte.key]: val => Number(val) || val,
+  [DEVICE_FILTERING_OPTIONS.$ltne.key]: val => Number(val) || val,
+  [DEVICE_FILTERING_OPTIONS.$in.key]: val => ('' + val).split(',').map(i => i.trim()),
+  [DEVICE_FILTERING_OPTIONS.$nin.key]: val => ('' + val).split(',').map(i => i.trim()),
+  [DEVICE_FILTERING_OPTIONS.$exists.key]: yes,
+  [DEVICE_FILTERING_OPTIONS.$nexists.key]: () => false
 };
 const filterAliases = {
   $nexists: { alias: DEVICE_FILTERING_OPTIONS.$exists.key, value: false }
@@ -131,6 +132,24 @@ export const mapUserRolesToUiPermissions = (userRoles, roles) =>
 export const progress = ({ loaded, total }) => {
   let uploadProgress = (loaded / total) * 100;
   return (uploadProgress = uploadProgress < 50 ? Math.ceil(uploadProgress) : Math.round(uploadProgress));
+};
+
+export const extractErrorMessage = (err, fallback = '') =>
+  err.response?.data?.error?.message || err.response?.data?.error || err.error || err.message || fallback;
+
+export const preformatWithRequestID = (res, failMsg) => {
+  // ellipsis line
+  if (failMsg.length > 100) failMsg = `${failMsg.substring(0, 220)}...`;
+
+  try {
+    if (res?.data && Object.keys(res.data).includes('request_id')) {
+      let shortRequestUUID = res.data['request_id'].substring(0, 8);
+      return `${failMsg} [Request ID: ${shortRequestUUID}]`;
+    }
+  } catch (e) {
+    console.log('failed to extract request id:', e);
+  }
+  return failMsg;
 };
 
 export const getComparisonCompatibleVersion = version => (isNaN(version.charAt(0)) && version !== 'next' ? 'master' : version);

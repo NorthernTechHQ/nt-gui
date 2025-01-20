@@ -172,7 +172,7 @@ export const uiPermissionsByArea = {
       'Granting access to the audit log will allow tracing changes to devices, releases and user accounts, as well as providing information about deployments.',
     key: 'auditlog',
     uiPermissions: [uiPermissionsById.read],
-    title: 'System audit log'
+    title: 'System Audit Log'
   },
   deployments: {
     endpoints: [
@@ -333,7 +333,7 @@ export const serviceProviderRolesById = {
   },
   readOnly: {
     name: 'Read access',
-    value: staticRolesByName.admin,
+    value: staticRolesByName.readOnly,
     description: 'This role can see all linked organizations but cannot make any changes',
     permissions: [],
     uiPermissions: {
