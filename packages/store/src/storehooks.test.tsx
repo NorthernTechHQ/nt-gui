@@ -318,7 +318,7 @@ it('should try to get all required app information', async () => {
   const wrapper = ({ children }) => <Provider store={store}>{children}</Provider>;
   const { result } = renderHook(() => useAppInit(userId), { wrapper });
   await waitFor(() => expect(result.current.coreInitDone).toBeTruthy());
-  await jest.runAllTimersAsync();
+  await vi.runAllTimersAsync();
   const storeActions = store.getActions();
   expect(storeActions.length).toEqual(appInitActions.length);
   appInitActions.map((action, index) => Object.keys(action).map(key => expect(storeActions[index][key]).toEqual(action[key])));
@@ -341,7 +341,7 @@ it('should execute the offline threshold migration for multi day thresholds', as
   const wrapper = ({ children }) => <Provider store={store}>{children}</Provider>;
   const { result } = renderHook(() => useAppInit(userId), { wrapper });
   await waitFor(() => expect(result.current.coreInitDone).toBeTruthy());
-  await jest.runAllTimersAsync();
+  await vi.runAllTimersAsync();
 
   const storeActions = store.getActions();
   expect(storeActions.length).toEqual(appInitActions.length + 9); // 3 = get settings + set settings + set offline threshold
@@ -368,7 +368,7 @@ it('should trigger the offline threshold migration dialog', async () => {
   const wrapper = ({ children }) => <Provider store={store}>{children}</Provider>;
   const { result } = renderHook(() => useAppInit(userId), { wrapper });
   await waitFor(() => expect(result.current.coreInitDone).toBeTruthy());
-  await jest.runAllTimersAsync();
+  await vi.runAllTimersAsync();
   const storeActions = store.getActions();
   expect(storeActions.length).toEqual(appInitActions.length + 1); // only setShowStartupNotification should be addded
   const notificationAction = storeActions.find(action => action.type === userActions.setShowStartupNotification.type);
