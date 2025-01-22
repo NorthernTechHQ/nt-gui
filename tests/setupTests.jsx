@@ -58,6 +58,7 @@ beforeAll(async () => {
   window.location = {
     ...oldWindowLocation,
     hostname: TEST_LOCATION,
+    origin: 'http://localhost',
     assign: vi.fn(),
     replace: vi.fn(),
     reload: vi.fn()

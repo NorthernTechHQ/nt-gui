@@ -14,7 +14,6 @@
 // @ts-nocheck
 import storeActions from '@northern.tech/store/actions';
 import Api from '@northern.tech/store/api/general-api';
-import { Tenant } from '@northern.tech/store/api/types/Tenant';
 import {
   AvailablePlans,
   DEVICE_LIST_DEFAULTS,
@@ -26,10 +25,11 @@ import {
   iotManagerBaseURL,
   locations
 } from '@northern.tech/store/constants';
+import { getDeviceLimit } from '@northern.tech/store/devicesSlice/thunks.tsx';
 import { BillingProfile } from '@northern.tech/store/organizationSlice/types';
 import { getCurrentSession, getTenantCapabilities, getTenantsList } from '@northern.tech/store/selectors';
 import { commonErrorFallback, commonErrorHandler } from '@northern.tech/store/store';
-import { getDeviceLimit, setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
+import { setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
 import { dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { jwtDecode } from 'jwt-decode';

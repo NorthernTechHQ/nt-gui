@@ -656,6 +656,8 @@ describe('user actions', () => {
       { type: setAllTooltipsReadState.fulfilled.type }
     ];
     await store.dispatch(setAllTooltipsReadState('testRead'));
+    vi.advanceTimersByTime(2000);
+    vi.runAllTimers();
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));

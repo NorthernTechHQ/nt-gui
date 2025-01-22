@@ -78,7 +78,7 @@ export const receivedInventoryDevice = {
 
 const appInitActions = [
   { type: userActions.successfullyLoggedIn.type }, //, payload: { token }
-  { type: onboardingActions.setOnboardingComplete.type, payload: false },
+  { type: onboardingActions.setOnboardingComplete.type, payload: true },
   { type: onboardingActions.setDemoArtifactPort.type, payload: 85 },
   { type: appActions.setFeatures.type, payload: { ...defaultState.app.features, hasMultitenancy: true } },
   {
@@ -130,7 +130,7 @@ const appInitActions = [
   { type: getUserOrganization.fulfilled.type },
   { type: userActions.setGlobalSettings.type, payload: { ...defaultState.users.globalSettings } },
   { type: setOfflineThreshold.pending.type },
-  { type: appActions.setOfflineThreshold.type, payload: '2019-01-12T13:00:06.150Z' },
+  { type: appActions.setOfflineThreshold.type, payload: '2019-01-12T13:00:00.950Z' },
   { type: setOfflineThreshold.fulfilled.type },
   { type: userActions.setUserSettings.type, payload: { ...defaultState.users.userSettings } },
   { type: getGlobalSettings.fulfilled.type },
@@ -171,7 +171,7 @@ const appInitActions = [
     type: deviceActions.receivedGroups.type,
     payload: {
       testGroup: defaultState.devices.groups.byId.testGroup,
-      testGroupDynamic: { filters: [{ key: 'group', operator: '$eq', scope: 'system', value: 'things' }], id: 'filter1' }
+      testGroupDynamic: { filters: [{ key: 'group', operator: '$eq', scope: 'system', value: 'things' }], id: 'filter1', name: 'filter1' }
     }
   },
   { type: getDevicesByStatus.pending.type },
@@ -189,6 +189,7 @@ const appInitActions = [
           { key: 'kernel', operator: '$exists', scope: 'identity', value: true }
         ],
         id: 'filter1',
+        name: 'filter1',
         total: 0
       }
     }
@@ -239,12 +240,6 @@ const appInitActions = [
     ]
   },
   { type: getIntegrations.fulfilled.type },
-  { type: releasesActions.receiveReleases.type, payload: defaultState.releases.byId },
-  {
-    type: releasesActions.setReleaseListState.type,
-    payload: { ...defaultState.releases.releasesList, releaseIds: [defaultState.releases.byId.r1.name], page: 42 }
-  },
-  { type: getReleases.fulfilled.type },
   {
     type: deviceActions.receivedDevices.type,
     payload: {
@@ -258,6 +253,11 @@ const appInitActions = [
       [expectedDevice.id]: { ...defaultState.devices.byId.a1, group: undefined, isNew: false, isOffline: true, monitor: {}, tags: {} }
     }
   },
+  { type: releasesActions.receiveReleases.type, payload: defaultState.releases.byId },
+  {
+    type: releasesActions.setReleaseListState.type,
+    payload: { ...defaultState.releases.releasesList, releaseIds: [defaultState.releases.byId.r1.name], page: 42 }
+  },
   { type: getDevicesWithAuth.fulfilled.type },
   { type: getDevicesWithAuth.fulfilled.type },
   {
@@ -268,6 +268,7 @@ const appInitActions = [
     }
   },
   { type: getDevicesWithAuth.pending.type },
+  { type: getReleases.fulfilled.type },
   { type: getDevicesByStatus.fulfilled.type },
   { type: getDevicesByStatus.fulfilled.type },
   { type: userActions.receivedPermissionSets.type, payload: receivedPermissionSets },
@@ -303,7 +304,6 @@ const appInitActions = [
   { type: saveUserSettings.fulfilled.type },
   ...expectedOnboardingActions
 ];
-
 it('should try to get all required app information', async () => {
   const store = mockStore({
     ...defaultState,
@@ -321,7 +321,7 @@ it('should try to get all required app information', async () => {
   await vi.runAllTimersAsync();
   const storeActions = store.getActions();
   expect(storeActions.length).toEqual(appInitActions.length);
-  appInitActions.map((action, index) => Object.keys(action).map(key => expect(storeActions[index][key]).toEqual(action[key])));
+  appInitActions.forEach((action, index) => Object.keys(action).forEach(key => expect(storeActions[index][key]).toEqual(action[key])));
 });
 it('should execute the offline threshold migration for multi day thresholds', async () => {
   const store = mockStore({

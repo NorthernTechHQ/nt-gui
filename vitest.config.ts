@@ -24,6 +24,10 @@ export default defineConfig({
       }
     ]
   },
+  server: {
+    port: 80,
+    middlewareMode: false
+  },
   test: {
     //TODO: change to 3
     retry: 0,

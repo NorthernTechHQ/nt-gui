@@ -56,6 +56,7 @@ import {
   storeSsoConfig,
   tenantDataDivergedMessage
 } from './thunks';
+import { setFirstLoginAfterSignup } from "@northern.tech/store/appSlice/thunks";
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
@@ -116,7 +117,13 @@ describe('organization actions', () => {
   it('should handle trial creation', async () => {
     const store = mockStore({ ...defaultState });
     expect(store.getActions()).toHaveLength(0);
-    const expectedActions = [{ type: appActions.setFirstLoginAfterSignup.type, payload: true }];
+    const expectedActions = [
+      { type: createOrganizationTrial.pending.type },
+      { type: setFirstLoginAfterSignup.pending.type },
+      { type: appActions.setFirstLoginAfterSignup.type, payload: true },
+      { type: setFirstLoginAfterSignup.fulfilled.type },
+      { type: createOrganizationTrial.fulfilled.type }
+    ];
     const result = store.dispatch(
       createOrganizationTrial({
         'g-recaptcha-response': 'test',
@@ -642,8 +649,9 @@ describe('organization actions', () => {
         binary_delta: true
       })
     );
-    await expect(request).resolves.toBeTruthy();
+    await vi.advanceTimersByTime(1000);
     await vi.runOnlyPendingTimersAsync();
+    await expect(request).resolves.toBeTruthy();
     const storeActions = store.getActions();
     expect(storeActions).toHaveLength(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -679,8 +687,9 @@ describe('organization actions', () => {
       { type: editTenantDeviceLimit.fulfilled.type }
     ];
     const request = store.dispatch(editTenantDeviceLimit({ id: '671a0f1dd58c813118fe8622', name: 'child2', newLimit: 2 }));
-    await expect(request).resolves.toBeTruthy();
+    await vi.advanceTimersByTime(1500);
     await vi.runOnlyPendingTimersAsync();
+    await expect(request).resolves.toBeTruthy();
     const storeActions = store.getActions();
     expect(storeActions).toHaveLength(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));

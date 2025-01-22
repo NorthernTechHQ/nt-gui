@@ -29,55 +29,8 @@ import { actions as appActions } from '../appSlice';
 import { EXTERNAL_PROVIDER, TIMEOUTS, UNGROUPED_GROUP } from '../constants';
 import { actions as deploymentActions } from '../deploymentsSlice';
 import { DEVICE_STATES } from './constants';
-import {
-  addDevicesToGroup,
-  addDynamicGroup,
-  addStaticGroup,
-  applyDeviceConfig,
-  decommissionDevice,
-  deleteAuthset,
-  deriveInactiveDevices,
-  deriveReportsData,
-  deviceFileUpload,
-  getAllDeviceCounts,
-  getAllDevicesByStatus,
-  getAllDynamicGroupDevices,
-  getAllGroupDevices,
-  getDeviceAttributes,
-  getDeviceAuth,
-  getDeviceById,
-  getDeviceConfig,
-  getDeviceConnect,
-  getDeviceCount,
-  getDeviceFileDownloadLink,
-  getDeviceInfo,
-  getDeviceLimit,
-  getDeviceTwin,
-  getDevicesByStatus,
-  getDevicesWithAuth,
-  getDynamicGroups,
-  getGatewayDevices,
-  getGroupDevices,
-  getGroups,
-  getReportingLimits,
-  getReportsData,
-  getReportsDataWithoutBackendSupport,
-  getSessionDetails,
-  getSystemDevices,
-  preauthDevice,
-  removeDevicesFromGroup,
-  removeDynamicGroup,
-  removeStaticGroup,
-  selectGroup,
-  setDeviceConfig,
-  setDeviceListState,
-  setDeviceTags,
-  setDeviceTwin,
-  triggerDeviceUpdate,
-  updateDeviceAuth,
-  updateDevicesAuth,
-  updateDynamicGroup
-} from './thunks';
+import { addDevicesToGroup, addDynamicGroup, addStaticGroup, applyDeviceConfig, decommissionDevice, deleteAuthset, deriveInactiveDevices, deriveReportsData, deviceFileUpload, getAllDeviceCounts, getAllDevicesByStatus, getAllDynamicGroupDevices, getAllGroupDevices, getDeviceAttributes, getDeviceAuth, getDeviceById, getDeviceConfig, getDeviceConnect, getDeviceCount, getDeviceFileDownloadLink, getDeviceInfo, getDeviceLimit, getDeviceTwin, getDevicesByStatus, getDevicesWithAuth, getDynamicGroups, getGatewayDevices, getGroupDevices, getGroups, getReportingLimits, getReportsData, getReportsDataWithoutBackendSupport, getSessionDetails, getSystemDevices, preauthDevice, removeDevicesFromGroup, removeDynamicGroup, removeStaticGroup, selectGroup, setDeviceConfig, setDeviceListState, setDeviceTags, setDeviceTwin, triggerDeviceUpdate, updateDeviceAuth, updateDevicesAuth, updateDynamicGroup } from './thunks';
+
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
@@ -1142,10 +1095,10 @@ describe('device config ', () => {
     const store = mockStore({ ...defaultState });
     const expectedActions = [
       { type: applyDeviceConfig.pending.type },
-      { type: actions.receivedDevice.type, payload: { ...defaultState.devices.byId.a1, config: { deployment_id: '' } } },
-      { type: getSingleDeployment.type },
+      { type: actions.receivedDevice.type, payload: { ...defaultState.devices.byId.a1, config: { deployment_id: 'config1' } } },
+      { type: getSingleDeployment.pending.type },
       { type: deploymentActions.receivedDeployment.type, payload: { ...defaultState.deployments.byId.d1, id: 'config1', created: '2019-01-01T09:25:01.000Z' } },
-      { type: getSingleDeployment.type },
+      { type: getSingleDeployment.fulfilled.type },
       { type: applyDeviceConfig.fulfilled.type }
     ];
     const result = store.dispatch(applyDeviceConfig({ deviceId: defaultState.devices.byId.a1.id, config: { something: 'asdl' } }));
