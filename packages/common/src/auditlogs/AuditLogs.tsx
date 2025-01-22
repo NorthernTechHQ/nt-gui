@@ -16,8 +16,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { makeStyles } from 'tss-react/mui';
 
-import EnterpriseNotification, { DefaultUpgradeNotification } from '@northern.tech/common-ui/enterpriseNotification';
-import { HELPTOOLTIPS, MenderHelpTooltip } from '@northern.tech/common-ui/helptips/helptooltips';
+import EnterpriseNotification, { DefaultUpgradeNotification } from '@northern.tech/common-ui/EnterpriseNotification';
+import { HELPTOOLTIPS, MenderHelpTooltip } from '@northern.tech/common-ui/helptips/HelpTooltips';
 import { AUDIT_LOGS_TYPES, BEGINNING_OF_TIME, BENEFITS, SORTING_OPTIONS, SP_AUDIT_LOGS_TYPES, TIMEOUTS } from '@northern.tech/store/constants';
 import {
   getAuditLog,
@@ -36,12 +36,12 @@ import dayjs from 'dayjs';
 
 import historyImage from '../../../../assets/img/history.png';
 import AuditLogsFilter from './AuditLogsFilter';
+import AuditLogsList from './AuditLogsList';
 import AuditlogsView from './AuditlogsView';
 import { ActionDescriptor, ChangeDescriptor, ChangeDetailsDescriptor, TimeWrapper, TypeDescriptor, UserDescriptor, ViewDetails } from './ColumnComponents';
+import EventDetailsDrawer from './EventDetailsDrawer';
 import EventDetailsDrawerContentMap from './EventDetailsDrawerContentMap';
-import AuditLogsList from './auditlogslist';
 import EventDetailsFallbackComponent from './eventdetails/FallbackComponent';
-import EventDetailsDrawer from './eventdetailsdrawer';
 
 const useStyles = makeStyles()(theme => ({
   filters: {

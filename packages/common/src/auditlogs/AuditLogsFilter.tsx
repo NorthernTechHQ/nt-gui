@@ -15,10 +15,10 @@ import React, { useState } from 'react';
 
 import { TextField } from '@mui/material';
 
-import { ControlledAutoComplete } from '@northern.tech/common-ui/forms/autocomplete';
-import ClickFilter from '@northern.tech/common-ui/forms/clickfilter';
-import Filters from '@northern.tech/common-ui/forms/filters';
-import TimeframePicker from '@northern.tech/common-ui/forms/timeframe-picker';
+import { ControlledAutoComplete } from '@northern.tech/common-ui/forms/Autocomplete';
+import ClickFilter from '@northern.tech/common-ui/forms/ClickFilter';
+import Filters from '@northern.tech/common-ui/forms/Filters';
+import TimeframePicker from '@northern.tech/common-ui/forms/TimeframePicker';
 import { getISOStringBoundaries } from '@northern.tech/utils/helpers';
 
 const detailsMap = {

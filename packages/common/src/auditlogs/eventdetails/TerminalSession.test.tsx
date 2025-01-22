@@ -18,7 +18,7 @@ import { act, screen, waitFor } from '@testing-library/react';
 
 import { defaultState, undefineds } from '../../../../../tests/mockData';
 import { render } from '../../../../../tests/setupTests';
-import TerminalSession from './terminalsession';
+import TerminalSession from './TerminalSession';
 
 describe('TerminalSession Component', () => {
   let socketSpyFactory;

@@ -1,4 +1,4 @@
-// Copyright 2024 Northern.tech AS
+// Copyright 2021 Northern.tech AS
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -11,16 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { Code } from '@northern.tech/common-ui/copy-code';
+import { Code } from '@northern.tech/common-ui/CopyCode';
 
-const FallbackComponent = ({ item }) => {
-  let content = '';
-  try {
-    content = JSON.stringify(item, null, 2);
-  } catch (error) {
-    content = `error parsing the logged event:\n${error}`;
-  }
-  return <Code style={{ whiteSpace: 'pre' }}>{content}</Code>;
-};
-
-export default FallbackComponent;
+export const UserChange = ({ item }) => <Code>{item.change}</Code>;

@@ -1,2 +1,2 @@
-export * from './auditlogs/auditlogs';
+export * from './auditlogs/AuditLogs';
 export * from './button';

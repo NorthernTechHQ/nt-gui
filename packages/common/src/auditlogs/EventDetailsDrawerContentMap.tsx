@@ -11,12 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import DeviceConfiguration from './eventdetails/DeviceConfiguration';
 import EventDetailsFallbackComponent from './eventdetails/FallbackComponent';
-import DeviceConfiguration from './eventdetails/deviceconfiguration';
-import FileTransfer from './eventdetails/filetransfer';
-import PortForward from './eventdetails/portforward';
-import TerminalSession from './eventdetails/terminalsession';
-import { UserChange } from './eventdetails/userchange';
+import FileTransfer from './eventdetails/FileTransfer';
+import PortForward from './eventdetails/PortForward';
+import TerminalSession from './eventdetails/TerminalSession';
+import { UserChange } from './eventdetails/UserChange';
 
 const changeTypes = {
   user: 'user',

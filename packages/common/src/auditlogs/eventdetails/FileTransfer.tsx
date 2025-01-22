@@ -16,46 +16,45 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { useTheme } from '@mui/material/styles';
 
-import Loader from '@northern.tech/common-ui/loader';
+import Loader from '@northern.tech/common-ui/Loader';
 import { getAuditlogDevice, getIdAttribute, getUserCapabilities } from '@northern.tech/store/selectors';
 import { getDeviceById } from '@northern.tech/store/thunks';
 
-import DeviceDetails, { DetailInformation } from './devicedetails';
+import DeviceDetails, { DetailInformation } from './DeviceDetails';
 
-export const DeviceConfiguration = ({ item, onClose }) => {
-  const { object = {} } = item;
-  const { canReadDevices } = useSelector(getUserCapabilities);
-  const device = useSelector(getAuditlogDevice);
-  const idAttribute = useSelector(getIdAttribute);
+export const FileTransfer = ({ item, onClose }) => {
   const dispatch = useDispatch();
-
+  const {
+    actor,
+    meta: { path = [] },
+    object = {}
+  } = item;
+  const device = useSelector(getAuditlogDevice);
+  const { canReadDevices } = useSelector(getUserCapabilities);
+  const idAttribute = useSelector(getIdAttribute);
   const theme = useTheme();
+
   useEffect(() => {
     if (canReadDevices) {
       dispatch(getDeviceById(object.id));
     }
   }, [canReadDevices, dispatch, object.id]);
 
-  if (canReadDevices && !device.id) {
+  if (canReadDevices && !device) {
     return <Loader show={true} />;
   }
 
-  const { actor, change } = item;
-
-  let config;
-  try {
-    config = JSON.parse(change);
-  } catch (error) {
-    config = { error: `An error occurred processing the changed config:\n${error}` };
-  }
+  const sessionMeta = {
+    Path: path.join(','),
+    User: actor.email
+  };
 
   return (
     <div className="flexbox column" style={{ margin: theme.spacing(3), minWidth: 'min-content' }}>
       {canReadDevices && <DeviceDetails device={device} idAttribute={idAttribute} onClose={onClose} />}
-      <DetailInformation title="changed configuration" details={config} />
-      <DetailInformation title="change" details={{ User: actor.email }} />
+      <DetailInformation title="file transfer" details={sessionMeta} />
     </div>
   );
 };
 
-export default DeviceConfiguration;
+export default FileTransfer;

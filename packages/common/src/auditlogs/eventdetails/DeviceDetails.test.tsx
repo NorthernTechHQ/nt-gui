@@ -15,7 +15,7 @@ import React from 'react';
 
 import { defaultState, undefineds } from '../../../../../tests/mockData';
 import { render } from '../../../../../tests/setupTests';
-import DeviceDetails from './devicedetails';
+import DeviceDetails from './DeviceDetails';
 
 describe('DeviceDetails Component', () => {
   it('renders correctly', async () => {

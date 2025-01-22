@@ -16,18 +16,19 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { useTheme } from '@mui/material/styles';
 
-import Loader from '@northern.tech/common-ui/loader';
-import Time from '@northern.tech/common-ui/time';
-import { getAuditlogDevice, getIdAttribute, getUserCapabilities } from '@northern.tech/store/selectors';
+import Loader from '@northern.tech/common-ui/Loader';
+import Time from '@northern.tech/common-ui/Time';
+import { getAuditlogDevice, getCurrentSession, getIdAttribute, getUserCapabilities } from '@northern.tech/store/selectors';
 import { getDeviceById, getSessionDetails } from '@northern.tech/store/thunks';
 import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
+import durationDayJs from 'dayjs/plugin/duration';
 
-import DeviceDetails, { DetailInformation } from './devicedetails';
+import DeviceDetails, { DetailInformation } from './DeviceDetails';
+import TerminalPlayer from './TerminalPlayer';
 
-dayjs.extend(duration);
+dayjs.extend(durationDayJs);
 
-export const PortForward = ({ item, onClose }) => {
+export const TerminalSession = ({ item, onClose }) => {
   const theme = useTheme();
   const [sessionDetails, setSessionDetails] = useState();
   const dispatch = useDispatch();
@@ -35,6 +36,7 @@ export const PortForward = ({ item, onClose }) => {
   const { canReadDevices } = useSelector(getUserCapabilities);
   const device = useSelector(getAuditlogDevice);
   const idAttribute = useSelector(getIdAttribute);
+  const { token } = useSelector(getCurrentSession);
 
   useEffect(() => {
     if (canReadDevices) {
@@ -48,7 +50,9 @@ export const PortForward = ({ item, onClose }) => {
         startDate: action.startsWith('open') ? time : undefined,
         endDate: action.startsWith('close') ? time : undefined
       })
-    ).then(setSessionDetails);
+    )
+      .unwrap()
+      .then(setSessionDetails);
   }, [action, actor.id, canReadDevices, dispatch, meta.session_id, object.id, time]);
 
   if (!sessionDetails || (canReadDevices && !device)) {
@@ -64,11 +68,14 @@ export const PortForward = ({ item, onClose }) => {
   };
 
   return (
-    <div className="flexbox column" style={{ margin: theme.spacing(3), minWidth: 'min-content' }}>
-      {canReadDevices && <DeviceDetails device={device} idAttribute={idAttribute} onClose={onClose} />}
-      <DetailInformation title="port forwarding" details={sessionMeta} />
+    <div className="flexbox" style={{ flexWrap: 'wrap' }}>
+      <TerminalPlayer className="flexbox column margin-top" item={item} sessionInitialized={!!sessionDetails} token={token} />
+      <div className="flexbox column" style={{ margin: theme.spacing(3), minWidth: 'min-content' }}>
+        {canReadDevices && <DeviceDetails device={device} idAttribute={idAttribute} onClose={onClose} />}
+        <DetailInformation title="session" details={sessionMeta} />
+      </div>
     </div>
   );
 };
 
-export default PortForward;
+export default TerminalSession;

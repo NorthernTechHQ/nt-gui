@@ -1,4 +1,4 @@
-// Copyright 2019 Northern.tech AS
+// Copyright 2021 Northern.tech AS
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -13,13 +13,18 @@
 //    limitations under the License.
 import React from 'react';
 
+import * as DeviceActions from '@northern.tech/store/devicesSlice/thunks';
+import { act, waitFor } from '@testing-library/react';
+
 import { defaultState, undefineds } from '../../../../../tests/mockData';
 import { render } from '../../../../../tests/setupTests';
-import FileTransfer from './filetransfer';
+import PortForward from './PortForward';
 
-describe('FileTransfer Component', () => {
+describe('PortForward Component', () => {
   it('renders correctly', async () => {
-    const { baseElement } = render(<FileTransfer item={{ ...defaultState.organization.auditlog.events[2], meta: { path: ['/dev/null'] } }} />, {
+    const sessionSpy = jest.spyOn(DeviceActions, 'getSessionDetails');
+    const ui = <PortForward item={defaultState.organization.auditlog.events[2]} />;
+    const { baseElement, rerender } = render(ui, {
       preloadedState: {
         ...defaultState,
         organization: {
@@ -34,6 +39,12 @@ describe('FileTransfer Component', () => {
         }
       }
     });
+    await waitFor(() => rerender(ui));
+    await act(async () => {
+      jest.runOnlyPendingTimers();
+      jest.runAllTicks();
+    });
+    expect(sessionSpy).toHaveBeenCalled();
 
     const view = baseElement.firstChild.firstChild;
     expect(view).toMatchSnapshot();

@@ -15,8 +15,8 @@ import React from 'react';
 
 import { Button } from '@mui/material';
 
-import { InfoHintContainer } from '@northern.tech/common-ui/info-hint';
-import Loader from '@northern.tech/common-ui/loader';
+import { InfoHintContainer } from '@northern.tech/common-ui/InfoHint';
+import Loader from '@northern.tech/common-ui/Loader';
 
 export const AuditlogsView = ({ total, csvLoading, createCsvDownload, infoHintComponent = null, auditLogsFilter, children }) => {
   return (

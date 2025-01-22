@@ -16,8 +16,9 @@ import React from 'react';
 import { Sort as SortIcon } from '@mui/icons-material';
 import { makeStyles } from 'tss-react/mui';
 
-import Loader from '@northern.tech/common-ui/loader';
-import Pagination from '@northern.tech/common-ui/pagination';
+import DetailsIndicator from '@northern.tech/common-ui/DetailsIndicator';
+import Loader from '@northern.tech/common-ui/Loader';
+import Pagination from '@northern.tech/common-ui/Pagination';
 import { SORTING_OPTIONS } from '@northern.tech/store/constants';
 
 export const defaultRowsPerPage = 20;
@@ -42,6 +43,9 @@ const useStyles = makeStyles()(theme => ({
         alignItems: 'center',
         maxHeight: theme.spacing(6),
         overflow: 'hidden'
+      },
+      '> .text-overflow': {
+        display: 'block'
       },
       '&.auditlogs-list-item-header': {
         borderBottom: 'transparent',
@@ -95,6 +99,7 @@ export const AuditLogsList = ({
                 }}
               >
                 {auditLogColumns.map((column, index) => column.render(item, index, userCapabilities))}
+                {allowsExpansion ? <DetailsIndicator /> : <div />}
               </div>
             );
           })}

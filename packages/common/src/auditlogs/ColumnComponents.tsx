@@ -14,9 +14,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import DetailsIndicator from '@northern.tech/common-ui/detailsindicator';
-import DeviceIdentityDisplay from '@northern.tech/common-ui/deviceidentity';
-import Time from '@northern.tech/common-ui/time';
+import DetailsIndicator from '@northern.tech/common-ui/DetailsIndicator';
+import DeviceIdentityDisplay from '@northern.tech/common-ui/DeviceIdentity';
+import Time from '@northern.tech/common-ui/Time';
 import { AUDIT_LOGS_TYPES, DEPLOYMENT_ROUTES, canAccess } from '@northern.tech/store/constants';
 
 const ArtifactLink = ({ item }) => <Link to={`/releases/${item.object.artifact.name}`}>View artifact</Link>;
@@ -28,7 +28,7 @@ const ChangeFallback = props => {
   const {
     item: { change = '-' }
   } = props;
-  return <div>{change}</div>;
+  return <div className="text-overflow">{change}</div>;
 };
 
 const FallbackFormatter = props => {

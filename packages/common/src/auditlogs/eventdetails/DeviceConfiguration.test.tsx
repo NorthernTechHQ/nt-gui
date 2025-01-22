@@ -15,7 +15,7 @@ import React from 'react';
 
 import { defaultState, undefineds } from '../../../../../tests/mockData';
 import { render } from '../../../../../tests/setupTests';
-import DeviceConfiguration from './deviceconfiguration';
+import DeviceConfiguration from './DeviceConfiguration';
 
 describe('DeviceConfiguration Component', () => {
   it('renders correctly', async () => {

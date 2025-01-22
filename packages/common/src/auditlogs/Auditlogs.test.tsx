@@ -27,7 +27,7 @@ import userEvent from '@testing-library/user-event';
 import { light as lightTheme } from '../../../../src/js/themes/Mender';
 import { defaultState, undefineds } from '../../../../tests/mockData';
 import { render, selectMaterialUiSelectOption } from '../../../../tests/setupTests';
-import AuditLogs from './auditlogs';
+import AuditLogs from './AuditLogs';
 
 const preloadedState = {
   ...defaultState,
