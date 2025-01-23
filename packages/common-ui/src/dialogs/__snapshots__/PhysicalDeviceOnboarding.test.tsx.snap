@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`PhysicalDeviceOnboarding Component renders correctly 1`] = `
+exports[`PhysicalDeviceOnboarding Component > renders correctly 1`] = `
 .emotion-0.Mui-focused .MuiAutocomplete-clearIndicator {
   visibility: visible;
 }
@@ -609,7 +609,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
 </div>
 `;
 
-exports[`PhysicalDeviceOnboarding Component tiny onboarding tips renders ConvertedImageNote correctly 1`] = `
+exports[`PhysicalDeviceOnboarding Component > tiny onboarding tips > renders ConvertedImageNote correctly 1`] = `
 <div>
   <p>
     We prepared an image, ready for Mender, for you to start with. You can find it in the
@@ -627,7 +627,7 @@ exports[`PhysicalDeviceOnboarding Component tiny onboarding tips renders Convert
 </div>
 `;
 
-exports[`PhysicalDeviceOnboarding Component tiny onboarding tips renders DeviceTypeSelectionStep correctly 1`] = `
+exports[`PhysicalDeviceOnboarding Component > tiny onboarding tips > renders DeviceTypeSelectionStep correctly 1`] = `
 .emotion-0.Mui-focused .MuiAutocomplete-clearIndicator {
   visibility: visible;
 }
@@ -1151,7 +1151,11 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
   margin-right: 8px;
 }
 
-.emotion-9 {
+.emotion-9.read {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.emotion-10 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -1169,15 +1173,11 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
   color: #337a87;
 }
 
-.emotion-9 iconButton {
+.emotion-10 iconButton {
   margin-right: 8px;
 }
 
-.emotion-9.read {
-  color: rgba(0, 0, 0, 0.38);
-}
-
-.emotion-10 {
+.emotion-11 {
   position: absolute;
   top: -5px;
   bottom: 0;
@@ -1187,7 +1187,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
   border-radius: 50%;
 }
 
-.emotion-10.read {
+.emotion-11.read {
   border-color: rgba(0, 0, 0, 0.38);
 }
 
@@ -1286,7 +1286,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
       >
         <svg
           aria-hidden="true"
-          class="MuiSvgIcon-root MuiSvgIcon-colorPrimary MuiSvgIcon-fontSizeMedium emotion-9"
+          class="MuiSvgIcon-root MuiSvgIcon-colorPrimary MuiSvgIcon-fontSizeMedium emotion-9 emotion-10"
           data-testid="HelpIcon"
           focusable="false"
           viewBox="0 0 24 24"
@@ -1296,7 +1296,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
           />
         </svg>
         <div
-          class="emotion-10 "
+          class="emotion-11 "
         />
       </div>
     </div>
@@ -1317,7 +1317,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
 </div>
 `;
 
-exports[`PhysicalDeviceOnboarding Component tiny onboarding tips renders ExternalProviderTip correctly 1`] = `
+exports[`PhysicalDeviceOnboarding Component > tiny onboarding tips > renders ExternalProviderTip correctly 1`] = `
 .emotion-0 {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -1360,7 +1360,7 @@ exports[`PhysicalDeviceOnboarding Component tiny onboarding tips renders Externa
 </div>
 `;
 
-exports[`PhysicalDeviceOnboarding Component tiny onboarding tips renders InstallationStep correctly 1`] = `
+exports[`PhysicalDeviceOnboarding Component > tiny onboarding tips > renders InstallationStep correctly 1`] = `
 .emotion-0 {
   border: 1px solid;
   border-color: #f7f7f7;

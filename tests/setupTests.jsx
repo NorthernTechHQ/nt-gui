@@ -3,10 +3,11 @@ import { createMocks } from 'react-idle-timer';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 
+import { createSerializer } from '@emotion/jest';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import '@testing-library/jest-dom/vitest';
-import { act, cleanup, render, queryByRole, within, waitFor} from "@testing-library/react";
+import { act, cleanup, queryByRole, render, waitFor, within } from '@testing-library/react';
 import crypto from 'crypto';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
@@ -18,6 +19,12 @@ import { getConfiguredStore } from '../packages/store/src/store';
 import handlers from './__mocks__/requestHandlers';
 import { defaultState, menderEnvironment, mockDate, token as mockToken } from './mockData';
 import { light } from './theme/light';
+
+process.on('unhandledRejection', err => {
+  throw err;
+});
+
+expect.addSnapshotSerializer(createSerializer({ includeStyles: true }));
 
 afterEach(() => {
   cleanup();

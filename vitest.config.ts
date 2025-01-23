@@ -29,6 +29,12 @@ export default defineConfig({
     middlewareMode: false
   },
   test: {
+    env: {
+      BABEL_ENV: 'test',
+      NODE_ENV: 'test',
+      PUBLIC_URL: '',
+      TZ: 'UTC'
+    },
     //TODO: change to 3
     retry: 0,
     environment: 'jsdom',

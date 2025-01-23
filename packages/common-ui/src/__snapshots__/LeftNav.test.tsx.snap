@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`LeftNav Component renders correctly 1`] = `
+exports[`LeftNav Component > renders correctly 1`] = `
 .emotion-0 {
   list-style: none;
   margin: 0;
@@ -22,7 +22,19 @@ exports[`LeftNav Component renders correctly 1`] = `
   padding-right: 16px;
 }
 
-.emotion-2 {
+.emotion-2.navLink .MuiListItemText-root {
+  color: #969696;
+}
+
+.emotion-2.navLink.active .MuiListItemText-root {
+  color: rgba(10, 10, 11, 0.78);
+}
+
+.emotion-2.active {
+  background: #f7f7f7;
+}
+
+.emotion-3 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -49,37 +61,33 @@ exports[`LeftNav Component renders correctly 1`] = `
   padding-bottom: 11px;
 }
 
-.emotion-2.undefined {
+.emotion-3.undefined {
   opacity: 1;
 }
 
-.emotion-2.active {
+.emotion-3.active {
   background-color: #fff;
 }
 
-.emotion-2.leftNav.active {
+.emotion-3.leftNav.active {
   border-top: 1px solid #d4e9e7;
   border-bottom: 1px solid #d4e9e7;
 }
 
-.emotion-2.navLink,
-.emotion-2.navLink .MuiListItemText-root {
+.emotion-3.navLink,
+.emotion-3.navLink .MuiListItemText-root {
   color: #969696;
 }
 
-.emotion-2.navLink .MuiListItemText-root {
-  color: #969696;
+.emotion-4 .MuiListItemText-primary {
+  font-size: 0.8rem;
 }
 
-.emotion-2.navLink.active .MuiListItemText-root {
-  color: rgba(10, 10, 11, 0.78);
+.emotion-4 .MuiListItemText-primary:hover {
+  color: #337a87;
 }
 
-.emotion-2.active {
-  background: #f7f7f7;
-}
-
-.emotion-3 {
+.emotion-5 {
   -webkit-flex: 1 1 auto;
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
@@ -91,23 +99,15 @@ exports[`LeftNav Component renders correctly 1`] = `
   color: rgba(10, 10, 11, 0.78);
 }
 
-.MuiTypography-root:where(.emotion-3 .MuiListItemText-primary) {
+.MuiTypography-root:where(.emotion-5 .MuiListItemText-primary) {
   display: block;
 }
 
-.MuiTypography-root:where(.emotion-3 .MuiListItemText-secondary) {
+.MuiTypography-root:where(.emotion-5 .MuiListItemText-secondary) {
   display: block;
 }
 
-.emotion-3 .MuiListItemText-primary {
-  font-size: 0.8rem;
-}
-
-.emotion-3 .MuiListItemText-primary:hover {
-  color: #337a87;
-}
-
-.emotion-4 {
+.emotion-6 {
   margin: 0;
   line-height: 1.5;
   font-family: Lato,sans-serif;
@@ -115,7 +115,7 @@ exports[`LeftNav Component renders correctly 1`] = `
   font-size: 0.9286rem;
 }
 
-.emotion-5 {
+.emotion-7 {
   min-width: 56px;
   color: rgba(0, 0, 0, 0.54);
   -webkit-flex-shrink: 0;
@@ -136,21 +136,22 @@ exports[`LeftNav Component renders correctly 1`] = `
     test
   </li>
   <a
-    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding navLink test-list emotion-2"
+    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding navLink test-list emotion-2 emotion-3"
+    data-discover="true"
     href="/far/away"
     style="background: red;"
   >
     <div
-      class="MuiListItemText-root emotion-3"
+      class="MuiListItemText-root emotion-4 emotion-5"
     >
       <span
-        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-4"
+        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-6"
       >
         test1
       </span>
     </div>
     <div
-      class="MuiListItemIcon-root emotion-5"
+      class="MuiListItemIcon-root emotion-7"
     >
       <div>
         HEYA!
@@ -158,14 +159,15 @@ exports[`LeftNav Component renders correctly 1`] = `
     </div>
   </a>
   <a
-    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding navLink test-list emotion-2"
+    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding navLink test-list emotion-2 emotion-3"
+    data-discover="true"
     href="/further/away"
   >
     <div
-      class="MuiListItemText-root emotion-3"
+      class="MuiListItemText-root emotion-4 emotion-5"
     >
       <span
-        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-4"
+        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-6"
       >
         test1
       </span>

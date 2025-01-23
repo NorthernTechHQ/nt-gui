@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`DeviceConfiguration Component renders correctly 1`] = `
+exports[`FileTransfer Component > renders correctly 1`] = `
 .emotion-0 .key>b {
   background-color: #f7f7f7;
   color: rgba(0, 0, 0, 0.87);
@@ -71,6 +71,7 @@ exports[`DeviceConfiguration Component renders correctly 1`] = `
       >
         <a
           class="flexbox center-aligned emotion-2"
+          data-discover="true"
           href="/devices?id=a1"
         >
           <div
@@ -137,6 +138,7 @@ exports[`DeviceConfiguration Component renders correctly 1`] = `
         class="flexbox "
       >
         <a
+          data-discover="true"
           href="/auditlog?objectId=a1&objectType=device&startDate=2016-01-01"
         >
           List all log entries for this device
@@ -150,7 +152,7 @@ exports[`DeviceConfiguration Component renders correctly 1`] = `
     <b
       class="margin-bottom-small capitalized-start"
     >
-      changed configuration
+      file transfer
        details
     </b>
     <div
@@ -160,32 +162,18 @@ exports[`DeviceConfiguration Component renders correctly 1`] = `
         class="align-right key muted"
       >
         <b>
-          something
+          Path
         </b>
       </div>
       <div
         class="flexbox "
       >
         <div
-          title="here"
+          title="/dev/null"
         >
-          here
+          /dev/null
         </div>
       </div>
-    </div>
-  </div>
-  <div
-    class="flexbox column margin-top-small"
-  >
-    <b
-      class="margin-bottom-small capitalized-start"
-    >
-      change
-       details
-    </b>
-    <div
-      class="break-all two-columns emotion-0  emotion-1"
-    >
       <div
         class="align-right key muted"
       >

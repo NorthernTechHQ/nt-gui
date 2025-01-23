@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`DeviceConnectionDialog Component renders correctly 1`] = `
+exports[`DeviceConnectionDialog Component > renders correctly 1`] = `
 .emotion-0 {
   position: fixed;
   z-index: 1300;
@@ -255,7 +255,11 @@ exports[`DeviceConnectionDialog Component renders correctly 1`] = `
   margin-left: 16px;
 }
 
-.emotion-9 {
+.emotion-9.read {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.emotion-10 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -273,15 +277,11 @@ exports[`DeviceConnectionDialog Component renders correctly 1`] = `
   color: #337a87;
 }
 
-.emotion-9 iconButton {
+.emotion-10 iconButton {
   margin-right: 8px;
 }
 
-.emotion-9.read {
-  color: rgba(0, 0, 0, 0.38);
-}
-
-.emotion-10 {
+.emotion-11 {
   position: absolute;
   top: -5px;
   bottom: 0;
@@ -291,11 +291,11 @@ exports[`DeviceConnectionDialog Component renders correctly 1`] = `
   border-radius: 50%;
 }
 
-.emotion-10.read {
+.emotion-11.read {
   border-color: rgba(0, 0, 0, 0.38);
 }
 
-.emotion-11 {
+.emotion-12 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -314,11 +314,11 @@ exports[`DeviceConnectionDialog Component renders correctly 1`] = `
   flex: 0 0 auto;
 }
 
-.emotion-11>:not(style)~:not(style) {
+.emotion-12>:not(style)~:not(style) {
   margin-left: 8px;
 }
 
-.emotion-12 {
+.emotion-13 {
   display: -webkit-inline-box;
   display: -webkit-inline-flex;
   display: -ms-inline-flexbox;
@@ -376,33 +376,33 @@ exports[`DeviceConnectionDialog Component renders correctly 1`] = `
   padding: 10px 15px;
 }
 
-.emotion-12::-moz-focus-inner {
+.emotion-13::-moz-focus-inner {
   border-style: none;
 }
 
-.emotion-12.Mui-disabled {
+.emotion-13.Mui-disabled {
   pointer-events: none;
   cursor: default;
 }
 
 @media print {
-  .emotion-12 {
+  .emotion-13 {
     -webkit-print-color-adjust: exact;
     color-adjust: exact;
   }
 }
 
-.emotion-12:hover {
+.emotion-13:hover {
   -webkit-text-decoration: none;
   text-decoration: none;
 }
 
-.emotion-12.Mui-disabled {
+.emotion-13.Mui-disabled {
   color: rgba(0, 0, 0, 0.26);
 }
 
 @media (hover: hover) {
-  .emotion-12:hover {
+  .emotion-13:hover {
     --variant-containedBg: rgb(35, 85, 94);
     --variant-textBg: rgba(51, 122, 135, 0.04);
     --variant-outlinedBorder: #337a87;
@@ -410,11 +410,11 @@ exports[`DeviceConnectionDialog Component renders correctly 1`] = `
   }
 }
 
-.emotion-12:hover {
+.emotion-13:hover {
   colors: #337a87;
 }
 
-.emotion-12.MuiButton-text {
+.emotion-13.MuiButton-text {
   color: rgba(10, 10, 11, 0.78);
 }
 
@@ -473,10 +473,10 @@ exports[`DeviceConnectionDialog Component renders correctly 1`] = `
               class="flexbox centered os-list"
             >
               <img
-                src="raspberrypi.png"
+                src="/assets/img/raspberrypi.png"
               />
               <img
-                src="raspberrypi4.png"
+                src="/assets/img/raspberrypi4.png"
               />
             </div>
             <button
@@ -502,7 +502,7 @@ exports[`DeviceConnectionDialog Component renders correctly 1`] = `
               </h3>
               <img
                 class="emotion-8"
-                src="docker.png"
+                src="/assets/img/docker.png"
               />
             </div>
             <p
@@ -570,7 +570,7 @@ exports[`DeviceConnectionDialog Component renders correctly 1`] = `
           >
             <svg
               aria-hidden="true"
-              class="MuiSvgIcon-root MuiSvgIcon-colorPrimary MuiSvgIcon-fontSizeMedium emotion-9"
+              class="MuiSvgIcon-root MuiSvgIcon-colorPrimary MuiSvgIcon-fontSizeMedium emotion-9 emotion-10"
               data-testid="HelpIcon"
               focusable="false"
               viewBox="0 0 24 24"
@@ -580,16 +580,16 @@ exports[`DeviceConnectionDialog Component renders correctly 1`] = `
               />
             </svg>
             <div
-              class="emotion-10 "
+              class="emotion-11 "
             />
           </div>
         </div>
       </div>
       <div
-        class="MuiDialogActions-root MuiDialogActions-spacing emotion-11"
+        class="MuiDialogActions-root MuiDialogActions-spacing emotion-12"
       >
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary emotion-12"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary emotion-13"
           tabindex="0"
           type="button"
         >
