@@ -38,6 +38,7 @@ export const PortForward = ({ item, onClose }) => {
 
   useEffect(() => {
     if (canReadDevices) {
+      console.log(getDeviceById, getSessionDetails);
       dispatch(getDeviceById(object.id));
     }
     dispatch(

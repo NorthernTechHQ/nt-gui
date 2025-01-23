@@ -6,7 +6,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import '@testing-library/jest-dom/vitest';
-import { cleanup, render } from '@testing-library/react';
+import { act, cleanup, render, queryByRole, within, waitFor} from "@testing-library/react";
 import crypto from 'crypto';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
@@ -138,6 +138,22 @@ afterAll(async () => {
   cleanup();
 });
 const theme = createTheme(light);
+
+export const selectMaterialUiSelectOption = async (element, optionText, user) => {
+  // The button that opens the dropdown, which is a sibling of the input
+  const selectButton = element.parentNode.querySelector('[role=combobox]');
+  // Open the select dropdown
+  await act(async () => await user.click(selectButton));
+  // Get the dropdown element. We don't use getByRole() because it includes <select>s too.
+  const listbox = queryByRole(document.documentElement, 'listbox');
+  // Click the list item
+  const listItem = within(listbox).getByText(optionText);
+  await user.click(listItem);
+  // Wait for the listbox to be removed, so it isn't visible in subsequent calls
+  await waitFor(() => expect(queryByRole(document.documentElement, 'listbox')).not.toBeInTheDocument());
+  return Promise.resolve();
+};
+
 
 const customRender = (ui, options = {}) => {
   const {
