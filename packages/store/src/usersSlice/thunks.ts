@@ -1,5 +1,3 @@
-'use strict';
-
 // Copyright 2019 Northern.tech AS
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,12 +11,8 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-<<<<<<< Updated upstream
-// @ts-nocheck
-=======
 //@ts-nocheck
 // eslint-disable-next-line import/no-unresolved
->>>>>>> Stashed changes
 import { HELPTOOLTIPS } from '@northern.tech/helptips/HelpTooltips';
 import storeActions from '@northern.tech/store/actions';
 import GeneralApi from '@northern.tech/store/api/general-api';

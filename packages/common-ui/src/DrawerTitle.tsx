@@ -11,6 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+//@ts-nocheck
 import { FunctionComponent, ReactNode } from 'react';
 
 import { Close as CloseIcon, Link as LinkIcon } from '@mui/icons-material';

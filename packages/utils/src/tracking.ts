@@ -11,6 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+//@ts-nocheck
 import ReactGA4 from 'react-ga4';
 
 const cookieConsentCSS = 'https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css';

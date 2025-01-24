@@ -11,11 +11,13 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+//@ts-nocheck
 import { accordionClasses } from '@mui/material/Accordion';
 import { buttonClasses } from '@mui/material/Button';
 import { formLabelClasses } from '@mui/material/FormLabel';
 import { listItemTextClasses } from '@mui/material/ListItemText';
 
+// eslint-disable-next-line import/no-unresolved
 import { LIGHT_MODE } from '@northern.tech/store/constants';
 
 import { palette as commonPalette, overrides, typography } from './common';

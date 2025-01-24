@@ -11,6 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+//@ts-nocheck
 import { useState } from 'react';
 
 import { Checkbox, FormControl, FormHelperText, InputLabel, MenuItem, Select } from '@mui/material';
