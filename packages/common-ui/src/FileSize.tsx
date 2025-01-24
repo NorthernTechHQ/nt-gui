@@ -20,7 +20,7 @@ interface FileSizeProps {
   style?: React.CSSProperties;
 }
 
-const FileSize: ForwardRefRenderFunction<HTMLDivElement, FileSizeProps> = ({ fileSize, style = {} }, ref) => (
+export const FileSize: ForwardRefRenderFunction<HTMLDivElement, FileSizeProps> = ({ fileSize, style = {} }, ref) => (
   <div ref={ref} style={style}>
     {getFormattedSize(fileSize)}
   </div>

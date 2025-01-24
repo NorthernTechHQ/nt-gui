@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "tsup-node",
-    "lint": "eslint .",
+    "lint": "eslint src/**/*.{js,ts,tsx}",
     "publish": "npm publish",
     "pre-publish": "npm publish --tag next"
   },

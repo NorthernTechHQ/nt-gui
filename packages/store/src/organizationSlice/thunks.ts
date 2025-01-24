@@ -14,6 +14,7 @@
 // @ts-nocheck
 import storeActions from '@northern.tech/store/actions';
 import Api from '@northern.tech/store/api/general-api';
+import { Tenant } from '@northern.tech/store/api/types/Tenant';
 import {
   AvailablePlans,
   DEVICE_LIST_DEFAULTS,

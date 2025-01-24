@@ -13,9 +13,8 @@
 //    limitations under the License.
 //@ts-nocheck
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TENANT_LIST_DEFAULT } from '@northern.tech/store/constants';
-import { createSlice } from '@reduxjs/toolkit';
-
 import { OrganizationState } from '@northern.tech/store/organizationSlice/types';
+import { createSlice } from '@reduxjs/toolkit';
 
 export const sliceName = 'organization';
 
