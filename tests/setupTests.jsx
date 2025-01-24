@@ -8,7 +8,6 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import '@testing-library/jest-dom/vitest';
 import { act, cleanup, queryByRole, render, waitFor, within } from '@testing-library/react';
-import crypto from 'crypto';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 import { MessageChannel } from 'worker_threads';
@@ -34,7 +33,7 @@ export const TEST_LOCATION = 'localhost';
 export const mockAbortController = { signal: { addEventListener: () => {}, removeEventListener: () => {} } };
 
 // Setup requests interception
-let server;
+const server = setupServer(...handlers)
 
 const oldWindowLocalStorage = window.localStorage;
 const oldWindowLocation = window.location;
@@ -105,11 +104,8 @@ beforeAll(async () => {
       createDataChannel: () => {}
     };
   };
-  window.crypto.subtle = {
-    digest: (...args) => crypto.subtle.digest(...args)
-  };
+
   createMocks();
-  server = setupServer(...handlers);
   await server.listen({ onUnhandledRequest: 'error' });
   Object.defineProperty(navigator, 'appVersion', { value: 'Test', writable: true });
   const intersectionObserverMock = () => ({
