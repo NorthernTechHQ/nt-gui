@@ -62,6 +62,7 @@ import { v4 as uuid } from 'uuid';
 
 import { actions, sliceName } from '.';
 import {
+  ALL_DEVICE_STATES,
   DEVICE_STATES,
   REPORT_CHART_SIZE_LIMIT,
   deviceAuthV2,
@@ -83,11 +84,6 @@ import {
   getGroups as getGroupsSelector,
   getSelectedGroup
 } from './selectors';
-
-// import { routes } from '../../components/devices/BaseDevices';
-
-//TODO: resolve this issue in better way
-const routes = { allDevices: { key: 'any' } };
 
 const { cleanUpUpload, initUpload, setSnackbar, uploadProgress } = storeActions;
 const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
@@ -531,7 +527,7 @@ export const setDeviceListState = createAsyncThunk(
     if (!nextState.setOnly && !deepCompare(currentRequestState, nextRequestState)) {
       const { direction: sortDown = SORTING_OPTIONS.desc, key: sortCol, scope: sortScope } = nextState.sort ?? {};
       const sortBy = sortCol ? [{ attribute: sortCol, order: sortDown, scope: sortScope }] : undefined;
-      const applicableSelectedState = nextState.state === routes.allDevices.key ? undefined : nextState.state;
+      const applicableSelectedState = nextState.state === ALL_DEVICE_STATES ? undefined : nextState.state;
       nextState.isLoading = true;
       tasks.push(
         dispatch(getDevicesByStatus({ ...nextState, status: applicableSelectedState, sortOptions: sortBy, fetchAuth }))
