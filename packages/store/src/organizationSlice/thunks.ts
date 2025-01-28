@@ -26,7 +26,7 @@ import {
   iotManagerBaseURL,
   locations
 } from '@northern.tech/store/constants';
-import { getDeviceLimit } from '@northern.tech/store/devicesSlice/thunks.tsx';
+import { getDeviceLimit } from '@northern.tech/store/devicesSlice/thunks';
 import { BillingProfile } from '@northern.tech/store/organizationSlice/types';
 import { getCurrentSession, getTenantCapabilities, getTenantsList } from '@northern.tech/store/selectors';
 import { commonErrorFallback, commonErrorHandler } from '@northern.tech/store/store';

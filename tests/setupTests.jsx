@@ -33,7 +33,7 @@ export const TEST_LOCATION = 'localhost';
 export const mockAbortController = { signal: { addEventListener: () => {}, removeEventListener: () => {} } };
 
 // Setup requests interception
-const server = setupServer(...handlers)
+const server = setupServer(...handlers);
 
 const oldWindowLocalStorage = window.localStorage;
 const oldWindowLocation = window.location;
@@ -156,7 +156,6 @@ export const selectMaterialUiSelectOption = async (element, optionText, user) =>
   await waitFor(() => expect(queryByRole(document.documentElement, 'listbox')).not.toBeInTheDocument());
   return Promise.resolve();
 };
-
 
 const customRender = (ui, options = {}) => {
   const {

@@ -13,9 +13,8 @@
 //    limitations under the License.
 import React from 'react';
 
-import { describe, expect, it, vi } from 'vitest';
-
 import { prettyDOM } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 
 import { adminUserCapabilities, defaultState, undefineds } from '../../../../tests/mockData';
 import { render } from '../../../../tests/setupTests';

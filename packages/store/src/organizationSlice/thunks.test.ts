@@ -12,6 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 // @ts-nocheck
+import { setFirstLoginAfterSignup } from '@northern.tech/store/appSlice/thunks';
 import { EXTERNAL_PROVIDER, TIMEOUTS } from '@northern.tech/store/constants';
 import { getDeviceLimit } from '@northern.tech/store/devicesSlice/thunks';
 import configureMockStore from 'redux-mock-store';
@@ -56,7 +57,6 @@ import {
   storeSsoConfig,
   tenantDataDivergedMessage
 } from './thunks';
-import { setFirstLoginAfterSignup } from "@northern.tech/store/appSlice/thunks";
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);

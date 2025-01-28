@@ -19,7 +19,6 @@ import { setOfflineThreshold } from '@northern.tech/store/thunks';
 import { act } from '@testing-library/react';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
-import Cookies from 'universal-cookie';
 
 import { actions } from '.';
 import { accessTokens, defaultPassword, defaultState, receivedPermissionSets, receivedRoles, testSsoId, userId } from '../../../../tests/mockData';
@@ -62,7 +61,6 @@ import {
   verifyEmailComplete,
   verifyEmailStart
 } from './thunks';
-import { mockUniversalCookies } from "../../../../tests/setupTests";
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
@@ -538,7 +536,6 @@ describe('user actions', () => {
   });
   it('should store the visibility of the announcement shown in the header in a cookie on dismissal', async () => {
     vi.clearAllMocks();
-    const cookies = new Cookies();
     const expectedActions = [
       { type: setHideAnnouncement.pending.type },
       { type: appActions.setAnnouncement.type, payload: undefined },

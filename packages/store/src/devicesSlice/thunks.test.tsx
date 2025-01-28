@@ -12,7 +12,6 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 // @ts-nocheck
-
 /*eslint import/namespace: ['error', { allowComputed: true }]*/
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -29,8 +28,55 @@ import { actions as appActions } from '../appSlice';
 import { EXTERNAL_PROVIDER, TIMEOUTS, UNGROUPED_GROUP } from '../constants';
 import { actions as deploymentActions } from '../deploymentsSlice';
 import { DEVICE_STATES } from './constants';
-import { addDevicesToGroup, addDynamicGroup, addStaticGroup, applyDeviceConfig, decommissionDevice, deleteAuthset, deriveInactiveDevices, deriveReportsData, deviceFileUpload, getAllDeviceCounts, getAllDevicesByStatus, getAllDynamicGroupDevices, getAllGroupDevices, getDeviceAttributes, getDeviceAuth, getDeviceById, getDeviceConfig, getDeviceConnect, getDeviceCount, getDeviceFileDownloadLink, getDeviceInfo, getDeviceLimit, getDeviceTwin, getDevicesByStatus, getDevicesWithAuth, getDynamicGroups, getGatewayDevices, getGroupDevices, getGroups, getReportingLimits, getReportsData, getReportsDataWithoutBackendSupport, getSessionDetails, getSystemDevices, preauthDevice, removeDevicesFromGroup, removeDynamicGroup, removeStaticGroup, selectGroup, setDeviceConfig, setDeviceListState, setDeviceTags, setDeviceTwin, triggerDeviceUpdate, updateDeviceAuth, updateDevicesAuth, updateDynamicGroup } from './thunks';
-
+import {
+  addDevicesToGroup,
+  addDynamicGroup,
+  addStaticGroup,
+  applyDeviceConfig,
+  decommissionDevice,
+  deleteAuthset,
+  deriveInactiveDevices,
+  deriveReportsData,
+  deviceFileUpload,
+  getAllDeviceCounts,
+  getAllDevicesByStatus,
+  getAllDynamicGroupDevices,
+  getAllGroupDevices,
+  getDeviceAttributes,
+  getDeviceAuth,
+  getDeviceById,
+  getDeviceConfig,
+  getDeviceConnect,
+  getDeviceCount,
+  getDeviceFileDownloadLink,
+  getDeviceInfo,
+  getDeviceLimit,
+  getDeviceTwin,
+  getDevicesByStatus,
+  getDevicesWithAuth,
+  getDynamicGroups,
+  getGatewayDevices,
+  getGroupDevices,
+  getGroups,
+  getReportingLimits,
+  getReportsData,
+  getReportsDataWithoutBackendSupport,
+  getSessionDetails,
+  getSystemDevices,
+  preauthDevice,
+  removeDevicesFromGroup,
+  removeDynamicGroup,
+  removeStaticGroup,
+  selectGroup,
+  setDeviceConfig,
+  setDeviceListState,
+  setDeviceTags,
+  setDeviceTwin,
+  triggerDeviceUpdate,
+  updateDeviceAuth,
+  updateDevicesAuth,
+  updateDynamicGroup
+} from './thunks';
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);

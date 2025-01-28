@@ -11,6 +11,8 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { describe, expect, it } from 'vitest';
+
 import { defaultState, token } from '../../../tests/mockData';
 import {
   customSort,
@@ -33,8 +35,6 @@ import {
   validatePhases,
   versionCompare
 } from './helpers';
-
-import {describe, it, expect} from 'vitest';
 
 const deploymentCreationTime = defaultState.deployments.byId.d1.created;
 
@@ -403,7 +403,6 @@ describe('standardizePhases function', () => {
 
 describe('getRemainderPercent function', () => {
   it('remainder Percent calculated correctly', async () => {
-
     const phases = [
       { batch_size: 10, not: 'interested' },
       { batch_size: 10, not: 'interested' },
@@ -430,7 +429,7 @@ describe('getRemainderPercent function', () => {
         { batch_size: 95, not: 'interested' }
       ])
     ).toEqual(-5);
-  })
+  });
 });
 
 describe('validatePhases function', () => {
@@ -472,5 +471,22 @@ describe('validatePhases function', () => {
         true
       )
     ).toEqual(true);
+  });
+});
+
+describe('preformatWithRequestID function', () => {
+  it('works as expected', async () => {
+    expect(preformatWithRequestID({ data: { request_id: 'someUuidLikeLongerText' } }, token)).toEqual(
+      'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjZTNkMGY4Yy1hZWRlLTQwMzAtYjM5MS03ZDUwMjBlYjg3M2UiLCJzdWIiOiJhMzBhNzgwYi1iODQzLTUzNDQtODBlMy0wZmQ5NWE0ZjZmYzMiLCJleHAiOjE2MDY4MTUzNjksImlhdCI6MTYwNjIxMDU2OSwibWVuZGVyLnRlbmF... [Request ID: someUuid]'
+    );
+    expect(preformatWithRequestID({ data: {} }, token)).toEqual(
+      'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjZTNkMGY4Yy1hZWRlLTQwMzAtYjM5MS03ZDUwMjBlYjg3M2UiLCJzdWIiOiJhMzBhNzgwYi1iODQzLTUzNDQtODBlMy0wZmQ5NWE0ZjZmYzMiLCJleHAiOjE2MDY4MTUzNjksImlhdCI6MTYwNjIxMDU2OSwibWVuZGVyLnRlbmF...'
+    );
+    expect(preformatWithRequestID(undefined, token)).toEqual(
+      'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjZTNkMGY4Yy1hZWRlLTQwMzAtYjM5MS03ZDUwMjBlYjg3M2UiLCJzdWIiOiJhMzBhNzgwYi1iODQzLTUzNDQtODBlMy0wZmQ5NWE0ZjZmYzMiLCJleHAiOjE2MDY4MTUzNjksImlhdCI6MTYwNjIxMDU2OSwibWVuZGVyLnRlbmF...'
+    );
+    const expectedText = 'short text';
+    expect(preformatWithRequestID({ data: { request_id: 'someUuidLikeLongerText' } }, expectedText)).toEqual('short text [Request ID: someUuid]');
+    expect(preformatWithRequestID(undefined, expectedText)).toEqual(expectedText);
   });
 });

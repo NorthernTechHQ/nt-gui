@@ -11,32 +11,32 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import Api from './general-api';
+import { describe, expect, it } from 'vitest';
 
-import {describe, it, expect} from "vitest";
+import Api from './general-api';
 
 const testLocation = '/test';
 
 describe('General API module', () => {
-  it('should allow GET requests', async() => {
-    const res = await Api.get(testLocation)
+  it('should allow GET requests', async () => {
+    const res = await Api.get(testLocation);
     expect(res.config.headers.Authorization).toMatch(/Bearer/);
     expect(res.config.method).toBe('get');
   });
   it('should allow POST requests', async () => {
-    const res =  await Api.post(testLocation)
+    const res = await Api.post(testLocation);
     expect(res.config.headers.Authorization).toMatch(/Bearer/);
     expect(res.config.method).toBe('post');
   });
   it('should allow PUT requests', async () => {
-    const res = await Api.put(testLocation)
+    const res = await Api.put(testLocation);
     expect(res.config.headers.Authorization).toMatch(/Bearer/);
-    expect(res.config.method).toBe('put')
+    expect(res.config.method).toBe('put');
   });
   it('should allow DELETE requests', async () => {
-    const res  = await Api.delete(testLocation);
+    const res = await Api.delete(testLocation);
     expect(res.config.headers.Authorization).toMatch(/Bearer/);
     expect(res.config.method === 'del' || res.config.method === 'delete').toBe(true);
   });
 });
-``
+``;

@@ -12,6 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { AUDIT_LOGS_TYPES, DEPLOYMENT_ROUTES, DEPLOYMENT_STATES, DEVICE_STATES, UNGROUPED_GROUP, listDefaultsByState } from '@northern.tech/store/constants';
+import { describe, expect, it } from 'vitest';
 
 import {
   commonProcessor,
@@ -28,8 +29,6 @@ import {
   parseDeviceQuery,
   parseReleasesQuery
 } from './locationutils';
-
-import {describe, it, expect} from 'vitest';
 
 const today = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
 const tonight = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
