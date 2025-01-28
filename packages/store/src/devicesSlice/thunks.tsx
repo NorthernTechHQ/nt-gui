@@ -61,9 +61,9 @@ import pluralize from 'pluralize';
 import { v4 as uuid } from 'uuid';
 
 import { actions, sliceName } from '.';
-import { chartColorPalette } from '../../../../tests/theme/common';
 import {
   DEVICE_STATES,
+  REPORT_CHART_SIZE_LIMIT,
   deviceAuthV2,
   deviceConfig,
   deviceConnect,
@@ -700,7 +700,7 @@ const getSingleReportData = (reportConfig, groups) => {
   }
   const aggregationAttribute = ensureVersionString(software, attribute);
   return GeneralApi.post(`${reportingApiUrl}/devices/aggregate`, {
-    aggregations: [{ attribute: aggregationAttribute, name: '*', scope: 'inventory', size: chartColorPalette.length }],
+    aggregations: [{ attribute: aggregationAttribute, name: '*', scope: 'inventory', size: REPORT_CHART_SIZE_LIMIT }],
     filters: mapFiltersToTerms(filters)
   }).then(({ data }) => ({ data, reportConfig }));
 };
