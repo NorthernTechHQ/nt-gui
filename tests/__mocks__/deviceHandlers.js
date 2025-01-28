@@ -22,6 +22,7 @@ import {
   inventoryApiUrlV2,
   iotManagerBaseURL,
   reportingApiUrl
+  // eslint-disable-next-line import/no-unresolved
 } from '@northern.tech/store/constants';
 import { HttpResponse, http } from 'msw';
 

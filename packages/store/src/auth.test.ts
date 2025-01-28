@@ -11,9 +11,9 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { cleanUp, getToken, updateMaxAge } from './auth';
+import { describe, expect, it, vi } from 'vitest';
 
-import {describe, it, expect, vi } from 'vitest'
+import { cleanUp, getToken, updateMaxAge } from './auth';
 
 describe('auth functions', () => {
   it('getToken returns the jwt token if set in a cookie', async () => {
