@@ -13,7 +13,7 @@
 //    limitations under the License.
 //@ts-nocheck
 // eslint-disable-next-line import/no-unresolved
-import { HELPTOOLTIPS } from '@northern.tech/helptips/HelpTooltips';
+import { HELPTOOLTIPS } from '@northern.tech/common-ui/helptips';
 import storeActions from '@northern.tech/store/actions';
 import GeneralApi from '@northern.tech/store/api/general-api';
 import UsersApi from '@northern.tech/store/api/users-api';

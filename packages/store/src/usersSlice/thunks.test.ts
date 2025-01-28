@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 // @ts-nocheck
-import { HELPTOOLTIPS } from '@northern.tech/helptips/HelpTooltips';
+import { HELPTOOLTIPS } from '@northern.tech/common-ui/helptips';
 import { getSessionInfo } from '@northern.tech/store/auth';
 import { emptyRole } from '@northern.tech/store/commonConstants';
 import { setOfflineThreshold } from '@northern.tech/store/thunks';
