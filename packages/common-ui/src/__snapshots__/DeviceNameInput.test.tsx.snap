@@ -2,16 +2,17 @@
 
 exports[`DeviceNameInput Component > renders correctly 1`] = `
 .emotion-0 {
-  color: rgba(10, 10, 11, 0.78);
+  color: rgba(0, 0, 0, 0.87);
   font-size: 0.8125rem;
 }
 
 .emotion-1 {
-  line-height: 1.4375em;
-  font-family: Lato,sans-serif;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
   font-weight: 400;
-  font-size: 0.9286rem;
-  color: rgba(10, 10, 11, 0.78);
+  font-size: 1rem;
+  line-height: 1.4375em;
+  letter-spacing: 0.00938em;
+  color: rgba(0, 0, 0, 0.87);
   box-sizing: border-box;
   position: relative;
   cursor: text;
@@ -55,7 +56,7 @@ exports[`DeviceNameInput Component > renders correctly 1`] = `
 
 .emotion-1.Mui-error::before,
 .emotion-1.Mui-error::after {
-  border-bottom-color: #ab1000;
+  border-bottom-color: #d32f2f;
 }
 
 .emotion-1::before {
@@ -71,7 +72,7 @@ exports[`DeviceNameInput Component > renders correctly 1`] = `
 }
 
 .emotion-1:hover:not(.Mui-disabled, .Mui-error):before {
-  border-bottom: 2px solid rgba(10, 10, 11, 0.78);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.87);
 }
 
 @media (hover: none) {
@@ -85,19 +86,7 @@ exports[`DeviceNameInput Component > renders correctly 1`] = `
 }
 
 .emotion-1::after {
-  border-bottom: 2px solid #337a87;
-}
-
-.emotion-1:before {
-  border-bottom: 1px solid rgb(224, 224, 224);
-}
-
-.emotion-1:hover:not($disabled):before {
-  border-bottom: 2px solid #337a87!important;
-}
-
-.emotion-1:after {
-  border-bottom: 2px solid #337a87;
+  border-bottom: 2px solid #1976d2;
 }
 
 .emotion-2 {
@@ -237,10 +226,11 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-2:focus::-ms-input-p
   -webkit-text-decoration: none;
   text-decoration: none;
   color: inherit;
-  font-family: Lato,sans-serif;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
   font-weight: 500;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   line-height: 1.75;
+  letter-spacing: 0.02857em;
   text-transform: uppercase;
   min-width: 64px;
   padding: 6px 16px;
@@ -251,17 +241,13 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-2:focus::-ms-input-p
   padding: 6px 8px;
   color: var(--variant-textColor);
   background-color: var(--variant-textBg);
-  --variant-textColor: #337a87;
-  --variant-outlinedColor: #337a87;
-  --variant-outlinedBorder: rgba(51, 122, 135, 0.5);
+  --variant-textColor: #1976d2;
+  --variant-outlinedColor: #1976d2;
+  --variant-outlinedBorder: rgba(25, 118, 210, 0.5);
   --variant-containedColor: #fff;
-  --variant-containedBg: #337a87;
+  --variant-containedBg: #1976d2;
   padding: 4px 5px;
-  font-size: 0.7545rem;
-  border-radius: 2px;
-  font-size: 14px;
-  font-weight: bold;
-  padding: 10px 15px;
+  font-size: 0.8125rem;
 }
 
 .emotion-4::-moz-focus-inner {
@@ -291,19 +277,11 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-2:focus::-ms-input-p
 
 @media (hover: hover) {
   .emotion-4:hover {
-    --variant-containedBg: rgb(35, 85, 94);
-    --variant-textBg: rgba(51, 122, 135, 0.04);
-    --variant-outlinedBorder: #337a87;
-    --variant-outlinedBg: rgba(51, 122, 135, 0.04);
+    --variant-containedBg: #1565c0;
+    --variant-textBg: rgba(25, 118, 210, 0.04);
+    --variant-outlinedBorder: #1976d2;
+    --variant-outlinedBg: rgba(25, 118, 210, 0.04);
   }
-}
-
-.emotion-4:hover {
-  colors: #337a87;
-}
-
-.emotion-4.MuiButton-text {
-  color: rgba(10, 10, 11, 0.78);
 }
 
 .emotion-5 {
@@ -331,11 +309,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-2:focus::-ms-input-p
   -webkit-transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   fill: currentColor;
-  font-size: 1.3929rem;
-}
-
-.emotion-6 iconButton {
-  margin-right: 8px;
+  font-size: 1.5rem;
 }
 
 <div
