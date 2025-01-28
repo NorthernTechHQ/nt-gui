@@ -408,7 +408,7 @@ export const getAllDynamicGroupDevices = createAsyncThunk(`${sliceName}/getAllDy
   return getAllDevices();
 });
 
-export const getDeviceById = createAsyncThunk(`${sliceName}/getDeviceById`, (id, { dispatch, getState }) =>
+export const getDeviceById = createAsyncThunk(`${sliceName}/getDeviceById`, (id: string, { dispatch, getState }) =>
   GeneralApi.get(`${inventoryApiUrl}/devices/${id}`)
     .then(res => {
       const device = reduceReceivedDevices([res.data], [], getState()).devicesById[id];
