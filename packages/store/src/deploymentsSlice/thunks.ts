@@ -12,14 +12,16 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 // @ts-nocheck
+/*eslint import/namespace: ['error', { allowComputed: true }]*/
 import storeActions from '@northern.tech/store/actions';
 import GeneralApi from '@northern.tech/store/api/general-api';
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TIMEOUTS, headerNames } from '@northern.tech/store/constants';
-import { getDevicesById, getGlobalSettings, getUserCapabilities } from '@northern.tech/store/selectors';
+import { getDevicesById, getGlobalSettings, getOrganization, getUserCapabilities } from '@northern.tech/store/selectors';
 import { commonErrorHandler } from '@northern.tech/store/store';
 import { getDeviceAuth, getDeviceById, saveGlobalSettings } from '@northern.tech/store/thunks';
 import { mapTermsToFilters } from '@northern.tech/store/utils';
 import { deepCompare, isEmpty, standardizePhases, startTimeSort } from '@northern.tech/utils/helpers';
+import Tracking from '@northern.tech/utils/tracking';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { isUUID } from 'validator';
 
@@ -90,6 +92,28 @@ export const getDeploymentsByStatus = createAsyncThunk(`${sliceName}/getDeployme
   });
 });
 
+const isWithinFirstMonth = expirationDate => {
+  if (!expirationDate) {
+    return false;
+  }
+  const endOfFirstMonth = new Date(expirationDate);
+  endOfFirstMonth.setMonth(endOfFirstMonth.getMonth() - 11);
+  return endOfFirstMonth > new Date();
+};
+
+const trackDeploymentCreation = (totalDeploymentCount, hasDeployments, trial_expiration) => {
+  Tracking.event({ category: 'deployments', action: 'create' });
+  if (!totalDeploymentCount) {
+    if (!hasDeployments) {
+      Tracking.event({ category: 'deployments', action: 'create_initial_deployment' });
+      if (isWithinFirstMonth(trial_expiration)) {
+        Tracking.event({ category: 'deployments', action: 'create_initial_deployment_first_month' });
+      }
+    }
+    Tracking.event({ category: 'deployments', action: 'create_initial_deployment_user' });
+  }
+};
+
 const MAX_PREVIOUS_PHASES_COUNT = 5;
 export const createDeployment = createAsyncThunk(`${sliceName}/createDeployment`, ({ newDeployment, hasNewRetryDefault = false }, { dispatch, getState }) => {
   let request;
@@ -100,6 +124,9 @@ export const createDeployment = createAsyncThunk(`${sliceName}/createDeployment`
   } else {
     request = GeneralApi.post(`${deploymentsApiUrl}/deployments`, newDeployment);
   }
+  const totalDeploymentCount = Object.values(getDeploymentsByStatusSelector(getState())).reduce((accu, item) => accu + item.total, 0);
+  const { hasDeployments } = getGlobalSettings(getState());
+  const { trial_expiration } = getOrganization(getState());
   return request
     .catch(err => commonErrorHandler(err, 'Error creating deployment.', dispatch))
     .then(data => {
@@ -116,6 +143,8 @@ export const createDeployment = createAsyncThunk(`${sliceName}/createDeployment`
         dispatch(getSingleDeployment(deploymentId)),
         dispatch(setSnackbar('Deployment created successfully', TIMEOUTS.fiveSeconds))
       ];
+      // track in GA
+      trackDeploymentCreation(totalDeploymentCount, hasDeployments, trial_expiration);
       const { canManageUsers } = getUserCapabilities(getState());
       if (canManageUsers) {
         const { phases, retries } = newDeployment;

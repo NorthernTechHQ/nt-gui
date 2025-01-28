@@ -37,43 +37,43 @@ describe('monitor actions', () => {
       { type: getDeviceAlerts.fulfilled.type }
     ];
     const request = store.dispatch(getDeviceAlerts({ id: defaultState.devices.byId.a1.id }));
-    expect(request).resolves.toBeTruthy();
+    await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
       expect(storeActions).toHaveLength(expectedActions.length);
-      expectedActions.map((action, index) => expect(storeActions[index]).toMatchObject(action));
+      expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
     });
   });
   it('should handle device based latest alert retrieval', async () => {
     const store = mockStore({ ...defaultState });
-    expect(store.getActions()).toHaveLength(0);
+    await expect(store.getActions()).toHaveLength(0);
     const expectedActions = [
       { type: getLatestDeviceAlerts.pending.type },
       { type: actions.receiveLatestDeviceAlerts.type, payload: { deviceId: defaultState.devices.byId.a1.id, alerts: [] } },
       { type: getLatestDeviceAlerts.fulfilled.type }
     ];
     const request = store.dispatch(getLatestDeviceAlerts({ id: defaultState.devices.byId.a1.id }));
-    expect(request).resolves.toBeTruthy();
+    await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
       expect(storeActions).toHaveLength(expectedActions.length);
-      expectedActions.map((action, index) => expect(storeActions[index]).toMatchObject(action));
+      expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
     });
   });
   it('should handle device issue count retrieval', async () => {
     const store = mockStore({ ...defaultState });
-    expect(store.getActions()).toHaveLength(0);
+    await expect(store.getActions()).toHaveLength(0);
     const expectedActions = [
       { type: getIssueCountsByType.pending.type },
       { type: actions.receiveDeviceIssueCounts.type, payload: { issueType: DEVICE_ISSUE_OPTIONS.monitoring.key, counts: { filtered: 4, total: 4 } } },
       { type: getIssueCountsByType.fulfilled.type }
     ];
     const request = store.dispatch(getIssueCountsByType({ type: DEVICE_ISSUE_OPTIONS.monitoring.key }));
-    expect(request).resolves.toBeTruthy();
+    await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
       expect(storeActions).toHaveLength(expectedActions.length);
-      expectedActions.map((action, index) => expect(storeActions[index]).toMatchObject(action));
+      expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
     });
   });
   it('should handle device monitor config retrieval', async () => {
@@ -85,11 +85,11 @@ describe('monitor actions', () => {
       { type: getDeviceMonitorConfig.fulfilled.type }
     ];
     const request = store.dispatch(getDeviceMonitorConfig(defaultState.devices.byId.a1.id));
-    expect(request).resolves.toBeTruthy();
+    await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
       expect(storeActions).toHaveLength(expectedActions.length);
-      expectedActions.map((action, index) => expect(storeActions[index]).toMatchObject(action));
+      expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
     });
   });
   it('should handle changes to alert notification settings', async () => {
@@ -102,11 +102,11 @@ describe('monitor actions', () => {
       { type: changeNotificationSetting.fulfilled.type }
     ];
     const request = store.dispatch(changeNotificationSetting({ enabled: false }));
-    expect(request).resolves.toBeTruthy();
+    await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
       expect(storeActions).toHaveLength(expectedActions.length);
-      expectedActions.map((action, index) => expect(storeActions[index]).toMatchObject(action));
+      expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
     });
   });
 });

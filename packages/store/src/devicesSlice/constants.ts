@@ -55,3 +55,5 @@ export const DEVICE_CONNECT_STATES = {
 };
 
 export const geoAttributes = ['geo-lat', 'geo-lon'].map(attribute => ({ attribute, scope: 'inventory' }));
+
+export const REPORT_CHART_SIZE_LIMIT = 6;

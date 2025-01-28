@@ -11,12 +11,14 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+//@ts-nocheck
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TENANT_LIST_DEFAULT } from '@northern.tech/store/constants';
+import { OrganizationState } from '@northern.tech/store/organizationSlice/types';
 import { createSlice } from '@reduxjs/toolkit';
 
 export const sliceName = 'organization';
 
-export const initialState = {
+export const initialState: OrganizationState = {
   card: {
     last4: '',
     expiration: { month: 1, year: 2020 },

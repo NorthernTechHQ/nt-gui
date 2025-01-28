@@ -12,6 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 // @ts-nocheck
+/*eslint import/namespace: ['error', { allowComputed: true }]*/
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -38,6 +39,7 @@ import {
   getGlobalSettings,
   getIdAttribute,
   getSearchEndpoint,
+  getSelectedDeviceAttribute,
   getTenantCapabilities,
   getUserCapabilities,
   getUserSettings
@@ -62,6 +64,7 @@ import { actions, sliceName } from '.';
 import {
   ALL_DEVICE_STATES,
   DEVICE_STATES,
+  REPORT_CHART_SIZE_LIMIT,
   deviceAuthV2,
   deviceConfig,
   deviceConnect,
@@ -405,7 +408,7 @@ export const getAllDynamicGroupDevices = createAsyncThunk(`${sliceName}/getAllDy
   return getAllDevices();
 });
 
-export const getDeviceById = createAsyncThunk(`${sliceName}/getDeviceById`, (id, { dispatch, getState }) =>
+export const getDeviceById = createAsyncThunk(`${sliceName}/getDeviceById`, (id: string, { dispatch, getState }) =>
   GeneralApi.get(`${inventoryApiUrl}/devices/${id}`)
     .then(res => {
       const device = reduceReceivedDevices([res.data], [], getState()).devicesById[id];
@@ -554,7 +557,7 @@ export const getDevicesByStatus = createAsyncThunk(`${sliceName}/getDevicesBySta
     page = defaultPage,
     perPage = defaultPerPage,
     sortOptions = [],
-    selectedAttributes = []
+    selectedAttributes = getSelectedDeviceAttribute(getState())
   } = options;
   const state = getState();
   const { applicableFilters, filterTerms } = convertDeviceListStateToFilters({
@@ -683,7 +686,6 @@ export const getReportingLimits = createAsyncThunk(`${sliceName}/getReportingLim
 export const ensureVersionString = (software, fallback) =>
   software.length && software !== 'artifact_name' ? (software.endsWith('.version') ? software : `${software}.version`) : fallback;
 
-const REPORT_CHART_SIZE_LIMIT = 6;
 const getSingleReportData = (reportConfig, groups) => {
   const { attribute, group, software = '' } = reportConfig;
   const filters = [{ key: 'status', scope: 'identity', operator: DEVICE_FILTERING_OPTIONS.$eq.key, value: 'accepted' }];
@@ -768,6 +770,13 @@ export const getReportsDataWithoutBackendSupport = createAsyncThunk(`${sliceName
 export const getDeviceConnect = createAsyncThunk(`${sliceName}/getDeviceConnect`, (id, { dispatch }) =>
   GeneralApi.get(`${deviceConnect}/devices/${id}`).then(({ data }) =>
     Promise.all([dispatch(actions.receivedDevice({ connect_status: data.status, connect_updated_ts: data.updated_ts, id })), Promise.resolve(data)])
+  )
+);
+
+const updateTypeMap = { deploymentUpdate: 'check-update', inventoryUpdate: 'send-inventory' };
+export const triggerDeviceUpdate = createAsyncThunk(`${sliceName}/triggerDeviceUpdate`, ({ id, type }, { dispatch }) =>
+  GeneralApi.post(`${deviceConnect}/devices/${id}/${updateTypeMap[type] ?? updateTypeMap.deploymentUpdate}`).then(
+    () => new Promise(resolve => setTimeout(() => resolve(dispatch(getDeviceById(id))), TIMEOUTS.threeSeconds))
   )
 );
 
@@ -897,15 +906,15 @@ export const deleteAuthset = createAsyncThunk(`${sliceName}/deleteAuthset`, ({ d
     .finally(() => dispatch(setDeviceListState({ refreshTrigger: !getState().devices.deviceList.refreshTrigger })))
 );
 
-export const preauthDevice = createAsyncThunk(`${sliceName}/preauthDevice`, (authset, { dispatch }) =>
+export const preauthDevice = createAsyncThunk(`${sliceName}/preauthDevice`, (authset, { dispatch, rejectWithValue }) =>
   GeneralApi.post(`${deviceAuthV2}/devices`, authset)
+    .then(() => Promise.resolve(dispatch(setSnackbar('Device was successfully added to the preauthorization list', TIMEOUTS.fiveSeconds))))
     .catch(err => {
       if (err.response.status === 409) {
-        return Promise.reject('A device with a matching identity data set already exists');
+        return rejectWithValue('A device with a matching identity data set already exists');
       }
       return commonErrorHandler(err, 'The device could not be added:', dispatch);
     })
-    .then(() => Promise.resolve(dispatch(setSnackbar('Device was successfully added to the preauthorization list', TIMEOUTS.fiveSeconds))))
 );
 
 export const decommissionDevice = createAsyncThunk(`${sliceName}/decommissionDevice`, ({ deviceId, authId }, { dispatch, getState }) =>

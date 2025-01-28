@@ -46,6 +46,13 @@ lint:
     - npm ci
     - npm run lint
 
+test:
+  stage: test
+  needs: []
+  script:
+    - npm ci
+    - npm run test
+
 build:
   stage: build
   needs: []

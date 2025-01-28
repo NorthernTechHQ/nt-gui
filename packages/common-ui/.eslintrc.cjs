@@ -2,5 +2,8 @@
 module.exports = {
   root: true,
   extends: ['@northern.tech/eslint-config/react.js'],
-  ignorePatterns: ['node_modules/', 'dist/', '**/*.test.js']
+  ignorePatterns: ['node_modules/', 'dist/'],
+  globals: {
+    globalThis: true
+  }
 };

@@ -26,8 +26,6 @@
     },
     "lint": {
       "dependsOn": [
-        "build",
-        "@northern.tech/store#build",
         "@northern.tech/common-ui#build"
       ],
       "cache": true

@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "tsup-node",
-    "lint": "eslint .",
+    "lint": "eslint src/**/*.{ts,tsx}",
     "publish": "npm publish",
     "pre-publish": "npm publish --tag next"
   },
@@ -86,7 +86,7 @@
     "@xterm/xterm": "^5.x",
     "copy-to-clipboard": "^3.x",
     "dayjs": "^1.x",
-    "generate-password": "^1.x",
+    "generate-password-browser": "^1.x",
     "pluralize": "^8.x",
     "react": "^18.x",
     "react-dom": "^18.x",

@@ -1,6 +1,5 @@
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
   root: true,
-  extends: ['@northern.tech/eslint-config/react.js'],
-  ignorePatterns: ['**/*.test.js', '**/*.test.jsx'],
+  extends: ['@northern.tech/eslint-config/react.js']
 };

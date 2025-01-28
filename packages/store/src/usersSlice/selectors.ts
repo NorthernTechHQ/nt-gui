@@ -23,10 +23,13 @@ export const getTooltipsById = state => state.users.tooltips.byId;
 export const getGlobalSettings = state => state.users.globalSettings;
 
 const getCurrentUserId = state => state.users.currentUser;
-const getUsersById = state => state.users.byId;
+export const getUsersById = state => state.users.byId;
+export const getUsersList = createSelector([getUsersById], usersById => Object.values(usersById));
 export const getCurrentUser = createSelector([getUsersById, getCurrentUserId], (usersById, userId) => usersById[userId] ?? {});
 export const getUserSettings = state => state.users.userSettings;
-
+export const getSelectedDeviceAttribute = createSelector([getUserSettings], ({ columnSelection }) =>
+  columnSelection.map(attribute => ({ attribute: attribute.key, scope: attribute.scope }))
+);
 export const getIsDarkMode = createSelector([getUserSettings], ({ mode }) => isDarkMode(mode));
 
 export const getShowHelptips = createSelector([getTooltipsById], tooltips =>
@@ -55,6 +58,6 @@ export const getOfflineThresholdSettings = createSelector([getGlobalSettings], (
   intervalUnit: offlineThreshold?.intervalUnit || DEVICE_ONLINE_CUTOFF.intervalName
 }));
 
-export const getRolesList = createSelector([getRolesById], rolesById => Object.entries(rolesById).map(([id, role]) => ({ id, ...role })));
+export const getRolesList = createSelector([getRolesById], rolesById => Object.entries(rolesById).map(([value, role]) => ({ value, ...role })));
 
 export const getCurrentSession = state => state.users.currentSession;

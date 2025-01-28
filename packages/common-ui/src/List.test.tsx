@@ -11,25 +11,43 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { CommonList } from '@northern.tech/common-ui/List';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 
 import { defaultState, tenants, undefineds } from '../../../tests/mockData';
 import { render } from '../../../tests/setupTests';
-import { TenantListItem, columnHeaders } from '../components/tenants/TenantList';
-import { CommonList } from './list';
+import DetailsIndicator from './DetailsIndicator';
 
+const ListItemComponentMock = ({ onClick }) => (
+  <div onClick={onClick}>
+    <DetailsIndicator />
+  </div>
+);
+
+const columnHeaders = [
+  {
+    title: 'View Details',
+    attribute: {
+      name: '',
+      scope: ''
+    },
+    sortable: false,
+    component: DetailsIndicator
+  }
+];
 describe('List component', () => {
   it('renders correctly', () => {
-    const onExpandClickMock = jest.fn();
-    const onResizeColumns = jest.fn();
-    const onPageChange = jest.fn();
-    const onSelect = jest.fn();
-    const onSort = jest.fn();
-    const onChangeRowsPerPage = jest.fn();
+    const onExpandClickMock = vi.fn();
+    const onResizeColumns = vi.fn();
+    const onPageChange = vi.fn();
+    const onSelect = vi.fn();
+    const onSort = vi.fn();
+    const onChangeRowsPerPage = vi.fn();
     const { baseElement } = render(
       <CommonList
-        ListItemComponent={TenantListItem}
+        ListItemComponent={ListItemComponentMock}
         listItems={tenants}
         listState={{ ...defaultState.organization.organization.tenantList, total: 10 }}
         columnHeaders={columnHeaders}
@@ -47,16 +65,16 @@ describe('List component', () => {
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });
   it('works as expected', async () => {
-    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
-    const onExpandClickMock = jest.fn();
-    const onResizeColumns = jest.fn();
-    const onPageChange = jest.fn();
-    const onSelect = jest.fn();
-    const onSort = jest.fn();
-    const onChangeRowsPerPage = jest.fn();
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    const onExpandClickMock = vi.fn();
+    const onResizeColumns = vi.fn();
+    const onPageChange = vi.fn();
+    const onSelect = vi.fn();
+    const onSort = vi.fn();
+    const onChangeRowsPerPage = vi.fn();
     render(
       <CommonList
-        ListItemComponent={TenantListItem}
+        ListItemComponent={ListItemComponentMock}
         listItems={tenants}
         listState={{ ...defaultState.organization.organization.tenantList, total: 10 }}
         columnHeaders={columnHeaders}
