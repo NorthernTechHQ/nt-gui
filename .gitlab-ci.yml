@@ -23,7 +23,6 @@ variables:
     description: 'Github endpoint to update CI pipeline progress'
 
 stages:
-  - lint
   - test
   - build
   - changelog
@@ -41,18 +40,18 @@ include:
       - '.gitlab-ci-github-status-updates.yml'
 
 lint:
-  stage: lint
+  stage: test
   needs: []
   script:
     - npm ci
     - npm run lint
+
 test:
   stage: test
   needs: []
   script:
     - npm ci
     - npm run test
-
 
 build:
   stage: build
@@ -64,6 +63,7 @@ build:
   artifacts:
     paths:
       - storybook-static
+
 changelog:
   stage: changelog
   image: 'registry.gitlab.com/northern.tech/mender/mender-test-containers:release-please-v1-master'
