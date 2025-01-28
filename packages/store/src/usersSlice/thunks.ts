@@ -32,8 +32,8 @@ import {
 import { getOnboardingState, getOrganization, getTooltipsState, getUserSettings as getUserSettingsSelector } from '@northern.tech/store/selectors';
 import { commonErrorFallback, commonErrorHandler } from '@northern.tech/store/store';
 import { setOfflineThreshold } from '@northern.tech/store/thunks';
-import { extractErrorMessage, mergePermissions, preformatWithRequestID } from '@northern.tech/store/utils';
-import { duplicateFilter, isEmpty } from '@northern.tech/utils/helpers';
+import { mergePermissions } from '@northern.tech/store/utils';
+import { duplicateFilter, extractErrorMessage, isEmpty, preformatWithRequestID } from '@northern.tech/utils/helpers';
 import { clearAllRetryTimers } from '@northern.tech/utils/retrytimer';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import hashString from 'md5';

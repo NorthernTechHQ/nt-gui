@@ -12,16 +12,9 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 // @ts-nocheck
-import { defaultState, token } from '../../../tests/mockData';
+import { defaultState } from '../../../tests/mockData';
 import { DARK_MODE, LIGHT_MODE } from './constants';
-import {
-  generateDeploymentGroupDetails,
-  groupDeploymentDevicesStats,
-  groupDeploymentStats,
-  isDarkMode,
-  mapDeviceAttributes,
-  preformatWithRequestID
-} from './utils';
+import { generateDeploymentGroupDetails, groupDeploymentDevicesStats, groupDeploymentStats, isDarkMode, mapDeviceAttributes } from './utils';
 
 describe('mapDeviceAttributes function', () => {
   const defaultAttributes = {
@@ -94,23 +87,6 @@ describe('mapDeviceAttributes function', () => {
         this1: 'that1'
       }
     });
-  });
-});
-
-describe('preformatWithRequestID function', () => {
-  it('works as expected', async () => {
-    expect(preformatWithRequestID({ data: { request_id: 'someUuidLikeLongerText' } }, token)).toEqual(
-      'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjZTNkMGY4Yy1hZWRlLTQwMzAtYjM5MS03ZDUwMjBlYjg3M2UiLCJzdWIiOiJhMzBhNzgwYi1iODQzLTUzNDQtODBlMy0wZmQ5NWE0ZjZmYzMiLCJleHAiOjE2MDY4MTUzNjksImlhdCI6MTYwNjIxMDU2OSwibWVuZGVyLnRlbmF... [Request ID: someUuid]'
-    );
-    expect(preformatWithRequestID({ data: {} }, token)).toEqual(
-      'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjZTNkMGY4Yy1hZWRlLTQwMzAtYjM5MS03ZDUwMjBlYjg3M2UiLCJzdWIiOiJhMzBhNzgwYi1iODQzLTUzNDQtODBlMy0wZmQ5NWE0ZjZmYzMiLCJleHAiOjE2MDY4MTUzNjksImlhdCI6MTYwNjIxMDU2OSwibWVuZGVyLnRlbmF...'
-    );
-    expect(preformatWithRequestID(undefined, token)).toEqual(
-      'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjZTNkMGY4Yy1hZWRlLTQwMzAtYjM5MS03ZDUwMjBlYjg3M2UiLCJzdWIiOiJhMzBhNzgwYi1iODQzLTUzNDQtODBlMy0wZmQ5NWE0ZjZmYzMiLCJleHAiOjE2MDY4MTUzNjksImlhdCI6MTYwNjIxMDU2OSwibWVuZGVyLnRlbmF...'
-    );
-    const expectedText = 'short text';
-    expect(preformatWithRequestID({ data: { request_id: 'someUuidLikeLongerText' } }, expectedText)).toEqual('short text [Request ID: someUuid]');
-    expect(preformatWithRequestID(undefined, expectedText)).toEqual(expectedText);
   });
 });
 

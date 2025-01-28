@@ -15,6 +15,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { extractErrorMessage } from '@northern.tech/utils/helpers';
 import { getOnboardingComponentFor } from '@northern.tech/utils/onboardingManager';
 import dayjs from 'dayjs';
 import durationDayJs from 'dayjs/plugin/duration';
@@ -54,7 +55,7 @@ import {
   saveGlobalSettings,
   saveUserSettings
 } from './thunks';
-import { extractErrorMessage, getComparisonCompatibleVersion, stringToBoolean } from './utils';
+import { getComparisonCompatibleVersion, stringToBoolean } from './utils';
 
 const cookies = new Cookies();
 dayjs.extend(durationDayJs);
