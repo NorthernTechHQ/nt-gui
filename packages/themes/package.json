@@ -1,0 +1,40 @@
+{
+  "name": "@northern.tech/themes",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NorthernTechHQ/nt-gui.git"
+  },
+  "exports": {
+    "Mender": {
+      "types": "./dist/Mender/index.d.ts",
+      "import": "./dist/Mender/index.js",
+      "require": "./dist/Mender/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "lint": "eslint src/**/*.ts",
+    "publish": "npm publish",
+    "pre-publish": "npm publish --tag next"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "devDependencies": {
+    "@northern.tech/eslint-config": "*",
+    "@northern.tech/typescript-config": "*",
+    "eslint": "^8.57.0",
+    "tsup": "8.3.5"
+  },
+  "dependencies": {
+    "@mui/material": "^6.x"
+  }
+}
