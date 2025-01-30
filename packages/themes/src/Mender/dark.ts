@@ -61,7 +61,6 @@ const palette = {
     dark: '#dc6a5e'
   },
   tooltip: {
-    ...commonPalette.tooltip,
     text: grey[600],
     tierTipBackground: grey[50]
   }
@@ -78,6 +77,7 @@ export const dark = {
         root: {
           ...overrides.MuiAccordion.styleOverrides.root,
           [`&.${accordionClasses.expanded}`]: {
+            // @ts-ignore
             ...overrides.MuiAccordion.styleOverrides.root[`&.${accordionClasses.expanded}`],
             backgroundColor: palette.grey['A400']
           }

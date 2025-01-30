@@ -240,10 +240,7 @@ export const overrides = {
     styleOverrides: {
       root: {
         paddingTop: 11,
-        paddingBottom: 11,
-        [`&.${listItemClasses.disabled}`]: {
-          opacity: 1
-        }
+        paddingBottom: 11
       }
     }
   },
