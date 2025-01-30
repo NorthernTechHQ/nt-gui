@@ -15,6 +15,11 @@
       "types": "./dist/Mender/index.d.ts",
       "import": "./dist/Mender/index.js",
       "require": "./dist/Mender/index.cjs"
+    },
+    "Alvaldi": {
+      "types": "./dist/Alvaldi/index.d.ts",
+      "import": "./dist/Alvaldi/index.js",
+      "require": "./dist/Alvaldi/index.cjs"
     }
   },
   "files": [
