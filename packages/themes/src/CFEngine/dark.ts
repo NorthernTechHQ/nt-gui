@@ -30,7 +30,7 @@ const palette = {
     light: darkBlue[700],
     dark: orange[850]
   },
-  link: { primary: darkBlue[200], muted: gray[200]},
+  link: { primary: darkBlue[200], muted: gray[200] },
   text: {
     primary: darkThemeText,
     muted: gray[300]
