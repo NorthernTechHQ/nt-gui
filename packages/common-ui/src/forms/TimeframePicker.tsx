@@ -29,7 +29,7 @@ const ensureEndOfDay = date => {
   return `${momentDate.format().split('T')[0]}T23:59:59.999`;
 };
 
-export const TimeframePicker = ({ tonight: propsTonight }) => {
+export const TimeframePicker = ({ tonight: propsTonight, format = 'MMMM Do', fromLabel = 'From', toLabel = 'To', slotProps = {}, fallbackValue = dayjs() }) => {
   const [tonight] = useState(dayjs(propsTonight));
   const [maxStartDate, setMaxStartDate] = useState(tonight);
   const [minEndDate, setMinEndDate] = useState(tonight);
@@ -69,13 +69,13 @@ export const TimeframePicker = ({ tonight: propsTonight }) => {
         control={control}
         render={({ field: { onChange, value } }) => (
           <DatePicker
-            disabled={!value}
             disableFuture
-            format="MMMM Do"
-            label="From"
+            format={format}
+            label={fromLabel}
             maxDate={maxStartDate}
             onChange={e => onChange(handleChangeStartDate(e))}
-            value={value ? dayjs(value) : dayjs()}
+            value={value ? dayjs(value) : fallbackValue}
+            slotProps={slotProps}
           />
         )}
       />
@@ -85,11 +85,12 @@ export const TimeframePicker = ({ tonight: propsTonight }) => {
         render={({ field: { onChange, value } }) => (
           <DatePicker
             disableFuture
-            format="MMMM Do"
-            label="To"
+            format={format}
+            label={toLabel}
             minDate={minEndDate}
             onChange={e => onChange(handleChangeEndDate(e))}
-            value={value ? dayjs(value) : dayjs()}
+            value={value ? dayjs(value) : fallbackValue}
+            slotProps={slotProps}
           />
         )}
       />
