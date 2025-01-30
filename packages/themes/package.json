@@ -11,15 +11,20 @@
     "url": "git+https://github.com/NorthernTechHQ/nt-gui.git"
   },
   "exports": {
-    "Mender": {
+    "./Mender": {
       "types": "./dist/Mender/index.d.ts",
       "import": "./dist/Mender/index.js",
       "require": "./dist/Mender/index.cjs"
     },
-    "Alvaldi": {
+    "./Alvaldi": {
       "types": "./dist/Alvaldi/index.d.ts",
       "import": "./dist/Alvaldi/index.js",
       "require": "./dist/Alvaldi/index.cjs"
+    },
+    "./CFEngine": {
+      "types": "./dist/CFEngine/index.d.ts",
+      "import": "./dist/CFEngine/index.js",
+      "require": "./dist/CFEngine/index.cjs"
     }
   },
   "files": [
