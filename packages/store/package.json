@@ -136,6 +136,7 @@
     "dayjs": "^1.x",
     "jwt-decode": "^4.x",
     "md5": "^2.x",
+    "msgpack5": "^6.x",
     "react": "^19.x",
     "react-dom": "^19.x",
     "react-redux": "^9.x",
