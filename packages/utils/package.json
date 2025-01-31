@@ -37,18 +37,18 @@
     "@northern.tech/eslint-config": "*",
     "@northern.tech/typescript-config": "*",
     "eslint": "^8.57.0",
-    "tsup": "8.3.5"
+    "tsup": "8.3.6"
   },
   "dependencies": {
     "dayjs": "^1.x",
     "msgpack5": "^6.x",
     "pluralize": "^8.x",
-    "react": "^18.x",
-    "react-dom": "^18.x",
+    "react": "^19.x",
+    "react-dom": "^19.x",
     "react-ga4": "^2.x",
     "react-redux": "^9.x",
-    "react-router-dom": "^6.x || ^7.x",
-    "universal-cookie": "7.1.4",
+    "react-router-dom": "^7.x",
+    "universal-cookie": "7.1.x",
     "validator": "^13.x"
   }
 }
