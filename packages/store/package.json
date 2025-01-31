@@ -111,7 +111,7 @@
   ],
   "scripts": {
     "build": "tsup && cp -r src/api/types dist/api/",
-    "lint": "eslint src/**/*.{ts,tsx}",
+    "lint": "eslint src/**/*.{ts,tsx} src/*.{ts,tsx}",
     "publish": "npm publish",
     "pre-publish": "npm publish --tag next"
   },
