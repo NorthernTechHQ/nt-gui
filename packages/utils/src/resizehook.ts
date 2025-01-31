@@ -14,14 +14,14 @@
 //@ts-nocheck
 import { useLayoutEffect, useRef, useState } from 'react';
 
-import { TIMEOUTS } from '@northern.tech/store/constants';
+const halfASecond = 500;
 
 export const useWindowSize = () => {
   const [size, setSize] = useState({ height: window.innerHeight, width: window.innerWidth });
   const timer = useRef();
   useLayoutEffect(() => {
     const handleResize = () => {
-      timer.current = setTimeout(() => setSize({ height: window.innerHeight, width: window.innerWidth }), TIMEOUTS.halfASecond);
+      timer.current = setTimeout(() => setSize({ height: window.innerHeight, width: window.innerWidth }), halfASecond);
     };
     window.addEventListener('resize', handleResize);
     handleResize();

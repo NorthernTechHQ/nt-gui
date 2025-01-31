@@ -12,6 +12,8 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
+import { deepCompare, getISOStringBoundaries } from '@northern.tech/utils/helpers';
+
 import {
   ALL_DEVICES,
   ATTRIBUTE_SCOPES,
@@ -23,9 +25,7 @@ import {
   DEVICE_LIST_DEFAULTS,
   UNGROUPED_GROUP,
   emptyFilter
-} from '@northern.tech/store/constants';
-
-import { deepCompare, getISOStringBoundaries } from './helpers';
+} from './constants';
 
 const SEPARATOR = ':';
 
