@@ -1,5 +1,7 @@
 import type { Preview } from '@storybook/react';
 
+import { defaultTheme, globalThemeType, withMuiTheme } from './utils/themeUtils';
+
 const preview: Preview = {
   parameters: {
     actions: { argTypesRegex: '^on[A-Z].*' },
@@ -9,7 +11,12 @@ const preview: Preview = {
         date: /Date$/
       }
     }
-  }
+  },
+  decorators: [withMuiTheme],
+  globalTypes: {
+    theme: globalThemeType
+  },
+  initialGlobals: { theme: defaultTheme }
 };
 
 export default preview;
