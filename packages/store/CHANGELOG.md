@@ -1,4 +1,25 @@
 ---
+## @northern.tech/store-0.3.3 - 2025-01-31
+
+
+### Bug Fixes
+
+#### Store
+
+
+- *(store)* Removed reliance on test config in package code
+
+ ([106415a](https://github.com/NorthernTechHQ/nt-gui/commit/106415a590755e8400ba2b8a99069032fd6f6bcb))  by @mzedel
+
+- *(store)* Added missing type for device data retrieval
+
+ ([3b33c43](https://github.com/NorthernTechHQ/nt-gui/commit/3b33c4380f6cf47688452319ef0bf88554179eef))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/store-0.3.2 - 2024-12-13
 
 
