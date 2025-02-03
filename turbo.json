@@ -24,12 +24,6 @@
       ],
       "cache": false
     },
-    "@northern.tech/themes#build": {
-      "dependsOn": [
-        "@northern.tech/store#build"
-      ],
-      "cache": false
-    },
     "lint": {
       "dependsOn": [
         "@northern.tech/common-ui#build"

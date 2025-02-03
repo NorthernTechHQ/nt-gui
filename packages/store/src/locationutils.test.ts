@@ -11,9 +11,9 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { AUDIT_LOGS_TYPES, DEPLOYMENT_ROUTES, DEPLOYMENT_STATES, DEVICE_STATES, UNGROUPED_GROUP, listDefaultsByState } from '@northern.tech/store/constants';
 import { describe, expect, it } from 'vitest';
 
+import { AUDIT_LOGS_TYPES, DEPLOYMENT_ROUTES, DEPLOYMENT_STATES, DEVICE_STATES, UNGROUPED_GROUP, listDefaultsByState } from './constants';
 import {
   commonProcessor,
   formatAuditlogs,

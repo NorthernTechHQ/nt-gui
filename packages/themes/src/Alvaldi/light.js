@@ -14,10 +14,9 @@
 import { accordionClasses } from '@mui/material/Accordion';
 import { buttonClasses } from '@mui/material/Button';
 import { formLabelClasses } from '@mui/material/FormLabel';
-
-import { LIGHT_MODE } from '@northern.tech/store/constants';
-import { palette as commonPalette, overrides, typography } from './common';
 import { iconButtonClasses } from '@mui/material/IconButton';
+
+import { palette as commonPalette, overrides, typography } from './common';
 
 const grey = {
   '900': '#969696',
@@ -54,7 +53,7 @@ const blue = {
 
 const palette = {
   ...commonPalette,
-  mode: LIGHT_MODE,
+  mode: 'light',
   grey,
   blue,
   green,

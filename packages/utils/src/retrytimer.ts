@@ -12,9 +12,9 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import { TIMEOUTS } from '@northern.tech/store/constants';
-
 import { extractErrorMessage, preformatWithRequestID } from './helpers';
+
+const oneSecond = 1000;
 
 let timers = {};
 
@@ -23,14 +23,14 @@ export function setRetryTimer(err, service, errorContext, timeLeft, setSnackbar)
   if (timers[service]) {
     return;
   }
-  let remaining = timeLeft - TIMEOUTS.oneSecond;
+  let remaining = timeLeft - oneSecond;
   timers[service] = setInterval(() => {
-    remaining -= TIMEOUTS.oneSecond;
+    remaining -= oneSecond;
     const errMsg = extractErrorMessage(err, 'Please check your connection.');
     remaining > 0
       ? setSnackbar(preformatWithRequestID(err.response, `${errorContext} ${errMsg} Retrying in ${remaining / 1000} seconds`))
       : clearRetryTimer(service, setSnackbar);
-  }, TIMEOUTS.oneSecond);
+  }, oneSecond);
 }
 
 export function clearRetryTimer(service, setSnackbar) {

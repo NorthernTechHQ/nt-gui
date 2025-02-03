@@ -35,7 +35,7 @@
   ],
   "scripts": {
     "build": "tsup",
-    "lint": "eslint src/**/*.ts",
+    "lint": "eslint src/**/*.{js,ts}",
     "publish": "npm publish",
     "pre-publish": "npm publish --tag next"
   },

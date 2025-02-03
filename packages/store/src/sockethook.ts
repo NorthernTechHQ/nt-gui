@@ -14,24 +14,15 @@
 //@ts-nocheck
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { DEVICE_MESSAGE_PROTOCOLS as MessageProtocols, DEVICE_MESSAGE_TYPES as MessageTypes, TIMEOUTS, apiUrl } from '@northern.tech/store/constants';
+import { blobToString, byteArrayToString } from '@northern.tech/utils/helpers';
 import msgpack5 from 'msgpack5';
 import Cookies from 'universal-cookie';
+
+import { DEVICE_MESSAGE_PROTOCOLS as MessageProtocols, DEVICE_MESSAGE_TYPES as MessageTypes, TIMEOUTS, apiUrl } from './constants';
 
 const cookies = new Cookies();
 
 const MessagePack = msgpack5();
-
-export const byteArrayToString = body => String.fromCharCode(...body);
-
-export const blobToString = blob =>
-  new Promise(resolve => {
-    let fr = new FileReader();
-    fr.onload = () => {
-      resolve(fr.result);
-    };
-    fr.readAsArrayBuffer(blob);
-  });
 
 export const useSession = ({ onClose, onHealthCheckFailed, onMessageReceived, onNotify, onOpen, token }) => {
   const [sessionId, setSessionId] = useState();

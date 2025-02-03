@@ -16,14 +16,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { extractErrorMessage } from '@northern.tech/utils/helpers';
-import { getOnboardingComponentFor } from '@northern.tech/utils/onboardingManager';
 import dayjs from 'dayjs';
 import durationDayJs from 'dayjs/plugin/duration';
 import Cookies from 'universal-cookie';
 
 import storeActions from './actions';
 import { getSessionInfo } from './auth';
-import { DEPLOYMENT_STATES, DEVICE_STATES, TIMEOUTS, onboardingSteps, timeUnits } from './constants';
+import { DEPLOYMENT_STATES, DEVICE_STATES, TIMEOUTS, timeUnits } from './constants';
 import {
   getDevicesByStatus as getDevicesByStatusSelector,
   getFeatures,
@@ -60,7 +59,7 @@ import { getComparisonCompatibleVersion, stringToBoolean } from './utils';
 const cookies = new Cookies();
 dayjs.extend(durationDayJs);
 
-const { setSnackbar, setDeviceListState, setFirstLoginAfterSignup, setTooltipsState, setShowStartupNotification } = storeActions;
+const { setDeviceListState, setFirstLoginAfterSignup, setTooltipsState, setShowStartupNotification } = storeActions;
 
 const featureFlags = [
   'hasAuditlogs',
@@ -131,14 +130,6 @@ export const parseEnvironmentInfo = () => (dispatch, getState) => {
 const maybeAddOnboardingTasks = ({ devicesByStatus, dispatch, onboardingState, tasks }) => {
   if (!onboardingState.showTips || onboardingState.complete) {
     return tasks;
-  }
-  const welcomeTip = getOnboardingComponentFor(onboardingSteps.ONBOARDING_START, {
-    progress: onboardingState.progress,
-    complete: onboardingState.complete,
-    showTips: onboardingState.showTips
-  });
-  if (welcomeTip) {
-    tasks.push(dispatch(setSnackbar({ message: 'open', autoHideDuration: TIMEOUTS.refreshDefault, children: welcomeTip, onClick: () => {}, onClose: true })));
   }
   // try to retrieve full device details for onboarding devices to ensure ips etc. are available
   // we only load the first few/ 20 devices, as it is possible the onboarding is left dangling

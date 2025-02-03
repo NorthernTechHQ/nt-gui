@@ -479,3 +479,14 @@ export const dateRangeToUnix = (startDate = null, endDate = null) => {
 
   return unixRange;
 };
+
+export const byteArrayToString = body => String.fromCharCode(...body);
+
+export const blobToString = blob =>
+  new Promise(resolve => {
+    let fr = new FileReader();
+    fr.onload = () => {
+      resolve(fr.result);
+    };
+    fr.readAsArrayBuffer(blob);
+  });
