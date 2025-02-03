@@ -44,7 +44,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
           class="filter-item"
         >
           <h5
-            class="margin-top-small margin-bottom-none muted"
+            class="margin-top-small margin-bottom-small muted"
           >
             Performed by
           </h5>
@@ -118,7 +118,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
           class="filter-item"
         >
           <h5
-            class="margin-top-small margin-bottom-none muted"
+            class="margin-top-small margin-bottom-small muted"
           >
             Filter by changes
           </h5>
@@ -192,7 +192,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
           class="filter-item"
         >
           <h5
-            class="margin-top-small margin-bottom-none muted"
+            class="margin-top-small margin-bottom-small muted"
           />
           <div
             class="MuiAutocomplete-root css-1tlcqt-MuiAutocomplete-root"
@@ -242,7 +242,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
           class="filter-item"
         >
           <h5
-            class="margin-top-small margin-bottom-none muted"
+            class="margin-top-small margin-bottom-small muted"
           >
             Start time
           </h5>
@@ -459,10 +459,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
             />
           </svg>
         </div>
-        <div
-          class="columnHeader"
-          style="cursor: initial;"
-        />
         <div />
       </div>
       <div
@@ -497,26 +493,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
           >
             2019-01-01 12:10
           </time>
-          <div
-            class="clickable"
-          >
-            <div
-              class="bold flexbox center-aligned link-color nowrap "
-            >
-              View details
-              <svg
-                aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall margin-left-xsmall css-120dh41-MuiSvgIcon-root"
-                data-testid="ArrowForwardIcon"
-                focusable="false"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"
-                />
-              </svg>
-            </div>
-          </div>
           <div
             class="bold flexbox center-aligned link-color nowrap "
           >
@@ -564,26 +540,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
           >
             2019-01-01 12:16
           </time>
-          <div
-            class="clickable"
-          >
-            <div
-              class="bold flexbox center-aligned link-color nowrap "
-            >
-              View details
-              <svg
-                aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall margin-left-xsmall css-120dh41-MuiSvgIcon-root"
-                data-testid="ArrowForwardIcon"
-                focusable="false"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"
-                />
-              </svg>
-            </div>
-          </div>
           <div
             class="bold flexbox center-aligned link-color nowrap "
           >
@@ -633,26 +589,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
           >
             2019-01-01 12:10
           </time>
-          <div
-            class="clickable"
-          >
-            <div
-              class="bold flexbox center-aligned link-color nowrap "
-            >
-              View details
-              <svg
-                aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall margin-left-xsmall css-120dh41-MuiSvgIcon-root"
-                data-testid="ArrowForwardIcon"
-                focusable="false"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"
-                />
-              </svg>
-            </div>
-          </div>
           <div
             class="bold flexbox center-aligned link-color nowrap "
           >

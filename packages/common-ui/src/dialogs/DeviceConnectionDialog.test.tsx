@@ -17,7 +17,7 @@ import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import { undefineds } from '../../../../tests/mockData';
+import { defaultState, undefineds } from '../../../../tests/mockData';
 import { render } from '../../../../tests/setupTests';
 import DeviceConnectionDialog from './DeviceConnectionDialog';
 
@@ -31,7 +31,18 @@ describe('DeviceConnectionDialog Component', () => {
 
   it('works as intended', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    render(<DeviceConnectionDialog onCancel={vi.fn} />);
+    render(<DeviceConnectionDialog onCancel={vi.fn} />, {
+      preloadedState: {
+        ...defaultState,
+        app: {
+          ...defaultState.app,
+          features: {
+            ...defaultState.app.features,
+            isHosted: true
+          }
+        }
+      }
+    });
     await user.click(screen.getByText(/get started/i));
     expect(screen.getByText(/Enter your device type/i)).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /back/i }));
