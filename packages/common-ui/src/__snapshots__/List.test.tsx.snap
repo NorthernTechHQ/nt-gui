@@ -499,6 +499,10 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-10:focus::-ms-input-
   color: rgba(0, 0, 0, 0.26);
 }
 
+.emotion-14.MuiIconButton-loading {
+  color: transparent;
+}
+
 <div>
   <div
     class="deviceList selectable"
@@ -587,10 +591,9 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-10:focus::-ms-input-
             Rows
           </p>
           <div
-            class="MuiInputBase-root MuiInputBase-colorPrimary MuiTablePagination-select MuiTablePagination-input emotion-9"
+            class="MuiInputBase-root MuiInputBase-colorPrimary MuiTablePagination-select MuiSelect-root MuiTablePagination-input emotion-9"
           >
             <div
-              aria-controls=":r2:"
               aria-expanded="false"
               aria-haspopup="listbox"
               aria-labelledby=":r1: :r0:"
@@ -633,6 +636,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-10:focus::-ms-input-
             <button
               class="MuiButtonBase-root Mui-disabled MuiIconButton-root Mui-disabled MuiIconButton-sizeLarge emotion-14"
               disabled=""
+              id=":r3:"
               tabindex="-1"
               type="button"
             >
@@ -652,6 +656,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-10:focus::-ms-input-
               <button
                 class="MuiButtonBase-root Mui-disabled MuiIconButton-root Mui-disabled MuiIconButton-sizeLarge emotion-14"
                 disabled=""
+                id=":r4:"
                 tabindex="-1"
                 type="button"
               >

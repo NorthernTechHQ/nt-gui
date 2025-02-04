@@ -80,6 +80,10 @@ exports[`Confirm Component > renders correctly 1`] = `
   color: rgba(0, 0, 0, 0.26);
 }
 
+.emotion-0.MuiIconButton-loading {
+  color: transparent;
+}
+
 .emotion-1 {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -126,6 +130,7 @@ exports[`Confirm Component > renders correctly 1`] = `
   </button>
   <button
     class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge emotion-0"
+    id=":r1:"
     tabindex="0"
     type="button"
   >
