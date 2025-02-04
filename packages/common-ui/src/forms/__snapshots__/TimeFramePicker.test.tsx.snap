@@ -441,6 +441,10 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-8:focus::-ms-input-p
   color: rgba(0, 0, 0, 0.26);
 }
 
+.emotion-10.MuiIconButton-loading {
+  color: transparent;
+}
+
 .emotion-12 {
   text-align: left;
   position: absolute;
@@ -708,6 +712,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
   --variant-outlinedBorder: rgba(25, 118, 210, 0.5);
   --variant-containedColor: #fff;
   --variant-containedBg: #1976d2;
+  -webkit-transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 }
 
 .emotion-23::-moz-focus-inner {
@@ -766,6 +772,10 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
     --variant-outlinedBorder: #1976d2;
     --variant-outlinedBg: rgba(25, 118, 210, 0.04);
   }
+}
+
+.emotion-23.MuiButton-loading {
+  color: transparent;
 }
 
 <form
@@ -831,6 +841,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
           >
             <button
               class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge emotion-10"
+              id=":r0:"
               tabindex="0"
               type="button"
             >
@@ -929,6 +940,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-18:focus::-ms-input-
     <button
       class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary emotion-23"
       disabled=""
+      id=":r1:"
       tabindex="-1"
       type="submit"
     />
@@ -1271,6 +1283,10 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
   color: rgba(0, 0, 0, 0.26);
 }
 
+.emotion-5.MuiIconButton-loading {
+  color: transparent;
+}
+
 .emotion-6 {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -1343,8 +1359,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
       <label
         class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined emotion-1"
         data-shrink="true"
-        for=":r0:"
-        id=":r0:-label"
+        for=":r5:"
+        id=":r5:-label"
       >
         From
       </label>
@@ -1355,7 +1371,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
           aria-invalid="false"
           autocomplete="off"
           class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd emotion-3"
-          id=":r0:"
+          id=":r5:"
           inputmode="text"
           placeholder="MMMM DD"
           type="text"
@@ -1367,6 +1383,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
           <button
             aria-label="Choose date, selected date is Jan 13, 2019"
             class="MuiButtonBase-root MuiIconButton-root MuiIconButton-edgeEnd MuiIconButton-sizeMedium emotion-5"
+            id=":r7:"
             tabindex="0"
             type="button"
           >
@@ -1403,8 +1420,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
       <label
         class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined emotion-1"
         data-shrink="true"
-        for=":r2:"
-        id=":r2:-label"
+        for=":r8:"
+        id=":r8:-label"
       >
         To
       </label>
@@ -1415,7 +1432,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
           aria-invalid="false"
           autocomplete="off"
           class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd emotion-3"
-          id=":r2:"
+          id=":r8:"
           inputmode="text"
           placeholder="MMMM DD"
           type="text"
@@ -1427,6 +1444,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
           <button
             aria-label="Choose date, selected date is Jan 13, 2019"
             class="MuiButtonBase-root MuiIconButton-root MuiIconButton-edgeEnd MuiIconButton-sizeMedium emotion-5"
+            id=":ra:"
             tabindex="0"
             type="button"
           >

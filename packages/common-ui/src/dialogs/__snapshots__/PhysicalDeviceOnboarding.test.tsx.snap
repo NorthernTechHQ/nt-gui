@@ -437,6 +437,10 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
   color: rgba(0, 0, 0, 0.26);
 }
 
+.emotion-6.MuiIconButton-loading {
+  color: transparent;
+}
+
 .emotion-7 {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -561,6 +565,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
             <button
               aria-label="Clear"
               class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium MuiAutocomplete-clearIndicator emotion-6"
+              id=":r9:"
               tabindex="-1"
               title="Clear"
               type="button"
@@ -1086,6 +1091,10 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
   color: rgba(0, 0, 0, 0.26);
 }
 
+.emotion-6.MuiIconButton-loading {
+  color: transparent;
+}
+
 .emotion-7 {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -1249,6 +1258,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
             <button
               aria-label="Clear"
               class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium MuiAutocomplete-clearIndicator emotion-6"
+              id=":r2:"
               tabindex="-1"
               title="Clear"
               type="button"
@@ -1435,6 +1445,8 @@ exports[`PhysicalDeviceOnboarding Component > tiny onboarding tips > renders Ins
   --variant-outlinedBorder: rgba(25, 118, 210, 0.5);
   --variant-containedColor: #fff;
   --variant-containedBg: #1976d2;
+  -webkit-transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 }
 
 .emotion-1::-moz-focus-inner {
@@ -1469,6 +1481,10 @@ exports[`PhysicalDeviceOnboarding Component > tiny onboarding tips > renders Ins
     --variant-outlinedBorder: #1976d2;
     --variant-outlinedBg: rgba(25, 118, 210, 0.04);
   }
+}
+
+.emotion-1.MuiButton-loading {
+  color: transparent;
 }
 
 .emotion-2 {
@@ -1514,6 +1530,7 @@ exports[`PhysicalDeviceOnboarding Component > tiny onboarding tips > renders Ins
   >
     <button
       class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary emotion-1"
+      id=":r5:"
       style="float: right; margin: -20px 0px 0px 10px;"
       tabindex="0"
       type="button"
