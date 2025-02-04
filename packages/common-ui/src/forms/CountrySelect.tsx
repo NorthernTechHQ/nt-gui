@@ -12,7 +12,8 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import { Controller } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
 
 import { Autocomplete, TextField } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
@@ -29,10 +30,11 @@ const useStyles = makeStyles()(() => ({
 }));
 
 export const CountrySelect = (props: CountrySelectProps) => {
-  const { id, onChange, ...restProps } = props;
+  const { id, onChange, defaultValue, ...restProps } = props;
   const { classes } = useStyles();
   return (
     <Autocomplete
+      key={defaultValue}
       getOptionLabel={option => option.label}
       options={countries}
       className={classes.autocomplete}
@@ -40,15 +42,28 @@ export const CountrySelect = (props: CountrySelectProps) => {
       renderInput={params => <TextField {...params} label="Country" id={id || 'country'} />}
       onChange={(e, data) => onChange(data)}
       {...restProps}
+      defaultValue={countries.find(country => country.code === defaultValue)}
     />
   );
 };
 
-export const ControlledCountrySelect = ({ control, id, required }) => (
-  <Controller
-    rules={{ required }}
-    render={({ field: { onChange }, ...props }) => <CountrySelect onChange={onChange} id={id} {...props} />}
-    name="country"
-    control={control}
-  />
-);
+export const ControlledCountrySelect = ({ control, id, required }) => {
+  const [defaultCountry, setDefaultCountry] = useState('');
+  const { getValues } = useFormContext();
+  const values = getValues();
+  useEffect(() => {
+    setDefaultCountry(values.country);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return (
+    <Controller
+      rules={{ required }}
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      render={({ field: { onChange }, formState, fieldState, ...props }) => (
+        <CountrySelect defaultValue={defaultCountry} onChange={onChange} id={id} {...props} />
+      )}
+      name="country"
+      control={control}
+    />
+  );
+};

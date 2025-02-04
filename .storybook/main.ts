@@ -10,7 +10,7 @@ const config: StorybookConfig = {
     name: getAbsolutePath('@storybook/react-vite'),
     options: {}
   },
-
+  staticDirs: ['./public'],
   core: {},
 
   async viteFinal(config) {
