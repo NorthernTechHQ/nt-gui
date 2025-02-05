@@ -22,7 +22,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
           data-mui-internal-clone-element="true"
         >
           <div
-            class="MuiChip-root css-ocjfcy-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorDefault MuiChip-filledDefault css-ocjfcy-root css-5c51lm-MuiChip-root"
+            class="MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorDefault MuiChip-filledDefault css-1jnft00-MuiChip-root-root-root"
           >
             <span
               class="MuiChip-label MuiChip-labelMedium css-1dybbl5-MuiChip-label"
@@ -762,7 +762,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
         >
           <svg
             aria-hidden="true"
-            class="MuiSvgIcon-root MuiSvgIcon-colorPrimary MuiSvgIcon-fontSizeMedium css-vsxr36-icon css-1wtp6o0-MuiSvgIcon-root"
+            class="MuiSvgIcon-root MuiSvgIcon-colorPrimary MuiSvgIcon-fontSizeMedium css-1wdgt7t-MuiSvgIcon-root-icon"
             data-testid="HelpIcon"
             focusable="false"
             viewBox="0 0 24 24"

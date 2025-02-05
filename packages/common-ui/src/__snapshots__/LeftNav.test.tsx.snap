@@ -22,19 +22,7 @@ exports[`LeftNav Component > renders correctly 1`] = `
   padding-right: 16px;
 }
 
-.emotion-2.navLink .MuiListItemText-root {
-  color: #212121;
-}
-
-.emotion-2.navLink.active .MuiListItemText-root {
-  color: rgba(0, 0, 0, 0.87);
-}
-
-.emotion-2.active {
-  background: #bdbdbd;
-}
-
-.emotion-3 {
+.emotion-2 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -59,15 +47,19 @@ exports[`LeftNav Component > renders correctly 1`] = `
   padding-right: 16px;
 }
 
-.emotion-4 .MuiListItemText-primary {
-  font-size: 0.8rem;
+.emotion-2.navLink .MuiListItemText-root {
+  color: #212121;
 }
 
-.emotion-4 .MuiListItemText-primary:hover {
-  color: #1976d2;
+.emotion-2.navLink.active .MuiListItemText-root {
+  color: rgba(0, 0, 0, 0.87);
 }
 
-.emotion-5 {
+.emotion-2.active {
+  background: #bdbdbd;
+}
+
+.emotion-3 {
   -webkit-flex: 1 1 auto;
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
@@ -76,15 +68,23 @@ exports[`LeftNav Component > renders correctly 1`] = `
   margin-bottom: 4px;
 }
 
-.MuiTypography-root:where(.emotion-5 .MuiListItemText-primary) {
+.MuiTypography-root:where(.emotion-3 .MuiListItemText-primary) {
   display: block;
 }
 
-.MuiTypography-root:where(.emotion-5 .MuiListItemText-secondary) {
+.MuiTypography-root:where(.emotion-3 .MuiListItemText-secondary) {
   display: block;
 }
 
-.emotion-6 {
+.emotion-3 .MuiListItemText-primary {
+  font-size: 0.8rem;
+}
+
+.emotion-3 .MuiListItemText-primary:hover {
+  color: #1976d2;
+}
+
+.emotion-4 {
   margin: 0;
   font-family: "Roboto","Helvetica","Arial",sans-serif;
   font-weight: 400;
@@ -93,7 +93,7 @@ exports[`LeftNav Component > renders correctly 1`] = `
   letter-spacing: 0.00938em;
 }
 
-.emotion-7 {
+.emotion-5 {
   min-width: 56px;
   color: rgba(0, 0, 0, 0.54);
   -webkit-flex-shrink: 0;
@@ -114,22 +114,22 @@ exports[`LeftNav Component > renders correctly 1`] = `
     test
   </li>
   <a
-    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding navLink test-list emotion-2 emotion-3"
+    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding navLink test-list emotion-2"
     data-discover="true"
     href="/far/away"
     style="background: red;"
   >
     <div
-      class="MuiListItemText-root emotion-4 emotion-5"
+      class="MuiListItemText-root emotion-3"
     >
       <span
-        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-6"
+        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-4"
       >
         test1
       </span>
     </div>
     <div
-      class="MuiListItemIcon-root emotion-7"
+      class="MuiListItemIcon-root emotion-5"
     >
       <div>
         HEYA!
@@ -137,15 +137,15 @@ exports[`LeftNav Component > renders correctly 1`] = `
     </div>
   </a>
   <a
-    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding navLink test-list emotion-2 emotion-3"
+    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding navLink test-list emotion-2"
     data-discover="true"
     href="/further/away"
   >
     <div
-      class="MuiListItemText-root emotion-4 emotion-5"
+      class="MuiListItemText-root emotion-3"
     >
       <span
-        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-6"
+        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary emotion-4"
       >
         test1
       </span>
