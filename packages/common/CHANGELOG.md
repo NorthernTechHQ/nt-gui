@@ -1,4 +1,34 @@
 ---
+## @northern.tech/common-ui-0.3.2 - 2025-02-05
+
+
+### Bug Fixes
+
+#### Common,store
+
+
+- *(common,store)* Fixed references to now moved utility functions
+
+ ([73e9f33](https://github.com/NorthernTechHQ/nt-gui/commit/73e9f33d77c0c5773f05b3f0344d8f7350c62e8f))  by @mzedel
+
+
+
+
+#### Common/auditlogs
+
+
+- *(common/auditlogs)* Fixed an issue with the auditlogs that prevented updating the window url after initialization
+
+ ([63e08f4](https://github.com/NorthernTechHQ/nt-gui/commit/63e08f4eaf1c106d8634451517314e84b882f9a5))  by @aleksandrychev
+
+
+  aligned with Mender code
+
+
+
+
+
+
 ## @northern.tech/common-0.2.2 - 2024-12-10
 
 
