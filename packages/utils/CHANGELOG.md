@@ -1,4 +1,21 @@
 ---
+## @northern.tech/utils-0.5.0 - 2025-02-05
+
+
+### Features
+
+#### Utils,store
+
+
+- *(utils,store)* Moved store focused utils to store package
+
+ ([9a98222](https://github.com/NorthernTechHQ/nt-gui/commit/9a982226b1668632bcbb6be382bb4b2ce8d8fe14))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/utils-0.4.1 - 2024-12-16
 
 

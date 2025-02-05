@@ -1,4 +1,48 @@
 ---
+## @northern.tech/store-0.4.0 - 2025-02-05
+
+
+### Bug Fixes
+
+#### Common,store
+
+
+- *(common,store)* Fixed references to now moved utility functions
+
+ ([73e9f33](https://github.com/NorthernTechHQ/nt-gui/commit/73e9f33d77c0c5773f05b3f0344d8f7350c62e8f))  by @mzedel
+
+
+
+
+#### Store
+
+
+- *(store)* Aligned onboarding handling with removed onboardingmanager
+
+ ([cf5ea53](https://github.com/NorthernTechHQ/nt-gui/commit/cf5ea5339e88f3767c25358221f52060941363e4))  by @mzedel
+
+- *(store)* Aligned dependencies with referenced packages
+
+ ([182dedd](https://github.com/NorthernTechHQ/nt-gui/commit/182dedd8a4a1f81ed4f22bf9e345bc0e4f73cc2d))  by @mzedel
+
+
+
+
+
+### Features
+
+#### Utils,store
+
+
+- *(utils,store)* Moved store focused utils to store package
+
+ ([9a98222](https://github.com/NorthernTechHQ/nt-gui/commit/9a982226b1668632bcbb6be382bb4b2ce8d8fe14))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/store-0.3.3 - 2025-01-31
 
 
