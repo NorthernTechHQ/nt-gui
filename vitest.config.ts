@@ -39,6 +39,9 @@ export default defineConfig({
     retry: 0,
     environment: 'jsdom',
     globals: true,
-    setupFiles: './tests/setupTests.jsx'
+    setupFiles: './tests/setupTests.jsx',
+    fakeTimers: {
+      toFake: ['setTimeout', 'clearTimeout', 'Date']
+    }
   }
 });
