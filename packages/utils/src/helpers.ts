@@ -282,30 +282,6 @@ export const detectOsIdentifier = () => {
   return 'Linux';
 };
 
-export const getRemainderPercent = phases => {
-  // remove final phase size if set
-  phases[phases.length - 1].batch_size = null;
-  // use this to get remaining percent of final phase so we don't set a hard number
-  return phases.reduce((accu, phase) => (phase.batch_size ? accu - phase.batch_size : accu), 100);
-};
-
-export const validatePhases = (phases, deploymentDeviceCount, hasFilter) => {
-  if (!phases?.length) {
-    return true;
-  }
-  const remainder = getRemainderPercent(phases);
-  return phases.reduce((accu, phase) => {
-    if (!accu) {
-      return accu;
-    }
-    const deviceCount = Math.floor((deploymentDeviceCount / 100) * (phase.batch_size || remainder));
-    return deviceCount >= 1 || hasFilter;
-  }, true);
-};
-
-export const getPhaseDeviceCount = (numberDevices = 1, batchSize, remainder, isLastPhase) =>
-  isLastPhase ? Math.ceil((numberDevices / 100) * (batchSize || remainder)) : Math.floor((numberDevices / 100) * (batchSize || remainder));
-
 export const startTimeSort = (a, b) => (b.created > a.created) - (b.created < a.created);
 
 export const standardizePhases = phases =>

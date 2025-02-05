@@ -25,14 +25,11 @@ import {
   getDebConfigurationCode,
   getDemoDeviceAddress,
   getFormattedSize,
-  getPhaseDeviceCount,
-  getRemainderPercent,
   isEmpty,
   preformatWithRequestID,
   standardizePhases,
   stringToBoolean,
   unionizeStrings,
-  validatePhases,
   versionCompare
 } from './helpers';
 
@@ -278,15 +275,6 @@ describe('unionizeStrings function', () => {
   });
 });
 
-describe('getPhaseDeviceCount function', () => {
-  it('works with empty attributes', async () => {
-    expect(getPhaseDeviceCount(120, 10, 20, false)).toEqual(12);
-    expect(getPhaseDeviceCount(120, 10, 20, true)).toEqual(12);
-    expect(getPhaseDeviceCount(120, null, 20, true)).toEqual(24);
-    expect(getPhaseDeviceCount(120, null, 20, false)).toEqual(24);
-    expect(getPhaseDeviceCount(undefined, null, 20, false)).toEqual(0);
-  });
-});
 describe('customSort function', () => {
   it('works as expected', async () => {
     const creationSortedUp = Object.values(defaultState.deployments.byId).sort(customSort(false, 'created'));
@@ -398,79 +386,6 @@ describe('standardizePhases function', () => {
       { batch_size: 10, delay: 2, delayUnit: 'hours', start_ts: 1 },
       { batch_size: 10, start_ts: 2 }
     ]);
-  });
-});
-
-describe('getRemainderPercent function', () => {
-  it('remainder Percent calculated correctly', async () => {
-    const phases = [
-      { batch_size: 10, not: 'interested' },
-      { batch_size: 10, not: 'interested' },
-      { batch_size: 10, not: 'interested' }
-    ];
-    expect(getRemainderPercent(phases)).toEqual(80);
-    expect(
-      getRemainderPercent([
-        { batch_size: 10, not: 'interested' },
-        { batch_size: 90, not: 'interested' }
-      ])
-    ).toEqual(90);
-    expect(
-      getRemainderPercent([
-        { batch_size: 10, not: 'interested' },
-        { batch_size: 95, not: 'interested' }
-      ])
-    ).toEqual(90);
-    // this will be caught in the phase validation - should still be good to be fixed in the future
-    expect(
-      getRemainderPercent([
-        { batch_size: 50, not: 'interested' },
-        { batch_size: 55, not: 'interested' },
-        { batch_size: 95, not: 'interested' }
-      ])
-    ).toEqual(-5);
-  });
-});
-
-describe('validatePhases function', () => {
-  it('works as expected', async () => {
-    const phases = [
-      {
-        batch_size: 10,
-        delay: 2,
-        delayUnit: 'hours',
-        start_ts: deploymentCreationTime
-      },
-      { batch_size: 10, delay: 2, start_ts: deploymentCreationTime },
-      { batch_size: 10, start_ts: deploymentCreationTime }
-    ];
-    expect(validatePhases(undefined, 10000, false)).toEqual(true);
-    expect(validatePhases(undefined, 10000, true)).toEqual(true);
-    expect(validatePhases(phases, 10, true)).toEqual(true);
-    expect(validatePhases(phases, 10, true)).toEqual(true);
-    expect(validatePhases([], 10, true)).toEqual(true);
-    expect(
-      validatePhases(
-        [
-          { batch_size: 50, not: 'interested' },
-          { batch_size: 55, not: 'interested' },
-          { batch_size: 95, not: 'interested' }
-        ],
-        10,
-        false
-      )
-    ).toEqual(false);
-    expect(
-      validatePhases(
-        [
-          { batch_size: 50, not: 'interested' },
-          { batch_size: 55, not: 'interested' },
-          { batch_size: 95, not: 'interested' }
-        ],
-        100,
-        true
-      )
-    ).toEqual(true);
   });
 });
 
