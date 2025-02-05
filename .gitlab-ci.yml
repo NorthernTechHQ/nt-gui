@@ -180,7 +180,7 @@ pages:
     GITHUB_STATUS_API_JSON_F: '{"state": "%s", "context": "ci/storybook", "target_url": "%s", "description": "%s"}'
     PAGES_PREFIX: ''
   script:
-    - json="$(printf "$GITHUB_STATUS_API_JSON_F" "success" "${CI_PAGES_URL}/${PAGES_PREFIX//_/-}" "Storybook deployed")"
+    - json="$(printf "$GITHUB_STATUS_API_JSON_F" "success" "${CI_PAGES_URL}" "Storybook deployed")"
     - curl -f -H "$GITHUB_AUTH" -d "$json" "$GITHUB_STATUS_API_URL"
   pages:
     path_prefix: '$PAGES_PREFIX'
