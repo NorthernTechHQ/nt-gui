@@ -12,11 +12,12 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import React, { useMemo } from 'react';
+import { CSSProperties, ReactNode, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 import { makeStyles } from 'tss-react/mui';
 
+import { Device } from '@northern.tech/store/api/types/Device';
 import { getDeviceById as getDeviceByIdSelector, getIdAttribute } from '@northern.tech/store/selectors';
 import { stringToBoolean } from '@northern.tech/utils/helpers';
 
@@ -70,9 +71,14 @@ export const getDeviceIdentityText = ({ device = {}, idAttribute }) => {
   return defaultTextRender({ column: { attribute: { name: attribute, scope } }, device });
 };
 
-const DeviceIdComponent = ({ style = {}, value }) => <div style={style}>{value}</div>;
+interface DeviceIdComponentProps {
+  style: CSSProperties;
+  value: string;
+}
 
-const attributeComponentMap = {
+const DeviceIdComponent = ({ style = {}, value }: DeviceIdComponentProps) => <div style={style}>{value}</div>;
+
+const attributeComponentMap: Record<string, (...props: any) => ReactNode> = {
   default: DeviceIdComponent,
   name: DeviceNameInput
 };
@@ -85,7 +91,14 @@ const adornments = [
   { component: GatewayIcon, isApplicable: ({ attributes = {} }) => stringToBoolean(attributes.mender_is_gateway) }
 ];
 
-export const DeviceIdentityDisplay = props => {
+interface DeviceIdentityDisplayProps {
+  device: Device; // TODO: replace with a UI device type
+  isEditable?: boolean;
+  hasAdornment?: boolean;
+  style?: CSSProperties;
+}
+
+export const DeviceIdentityDisplay = (props: DeviceIdentityDisplayProps) => {
   const { device = {}, isEditable = true, hasAdornment = true } = props;
 
   const idAttribute = useSelector(getIdAttribute);

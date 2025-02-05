@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
@@ -51,7 +51,12 @@ export const DefaultUpgradeNotification = props => (
   </div>
 );
 
-const EnterpriseNotification = ({ className = '', id = BENEFITS.default.id }) => {
+interface EnterpriseNotificationProps {
+  className?: string;
+  id?: string; // TODO: generate these from the BENEFITS?
+}
+
+export const EnterpriseNotification = ({ className = '', id = BENEFITS.default.id }: EnterpriseNotificationProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const tenantCapabilities = useSelector(getTenantCapabilities);
   const { isEnterprise, plan: currentPlan } = tenantCapabilities;

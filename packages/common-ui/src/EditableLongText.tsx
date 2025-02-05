@@ -11,8 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 // material ui
 import { TextField } from '@mui/material';
@@ -25,10 +24,19 @@ import ExpandableAttribute from './ExpandableAttribute';
 
 const useStyles = makeStyles()(theme => ({
   notes: { display: 'block', whiteSpace: 'pre-wrap' },
+  // @ts-expect-error: type misalignment in styleOverride root type
   notesWrapper: { minWidth: theme.components?.MuiFormControl?.styleOverrides?.root?.minWidth }
 }));
 
-export const EditableLongText = ({ contentFallback = '', fullWidth, original, onChange, placeholder = '-' }) => {
+interface EditableLongTextProps {
+  contentFallback?: string;
+  fullWidth?: boolean;
+  original: string;
+  onChange: (changed: string) => void;
+  placeholder?: string;
+}
+
+export const EditableLongText = ({ contentFallback = '', fullWidth, original, onChange, placeholder = '-' }: EditableLongTextProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(original);
   const { classes } = useStyles();

@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { useEffect, useRef, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
@@ -25,10 +24,15 @@ const useStyles = makeStyles()(() => ({
   copyNotification: { height: 15 }
 }));
 
-export const CopyTextToClipboard = ({ onCopy = yes, token }) => {
+interface CopyTextProps {
+  onCopy?: () => void;
+  token: string;
+}
+
+export const CopyTextToClipboard = ({ onCopy = yes, token }: CopyTextProps) => {
   const [copied, setCopied] = useState(false);
   const { classes } = useStyles();
-  const timer = useRef<ReturnType<typeof setTimeout> | undefined>();
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     return () => clearTimeout(timer.current);

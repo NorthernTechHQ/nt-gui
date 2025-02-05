@@ -11,10 +11,9 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
-import React from 'react';
-
 // material ui
+import { CSSProperties, ReactNode, Ref } from 'react';
+
 import { Sort as SortIcon } from '@mui/icons-material';
 import { Checkbox, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
@@ -33,6 +32,34 @@ const useStyles = makeStyles()(() => ({
   }
 }));
 
+interface SortParams {
+  key?: string;
+  direction?: 'asc' | 'desc';
+}
+
+interface ColumnDefinition {
+  defaultSortDirection?: 'asc' | 'desc';
+  extras?: any;
+  key: string;
+  render: (item: any, extras: any) => ReactNode;
+  renderTitle?: (extras: any) => ReactNode;
+  sortable?: boolean;
+  title: string;
+}
+
+interface DetailsTableProps {
+  className?: string;
+  columns: ColumnDefinition[];
+  items: any[];
+  onChangeSorting: (sortKey: string) => void;
+  onItemClick?: (item: any) => void;
+  sort?: SortParams;
+  style?: CSSProperties;
+  tableRef: Ref<HTMLTableElement>;
+  onRowSelected?: (rowNumber: number[]) => void;
+  selectedRows?: number[];
+}
+
 export const DetailsTable = ({
   className = '',
   columns,
@@ -42,9 +69,9 @@ export const DetailsTable = ({
   sort = {},
   style = {},
   tableRef,
-  onRowSelected = undefined,
+  onRowSelected,
   selectedRows = []
-}) => {
+}: DetailsTableProps) => {
   const { classes } = useStyles();
 
   const onRowSelection = selectedRow => {
@@ -55,6 +82,7 @@ export const DetailsTable = ({
     } else {
       updatedSelection.splice(selectedIndex, 1);
     }
+    // @ts-expect-error - the render code checks if this is defined
     onRowSelected(updatedSelection);
   };
 
@@ -63,6 +91,7 @@ export const DetailsTable = ({
     if (selectedRows.length && selectedRows.length <= items.length) {
       newSelectedRows = [];
     }
+    // @ts-expect-error - the render code checks if this is defined
     onRowSelected(newSelectedRows);
   };
 

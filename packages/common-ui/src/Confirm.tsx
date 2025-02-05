@@ -11,15 +11,14 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
-import React, { useState } from 'react';
+import { CSSProperties, useState } from 'react';
 
 import { Cancel as CancelIcon, CheckCircle as CheckCircleIcon, Check as CheckIcon, Close as CloseIcon, Edit as EditIcon } from '@mui/icons-material';
 import { Button, IconButton } from '@mui/material';
 
 const defaultRemoving = 'Removing...';
 
-const confirmationType = {
+export const confirmationType = {
   retry: {
     loading: 'Creating new deployment...',
     message: 'Confirm retry?'
@@ -54,7 +53,16 @@ const confirmationType = {
   }
 };
 
-export const Confirm = ({ action, cancel, classes = '', message = '', style = {}, type }) => {
+interface ConfirmProps {
+  action: () => void;
+  cancel: () => void;
+  classes?: string;
+  message?: string;
+  style?: CSSProperties;
+  type: keyof typeof confirmationType;
+}
+
+export const Confirm = ({ action, cancel, classes = '', message = '', style = {}, type }: ConfirmProps) => {
   const [className, setClassName] = useState('fadeIn');
   const [loading, setLoading] = useState(false);
 

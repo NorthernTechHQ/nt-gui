@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import React, { useState } from 'react';
+import { CSSProperties, ReactNode, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 import { FileCopy as CopyPasteIcon } from '@mui/icons-material';
@@ -21,7 +21,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import { TIMEOUTS } from '@northern.tech/store/constants';
 
-const buttonStyle = { float: 'right', margin: '-20px 0 0 10px' };
+const buttonStyle = { float: 'right', margin: '-20px 0 0 10px' } as CSSProperties;
 
 const useStyles = makeStyles()(theme => ({
   code: {
@@ -31,7 +31,13 @@ const useStyles = makeStyles()(theme => ({
   }
 }));
 
-export const Code = ({ className = '', children, style = {} }) => {
+interface CodeProps {
+  className?: string;
+  children: ReactNode;
+  style?: CSSProperties;
+}
+
+export const Code = ({ className = '', children, style = {} }: CodeProps) => {
   const { classes } = useStyles();
   return (
     <div className={`code ${classes.code} ${className}`} style={style}>
@@ -40,7 +46,13 @@ export const Code = ({ className = '', children, style = {} }) => {
   );
 };
 
-export const CopyCode = ({ code, onCopy, withDescription }) => {
+interface CopyCodeProps {
+  code: string;
+  onCopy: () => void;
+  withDescription?: boolean;
+}
+
+export const CopyCode = ({ code, onCopy, withDescription }: CopyCodeProps) => {
   const [copied, setCopied] = useState(false);
 
   const onCopied = (_text, result) => {
