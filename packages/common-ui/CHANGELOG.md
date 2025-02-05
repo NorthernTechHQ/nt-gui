@@ -1,4 +1,21 @@
 ---
+## @northern.tech/common-ui-0.3.2 - 2025-02-05
+
+
+### Bug Fixes
+
+#### Common-ui
+
+
+- *(common-ui)* Layout adjustments to re-align UI after switch to outlined inputs
+
+ ([49c8bbf](https://github.com/NorthernTechHQ/nt-gui/commit/49c8bbf64cea2a91c0dcaec33e9ddbed3716437f))  by @aleksandrychev
+
+
+
+
+
+
 ## @northern.tech/common-ui-0.3.0 - 2024-12-10
 
 

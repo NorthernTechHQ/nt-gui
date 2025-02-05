@@ -1,5 +1,5 @@
 {
-  "packages/common-ui": "0.3.1",
+  "packages/common-ui": "0.3.2",
   "packages/common": "0.2.2",
   "packages/eslint-config": "0.2.0",
   "packages/prettier-config": "0.2.0",
