@@ -1,7 +1,7 @@
 import type { Preview } from '@storybook/react';
 import { initialize as initializeMSW, mswLoader } from 'msw-storybook-addon';
 
-import { defaultTheme, globalThemeType, withMuiTheme } from './utils/themeUtils';
+import { defaultProduct, defaultTheme, globalProductType, globalThemeType, withMuiTheme } from './utils/themeUtils';
 
 initializeMSW();
 
@@ -17,9 +17,10 @@ const preview: Preview = {
   },
   decorators: [withMuiTheme],
   globalTypes: {
+    product: globalProductType,
     theme: globalThemeType
   },
-  initialGlobals: { theme: defaultTheme },
+  initialGlobals: { theme: defaultTheme, product: defaultProduct },
   loaders: [mswLoader],
   tags: ['autodocs']
 };
