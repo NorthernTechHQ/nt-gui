@@ -20,7 +20,8 @@ const preview: Preview = {
     theme: globalThemeType
   },
   initialGlobals: { theme: defaultTheme },
-  loaders: [mswLoader]
+  loaders: [mswLoader],
+  tags: ['autodocs']
 };
 
 export default preview;
