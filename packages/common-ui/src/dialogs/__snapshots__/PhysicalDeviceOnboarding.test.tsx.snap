@@ -1173,11 +1173,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
   font-size: 1.5rem;
 }
 
-.emotion-11.read {
-  color: rgba(0, 0, 0, 0.38);
-}
-
-.emotion-12 {
+.emotion-11 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -1195,7 +1191,11 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
   color: #1976d2;
 }
 
-.emotion-13 {
+.emotion-11.read {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.emotion-12 {
   position: absolute;
   top: -5px;
   bottom: 0;
@@ -1205,7 +1205,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
   border-radius: 50%;
 }
 
-.emotion-13.read {
+.emotion-12.read {
   border-color: rgba(0, 0, 0, 0.38);
 }
 
@@ -1317,7 +1317,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
       >
         <svg
           aria-hidden="true"
-          class="MuiSvgIcon-root MuiSvgIcon-colorPrimary MuiSvgIcon-fontSizeMedium emotion-11 emotion-12"
+          class="MuiSvgIcon-root MuiSvgIcon-colorPrimary MuiSvgIcon-fontSizeMedium emotion-11"
           data-testid="HelpIcon"
           focusable="false"
           viewBox="0 0 24 24"
@@ -1327,7 +1327,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-4:focus::-ms-input-p
           />
         </svg>
         <div
-          class="emotion-13 "
+          class="emotion-12 "
         />
       </div>
     </div>
