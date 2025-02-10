@@ -11,10 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { ReactNode } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 
-export const Alert = ({ children, className = '', severity = '', style }: { children: ReactNode; className?: string; severity?: string; style: {} }) => (
-  <div className={className + ' alert ' + (severity ? 'alert-' + severity : '')} style={style}>
+export const Alert = ({ children, className = '', style }: { children: ReactNode; className?: string; style: CSSProperties }) => (
+  <div className={className} style={style}>
     {children}
   </div>
 );
