@@ -11,8 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
 
 // material ui
 import { FileCopyOutlined as CopyToClipboardIcon } from '@mui/icons-material';
@@ -22,6 +21,20 @@ import { toggle } from '@northern.tech/utils/helpers';
 import copy from 'copy-to-clipboard';
 
 const defaultClasses = { root: 'attributes' };
+
+interface ExpandableAttributeProps {
+  className?: string;
+  copyToClipboard?: boolean;
+  dividerDisabled?: boolean;
+  onExpansion?: () => void;
+  primary: string;
+  secondary: string;
+  secondaryTypographyProps?: {};
+  setSnackbar?: (message: string) => void;
+  style?: CSSProperties;
+  textClasses?: Record<string, string>;
+  [x: string]: any;
+}
 
 export const ExpandableAttribute = ({
   className = '',
@@ -35,8 +48,8 @@ export const ExpandableAttribute = ({
   style,
   textClasses,
   ...remainder
-}) => {
-  const textContent = useRef(null);
+}: ExpandableAttributeProps) => {
+  const textContent = useRef<HTMLSpanElement | null>(null);
   const [expanded, setExpanded] = useState(false);
   const [overflowActive, setOverflowActive] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(false);
@@ -52,7 +65,7 @@ export const ExpandableAttribute = ({
   }, [expanded, overflowActive, textContent]);
 
   const onClick = useCallback(() => {
-    if (copyToClipboard) {
+    if (copyToClipboard && setSnackbar) {
       // Date/Time components
       copy(secondary);
       setSnackbar('Value copied to clipboard');

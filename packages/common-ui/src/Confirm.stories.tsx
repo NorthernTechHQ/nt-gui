@@ -1,4 +1,4 @@
-// Copyright 2020 Northern.tech AS
+// Copyright 2025 Northern.tech AS
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -11,12 +11,30 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { CSSProperties, ReactNode } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
 
-export const Alert = ({ children, className = '', style }: { children: ReactNode; className?: string; style: CSSProperties }) => (
-  <div className={className} style={style}>
-    {children}
-  </div>
-);
+import { Confirm, confirmationType } from './Confirm';
 
-export default Alert;
+const meta: Meta<typeof Confirm> = {
+  component: Confirm,
+  argTypes: {
+    type: {
+      options: Object.keys(confirmationType)
+    }
+  }
+};
+
+export default meta;
+
+type Story = StoryObj<typeof Confirm>;
+
+export const Primary: Story = {
+  render: props => <Confirm {...props} />,
+  name: 'Confirm',
+  args: {
+    classes: '',
+    message: 'fallback message',
+    style: {},
+    type: 'retry'
+  }
+};

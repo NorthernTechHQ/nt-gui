@@ -11,14 +11,14 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
-import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useEffect, useRef, useState } from 'react';
 
 // material ui
 import { InputAdornment, OutlinedInput } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
+import { Device } from '@northern.tech/store/api/types/MenderTypes';
+import { useAppDispatch } from '@northern.tech/store/store';
 import { setDeviceTags } from '@northern.tech/store/thunks';
 
 import { ConfirmationButtons, EditButton } from './Confirm';
@@ -33,14 +33,20 @@ const useStyles = makeStyles()(theme => ({
   }
 }));
 
-export const DeviceNameInput = ({ device, isHovered }) => {
+export interface DeviceNameInputProps {
+  device: Device; // TODO: replace with a UI device type
+  isHovered: boolean;
+}
+
+export const DeviceNameInput = ({ device, isHovered }: DeviceNameInputProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState('');
   const { classes } = useStyles();
-  const inputRef = useRef();
+  const inputRef = useRef<HTMLInputElement | undefined>(undefined);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
+  // @ts-expect-error: see TODO on Device UI type above
   const { id = '', tags = {} } = device;
   const { name = '' } = tags;
 
@@ -57,6 +63,7 @@ export const DeviceNameInput = ({ device, isHovered }) => {
     inputRef.current.focus();
   }, [isEditing]);
 
+  // @ts-expect-error: needs setDeviceTags to be typed
   const onSubmit = () => dispatch(setDeviceTags({ deviceId: id, tags: { ...tags, name: value } })).then(() => setIsEditing(false));
 
   const onCancel = () => {

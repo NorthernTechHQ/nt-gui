@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import React, { forwardRef, useState } from 'react';
+import { ReactNode, forwardRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { Description as DescriptionIcon } from '@mui/icons-material';
@@ -119,7 +119,15 @@ export const DocsTooltip = ({ anchor = {}, id = '', ...props }) => {
   );
 };
 
-export const DocsLink = forwardRef(({ children, className = '', path, title = '', ...remainder }, ref) => {
+interface DocsLinkProps {
+  children: ReactNode;
+  className?: string;
+  path: string;
+  title?: string;
+  [anything: string]: any;
+}
+
+export const DocsLink = forwardRef<HTMLAnchorElement, DocsLinkProps>(({ children, className = '', path, title = '', ...remainder }, ref) => {
   const docsVersion = useSelector(getDocsVersion);
   const { isHosted } = useSelector(getFeatures);
   const target = `https://docs.mender.io/${docsVersion}${path}`;

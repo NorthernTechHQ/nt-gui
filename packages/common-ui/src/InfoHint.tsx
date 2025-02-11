@@ -11,8 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
-import React from 'react';
+import { ReactNode } from 'react';
 
 import { InfoOutlined as InfoOutlinedIcon } from '@mui/icons-material';
 import { makeStyles } from 'tss-react/mui';
@@ -24,7 +23,13 @@ const useStyles = makeStyles()(theme => ({
   default: { gap: theme.spacing() }
 }));
 
-export const InfoHint = ({ className = '', content, ...props }) => {
+interface InfoHintProps {
+  className?: string;
+  content: ReactNode;
+  [x: string]: any;
+}
+
+export const InfoHint = ({ className = '', content, ...props }: InfoHintProps) => {
   const { classes } = useStyles();
   return (
     <InfoText className={`icon flexbox center-aligned ${classes.default} ${className}`} {...props}>
@@ -34,7 +39,13 @@ export const InfoHint = ({ className = '', content, ...props }) => {
   );
 };
 
-export const InfoHintContainer = ({ children, className = 'margin-left-small', ...props }) => {
+interface InfoHintContainerProps {
+  className?: string;
+  children: ReactNode;
+  [x: string]: any;
+}
+
+export const InfoHintContainer = ({ children, className = 'margin-left-small', ...props }: InfoHintContainerProps) => {
   const { classes } = useStyles();
   return (
     <div className={`flexbox center-aligned ${className} ${classes.container}`} {...props}>

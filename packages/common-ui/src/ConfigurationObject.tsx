@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import React, { Fragment, useState } from 'react';
+import React, { CSSProperties, Fragment, ReactNode, useState } from 'react';
 
 // material ui
 import { FileCopyOutlined as CopyToClipboardIcon } from '@mui/icons-material';
@@ -30,15 +30,20 @@ const useStyles = makeStyles()(theme => ({
   }
 }));
 
+interface ValueColumnProps {
+  value: ReactNode | string;
+  setSnackbar?: (message: string) => void;
+}
+
 const cutoffLength = 100;
-const ValueColumn = ({ value = '', setSnackbar }) => {
+const ValueColumn = ({ value = '', setSnackbar }: ValueColumnProps) => {
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const isComponent = React.isValidElement(value);
   const onClick = () => {
     if (setSnackbar) {
       let copyable = value;
       if (isComponent) {
-        copyable = value.props.value;
+        copyable = value.props.value as string;
       }
       copy(copyable);
       setSnackbar('Value copied to clipboard');
@@ -65,11 +70,30 @@ const ValueColumn = ({ value = '', setSnackbar }) => {
   );
 };
 
-const KeyColumn = ({ value, chipLikeKey }) => (
+interface KeyColumnProps {
+  value: string;
+  chipLikeKey: boolean;
+}
+
+const KeyColumn = ({ value, chipLikeKey }: KeyColumnProps) => (
   <div className={`align-right ${chipLikeKey ? 'key' : ''} muted`}>
     <b>{value}</b>
   </div>
 );
+
+interface TwoColumnsProps {
+  className?: string;
+  children?: ReactNode;
+  chipLikeKey?: boolean;
+  compact?: boolean;
+  items?: Record<string, string>;
+  KeyComponent?: (props: KeyColumnProps) => ReactNode;
+  KeyProps?: {};
+  setSnackbar?: (message: string) => void;
+  style?: CSSProperties;
+  ValueComponent?: (props: ValueColumnProps) => ReactNode;
+  ValueProps?: {};
+}
 
 export const TwoColumns = ({
   className = '',
@@ -83,7 +107,7 @@ export const TwoColumns = ({
   style = {},
   ValueComponent = ValueColumn,
   ValueProps = {}
-}) => {
+}: TwoColumnsProps) => {
   const { classes } = useStyles();
   return (
     <div className={`break-all two-columns ${classes.root} ${compact ? 'compact' : ''} ${className}`} style={style}>

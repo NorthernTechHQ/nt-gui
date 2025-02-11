@@ -11,15 +11,25 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
-import React, { useState } from 'react';
+import { RefObject, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { Autocomplete, TextField } from '@mui/material';
 
 import { duplicateFilter, unionizeStrings } from '@northern.tech/utils/helpers';
 
-export const ChipSelect = ({ className = '', name, disabled = false, helperText, inputRef, label = '', options = [], placeholder = '' }) => {
+interface ChipSelectProps {
+  className?: string;
+  name: string;
+  disabled?: boolean;
+  helperText: string;
+  inputRef: RefObject<Element>;
+  label?: string;
+  options?: string[];
+  placeholder?: string;
+}
+
+export const ChipSelect = ({ className = '', name, disabled = false, helperText, inputRef, label = '', options = [], placeholder = '' }: ChipSelectProps) => {
   const [value, setValue] = useState('');
 
   const { control, getValues } = useFormContext();
@@ -64,6 +74,7 @@ export const ChipSelect = ({ className = '', name, disabled = false, helperText,
           includeInputInList={true}
           multiple
           // allow edits to the textinput without deleting existing device types by ignoring backspace
+          // @ts-expect-error: type misalignment in event type
           onChange={(e, value) => (e.key !== 'Backspace' ? formOnChange(value) : null)}
           onInputChange={(e, v, reason) => onTextInputChange(null, reason, formOnChange)}
           options={options}

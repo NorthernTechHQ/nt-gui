@@ -1,4 +1,4 @@
-// Copyright 2020 Northern.tech AS
+// Copyright 2025 Northern.tech AS
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -11,12 +11,22 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { CSSProperties, ReactNode } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
 
-export const Alert = ({ children, className = '', style }: { children: ReactNode; className?: string; style: CSSProperties }) => (
-  <div className={className} style={style}>
-    {children}
-  </div>
-);
+import { DetailsIndicator } from './DetailsIndicator';
 
-export default Alert;
+const meta: Meta<typeof DetailsIndicator> = {
+  component: DetailsIndicator
+};
+
+export default meta;
+
+type Story = StoryObj<typeof DetailsIndicator>;
+
+export const Primary: Story = {
+  render: props => <DetailsIndicator {...props} />,
+  name: 'DetailsIndicator',
+  args: {
+    classes: { icon: '', wrapper: '' }
+  }
+};
