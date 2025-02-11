@@ -1,4 +1,21 @@
 ---
+## @northern.tech/utils-0.5.1 - 2025-02-11
+
+
+### Bug Fixes
+
+#### Utils
+
+
+- *(utils)* Aligned with Mender state to keep Mender only utils in product codebase
+
+ ([bdd002c](https://github.com/NorthernTechHQ/nt-gui/commit/bdd002cc9639b75eea0e2495b13a5b6df7a2af45))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/utils-0.5.0 - 2025-02-05
 
 
