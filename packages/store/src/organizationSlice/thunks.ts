@@ -27,7 +27,6 @@ import {
   locations
 } from '@northern.tech/store/constants';
 import { getDeviceLimit } from '@northern.tech/store/devicesSlice/thunks';
-import { BillingProfile } from '@northern.tech/store/organizationSlice/types';
 import { getCurrentSession, getTenantCapabilities, getTenantsList } from '@northern.tech/store/selectors';
 import { commonErrorFallback, commonErrorHandler } from '@northern.tech/store/store';
 import { setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
@@ -38,6 +37,7 @@ import hashString from 'md5';
 import Cookies from 'universal-cookie';
 
 import { actions, sliceName } from '.';
+import { BillingProfile } from '../api/types/BillingProfile';
 import { SSO_TYPES, auditLogsApiUrl, ssoIdpApiUrlv1, tenantadmApiUrlv1, tenantadmApiUrlv2 } from './constants';
 import { getAuditlogState, getOrganization } from './selectors';
 
@@ -227,9 +227,9 @@ export const setTenantsListState = createAsyncThunk(`${sliceName}/setTenantsList
 });
 
 interface editTenantBody {
+  id: string;
   name: string;
   newLimit: number;
-  id: string;
 }
 export const editTenantDeviceLimit = createAsyncThunk(`${sliceName}/editDeviceLimit`, ({ newLimit, id, name }: editTenantBody, { dispatch }) => {
   return Api.put(`${tenantadmApiUrlv2}/tenants/${id}/child`, { device_limit: newLimit, name })
@@ -275,14 +275,14 @@ export const sendSupportMessage = createAsyncThunk(`${sliceName}/sendSupportMess
     .then(() => Promise.resolve(dispatch(setSnackbar({ message: 'Your request was sent successfully', autoHideDuration: TIMEOUTS.fiveSeconds }))))
 );
 interface requestPlanChangePayload {
-  tenantId: string;
   content: {
-    current_plan: string;
-    requested_plan: string;
     current_addons: string;
+    current_plan: string;
     requested_addons: string;
+    requested_plan: string;
     user_message: string;
   };
+  tenantId: string;
 }
 export const requestPlanChange = createAsyncThunk(
   `${sliceName}/requestPlanChange`,

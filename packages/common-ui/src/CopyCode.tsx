@@ -32,8 +32,8 @@ const useStyles = makeStyles()(theme => ({
 }));
 
 interface CodeProps {
-  className?: string;
   children: ReactNode;
+  className?: string;
   style?: CSSProperties;
 }
 

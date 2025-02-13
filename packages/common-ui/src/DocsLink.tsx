@@ -120,11 +120,11 @@ export const DocsTooltip = ({ anchor = {}, id = '', ...props }) => {
 };
 
 interface DocsLinkProps {
+  [anything: string]: any;
   children: ReactNode;
   className?: string;
   path: string;
   title?: string;
-  [anything: string]: any;
 }
 
 export const DocsLink = forwardRef<HTMLAnchorElement, DocsLinkProps>(({ children, className = '', path, title = '', ...remainder }, ref) => {

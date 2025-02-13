@@ -33,8 +33,8 @@ const useStyles = makeStyles()(() => ({
 }));
 
 interface SortParams {
-  key?: string;
   direction?: 'asc' | 'desc';
+  key?: string;
 }
 
 interface ColumnDefinition {
@@ -53,11 +53,11 @@ interface DetailsTableProps {
   items: any[];
   onChangeSorting: (sortKey: string) => void;
   onItemClick?: (item: any) => void;
+  onRowSelected?: (rowNumber: number[]) => void;
+  selectedRows?: number[];
   sort?: SortParams;
   style?: CSSProperties;
   tableRef: Ref<HTMLTableElement>;
-  onRowSelected?: (rowNumber: number[]) => void;
-  selectedRows?: number[];
 }
 
 export const DetailsTable = ({

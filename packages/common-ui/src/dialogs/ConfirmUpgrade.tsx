@@ -17,11 +17,11 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/
 import { ADDONS, Plan } from '@northern.tech/store/constants';
 
 interface ConfirmUpgradeProps {
-  onConfirm: () => void;
-  onClose: () => void;
-  newPlan: Plan;
-  currentPlan: Plan;
   addOns: { name: string }[];
+  currentPlan: Plan;
+  newPlan: Plan;
+  onClose: () => void;
+  onConfirm: () => void;
 }
 export const ConfirmUpgrade = (props: ConfirmUpgradeProps) => {
   const { onConfirm, onClose, newPlan, currentPlan, addOns } = props;

@@ -31,8 +31,8 @@ const useStyles = makeStyles()(theme => ({
 }));
 
 interface ValueColumnProps {
-  value: ReactNode | string;
   setSnackbar?: (message: string) => void;
+  value: ReactNode | string;
 }
 
 const cutoffLength = 100;
@@ -71,8 +71,8 @@ const ValueColumn = ({ value = '', setSnackbar }: ValueColumnProps) => {
 };
 
 interface KeyColumnProps {
-  value: string;
   chipLikeKey: boolean;
+  value: string;
 }
 
 const KeyColumn = ({ value, chipLikeKey }: KeyColumnProps) => (
@@ -82,9 +82,9 @@ const KeyColumn = ({ value, chipLikeKey }: KeyColumnProps) => (
 );
 
 interface TwoColumnsProps {
-  className?: string;
   children?: ReactNode;
   chipLikeKey?: boolean;
+  className?: string;
   compact?: boolean;
   items?: Record<string, string>;
   KeyComponent?: (props: KeyColumnProps) => ReactNode;

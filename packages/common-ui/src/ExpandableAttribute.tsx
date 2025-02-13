@@ -23,6 +23,7 @@ import copy from 'copy-to-clipboard';
 const defaultClasses = { root: 'attributes' };
 
 interface ExpandableAttributeProps {
+  [x: string]: any;
   className?: string;
   copyToClipboard?: boolean;
   dividerDisabled?: boolean;
@@ -33,7 +34,6 @@ interface ExpandableAttributeProps {
   setSnackbar?: (message: string) => void;
   style?: CSSProperties;
   textClasses?: Record<string, string>;
-  [x: string]: any;
 }
 
 export const ExpandableAttribute = ({
