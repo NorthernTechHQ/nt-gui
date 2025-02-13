@@ -34,13 +34,11 @@ export const ConfirmUpgrade = (props: ConfirmUpgradeProps) => {
         </div>
         <div className="margin-bottom-small">
           Confirm to upgrade to <b>Mender {newPlan.name}</b>, billed at {newPlan.price}. <br />
-          {addOns.map(addon => {
-            return (
-              <div key={addon.name}>
-                The price of your <b>Mender {addon.name}</b> add-on package will change to {ADDONS[addon.name][newPlan.id].price}
-              </div>
-            );
-          })}
+          {addOns.map(addon => (
+            <div key={addon.name}>
+              The price of your <b>Mender {addon.name}</b> add-on package will change to {ADDONS[addon.name][newPlan.id].price}
+            </div>
+          ))}
         </div>
         <div>
           See full details of features and pricing at{' '}

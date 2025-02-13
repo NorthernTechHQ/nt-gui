@@ -350,23 +350,23 @@ export const getRelease = createAsyncThunk(`${sliceName}/getReleases`, async (na
 export const updateReleaseInfo = createAsyncThunk(`${sliceName}/updateReleaseInfo`, ({ name, info }, { dispatch, getState }) =>
   GeneralApi.patch(`${deploymentsApiUrlV2}/deployments/releases/${name}`, info)
     .catch(err => commonErrorHandler(err, `Release details couldn't be updated.`, dispatch))
-    .then(() => {
-      return Promise.all([
+    .then(() =>
+      Promise.all([
         dispatch(actions.receiveRelease({ ...getReleasesById(getState())[name], ...info, name })),
         dispatch(setSnackbar('Release details were updated successfully.', TIMEOUTS.fiveSeconds, ''))
-      ]);
-    })
+      ])
+    )
 );
 
 export const setReleaseTags = createAsyncThunk(`${sliceName}/setReleaseTags`, ({ name, tags = [] }, { dispatch, getState }) =>
   GeneralApi.put(`${deploymentsApiUrlV2}/deployments/releases/${name}/tags`, tags)
     .catch(err => commonErrorHandler(err, `Release tags couldn't be set.`, dispatch))
-    .then(() => {
-      return Promise.all([
+    .then(() =>
+      Promise.all([
         dispatch(actions.receiveRelease({ ...getReleasesById(getState())[name], name, tags })),
         dispatch(setSnackbar('Release tags were set successfully.', TIMEOUTS.fiveSeconds, ''))
-      ]);
-    })
+      ])
+    )
 );
 
 export const getExistingReleaseTags = createAsyncThunk(`${sliceName}/getReleaseTags`, (_, { dispatch }) =>

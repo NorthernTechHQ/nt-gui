@@ -34,6 +34,7 @@ export const CopyTextToClipboard = ({ onCopy = yes, token }: CopyTextProps) => {
   const { classes } = useStyles();
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
+  // eslint-disable-next-line arrow-body-style
   useEffect(() => {
     return () => clearTimeout(timer.current);
   }, []);

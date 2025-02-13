@@ -57,10 +57,9 @@ export const ControlledSearch = ({ className = '', isSearching, name = 'search',
     timer.current = setTimeout(() => (focusLockRef.current = true), TIMEOUTS.oneSecond);
   };
 
+  // eslint-disable-next-line arrow-body-style
   useEffect(() => {
-    return () => {
-      clearTimeout(timer.current);
-    };
+    return () => clearTimeout(timer.current);
   }, []);
 
   useEffect(() => {

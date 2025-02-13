@@ -96,10 +96,9 @@ export const PasswordInput = ({
     }
   }, [confirmationId, message, trigger]);
 
+  // eslint-disable-next-line arrow-body-style
   useEffect(() => {
-    return () => {
-      clearTimeout(timer.current);
-    };
+    return () => clearTimeout(timer.current);
   });
 
   const clearPassClick = () => {

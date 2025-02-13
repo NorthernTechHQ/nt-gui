@@ -97,13 +97,11 @@ beforeAll(async () => {
     unobserve: vi.fn(),
     disconnect: vi.fn()
   }));
-  window.RTCPeerConnection = () => {
-    return {
-      createOffer: () => {},
-      setLocalDescription: () => {},
-      createDataChannel: () => {}
-    };
-  };
+  window.RTCPeerConnection = () => ({
+    createOffer: () => {},
+    setLocalDescription: () => {},
+    createDataChannel: () => {}
+  });
 
   createMocks();
   await server.listen({ onUnhandledRequest: 'error' });
