@@ -18,10 +18,7 @@ import Cookies from 'universal-cookie';
 
 dayjs.extend(utc);
 
-const isEncoded = (uri: string) => {
-  uri = uri || '';
-  return uri !== decodeURIComponent(uri);
-};
+const isEncoded = (uri: string = '') => uri !== decodeURIComponent(uri);
 
 export const fullyDecodeURI = (uri: string) => {
   while (isEncoded(uri)) {
