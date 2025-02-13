@@ -296,8 +296,6 @@ export const detectOsIdentifier = () => {
   return 'Linux';
 };
 
-export const startTimeSort = (a, b) => (b.created > a.created) - (b.created < a.created);
-
 type TimeUnit = 'days' | 'minutes' | 'hours';
 
 interface StandardizedPhase {
