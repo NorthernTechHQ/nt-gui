@@ -11,14 +11,13 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { useLayoutEffect, useRef, useState } from 'react';
 
 const halfASecond = 500;
 
 export const useWindowSize = () => {
   const [size, setSize] = useState({ height: window.innerHeight, width: window.innerWidth });
-  const timer = useRef();
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useLayoutEffect(() => {
     const handleResize = () => {
       timer.current = setTimeout(() => setSize({ height: window.innerHeight, width: window.innerWidth }), halfASecond);

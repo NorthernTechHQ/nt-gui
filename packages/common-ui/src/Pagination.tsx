@@ -71,13 +71,21 @@ export const TablePaginationActions = ({ count, page = 0, onPageChange, rowsPerP
 };
 
 const Pagination = props => {
-  const { className, onChangeRowsPerPage, onChangePage, page = 0, rowsPerPageOptions = defaultRowsPerPageOptions, showCountInfo, ...remainingProps } = props;
+  const {
+    className = '',
+    onChangeRowsPerPage,
+    onChangePage,
+    page = 0,
+    rowsPerPageOptions = defaultRowsPerPageOptions,
+    showCountInfo,
+    ...remainingProps
+  } = props;
   // this is required due to the MUI tablepagination being 0-indexed, whereas we work with 1-indexed apis
   // running it without adjustment will lead to warnings from MUI
   const propsPage = Math.max(page - paginationIndex, 0);
   return (
     <TablePagination
-      className={`flexbox margin-top ${className || ''}`}
+      className={`flexbox margin-top ${className}`}
       classes={{ spacer: 'flexbox no-basis' }}
       component="div"
       labelDisplayedRows={() => ''}

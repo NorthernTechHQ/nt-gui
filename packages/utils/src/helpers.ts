@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 import pluralize from 'pluralize';
@@ -19,12 +18,9 @@ import Cookies from 'universal-cookie';
 
 dayjs.extend(utc);
 
-const isEncoded = uri => {
-  uri = uri || '';
-  return uri !== decodeURIComponent(uri);
-};
+const isEncoded = (uri: string = '') => uri !== decodeURIComponent(uri);
 
-export const fullyDecodeURI = uri => {
+export const fullyDecodeURI = (uri: string) => {
   while (isEncoded(uri)) {
     uri = decodeURIComponent(uri);
   }
@@ -173,7 +169,7 @@ export function deepCompare() {
   return true;
 }
 
-export const stringToBoolean = content => {
+export const stringToBoolean = (content: boolean | number | string) => {
   if (!content) {
     return false;
   }
@@ -193,7 +189,7 @@ export const stringToBoolean = content => {
   }
 };
 
-export const toggle = current => !current;
+export const toggle = (current: boolean) => !current;
 
 export const formatTime = date => {
   if (date && Object.prototype.toString.call(date) === '[object Date]' && !isNaN(date)) {
@@ -203,9 +199,9 @@ export const formatTime = date => {
   }
 };
 
-export const customSort = (direction, field) => (a, b) => {
+export const customSort = (direction: boolean, field: string) => (a, b) => {
   if (typeof a[field] === 'string') {
-    const result = a[field].localeCompare(b[field], { sensitivity: 'case' });
+    const result = a[field].localeCompare(b[field], navigator.language, { sensitivity: 'case' });
     return direction ? result * -1 : result;
   }
   if (a[field] > b[field]) return direction ? -1 : 1;
@@ -220,7 +216,7 @@ export const attributeDuplicateFilter = (filterableArray, attributeName = 'key')
     (item, index, array) => array.findIndex(filter => filter[attributeName] === item[attributeName] && filter.scope === item.scope) == index
   );
 
-export const unionizeStrings = (someStrings, someOtherStrings) => {
+export const unionizeStrings = (someStrings: string[], someOtherStrings: string[]) => {
   const startingPoint = new Set(someStrings.filter(item => item.length));
   const uniqueStrings = someOtherStrings.length
     ? someOtherStrings.reduce((accu, item) => {
@@ -233,7 +229,7 @@ export const unionizeStrings = (someStrings, someOtherStrings) => {
   return [...uniqueStrings];
 };
 
-export const getFormattedSize = bytes => {
+export const getFormattedSize = (bytes: number) => {
   const suffixes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   if (!bytes) {
@@ -242,9 +238,24 @@ export const getFormattedSize = bytes => {
   return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${suffixes[i]}`;
 };
 
+type DeviceAttribute = string | string[];
+
+// should be inferred from ATTRIBUTE_SCOPES instead
+type DeviceAttributes = {
+  identity?: DeviceAttribute;
+  inventory?: DeviceAttribute;
+  monitor?: DeviceAttribute;
+  system?: DeviceAttribute;
+  tags?: DeviceAttribute;
+};
+
+interface DeviceWithAttributes {
+  attributes: DeviceAttributes;
+}
+
 const collectAddressesFrom = devices =>
-  devices.reduce((collector, { attributes = {} }) => {
-    const ips = Object.entries(attributes).reduce((accu, [name, value]) => {
+  devices.reduce((collector: string[], { attributes = {} }: DeviceWithAttributes) => {
+    const ips = Object.entries(attributes).reduce((accu: string[], [name, value]) => {
       if (name.startsWith('ipv4')) {
         if (Array.isArray(value)) {
           const texts = value.map(text => text.slice(0, text.indexOf('/')));
@@ -282,11 +293,27 @@ export const detectOsIdentifier = () => {
   return 'Linux';
 };
 
-export const startTimeSort = (a, b) => (b.created > a.created) - (b.created < a.created);
+type TimeUnit = 'days' | 'minutes' | 'hours';
 
-export const standardizePhases = phases =>
+interface StandardizedPhase {
+  batch_size: number;
+  delay?: number;
+  delayUnit?: TimeUnit;
+  start_ts?: number;
+}
+
+// should use this from generated MenderTypes instead, likely from a separate types package
+interface DeploymentPhase {
+  batch_size?: number;
+  start_ts?: string;
+  device_count?: number;
+}
+
+type UiDeploymentPhase = DeploymentPhase & StandardizedPhase;
+
+export const standardizePhases = (phases: UiDeploymentPhase[]) =>
   phases.map((phase, index) => {
-    let standardizedPhase = { batch_size: phase.batch_size, start_ts: index };
+    let standardizedPhase = { batch_size: phase.batch_size, start_ts: index } as StandardizedPhase;
     if (phase.delay) {
       standardizedPhase.delay = phase.delay;
       standardizedPhase.delayUnit = phase.delayUnit || 'hours';
@@ -298,7 +325,19 @@ export const standardizePhases = phases =>
     return standardizedPhase;
   });
 
-const getInstallScriptArgs = ({ isHosted, isPreRelease, hasMonitor }) => {
+interface DebConfigurationProps {
+  deviceType?: string;
+  hasMonitor: boolean;
+  ipAddress?: string;
+  isDemoMode: boolean;
+  isHosted: boolean;
+  isOnboarding: boolean;
+  isPreRelease: boolean;
+  tenantToken?: string;
+  token: string;
+}
+
+const getInstallScriptArgs = ({ isHosted, isPreRelease, hasMonitor }: Partial<DebConfigurationProps>) => {
   let installScriptArgs = '--demo';
   installScriptArgs = isPreRelease ? `${installScriptArgs} -c experimental` : installScriptArgs;
   installScriptArgs = isHosted && hasMonitor ? `${installScriptArgs} --commercial` : installScriptArgs;
@@ -306,7 +345,7 @@ const getInstallScriptArgs = ({ isHosted, isPreRelease, hasMonitor }) => {
   return installScriptArgs;
 };
 
-const getSetupArgs = ({ deviceType = 'generic-armv6', ipAddress, isDemoMode, tenantToken, isOnboarding }) => {
+const getSetupArgs = ({ deviceType = 'generic-armv6', ipAddress, isDemoMode, tenantToken, isOnboarding }: Partial<DebConfigurationProps>) => {
   let menderSetupArgs = `--quiet --device-type "${deviceType}"`;
   menderSetupArgs = tenantToken ? `${menderSetupArgs} --tenant-token $TENANT_TOKEN` : menderSetupArgs;
   // in production we use polling intervals from the client examples: https://github.com/mendersoftware/mender/blob/master/examples/mender.conf.production
@@ -323,7 +362,7 @@ const getSetupArgs = ({ deviceType = 'generic-armv6', ipAddress, isDemoMode, ten
 
 const installComponents = '--force-mender-client4';
 
-export const getDebConfigurationCode = props => {
+export const getDebConfigurationCode = (props: DebConfigurationProps) => {
   const { tenantToken, token, isPreRelease } = props;
   const envVars = tenantToken ? `JWT_TOKEN="${token}"\nTENANT_TOKEN="${tenantToken}"\n` : '';
   const installScriptArgs = getInstallScriptArgs(props);
@@ -332,7 +371,7 @@ export const getDebConfigurationCode = props => {
   return `${envVars}wget -O- ${scriptUrl} | sudo bash -s -- ${installScriptArgs} ${installComponents} -- ${menderSetupArgs}`;
 };
 
-export const getSnackbarMessage = (skipped, done) => {
+export const getSnackbarMessage = (skipped: number, done: number) => {
   pluralize.addIrregularRule('its', 'their');
   const skipText = skipped
     ? `${skipped} ${pluralize('devices', skipped)} ${pluralize('have', skipped)} more than one pending authset. Expand ${pluralize(
@@ -344,14 +383,21 @@ export const getSnackbarMessage = (skipped, done) => {
   return `${doneText}${skipText}`;
 };
 
-export const extractSoftware = (attributes = {}) => {
-  const softwareKeys = Object.keys(attributes).reduce((accu, item) => {
+type SoftwareInformationEntry = [string, DeviceAttribute];
+
+type SoftwareInformation = {
+  software: SoftwareInformationEntry[];
+  nonSoftware: SoftwareInformationEntry[];
+};
+
+export const extractSoftware = (attributes: DeviceAttributes = {}) => {
+  const softwareKeys = Object.keys(attributes).reduce<string[]>((accu, item) => {
     if (item.endsWith('.version')) {
       accu.push(item.substring(0, item.lastIndexOf('.')));
     }
     return accu;
   }, []);
-  return Object.entries(attributes).reduce(
+  return Object.entries(attributes).reduce<SoftwareInformation>(
     (accu, item) => {
       if (softwareKeys.some(key => item[0].startsWith(key))) {
         accu.software.push(item);
@@ -364,11 +410,18 @@ export const extractSoftware = (attributes = {}) => {
   );
 };
 
-export const extractSoftwareItem = (artifactProvides = {}) => {
+type SoftwareItem = {
+  key: string;
+  name: string;
+  version: DeviceAttribute;
+  nestingLevel: number;
+};
+
+export const extractSoftwareItem = (artifactProvides: DeviceAttributes = {}) => {
   const { software } = extractSoftware(artifactProvides);
   return (
     software
-      .reduce((accu, item) => {
+      .reduce<SoftwareItem[]>((accu, item) => {
         const infoItems = item[0].split('.');
         if (infoItems[infoItems.length - 1] !== 'version') {
           return accu;
@@ -384,13 +437,13 @@ export const extractSoftwareItem = (artifactProvides = {}) => {
       // we assume the smaller the nesting level in the software name, the closer the software is to the rootfs/ the higher the chances we show the rootfs
       // sort based on this assumption & then only return the first item (can't use index access, since there might not be any software item at all)
       .sort((a, b) => a.nestingLevel - b.nestingLevel)
-      .reduce((accu, item) => accu ?? item, undefined)
+      .reduce((accu, item) => accu ?? item)
   );
 };
 
 const cookies = new Cookies();
 
-export const createDownload = (target, filename, token) => {
+export const createDownload = (target: string, filename: string, token: string) => {
   let link = document.createElement('a');
   link.setAttribute('href', target);
   link.setAttribute('download', filename);
@@ -406,17 +459,20 @@ export const createDownload = (target, filename, token) => {
   document.body.removeChild(link);
 };
 
-export const createFileDownload = (content, filename, token) => createDownload('data:text/plain;charset=utf-8,' + encodeURIComponent(content), filename, token);
+export const createFileDownload = (content: string, filename: string, token: string) =>
+  createDownload('data:text/plain;charset=utf-8,' + encodeURIComponent(content), filename, token);
 
-export const getISOStringBoundaries = currentDate => {
+export const getISOStringBoundaries = (currentDate: Date) => {
   const date = [currentDate.getUTCFullYear(), `0${currentDate.getUTCMonth() + 1}`.slice(-2), `0${currentDate.getUTCDate()}`.slice(-2)].join('-');
   return { start: `${date}T00:00:00.000`, end: `${date}T23:59:59.999` };
 };
 
-export const extractErrorMessage = (err, fallback = '') =>
+// err format from the backend can unfortunately still not be relied on
+export const extractErrorMessage = (err, fallback: string = '') =>
   err.response?.data?.error?.message || err.response?.data?.error || err.error || err.message || fallback;
 
-export const preformatWithRequestID = (res, failMsg) => {
+// res is "usually" an axios response
+export const preformatWithRequestID = (res, failMsg: string) => {
   // ellipsis line
   if (failMsg.length > 100) failMsg = `${failMsg.substring(0, 220)}...`;
 
@@ -431,6 +487,10 @@ export const preformatWithRequestID = (res, failMsg) => {
   return failMsg;
 };
 
+type UnixDateRange = { start: number | null; end: number | null };
+
+type UnixDateRangeParam = string | Date | number | null;
+
 /**
  * Converts provided start and end dates into a range of UNIX timestamps.
  * If either date is invalid or null, that value in the returned object will remain null.
@@ -440,10 +500,10 @@ export const preformatWithRequestID = (res, failMsg) => {
  * @returns {{ start: number|null, end: number|null }} An object containing the start and end times as UNIX timestamps, or null if invalid.
  *
  */
-export const dateRangeToUnix = (startDate = null, endDate = null) => {
+export const dateRangeToUnix = (startDate: UnixDateRangeParam = null, endDate: UnixDateRangeParam = null) => {
   const start = dayjs(startDate);
   const end = dayjs(endDate);
-  let unixRange = { start: null, end: null };
+  let unixRange: UnixDateRange = { start: null, end: null };
 
   if (start.isValid()) {
     unixRange.start = start.utc().startOf('day').unix();
@@ -456,9 +516,9 @@ export const dateRangeToUnix = (startDate = null, endDate = null) => {
   return unixRange;
 };
 
-export const byteArrayToString = body => String.fromCharCode(...body);
+export const byteArrayToString = (body: Buffer) => String.fromCharCode(...body);
 
-export const blobToString = blob =>
+export const blobToString = (blob: Blob) =>
   new Promise(resolve => {
     let fr = new FileReader();
     fr.onload = () => {
