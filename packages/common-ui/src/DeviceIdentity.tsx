@@ -93,8 +93,8 @@ const adornments = [
 
 interface DeviceIdentityDisplayProps {
   device: Device; // TODO: replace with a UI device type
-  isEditable?: boolean;
   hasAdornment?: boolean;
+  isEditable?: boolean;
   style?: CSSProperties;
 }
 

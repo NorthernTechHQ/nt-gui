@@ -20,11 +20,11 @@ import { duplicateFilter, unionizeStrings } from '@northern.tech/utils/helpers';
 
 interface ChipSelectProps {
   className?: string;
-  name: string;
   disabled?: boolean;
   helperText: string;
   inputRef: RefObject<Element>;
   label?: string;
+  name: string;
   options?: string[];
   placeholder?: string;
 }

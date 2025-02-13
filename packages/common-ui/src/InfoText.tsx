@@ -20,10 +20,10 @@ const useStyles = makeStyles()(theme => ({
 }));
 
 interface InfoTextProps {
-  className?: string;
-  children: ReactNode;
-  variant?: 'dense';
   [x: string]: any;
+  children: ReactNode;
+  className?: string;
+  variant?: 'dense';
 }
 
 export const InfoText = ({ children, className = '', variant, ...props }: InfoTextProps) => {

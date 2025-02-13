@@ -24,9 +24,9 @@ const useStyles = makeStyles()(theme => ({
 }));
 
 interface InfoHintProps {
+  [x: string]: any;
   className?: string;
   content: ReactNode;
-  [x: string]: any;
 }
 
 export const InfoHint = ({ className = '', content, ...props }: InfoHintProps) => {
@@ -40,9 +40,9 @@ export const InfoHint = ({ className = '', content, ...props }: InfoHintProps) =
 };
 
 interface InfoHintContainerProps {
-  className?: string;
-  children: ReactNode;
   [x: string]: any;
+  children: ReactNode;
+  className?: string;
 }
 
 export const InfoHintContainer = ({ children, className = 'margin-left-small', ...props }: InfoHintContainerProps) => {

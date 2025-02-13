@@ -67,6 +67,14 @@ module.exports = {
     'react/style-prop-object': 'error',
     'react/void-dom-elements-no-children': 'error',
     'sonarjs/cognitive-complexity': ['error', 17],
+    '@typescript-eslint/member-ordering': [
+      'error',
+      {
+        'default': {
+          'order': 'alphabetically-case-insensitive'
+        }
+      }
+    ],
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-unused-vars': 'error',

@@ -31,8 +31,8 @@ const useStyles = makeStyles()(theme => ({
 interface EditableLongTextProps {
   contentFallback?: string;
   fullWidth?: boolean;
-  original: string;
   onChange: (changed: string) => void;
+  original: string;
   placeholder?: string;
 }
 
