@@ -42,7 +42,7 @@ const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
 const sortingDefaults = { direction: SORTING_OPTIONS.desc, key: 'modified' };
 
 const flattenRelease = (release, stateRelease) => {
-  const updatedArtifacts = release.artifacts?.sort(customSort(1, 'modified')) || [];
+  const updatedArtifacts = release.artifacts?.sort(customSort(true, 'modified')) || [];
   const { artifacts, deviceTypes, modified } = updatedArtifacts.reduce(
     (accu, item) => {
       accu.deviceTypes.push(...item.device_types_compatible);
