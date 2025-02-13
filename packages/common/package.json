@@ -49,10 +49,10 @@
     "@northern.tech/utils": "*",
     "dayjs": "^1.x",
     "msgpack5": "^6.x",
-    "react": "^19.x",
-    "react-dom": "^19.x",
+    "react": "^18.x || ^19.x",
+    "react-dom": "^18.x || ^19.x",
     "react-redux": "^9.x",
-    "react-router-dom": "^7.x",
+    "react-router-dom": "^6.x || ^7.x",
     "tss-react": "^4.x",
     "universal-cookie": "7.1.x"
   }
