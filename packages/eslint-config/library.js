@@ -33,6 +33,7 @@ module.exports = {
   },
   ignorePatterns: ['node_modules/', 'dist/'],
   rules: {
+    'arrow-body-style': ['error', 'as-needed'],
     'consistent-this': ['error', 'self'],
     'import/no-named-as-default': 'off',
     'no-console': 'off',

@@ -38,6 +38,7 @@ module.exports = {
   },
   ignorePatterns: ['node_modules/', 'dist/', '.eslintrc.js', '**/*.css'],
   rules: {
+    'arrow-body-style': ['error', 'as-needed'],
     'consistent-this': ['error', 'self'],
     'import/no-named-as-default': 'off',
     'no-console': 'off',

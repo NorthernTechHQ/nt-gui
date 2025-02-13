@@ -149,9 +149,7 @@ export const appSlice = createSlice({
         ...action.payload
       };
     },
-    setEnvironmentData: (state, action) => {
-      return { ...state, ...action.payload };
-    }
+    setEnvironmentData: (state, action) => ({ ...state, ...action.payload })
   }
 });
 
