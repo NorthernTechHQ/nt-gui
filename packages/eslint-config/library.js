@@ -43,6 +43,14 @@ module.exports = {
     quotes: ['error', 'single', { allowTemplateLiterals: true }],
     'sonarjs/cognitive-complexity': ['error', 17],
     '@typescript-eslint/ban-ts-comment': 'off',
+    '@typescript-eslint/member-ordering': [
+      'error',
+      {
+        'default': {
+          'order': 'alphabetically'
+        }
+      }
+    ],
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-unused-vars': 'error'
   }
