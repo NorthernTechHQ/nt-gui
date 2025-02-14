@@ -305,8 +305,8 @@ interface StandardizedPhase {
 // should use this from generated MenderTypes instead, likely from a separate types package
 interface DeploymentPhase {
   batch_size?: number;
-  start_ts?: string;
   device_count?: number;
+  start_ts?: string;
 }
 
 type UiDeploymentPhase = DeploymentPhase & StandardizedPhase;
@@ -386,8 +386,8 @@ export const getSnackbarMessage = (skipped: number, done: number) => {
 type SoftwareInformationEntry = [string, DeviceAttribute];
 
 type SoftwareInformation = {
-  software: SoftwareInformationEntry[];
   nonSoftware: SoftwareInformationEntry[];
+  software: SoftwareInformationEntry[];
 };
 
 export const extractSoftware = (attributes: DeviceAttributes = {}) => {
@@ -413,8 +413,8 @@ export const extractSoftware = (attributes: DeviceAttributes = {}) => {
 type SoftwareItem = {
   key: string;
   name: string;
-  version: DeviceAttribute;
   nestingLevel: number;
+  version: DeviceAttribute;
 };
 
 export const extractSoftwareItem = (artifactProvides: DeviceAttributes = {}) => {
@@ -487,7 +487,7 @@ export const preformatWithRequestID = (res, failMsg: string) => {
   return failMsg;
 };
 
-type UnixDateRange = { start: number | null; end: number | null };
+type UnixDateRange = { end: number | null; start: number | null };
 
 type UnixDateRangeParam = string | Date | number | null;
 
