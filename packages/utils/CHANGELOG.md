@@ -1,4 +1,34 @@
 ---
+## @northern.tech/utils-0.6.0 - 2025-02-14
+
+
+### Bug Fixes
+
+#### Utils
+
+
+- *(utils)* Aligned with Mender state to keep Mender only utils in product codebase
+
+ ([bdd002c](https://github.com/NorthernTechHQ/nt-gui/commit/bdd002cc9639b75eea0e2495b13a5b6df7a2af45))  by @mzedel
+
+
+
+
+
+### Features
+
+#### Utils
+
+
+- *(utils)* Added more types & enabled type checking
+
+ ([6f8c272](https://github.com/NorthernTechHQ/nt-gui/commit/6f8c2724d695e94dfc92bac67be66cfffb400299))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/utils-0.5.0 - 2025-02-05
 
 
