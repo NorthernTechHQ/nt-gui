@@ -1,4 +1,25 @@
 ---
+## @northern.tech/eslint-config-0.3.0 - 2025-02-14
+
+
+### Features
+
+#### Eslint-config
+
+
+- *(eslint-config)* Activated arrow fns lint rule to ensure alignment w/ codebase
+
+ ([f8fa9c2](https://github.com/NorthernTechHQ/nt-gui/commit/f8fa9c236072bfd78bf89ed5a75db5270f93bc8c))  by @mzedel
+
+- *(eslint-config)* Enabled ts member ordering
+
+ ([8afad86](https://github.com/NorthernTechHQ/nt-gui/commit/8afad86c814f8036be806910bb437c81a672a28b))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/eslint-config-0.1.0 - 2024-11-05
 
 

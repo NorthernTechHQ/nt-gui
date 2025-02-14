@@ -1,7 +1,7 @@
 {
   "packages/common-ui": "0.3.2",
   "packages/common": "0.2.3",
-  "packages/eslint-config": "0.2.0",
+  "packages/eslint-config": "0.3.0",
   "packages/prettier-config": "0.2.0",
   "packages/store": "0.3.3",
   "packages/typescript-config": "0.1.2",
