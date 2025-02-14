@@ -1,5 +1,5 @@
 ---
-## @northern.tech/common-ui-0.3.2 - 2025-02-05
+## @northern.tech/common-ui-0.4.0 - 2025-02-14
 
 
 ### Bug Fixes
@@ -10,6 +10,23 @@
 - *(common-ui)* Layout adjustments to re-align UI after switch to outlined inputs
 
  ([49c8bbf](https://github.com/NorthernTechHQ/nt-gui/commit/49c8bbf64cea2a91c0dcaec33e9ddbed3716437f))  by @aleksandrychev
+
+- *(common-ui)* Aligned alert severity with (not) usage
+
+ ([3c5ea7b](https://github.com/NorthernTechHQ/nt-gui/commit/3c5ea7b75b42957e83a515f606bf886535202078))  by @mzedel
+
+
+
+
+
+### Features
+
+#### Common-ui
+
+
+- *(common-ui)* Added more stories for some common components
+
+ ([a18b768](https://github.com/NorthernTechHQ/nt-gui/commit/a18b7687e3b38c99242c18377bf410c6361c2694))  by @mzedel
 
 
 
