@@ -1,5 +1,5 @@
 ---
-## @northern.tech/store-0.4.0 - 2025-02-05
+## @northern.tech/store-0.4.0 - 2025-02-14
 
 
 ### Bug Fixes
@@ -24,6 +24,10 @@
 - *(store)* Aligned dependencies with referenced packages
 
  ([182dedd](https://github.com/NorthernTechHQ/nt-gui/commit/182dedd8a4a1f81ed4f22bf9e345bc0e4f73cc2d))  by @mzedel
+
+- *(store)* Aligned sorting behaviour with type expectation & single sorting function
+
+ ([f9d71d4](https://github.com/NorthernTechHQ/nt-gui/commit/f9d71d411907d3ba0106c2c7da4a6f46e5ac2cb0))  by @mzedel
 
 
 
