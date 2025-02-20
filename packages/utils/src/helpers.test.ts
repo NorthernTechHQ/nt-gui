@@ -20,6 +20,7 @@ import {
   detectOsIdentifier,
   duplicateFilter,
   extractSoftware,
+  extractSoftwareItem,
   formatTime,
   fullyDecodeURI,
   getDebConfigurationCode,
@@ -366,6 +367,20 @@ describe('extractSoftware function', () => {
         ['a.whole.lot.of.dots.version', 'test-3']
       ]
     });
+    expect(extractSoftware({ foo: 'myapp' })).toEqual({ nonSoftware: [['foo', 'myapp']], software: [] });
+  });
+});
+
+describe('extractSoftwareItem function', () => {
+  it('works as expected', async () => {
+    expect(
+      extractSoftwareItem({
+        artifact_name: 'myapp',
+        'data-partition.myapp.version': 'v2020.10',
+        list_of_fancy: ['x172']
+      })
+    ).toEqual({ key: 'data-partition', name: 'myapp', nestingLevel: 3, version: 'v2020.10' });
+    expect(extractSoftwareItem({ list_of_fancy: ['x172'] })).toEqual(undefined);
   });
 });
 
