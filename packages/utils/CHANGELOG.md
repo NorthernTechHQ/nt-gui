@@ -1,4 +1,21 @@
 ---
+## @northern.tech/utils-0.6.1 - 2025-02-24
+
+
+### Bug Fixes
+
+#### Utils
+
+
+- *(utils)* Fixed an issue that would prevent (not) finding software in an artifact without newer style software
+
+ ([dfd5aca](https://github.com/NorthernTechHQ/nt-gui/commit/dfd5aca9372299a9e4f456e151d4ed0ddec8d194))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/utils-0.6.0 - 2025-02-14
 
 
