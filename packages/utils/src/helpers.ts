@@ -437,7 +437,7 @@ export const extractSoftwareItem = (artifactProvides: DeviceAttributes = {}) => 
       // we assume the smaller the nesting level in the software name, the closer the software is to the rootfs/ the higher the chances we show the rootfs
       // sort based on this assumption & then only return the first item (can't use index access, since there might not be any software item at all)
       .sort((a, b) => a.nestingLevel - b.nestingLevel)
-      .reduce((accu, item) => accu ?? item)
+      .reduce<SoftwareItem | undefined>((accu, item) => accu ?? item, undefined) // we have to pass in undefined as the reducer will fail with a type error otherwise
   );
 };
 
