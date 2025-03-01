@@ -37,7 +37,7 @@
     "@northern.tech/eslint-config": "*",
     "@northern.tech/typescript-config": "*",
     "eslint": "^8.57.0",
-    "tsup": "8.3.6"
+    "tsup": "8.4.0"
   },
   "dependencies": {
     "dayjs": "^1.x",
@@ -47,7 +47,7 @@
     "react-dom": "^18.x || ^19.x",
     "react-ga4": "^2.x",
     "react-redux": "^9.x",
-    "react-router-dom": "^6.x || ^7.x",
+    "react-router-dom": "^7.x",
     "universal-cookie": "7.1.x",
     "validator": "^13.x"
   }
