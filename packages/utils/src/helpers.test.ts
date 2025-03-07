@@ -11,11 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { defaultState, token } from '../../../tests/mockData';
 import {
   customSort,
+  dateRangeToUnix,
   deepCompare,
   detectOsIdentifier,
   duplicateFilter,
@@ -418,5 +419,90 @@ describe('preformatWithRequestID function', () => {
     const expectedText = 'short text';
     expect(preformatWithRequestID({ data: { request_id: 'someUuidLikeLongerText' } }, expectedText)).toEqual('short text [Request ID: someUuid]');
     expect(preformatWithRequestID(undefined, expectedText)).toEqual(expectedText);
+  });
+});
+
+describe('dateRangeToUnix function', () => {
+  const timestamps = {
+    JAN_1_2025_START: 1735689600, // 2025-01-01 00:00:00 UTC
+    JAN_31_2025_END: 1738367999, // 2025-01-31 23:59:59 UTC
+    JUN_15_2025_START: 1749945600, // 2025-06-15 00:00:00 UTC
+    JUN_16_2025_END: 1750118399 // 2025-06-16 23:59:59 UTC
+  };
+
+  describe.for([
+    'America/New_York',
+    'Asia/Tokyo',
+    'Australia/Sydney',
+    'Europe/London',
+    'Asia/Dubai',
+    'Pacific/Auckland',
+    'Africa/Cairo',
+    'America/Los_Angeles',
+    'Asia/Shanghai',
+    'Europe/Paris',
+    'UTC'
+  ])('works for timezone %s', timezone => {
+    beforeAll(() => {
+      vi.stubEnv('TZ', timezone);
+    });
+
+    afterAll(() => {
+      vi.unstubAllEnvs();
+    });
+
+    it('converts valid date strings to unix timestamps with different timezones', () => {
+      const start = '2025-01-01T00:50:00';
+      const end = '2025-01-31T23:50:00';
+      const stringsResult = dateRangeToUnix(start, end);
+      const objectsResult = dateRangeToUnix(new Date(start), new Date(end));
+      expect(stringsResult).toStrictEqual(objectsResult);
+    });
+
+    it('handles Date objects for', () => {
+      const startDate = new Date('2025-06-15T00:50:00');
+      const endDate = new Date('2025-06-16T23:50:00');
+      const result = dateRangeToUnix(startDate, endDate);
+      expect(result.start).toBe(timestamps.JUN_15_2025_START);
+      expect(result.end).toBe(timestamps.JUN_16_2025_END);
+    });
+
+    it('strings result equals to Date objects', () => {
+      const startDate = new Date('2025-06-15T00:50:00');
+      const endDate = new Date('2025-06-16T23:50:00');
+      const result = dateRangeToUnix(startDate, endDate);
+      expect(result.start).toBe(timestamps.JUN_15_2025_START);
+      expect(result.end).toBe(timestamps.JUN_16_2025_END);
+    });
+
+    it('returns null for invalid dates', () => {
+      const result = dateRangeToUnix('invalid-date', '2025-01-31');
+      expect(result.start).toBeNull();
+      expect(result.end).toBe(timestamps.JAN_31_2025_END);
+    });
+
+    it('handles null inputs', () => {
+      const result = dateRangeToUnix(null, null);
+      expect(result.start).toBeNull();
+      expect(result.end).toBeNull();
+    });
+
+    it('works with only start date', () => {
+      const result = dateRangeToUnix('2025-01-01');
+      expect(result.start).toBe(timestamps.JAN_1_2025_START);
+      expect(result.end).toBeNull();
+    });
+
+    it('works with only end date', () => {
+      const result = dateRangeToUnix(null, '2025-01-31');
+      expect(result.start).toBeNull();
+      expect(result.end).toBe(timestamps.JAN_31_2025_END);
+    });
+
+    it('handles default parameters', () => {
+      const result = dateRangeToUnix();
+      expect(result.start).toBeNull();
+      expect(result.end).toBeNull();
+    });
   });
 });
