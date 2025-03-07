@@ -48,7 +48,7 @@
     "react-idle-timer": "^5.7.2",
     "serve": "^14.2.4",
     "storybook": "^8.5.3",
-    "tsup": "8.3.6",
+    "tsup": "8.4.0",
     "turbo": "^2.4.4",
     "typescript": "^5.8.2",
     "vite": "^6.2.0",
