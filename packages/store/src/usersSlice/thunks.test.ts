@@ -19,6 +19,8 @@ import { setOfflineThreshold } from '@northern.tech/store/thunks';
 import { act } from '@testing-library/react';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import Cookies from 'universal-cookie';
+import { vi } from 'vitest';
 
 import { actions } from '.';
 import { accessTokens, defaultPassword, defaultState, receivedPermissionSets, receivedRoles, testSsoId, userId } from '../../../../tests/mockData';
@@ -76,6 +78,15 @@ export const offlineThreshold = [
   { type: appActions.setOfflineThreshold.type, payload: '2019-01-12T13:00:00.900Z' },
   { type: setOfflineThreshold.fulfilled.type }
 ];
+vi.mock('universal-cookie', () => {
+  const mockCookie = {
+    get: vi.fn(),
+    set: vi.fn(),
+    remove: vi.fn()
+  };
+  return { default: vi.fn(() => mockCookie) };
+});
+const cookies = new Cookies();
 
 /* eslint-disable sonarjs/no-identical-functions */
 describe('user actions', () => {
@@ -544,9 +555,8 @@ describe('user actions', () => {
     const store = mockStore({ ...defaultState, app: { ...defaultState.app, hostedAnnouncement: 'something' } });
     await store.dispatch(setHideAnnouncement({ shouldHide: true }));
     const storeActions = store.getActions();
-    //TODO: uncomment this and fix
-    // expect(cookies.get).toHaveBeenCalledTimes(1);
-    // expect(cookies.set).toHaveBeenCalledTimes(1);
+    expect(cookies.get).toHaveBeenCalledTimes(1);
+    expect(cookies.set).toHaveBeenCalledTimes(1);
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
@@ -653,8 +663,6 @@ describe('user actions', () => {
       { type: setAllTooltipsReadState.fulfilled.type }
     ];
     await store.dispatch(setAllTooltipsReadState('testRead'));
-    vi.advanceTimersByTime(2000);
-    vi.runAllTimers();
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));

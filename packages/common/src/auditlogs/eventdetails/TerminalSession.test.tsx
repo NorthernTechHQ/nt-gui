@@ -13,8 +13,6 @@
 //    limitations under the License.
 import React from 'react';
 
-// import * as DeviceActions from '@northern.tech/store/devicesSlice/thunks';
-//TODO: resolve issues with the import causing vi.spy to make all functions in module undefined
 import { act, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -55,9 +53,9 @@ describe('TerminalSession Component', () => {
     socketSpyFactory.mockReset();
     window.matchMedia = oldMatchMedia;
   });
-  //TODO: resolve issue with spy
-  it.skip('renders correctly', async () => {
-    // const sessionSpy = vi.spyOn(DeviceActions, 'getSessionDetails');
+  it('renders correctly', async () => {
+    const DeviceActions = await import('@northern.tech/store/devicesSlice/thunks');
+    const sessionSpy = vi.spyOn(DeviceActions, 'getSessionDetails');
     const ui = <TerminalSession item={defaultState.organization.auditlog.events[2]} />;
     const { baseElement, rerender } = render(ui, {
       preloadedState: {
@@ -79,7 +77,8 @@ describe('TerminalSession Component', () => {
       vi.runAllTimers();
       vi.runAllTicks();
     });
-    // expect(sessionSpy).toHaveBeenCalled();
+    expect(await screen.findByText('WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW')).toBeInTheDocument();
+    expect(sessionSpy).toHaveBeenCalled();
     await waitFor(() => expect(screen.queryByText(/Device type/i)).toBeVisible());
 
     const view = baseElement.firstChild.firstChild;
