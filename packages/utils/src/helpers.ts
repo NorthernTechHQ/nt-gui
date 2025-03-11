@@ -489,28 +489,34 @@ export const preformatWithRequestID = (res, failMsg: string) => {
 
 type UnixDateRange = { end: number | null; start: number | null };
 
-type UnixDateRangeParam = string | Date | number | null;
+type UnixDateRangeParam = string | Date | null;
 
 /**
- * Converts provided start and end dates into a range of UNIX timestamps.
+ * Converts dates into Unix timestamps representing the start and end of their respective days.
+ * Start timestamp will be set to 00:00:00, end timestamp will be set to 23:59:59.
  * If either date is invalid or null, that value in the returned object will remain null.
+ * Handles both date strings correctly, preserving the exact date.
  *
- * @param {string|Date|number|null} [startDate=null] - The start date of the range.
- * @param {string|Date|number|null} [endDate=null] - The end date of the range.
- * @returns {{ start: number|null, end: number|null }} An object containing the start and end times as UNIX timestamps, or null if invalid.
- *
+ * @param {string|Date|null} [startDate=null] - The start date of the range.
+ * @param {string|Date|null} [endDate=null] - The end date of the range.
+ * @returns {{ start: number|null, end: number|null }} An object containing the start and end times as UNIX timestamps, or null if invalid or not set.
  */
-export const dateRangeToUnix = (startDate: UnixDateRangeParam = null, endDate: UnixDateRangeParam = null) => {
-  const start = dayjs(startDate);
-  const end = dayjs(endDate);
+export const dateRangeToUnix = (startDate: UnixDateRangeParam = null, endDate: UnixDateRangeParam = null): UnixDateRange => {
   let unixRange: UnixDateRange = { start: null, end: null };
+  const format = 'YYYY-MM-DD';
 
-  if (start.isValid()) {
-    unixRange.start = start.utc().startOf('day').unix();
+  if (startDate !== null) {
+    let start = dayjs.utc(dayjs(startDate).format(format));
+    if (start.isValid()) {
+      unixRange.start = start.startOf('day').unix();
+    }
   }
 
-  if (end.isValid()) {
-    unixRange.end = end.utc().endOf('day').unix();
+  if (endDate !== null) {
+    const end = dayjs.utc(dayjs(endDate).format(format));
+    if (end.isValid()) {
+      unixRange.end = end.endOf('day').unix();
+    }
   }
 
   return unixRange;
