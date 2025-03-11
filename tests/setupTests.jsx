@@ -114,6 +114,7 @@ beforeAll(async () => {
     observe: vi.fn(),
     disconnect: vi.fn()
   });
+  window.prompt = vi.fn();
   window.IntersectionObserver = vi.fn().mockImplementation(intersectionObserverMock);
   vi.spyOn(React, 'useEffect').mockImplementation(React.useLayoutEffect);
 
