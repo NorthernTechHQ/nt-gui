@@ -1,4 +1,21 @@
 ---
+## @northern.tech/utils-0.6.2 - 2025-03-11
+
+
+### Bug Fixes
+
+#### Utils
+
+
+- *(utils)* Fixed dateRangeToUnix function where start date was off by -1 day in some cases
+
+([MEN-8150](https://northerntech.atlassian.net/browse/MEN-8150)) ([4af1f7a](https://github.com/NorthernTechHQ/nt-gui/commit/4af1f7a70a608dddd80c7622117a96d8065d0ef3))  by @aleksandrychev
+
+
+
+
+
+
 ## @northern.tech/utils-0.6.1 - 2025-02-24
 
 
