@@ -1,5 +1,5 @@
 ---
-## @northern.tech/common-ui-0.4.0 - 2025-02-14
+## @northern.tech/common-ui-0.4.0 - 2025-03-11
 
 
 ### Bug Fixes
