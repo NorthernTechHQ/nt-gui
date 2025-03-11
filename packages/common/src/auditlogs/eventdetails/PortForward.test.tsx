@@ -13,8 +13,6 @@
 //    limitations under the License.
 import React from 'react';
 
-// import * as DeviceActions from '@northern.tech/store/devicesSlice/thunks';
-//TODO: resolve issues with the import causing vi.spy to make all functions in module undefined
 import { act, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -24,7 +22,8 @@ import PortForward from './PortForward';
 
 describe('PortForward Component', () => {
   it('renders correctly', async () => {
-    // const sessionSpy = vi.spyOn(DeviceActions, 'getSessionDetails');
+    const DeviceActions = await import('@northern.tech/store/devicesSlice/thunks');
+    const sessionSpy = vi.spyOn(DeviceActions, 'getSessionDetails');
     const ui = <PortForward item={defaultState.organization.auditlog.events[2]} />;
     const { baseElement, rerender } = render(ui, {
       preloadedState: {
@@ -46,7 +45,7 @@ describe('PortForward Component', () => {
       vi.runOnlyPendingTimers();
       vi.runAllTicks();
     });
-    // expect(sessionSpy).toHaveBeenCalled();
+    expect(sessionSpy).toHaveBeenCalled();
 
     const view = baseElement.firstChild.firstChild;
     expect(view).toMatchSnapshot();

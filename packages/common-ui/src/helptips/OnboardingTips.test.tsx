@@ -48,9 +48,7 @@ describe('OnboardingTips Components', () => {
       DeploymentsInprogress,
       DeploymentsPast,
       DeploymentsPastCompletedFailure,
-      DevicesAcceptedOnboarding,
       DevicesPendingAcceptingOnboarding,
-      GetStartedTip,
       SchedulingAllDevicesSelection,
       SchedulingArtifactSelection,
       SchedulingGroupSelection,
@@ -58,6 +56,13 @@ describe('OnboardingTips Components', () => {
     ].forEach(async Component => {
       it(`renders ${Component.displayName || Component.name} correctly`, () => {
         const { baseElement } = render(<Component createdGroup="testgroup" selectedRelease={{ name: 'test', toString: () => 'test' }} />);
+        const view = baseElement.firstChild.firstChild;
+        expect(view).toMatchSnapshot();
+      });
+    });
+    [DevicesAcceptedOnboarding, GetStartedTip].forEach(async Component => {
+      it(`renders ${Component.displayName || Component.name} correctly`, () => {
+        const { baseElement } = render(<Component />);
         const view = baseElement.firstChild.firstChild;
         expect(view).toMatchSnapshot();
       });

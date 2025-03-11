@@ -29,14 +29,6 @@ describe('PhysicalDeviceOnboarding Component', () => {
       ...window.location,
       hostname: 'hosted.mender.io'
     };
-    const _jest = globalThis.jest;
-
-    globalThis.jest = {
-      ...globalThis.jest,
-      advanceTimersByTime: vi.advanceTimersByTime.bind(vi)
-    };
-
-    return () => void (globalThis.jest = _jest);
   });
   afterEach(() => {
     window.location = {

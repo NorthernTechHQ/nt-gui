@@ -1,3 +1,16 @@
+// Copyright 2025 Northern.tech AS
+//
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//
+//        http://www.apache.org/licenses/LICENSE-2.0
+//
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
 import React from 'react';
 import { createMocks } from 'react-idle-timer';
 import { Provider } from 'react-redux';
@@ -38,15 +51,6 @@ const server = setupServer(...handlers);
 const oldWindowLocalStorage = window.localStorage;
 const oldWindowLocation = window.location;
 const oldWindowSessionStorage = window.sessionStorage;
-
-vi.mock('universal-cookie', () => {
-  const mockCookie = {
-    get: vi.fn(),
-    set: vi.fn(),
-    remove: vi.fn()
-  };
-  return vi.fn(() => mockCookie);
-});
 
 vi.mock('uuid', () => ({ v4: () => 'mock-uuid' }));
 
@@ -107,9 +111,10 @@ beforeAll(async () => {
   await server.listen({ onUnhandledRequest: 'error' });
   Object.defineProperty(navigator, 'appVersion', { value: 'Test', writable: true });
   const intersectionObserverMock = () => ({
-    observe: vi.fn,
-    disconnect: vi.fn
+    observe: vi.fn(),
+    disconnect: vi.fn()
   });
+  window.prompt = vi.fn();
   window.IntersectionObserver = vi.fn().mockImplementation(intersectionObserverMock);
   vi.spyOn(React, 'useEffect').mockImplementation(React.useLayoutEffect);
 
