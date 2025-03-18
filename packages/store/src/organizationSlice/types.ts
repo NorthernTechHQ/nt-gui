@@ -12,6 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { AvailableAddon } from '@northern.tech/store/appSlice/constants';
+import { SORTING_OPTIONS } from '@northern.tech/store/commonConstants';
 
 import { ApiQuota } from '../api/types/ApiQuota';
 import { Tenant } from '../api/types/Tenant';
@@ -26,8 +27,8 @@ interface Card {
   last4: string;
 }
 
-interface SortOptions {
-  direction: 'asc' | 'desc';
+export interface SortOptions {
+  direction: keyof typeof SORTING_OPTIONS;
   key?: string;
 }
 

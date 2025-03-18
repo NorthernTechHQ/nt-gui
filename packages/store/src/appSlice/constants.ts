@@ -14,7 +14,9 @@
 //@ts-nocheck
 import { BarChart as BarChartIcon, PieChartOutline as PieChartIcon } from '@mui/icons-material';
 
+// @ts-ignore
 import FlagEU from '../../../../assets/img/flag-eu.svg';
+// @ts-ignore
 import FlagUS from '../../../../assets/img/flag-us.svg';
 
 const startingDeviceCount = {
