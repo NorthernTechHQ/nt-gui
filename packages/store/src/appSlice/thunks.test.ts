@@ -11,11 +11,11 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import { commonErrorHandler } from '@northern.tech/store/store';
 import { searchDevices } from '@northern.tech/store/thunks';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { describe, expect, it } from 'vitest';
 
 import { actions } from '.';
 import { defaultState } from '../../../../tests/mockData';
@@ -103,8 +103,8 @@ describe('app actions', () => {
     const store = mockStore({ ...defaultState });
     const expectedActions = [
       { type: setSearchState.pending.type },
-      { type: searchDevices.pending.type },
       { type: actions.setSearchState.type, payload: { ...defaultState.app.searchState, isSearching: true, searchTerm: 'next!' } },
+      { type: searchDevices.pending.type },
       { type: deviceActions.receivedDevices.type, payload: {} },
       { type: searchDevices.fulfilled.type },
       { type: actions.setSearchState.type, payload: { deviceIds: [], isSearching: false, searchTotal: 0 } },

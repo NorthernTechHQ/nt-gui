@@ -169,7 +169,7 @@ export const TIMEOUTS = {
 export const SORTING_OPTIONS = {
   asc: 'asc',
   desc: 'desc'
-};
+} as const;
 
 export const DEVICE_ONLINE_CUTOFF = { interval: 1, intervalName: timeUnits.days };
 
