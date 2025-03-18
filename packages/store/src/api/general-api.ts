@@ -35,7 +35,7 @@ authenticatedRequest.interceptors.request.use(
 );
 
 const Api = {
-  get: authenticatedRequest.get,
+  get: <T>(url: string, config?: object) => authenticatedRequest.get<T>(url, config),
   delete: (url, data) => authenticatedRequest.request({ method: 'delete', url, data }),
   patch: authenticatedRequest.patch,
   post: authenticatedRequest.post,
