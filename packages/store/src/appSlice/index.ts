@@ -24,7 +24,7 @@ const getYesterday = () => {
   return today.toISOString();
 };
 
-type Repository = {
+export type Repository = {
   name: string;
   version: string;
 };
@@ -164,20 +164,18 @@ export const appSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    setFeatures: (state, action) => {
+    setFeatures: (state, action: PayloadAction<Record<string, boolean>>) => {
       state.features = {
         ...state.features,
         ...action.payload
       };
     },
     setSnackbar: (state, { payload }: PayloadAction<SnackbarContent | string>) => {
-      const isString = typeof payload === 'string';
-
-      const message = isString ? payload : payload.message;
-      const autoHideDuration = isString ? undefined : payload.autoHideDuration;
-      const action = isString ? undefined : payload.action;
-      const preventClickToCopy = isString ? false : (payload.preventClickToCopy ?? false);
-
+      if (typeof payload === 'string') {
+        state.snackbar.message = payload;
+        return;
+      }
+      const { message, autoHideDuration, action, preventClickToCopy = false } = payload;
       state.snackbar = {
         message,
         autoHideDuration,
@@ -186,10 +184,10 @@ export const appSlice = createSlice({
         open: !!message
       };
     },
-    setFirstLoginAfterSignup: (state, action) => {
+    setFirstLoginAfterSignup: (state, action: PayloadAction<boolean>) => {
       state.firstLoginAfterSignup = action.payload;
     },
-    setAnnouncement: (state, action) => {
+    setAnnouncement: (state, action: PayloadAction<string>) => {
       state.hostedAnnouncement = action.payload;
     },
     setSearchState: (state, action) => {
@@ -198,26 +196,26 @@ export const appSlice = createSlice({
         ...action.payload
       };
     },
-    setOfflineThreshold: (state, action) => {
+    setOfflineThreshold: (state, action: PayloadAction<string>) => {
       state.offlineThreshold = action.payload;
     },
-    initUpload: (state, action) => {
+    initUpload: (state, action: PayloadAction<{ id: string; upload: Upload }>) => {
       const { id, upload } = action.payload;
       state.uploadsById[id] = upload;
     },
-    uploadProgress: (state, action) => {
+    uploadProgress: (state, action: PayloadAction<{ id: string; progress: number }>) => {
       const { id, progress } = action.payload;
       state.uploadsById[id] = {
         ...state.uploadsById[id],
         progress
       };
     },
-    cleanUpUpload: (state, action) => {
+    cleanUpUpload: (state, action: PayloadAction<string>) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [action.payload]: current, ...remainder } = state.uploadsById;
       state.uploadsById = remainder;
     },
-    setVersionInformation: (state, action) => {
+    setVersionInformation: (state, action: PayloadAction<VersionInformation>) => {
       state.versionInformation = {
         ...state.versionInformation,
         ...action.payload
