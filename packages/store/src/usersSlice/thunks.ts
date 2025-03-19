@@ -33,7 +33,7 @@ import { getOnboardingState, getOrganization, getTooltipsState, getUserSettings 
 import { commonErrorFallback, commonErrorHandler } from '@northern.tech/store/store';
 import { setOfflineThreshold } from '@northern.tech/store/thunks';
 import { mergePermissions } from '@northern.tech/store/utils';
-import { duplicateFilter, extractErrorMessage, isEmpty, preformatWithRequestID } from '@northern.tech/utils/helpers';
+import { duplicateFilter, extractErrorMessage, isEmpty } from '@northern.tech/utils/helpers';
 import { clearAllRetryTimers } from '@northern.tech/utils/retrytimer';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import hashString from 'md5';
@@ -64,7 +64,7 @@ const { setAnnouncement, setSnackbar } = storeActions;
 
 const handleLoginError =
   (err, { token2fa: has2FA, password }, rejectWithValue) =>
-  dispatch => {
+  () => {
     const errorText = extractErrorMessage(err);
     const is2FABackend = errorText.includes('2fa');
     if (is2FABackend && !has2FA) {
@@ -80,7 +80,7 @@ const handleLoginError =
     const errorMessage = `There was a problem logging in. Please check your email${
       twoFAError ? ',' : ' and'
     } password${twoFAError}. If you still have problems, contact an administrator.`;
-    return Promise.reject(dispatch(setSnackbar({ message: preformatWithRequestID(err.response, errorMessage), action: 'Copy to clipboard' })));
+    return rejectWithValue({ error: errorMessage });
   };
 
 /*
@@ -265,7 +265,7 @@ const userActionErrorHandler = (err, type, dispatch) => commonErrorHandler(err, 
 
 export const createUser = createAsyncThunk(`${sliceName}/createUser`, ({ shouldResetPassword, ...userData }, { dispatch }) =>
   GeneralApi.post(`${useradmApiUrl}/users`, { ...userData, send_reset_password: shouldResetPassword })
-    .then(() => Promise.all([dispatch(actions.createdUser(userData)), dispatch(getUserList()), dispatch(setSnackbar(userActions.create.successMessage))]))
+    .then(() => Promise.all([dispatch(getUserList()), dispatch(setSnackbar(userActions.create.successMessage))]))
     .catch(err => userActionErrorHandler(err, 'create', dispatch))
 );
 
@@ -609,7 +609,14 @@ const roleActions = {
   }
 };
 
-const roleActionErrorHandler = (err, type, dispatch) => commonErrorHandler(err, `There was an error ${roleActions[type].errorMessage} the role.`, dispatch);
+const roleActionErrorHandler = (err, type, dispatch, meta) => {
+  const { permissionSetsCreated, name } = meta;
+  let errorContext = `There was an error ${roleActions[type].errorMessage} the role.`;
+  if (permissionSetsCreated) {
+    errorContext += ` Tried to ${type} role ${name} with ${permissionSetsCreated} permission sets.`;
+  }
+  return commonErrorHandler(err, errorContext, dispatch);
+};
 
 export const createRole = createAsyncThunk(`${sliceName}/createRole`, (roleData, { dispatch }) => {
   const { permissionSetsWithScope, role } = transformRoleDataToRole(roleData);
@@ -619,7 +626,7 @@ export const createRole = createAsyncThunk(`${sliceName}/createRole`, (roleData,
     permission_sets_with_scope: permissionSetsWithScope
   })
     .then(() => Promise.all([dispatch(actions.createdRole(role)), dispatch(getRoles()), dispatch(setSnackbar(roleActions.create.successMessage))]))
-    .catch(err => roleActionErrorHandler(err, 'create', dispatch));
+    .catch(err => roleActionErrorHandler(err, 'create', dispatch, { permissionSetsCreated: permissionSetsWithScope.length, name: role.name }));
 });
 
 export const editRole = createAsyncThunk(`${sliceName}/editRole`, (roleData, { dispatch, getState }) => {
@@ -630,7 +637,7 @@ export const editRole = createAsyncThunk(`${sliceName}/editRole`, (roleData, { d
     permission_sets_with_scope: permissionSetsWithScope
   })
     .then(() => Promise.all([dispatch(actions.createdRole(role)), dispatch(getRoles()), dispatch(setSnackbar(roleActions.edit.successMessage))]))
-    .catch(err => roleActionErrorHandler(err, 'edit', dispatch));
+    .catch(err => roleActionErrorHandler(err, 'edit', dispatch, { permissionSetsCreated: permissionSetsWithScope.length, name: role.name }));
 });
 
 export const removeRole = createAsyncThunk(`${sliceName}/removeRole`, (roleId, { dispatch }) =>
