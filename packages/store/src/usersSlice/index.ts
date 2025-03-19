@@ -39,6 +39,7 @@ export const initialState = {
   rolesById: {
     ...rolesById
   },
+  rolesInitialized: false,
   settingsInitialized: false,
   showConnectDeviceDialog: false,
   showFeedbackDialog: false,
@@ -75,10 +76,6 @@ export const usersSlice = createSlice({
       state.byId[action.payload.id] = action.payload;
       state.currentUser = action.payload.id;
     },
-    createdUser: (state, action) => {
-      // the new user gets a 0 as id, since this will be overwritten by the retrieved userlist anyway + there is no way to know the id before
-      state.byId[0] = action.payload;
-    },
     removedUser: (state, action) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [action.payload]: removedUser, ...byId } = state.byId;
@@ -96,6 +93,7 @@ export const usersSlice = createSlice({
     },
     receivedRoles: (state, action) => {
       state.rolesById = action.payload;
+      state.rolesInitialized = true;
     },
     createdRole: (state, action) => {
       state.rolesById[action.payload.name] = {
