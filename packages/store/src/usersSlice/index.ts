@@ -11,14 +11,89 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
-import { createSlice } from '@reduxjs/toolkit';
+import { DeploymentPhase, TenantInfo, TenantsIdName, UserUseradm } from '@northern.tech/store/api/types/MenderTypes';
+import { FilterOperator } from '@northern.tech/store/commonConstants';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-import { READ_STATES, defaultPermissionSets, rolesById } from './constants';
+import { PermissionSet, READ_STATES, ReadState, Role, defaultPermissionSets, rolesById } from './constants';
 
 export const sliceName = 'users';
+export type User = UserUseradm & TenantInfo & { tenants?: TenantsIdName };
+export type UserSession = {
+  expiresAt?: string;
+  token: string;
+};
+export type CustomColumn = {
+  attribute: {
+    name: string;
+    scope: string;
+  };
+  size: number;
+};
 
-export const initialState = {
+type FilterOption = {
+  key: string;
+  operator: FilterOperator;
+  scope: string;
+  value: string;
+};
+export type GlobalSettings = {
+  [x: string]: any;
+  id_attribute?: {
+    attribute: string;
+    scope: string;
+  };
+  previousFilters: FilterOption[];
+  previousPhases: DeploymentPhase[];
+  retries: number;
+};
+type Column = {
+  id: string;
+  key: string;
+  name: string;
+  scope: string;
+  title: string;
+};
+export type UserSettings = {
+  [x: string]: any;
+  columnSelection: Column[];
+  feedbackCollectedAt?: string;
+  mode?: 'light' | 'dark';
+  onboarding: Partial<{
+    address: string;
+    approach: 'physical' | 'virtual';
+    complete: boolean;
+    demoArtifactPort: number;
+    deviceType: string[];
+    progress: string;
+    showTips: null | boolean;
+    showTipsDialog: boolean;
+  }>;
+  tooltips?: object;
+  trackingConsentGiven?: boolean;
+};
+type UserSliceState = {
+  activationCode?: string;
+  byId: Record<string, User>;
+  currentSession?: UserSession | {};
+  currentUser: string | null;
+  customColumns: CustomColumn[];
+  globalSettings: GlobalSettings;
+  permissionSetsById: Record<string, PermissionSet>;
+  qrCode: string | null;
+  rolesById: Record<string, Role>;
+  rolesInitialized: boolean;
+  settingsInitialized: boolean;
+  showConnectDeviceDialog: boolean;
+  showFeedbackDialog: boolean;
+  showStartupNotification: boolean;
+  tooltips: {
+    byId: Record<string, { readState: ReadState }>;
+  };
+  userSettings: UserSettings;
+  userSettingsInitialized: boolean;
+};
+export const initialState: UserSliceState = {
   activationCode: undefined,
   byId: {},
   currentUser: null,
@@ -60,86 +135,86 @@ export const usersSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    receivedQrCode: (state, action) => {
+    receivedQrCode: (state, action: PayloadAction<string | null>) => {
       state.qrCode = action.payload;
     },
-    successfullyLoggedIn: (state, action) => {
+    successfullyLoggedIn: (state, action: PayloadAction<UserSession>) => {
       state.currentSession = action.payload;
     },
-    receivedUserList: (state, action) => {
+    receivedUserList: (state, action: PayloadAction<Record<string, User>>) => {
       state.byId = action.payload;
     },
-    receivedActivationCode: (state, action) => {
+    receivedActivationCode: (state, action: PayloadAction<string>) => {
       state.activationCode = action.payload;
     },
-    receivedUser: (state, action) => {
+    receivedUser: (state, action: PayloadAction<User>) => {
       state.byId[action.payload.id] = action.payload;
       state.currentUser = action.payload.id;
     },
-    removedUser: (state, action) => {
+    removedUser: (state, action: PayloadAction<string>) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [action.payload]: removedUser, ...byId } = state.byId;
       state.byId = byId;
       state.currentUser = state.currentUser === action.payload ? null : state.currentUser;
     },
-    updatedUser: (state, action) => {
+    updatedUser: (state, action: PayloadAction<Partial<User> & { id: string }>) => {
       state.byId[action.payload.id] = {
         ...state.byId[action.payload.id],
         ...action.payload
       };
     },
-    receivedPermissionSets: (state, action) => {
+    receivedPermissionSets: (state, action: PayloadAction<Record<string, PermissionSet>>) => {
       state.permissionSetsById = action.payload;
     },
-    receivedRoles: (state, action) => {
+    receivedRoles: (state, action: PayloadAction<Record<string, Role>>) => {
       state.rolesById = action.payload;
       state.rolesInitialized = true;
     },
-    createdRole: (state, action) => {
+    createdRole: (state, action: PayloadAction<Role>) => {
       state.rolesById[action.payload.name] = {
         ...state.rolesById[action.payload.name],
         ...action.payload
       };
     },
-    removedRole: (state, action) => {
+    removedRole: (state, action: PayloadAction<string>) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [action.payload]: toBeRemoved, ...rolesById } = state.rolesById;
       state.rolesById = rolesById;
     },
-    setCustomColumns: (state, action) => {
+    setCustomColumns: (state, action: PayloadAction<CustomColumn[]>) => {
       state.customColumns = action.payload;
     },
-    setGlobalSettings: (state, action) => {
+    setGlobalSettings: (state, action: PayloadAction<GlobalSettings>) => {
       state.settingsInitialized = true;
       state.globalSettings = {
         ...state.globalSettings,
         ...action.payload
       };
     },
-    setUserSettings: (state, action) => {
+    setUserSettings: (state, action: PayloadAction<UserSettings>) => {
       state.userSettingsInitialized = true;
       state.userSettings = {
         ...state.userSettings,
         ...action.payload
       };
     },
-    setTooltipState: (state, action) => {
+    setTooltipState: (state, action: PayloadAction<{ id: string; readState: ReadState }>) => {
       const { id, readState = READ_STATES.read } = action.payload;
-      state.tooltips.byId[id].readState = readState;
+      state.tooltips.byId[id] = { ...state.tooltips.byId[id], readState };
     },
-    setTooltipsState: (state, action) => {
+    setTooltipsState: (state, action: PayloadAction<UserSliceState['tooltips']['byId']>) => {
       state.tooltips.byId = {
         ...state.tooltips.byId,
         ...action.payload
       };
     },
-    setShowFeedbackDialog: (state, action) => {
+    setShowFeedbackDialog: (state, action: PayloadAction<boolean>) => {
       state.showFeedbackDialog = action.payload;
     },
-    setShowConnectingDialog: (state, action) => {
+    setShowConnectingDialog: (state, action: PayloadAction<boolean>) => {
       state.showConnectDeviceDialog = action.payload;
     },
-    setShowStartupNotification: (state, action) => {
+    setShowStartupNotification: (state, action: PayloadAction<boolean>) => {
       state.showStartupNotification = action.payload;
     }
   }
