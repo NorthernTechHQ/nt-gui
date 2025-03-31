@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TENANT_LIST_DEFAULT } from '@northern.tech/store/constants';
 import { OrganizationState } from '@northern.tech/store/organizationSlice/types';
 import { createSlice } from '@reduxjs/toolkit';
@@ -87,6 +86,9 @@ export const organizationSlice = createSlice({
     },
     setOrganization: (state, action) => {
       state.organization = { ...state.organization, ...action.payload };
+    },
+    setBillingProfile: (state, action) => {
+      state.organization.billing_profile = action.payload;
     },
     setTenantListState: (state, action) => {
       state.tenantList = action.payload;
