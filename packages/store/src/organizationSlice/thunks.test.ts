@@ -13,15 +13,15 @@
 //    limitations under the License.
 // @ts-nocheck
 import { EXTERNAL_PROVIDER, TIMEOUTS } from '@northern.tech/store/constants';
-import { getDeviceLimit } from '@northern.tech/store/devicesSlice/thunks';
+import { setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 
 import { actions } from '.';
 import { defaultState, tenants, webhookEvents } from '../../../../tests/mockData';
 import { actions as appActions } from '../appSlice';
 import { locations } from '../appSlice/constants';
-import { setFirstLoginAfterSignup } from '../appSlice/thunks';
 import { getSessionInfo } from '../auth';
 import { actions as deviceActions } from '../devicesSlice';
 import { SSO_TYPES } from './constants';
@@ -246,6 +246,7 @@ describe('organization actions', () => {
   });
 
   it('should handle account upgrade completion', async () => {
+    const { getDeviceLimit } = await import('@northern.tech/store/devicesSlice/thunks');
     const store = mockStore({ ...defaultState, users: { ...defaultState.users, currentSession: getSessionInfo() } });
     expect(store.getActions()).toHaveLength(0);
     const expectedActions = [

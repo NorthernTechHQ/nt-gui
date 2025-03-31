@@ -13,10 +13,12 @@
 //    limitations under the License.
 import { AvailableAddon } from '@northern.tech/store/appSlice/constants';
 
+import { Address } from '../api/types/Address';
 import { Tenant } from '../api/types/Tenant';
+import { SORTING_OPTIONS } from '../commonConstants';
 
 //TODO: improve types
-interface Card {
+export interface Card {
   brand: string;
   expiration: {
     month: number;
@@ -26,7 +28,7 @@ interface Card {
 }
 
 export interface SortOptions {
-  direction: 'asc' | 'desc';
+  direction: keyof typeof SORTING_OPTIONS;
   key?: string;
 }
 
@@ -78,6 +80,12 @@ export interface OrganizationState {
 export interface Addon {
   enabled: boolean;
   name: AvailableAddon;
+}
+
+export interface BillingProfile {
+  address?: Address;
+  email: string;
+  name: string;
 }
 
 export interface Organization extends Tenant {

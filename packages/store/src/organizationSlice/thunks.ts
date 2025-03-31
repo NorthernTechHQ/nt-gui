@@ -26,23 +26,25 @@ import {
   iotManagerBaseURL,
   locations
 } from '@northern.tech/store/constants';
-import { getDeviceLimit } from '@northern.tech/store/devicesSlice/thunks';
+import { BillingProfile } from '@northern.tech/store/organizationSlice/types';
 import { getCurrentSession, getTenantCapabilities, getTenantsList } from '@northern.tech/store/selectors';
 import { commonErrorFallback, commonErrorHandler } from '@northern.tech/store/store';
-import { setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
+import { getDeviceLimit, setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
 import { dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { jwtDecode } from 'jwt-decode';
 import hashString from 'md5';
 import Cookies from 'universal-cookie';
 
 import { actions, sliceName } from '.';
-import { BillingProfile } from '../api/types/BillingProfile';
 import { SSO_TYPES, auditLogsApiUrl, ssoIdpApiUrlv1, tenantadmApiUrlv1, tenantadmApiUrlv2 } from './constants';
 import { getAuditlogState, getOrganization } from './selectors';
 
 const cookies = new Cookies();
 
+dayjs.extend(utc);
 const { setAnnouncement, setSnackbar } = storeActions;
 const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
 
@@ -114,13 +116,16 @@ export const getCurrentCard = createAsyncThunk(`${sliceName}/getCurrentCard`, (_
   })
 );
 
-export const startUpgrade = createAsyncThunk(`${sliceName}/startUpgrade`, (tenantId, { dispatch }) =>
+export const startUpgrade = createAsyncThunk(`${sliceName}/startUpgrade`, (tenantId: string, { dispatch }) =>
   Api.post(`${tenantadmApiUrlv2}/tenants/${tenantId}/upgrade/start`)
     .then(({ data }) => Promise.resolve(data.secret))
     .catch(err => commonErrorHandler(err, `There was an error upgrading your account:`, dispatch))
 );
 
-export const cancelUpgrade = createAsyncThunk(`${sliceName}/cancelUpgrade`, tenantId => Api.post(`${tenantadmApiUrlv2}/tenants/${tenantId}/upgrade/cancel`));
+export const cancelUpgrade = createAsyncThunk(`${sliceName}/cancelUpgrade`, (tenantId: string) =>
+  Api.post(`${tenantadmApiUrlv2}/tenants/${tenantId}/upgrade/cancel`)
+);
+
 interface completeUpgradePayload {
   billing_profile: BillingProfile;
   plan: AvailablePlans;
@@ -242,6 +247,13 @@ export const editTenantDeviceLimit = createAsyncThunk(`${sliceName}/editDeviceLi
       ])
     )
 );
+export const editBillingProfile = createAsyncThunk(
+  `${sliceName}/editBillingProfileEmail`,
+  ({ billingProfile }: { billingProfile: BillingProfile }, { dispatch }) =>
+    Api.patch(`${tenantadmApiUrlv2}/billing/profile`, billingProfile)
+      .catch(err => commonErrorHandler(err, `Failed to change billing profile`, dispatch))
+      .then(() => Promise.all([dispatch(setSnackbar('Billing Profile was changed successfully')), dispatch(getUserBilling())]))
+);
 export const removeTenant = createAsyncThunk(`${sliceName}/editDeviceLimit`, ({ id }: { id: string }, { dispatch }) =>
   Api.post(`${tenantadmApiUrlv2}/tenants/${id}/remove/start`)
     .catch(err => commonErrorHandler(err, `There was an error removing the tenant`, dispatch))
@@ -267,6 +279,9 @@ export const getUserOrganization = createAsyncThunk(`${sliceName}/getUserOrganiz
     }
     return Promise.all(tasks);
   })
+);
+export const getUserBilling = createAsyncThunk(`${sliceName}/getUserBilling`, (_, { dispatch }) =>
+  Api.get(`${tenantadmApiUrlv2}/billing/profile`).then(res => dispatch(actions.setBillingProfile(res.data)))
 );
 
 export const sendSupportMessage = createAsyncThunk(`${sliceName}/sendSupportMessage`, (content, { dispatch }) =>
