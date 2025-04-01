@@ -30,11 +30,11 @@
     "@northern.tech/prettier-config": "*",
     "@northern.tech/themes": "*",
     "@northern.tech/typescript-config": "*",
-    "@storybook/addon-actions": "^8.6.3",
-    "@storybook/addon-essentials": "^8.6.3",
-    "@storybook/addon-links": "^8.6.3",
-    "@storybook/react": "^8.6.3",
-    "@storybook/react-vite": "^8.6.3",
+    "@storybook/addon-actions": "^8.6.11",
+    "@storybook/addon-essentials": "^8.6.11",
+    "@storybook/addon-links": "^8.6.11",
+    "@storybook/react": "^8.6.11",
+    "@storybook/react-vite": "^8.6.11",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.1",
@@ -51,8 +51,8 @@
     "tsup": "8.4.0",
     "turbo": "^2.4.4",
     "typescript": "^5.8.2",
-    "vite": "^6.2.0",
-    "vitest": "^3.0.7"
+    "vite": "^6.2.4",
+    "vitest": "^3.1.1"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "*"
