@@ -11,21 +11,24 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type {
+  Tenant as BackendTenant,
+  TenantTenantadm as BackendTenantAdminTenant,
+  BillingProfile,
+  Event,
+  Integration
+} from '@northern.tech/store/api/types/MenderTypes';
 import { AvailableAddon } from '@northern.tech/store/appSlice/constants';
 
-import { Address } from '../api/types/Address';
-import { ApiQuota } from '../api/types/ApiQuota';
-import { Tenant } from '../api/types/Tenant';
 import { SORTING_OPTIONS } from '../commonConstants';
 
-//TODO: improve types
 export interface Card {
-  brand: string;
+  brand?: string;
   expiration: {
-    month: number;
-    year: number;
+    month?: number;
+    year?: number;
   };
-  last4: string;
+  last4?: string;
 }
 
 export interface SortOptions {
@@ -33,15 +36,22 @@ export interface SortOptions {
   key?: string;
 }
 
-interface AuditLogSelectionState {
+export interface AuditLogSelectionState {
   detail?: string;
   endDate?: string;
+  isLoading?: boolean;
+  page: number;
+  perPage: number;
   selectedIssue?: string;
   sort: SortOptions;
   startDate?: string;
   total: number;
-  type?: string;
-  user?: string;
+  type?: {
+    queryParameter: string;
+    title: string;
+    value: string;
+  };
+  user?: { id: string };
 }
 
 interface AuditLog {
@@ -49,44 +59,32 @@ interface AuditLog {
   selectionState: AuditLogSelectionState;
 }
 
-interface ExternalDeviceIntegration {
-  connection_string: string;
-  id: string;
-  provider: string;
-}
-
-interface Webhook {
-  events: Array<any>;
+export interface Webhook {
+  events: Event[];
   eventsTotal: number;
 }
+export type Tenant = BackendTenant & BackendTenantAdminTenant;
 
-interface TenantList {
-  selectedTenant: Tenant | null;
+export interface TenantList {
+  page: number;
+  perPage: number;
+  selectedTenant: BackendTenantAdminTenant | null;
   sort: SortOptions;
-  tenants: Tenant[];
+  tenants: BackendTenantAdminTenant[];
   total: number;
 }
+
+export type SSOConfig = any;
 
 export interface OrganizationState {
   auditlog: AuditLog;
   card: Card;
-  externalDeviceIntegrations: ExternalDeviceIntegration[];
+  externalDeviceIntegrations: Integration[];
   intentId: string | null;
-  organization: Organization;
-  ssoConfigs: any[];
+  organization: Partial<Organization>;
+  ssoConfigs: SSOConfig[];
   tenantList: TenantList;
   webhooks: Webhook;
-}
-
-interface ApiLimits {
-  devices: {
-    bursts: any[];
-    quota: ApiQuota;
-  };
-  management: {
-    bursts: any[];
-    quota: ApiQuota;
-  };
 }
 
 export interface Addon {
@@ -94,18 +92,11 @@ export interface Addon {
   name: AvailableAddon;
 }
 
-export interface BillingProfile {
-  address?: Address;
-  email: string;
-  name: string;
-}
-
 export interface Organization extends Tenant {
   addons: Addon[];
-  api_limits: ApiLimits;
+  billing_profile: BillingProfile;
   created_at: string;
   id: string;
   name: string;
-  status: 'active' | 'inactive';
   tenant_token: string;
 }

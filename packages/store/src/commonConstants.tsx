@@ -16,6 +16,8 @@ import React from 'react';
 
 import { mdiAws as AWS, mdiMicrosoftAzure as Azure } from '@mdi/js';
 
+import { Credentials } from './api/types/Credentials';
+
 export const DEVICE_LIST_DEFAULTS = {
   page: 1,
   perPage: 20
@@ -169,7 +171,7 @@ export const TIMEOUTS = {
 export const SORTING_OPTIONS = {
   asc: 'asc',
   desc: 'desc'
-};
+} as const;
 
 export const DEVICE_ONLINE_CUTOFF = { interval: 1, intervalName: timeUnits.days };
 
@@ -184,9 +186,9 @@ export const ATTRIBUTE_SCOPES = {
 export const defaultIdAttribute = Object.freeze({ attribute: 'id', scope: ATTRIBUTE_SCOPES.identity });
 
 const credentialTypes = {
-  aws: 'aws',
-  http: 'http',
-  sas: 'sas',
+  aws: Credentials.type.AWS,
+  http: Credentials.type.HTTP,
+  sas: Credentials.type.SAS,
   x509: 'x509'
 };
 export const EXTERNAL_PROVIDER = {
@@ -225,7 +227,7 @@ export const EXTERNAL_PROVIDER = {
     )
   },
   webhook: {
-    credentialsType: credentialTypes.http,
+    credentialsType: credentialTypes.http as Credentials.type.HTTP,
     deviceTwin: false,
     // disable the webhook provider here, since it is treated different than other integrations, with a custom configuration & management view, etc.
     enabled: false,
