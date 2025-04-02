@@ -93,7 +93,7 @@ const staticRolesByName = {
   ci: 'RBAC_ROLE_CI',
   deploymentsManager: 'RBAC_ROLE_DEPLOYMENTS_MANAGER',
   terminalAccess: 'RBAC_ROLE_REMOTE_TERMINAL'
-};
+} as const;
 
 export const PermissionTypes = {
   Any: 'any',
@@ -492,7 +492,7 @@ export const rolesByName = {
   deploymentCreation: { action: 'CREATE_DEPLOYMENT', object: { type: 'DEVICE_GROUP', value: undefined } },
   groupAccess: { action: 'VIEW_DEVICE', object: { type: 'DEVICE_GROUP', value: undefined } },
   userManagement: { action: 'http', object: { type: 'any', value: `${useradmApiUrlv1}/.*` } }
-};
+} as const;
 export const twoFAStates = {
   enabled: 'enabled',
   disabled: 'disabled',
