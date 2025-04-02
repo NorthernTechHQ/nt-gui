@@ -11,15 +11,16 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import { EXTERNAL_PROVIDER, TIMEOUTS } from '@northern.tech/store/constants';
 import { setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
-import { vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { actions } from '.';
 import { defaultState, tenants, webhookEvents } from '../../../../tests/mockData';
+import { Credentials } from '../api/types/Credentials';
+import { Integration } from '../api/types/Integration';
 import { actions as appActions } from '../appSlice';
 import { locations } from '../appSlice/constants';
 import { getSessionInfo } from '../auth';
@@ -81,7 +82,7 @@ describe('organization actions', () => {
       { type: appActions.setSnackbar.type, payload: { message: 'Deactivation request was sent successfully', autoHideDuration: TIMEOUTS.fiveSeconds } },
       { type: cancelRequest.fulfilled.type }
     ];
-    await store.dispatch(cancelRequest(defaultState.organization.organization.id, 'testReason')).then(() => {
+    await store.dispatch(cancelRequest('testReason')).then(() => {
       const storeActions = store.getActions();
       expect(storeActions).toHaveLength(expectedActions.length);
       expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -105,12 +106,12 @@ describe('organization actions', () => {
     ];
 
     expectations.forEach(({ hostname, location, result }) => {
-      window.location = { ...window.location, hostname };
+      window.location.hostname = hostname;
       const targetLocation = getTargetLocation(location);
       expect(targetLocation).toBe(result ? `https://${result}` : result);
     });
 
-    window.location = { ...window.location, hostname: oldHostname };
+    window.location.hostname = oldHostname;
   });
 
   it('should handle trial creation', async () => {
@@ -127,8 +128,9 @@ describe('organization actions', () => {
       createOrganizationTrial({
         'g-recaptcha-response': 'test',
         email: 'test@test.com',
+        password: '123',
+        name: 'My Organization',
         location: 'us',
-        marketing: true,
         organization: 'test',
         plan: 'os',
         tos: true
@@ -260,7 +262,13 @@ describe('organization actions', () => {
       { type: getUserOrganization.fulfilled.type },
       { type: completeUpgrade.fulfilled.type }
     ];
-    await store.dispatch(completeUpgrade({ tenantId: defaultState.organization.organization.id, plan: 'enterprise' }));
+    await store.dispatch(
+      completeUpgrade({
+        tenantId: defaultState.organization.organization.id,
+        plan: 'enterprise',
+        billing_profile: { address: {}, shipping: {}, email: 'test@example.com', name: 'business' }
+      })
+    );
     const storeActions = store.getActions();
     expect(storeActions).toHaveLength(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -320,7 +328,7 @@ describe('organization actions', () => {
       },
       { type: getAuditLogs.fulfilled.type }
     ];
-    const request = store.dispatch(getAuditLogs({ page: 1, perPage: 20 }));
+    const request = store.dispatch(getAuditLogs({ page: 1, perPage: 20, sort: { direction: 'asc' } }));
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
@@ -330,13 +338,13 @@ describe('organization actions', () => {
   });
   it('should allow auditlog state tracking', async () => {
     const store = mockStore({ ...defaultState });
-    await store.dispatch(setAuditlogsState({ page: 1, sort: { direction: 'something' } }));
+    await store.dispatch(setAuditlogsState({ page: 1, perPage: 20, sort: { direction: 'asc' } }));
     const expectedActions = [
       { type: setAuditlogsState.pending.type },
       { type: getAuditLogs.pending.type },
       {
         type: actions.setAuditLogState.type,
-        payload: { ...defaultState.organization.auditlog.selectionState, isLoading: true, sort: { direction: 'something' } }
+        payload: { ...defaultState.organization.auditlog.selectionState, isLoading: true, sort: { direction: 'asc' } }
       },
       { type: getAuditLogs.fulfilled.type },
       { type: actions.setAuditLogState.type, payload: { isLoading: false } },
@@ -379,7 +387,9 @@ describe('organization actions', () => {
       { type: getIntegrations.fulfilled.type },
       { type: createIntegration.fulfilled.type }
     ];
-    const request = store.dispatch(createIntegration({ connection_string: 'testString', provider: 'iot-hub' }));
+    const request = store.dispatch(
+      createIntegration({ id: '1', credentials: { connection_string: 'testString', type: Credentials.type.SAS }, provider: Integration.provider.IOT_HUB })
+    );
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
@@ -407,7 +417,9 @@ describe('organization actions', () => {
       { type: getIntegrations.fulfilled.type },
       { type: changeIntegration.fulfilled.type }
     ];
-    const request = store.dispatch(changeIntegration({ connection_string: 'testString2', id: 1, provider: 'iot-hub' }));
+    const request = store.dispatch(
+      changeIntegration({ provider: Integration.provider.IOT_CORE, credentials: { connection_string: 'testString2', type: Credentials.type.SAS }, id: '1' })
+    );
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
@@ -449,7 +461,9 @@ describe('organization actions', () => {
       { type: actions.receiveExternalDeviceIntegrations.type, payload: [] },
       { type: deleteIntegration.fulfilled.type }
     ];
-    const request = store.dispatch(deleteIntegration({ id: 1 }));
+    const request = store.dispatch(
+      deleteIntegration({ id: '1', provider: Integration.provider.WEBHOOK, credentials: { type: Credentials.type.HTTP, connection_string: '' } })
+    );
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
@@ -477,7 +491,7 @@ describe('organization actions', () => {
       { type: actions.receiveWebhookEvents.type, payload: { value: webhookEvents, total: 2 } },
       { type: getWebhookEvents.fulfilled.type }
     ];
-    const request = store.dispatch(getWebhookEvents());
+    const request = store.dispatch(getWebhookEvents({ isFollowUp: false }));
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
@@ -644,7 +658,8 @@ describe('organization actions', () => {
     const request = store.dispatch(
       addTenant({
         name: 'Mikita',
-        password: 'eWlXPqo4k8366KOs',
+        users: [{ email: 'test@example.com', role: 'RBAC_ROLE_PERMIT_ALL' }],
+        sso: false,
         device_limit: '2',
         binary_delta: true
       })
