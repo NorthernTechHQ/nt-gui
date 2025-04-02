@@ -36,7 +36,7 @@ authenticatedRequest.interceptors.request.use(
 
 const Api = {
   get: authenticatedRequest.get,
-  delete: (url, data) => authenticatedRequest.request({ method: 'delete', url, data }),
+  delete: (url, data?) => authenticatedRequest.request({ method: 'delete', url, data }),
   patch: authenticatedRequest.patch,
   post: authenticatedRequest.post,
   postUnauthorized: (url, data, config = {}) => axios.post(url, data, { ...commonRequestConfig, ...config }),
