@@ -79,10 +79,6 @@ export const getLatestReleaseInfo = createAsyncThunk(`${sliceName}/getLatestRele
     return Promise.resolve();
   }
   return Promise.all([GeneralApi.get('/versions.json'), GeneralApi.get('/tags.json')])
-    .catch(err => {
-      console.log('init error:', extractErrorMessage(err));
-      return Promise.resolve([{ data: {} }, { data: [] }]);
-    })
     .then(([{ data }, { data: guiTags }]) => {
       if (!guiTags.length) {
         return Promise.resolve();
@@ -113,6 +109,10 @@ export const getLatestReleaseInfo = createAsyncThunk(`${sliceName}/getLatestRele
           })
         )
       );
+    })
+    .catch(err => {
+      console.log('init error:', extractErrorMessage(err));
+      return Promise.resolve();
     });
 });
 
