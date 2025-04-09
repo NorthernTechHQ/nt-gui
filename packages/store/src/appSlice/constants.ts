@@ -11,33 +11,34 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { BarChart as BarChartIcon, PieChartOutline as PieChartIcon } from '@mui/icons-material';
 
+// @ts-ignore
 import FlagEU from '../../../../assets/img/flag-eu.svg';
+// @ts-ignore
 import FlagUS from '../../../../assets/img/flag-us.svg';
 
 const startingDeviceCount = {
   os: 'for first 50 devices',
   professional: 'for first 250 devices'
-};
+} as const;
 
 export const apiRoot = '/api/management';
 export const apiUrl = {
   v1: `${apiRoot}/v1`,
   v2: `${apiRoot}/v2`
-};
+} as const;
 
 export const headerNames = {
   link: 'link',
   location: 'location',
   total: 'x-total-count'
-};
+} as const;
 
 export const chartTypes = {
   bar: { key: 'bar', Icon: BarChartIcon },
   pie: { key: 'pie', Icon: PieChartIcon }
-};
+} as const;
 export const emptyChartSelection = { software: '', group: '', chartType: chartTypes.bar.key, attribute: 'artifact_name' };
 export const defaultReportType = 'distribution';
 export const defaultReports = [{ ...emptyChartSelection, group: null, attribute: 'artifact_name', type: defaultReportType }];
@@ -47,7 +48,7 @@ export const BEGINNING_OF_TIME = '2016-01-01T00:00:00.000Z';
 export const locations = {
   eu: { key: 'eu', title: 'EU', location: 'eu.hosted.mender.io', icon: FlagEU },
   us: { key: 'us', title: 'US', location: 'hosted.mender.io', icon: FlagUS }
-};
+} as const;
 export type AvailablePlans = 'os' | 'professional' | 'enterprise';
 
 export type Plan = {
@@ -190,7 +191,7 @@ export const BENEFITS = {
   },
 
   default: { id: 'default', benefit: 'gain access to this feature', requiredPlan: PLANS.enterprise.id }
-};
+} as const;
 
 export const yes = () => true;
 export const canAccess = yes;
