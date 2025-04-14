@@ -13,5 +13,7 @@
 import { apiUrl } from '@northern.tech/store/constants';
 
 //    limitations under the License.
-export const alertChannels = { email: 'email' };
+export const alertChannels = { email: 'email' } as const;
+export type AlertChannelKey = keyof typeof alertChannels;
+
 export const monitorApiUrlv1 = `${apiUrl.v1}/devicemonitor`;
