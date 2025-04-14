@@ -11,11 +11,24 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 export const sliceName = 'onboarding';
 
-export const initialState = {
+export type OnboardingApproach = 'virtual' | 'physical';
+type OnboardingSliceType = {
+  address?: string;
+  approach: OnboardingApproach | null;
+  complete: boolean;
+  demoArtifactPort: number;
+  deviceConnection?: string;
+  deviceType: string[] | string | null;
+  progress: string | null;
+  showTips: boolean | null;
+  showTipsDialog: boolean;
+};
+
+export const initialState: OnboardingSliceType = {
   approach: null,
   complete: false,
   deviceType: null,
@@ -29,26 +42,26 @@ export const onboardingSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    setOnboardingState: (state, action) => ({ ...state, ...action.payload }),
-    setDemoArtifactPort: (state, action) => {
+    setOnboardingState: (state, action: PayloadAction<Partial<OnboardingSliceType>>) => ({ ...state, ...action.payload }),
+    setDemoArtifactPort: (state, action: PayloadAction<number>) => {
       state.demoArtifactPort = action.payload;
     },
-    setShowOnboardingHelp: (state, action) => {
+    setShowOnboardingHelp: (state, action: PayloadAction<boolean>) => {
       state.showTips = action.payload;
     },
-    setShowDismissOnboardingTipsDialog: (state, action) => {
+    setShowDismissOnboardingTipsDialog: (state, action: PayloadAction<boolean>) => {
       state.showTipsDialog = action.payload;
     },
-    setOnboardingComplete: (state, action) => {
+    setOnboardingComplete: (state, action: PayloadAction<boolean>) => {
       state.complete = action.payload;
     },
-    setOnboardingProgress: (state, action) => {
+    setOnboardingProgress: (state, action: PayloadAction<string>) => {
       state.progress = action.payload;
     },
-    setOnboardingDeviceType: (state, action) => {
+    setOnboardingDeviceType: (state, action: PayloadAction<string[] | string>) => {
       state.deviceType = action.payload;
     },
-    setOnboardingApproach: (state, action) => {
+    setOnboardingApproach: (state, action: PayloadAction<OnboardingApproach>) => {
       state.approach = action.payload;
     }
   }
