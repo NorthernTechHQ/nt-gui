@@ -11,21 +11,25 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
-import { DEVICE_STATES, onboardingSteps as onboardingStepNames, orderedOnboardingSteps as onboardingSteps } from '@northern.tech/store/constants';
+import {
+  DEVICE_STATES,
+  OnboardingStep,
+  onboardingSteps as onboardingStepNames,
+  orderedOnboardingSteps as onboardingSteps
+} from '@northern.tech/store/constants';
 import { getOnboardingState as getCurrentOnboardingState, getUserCapabilities } from '@northern.tech/store/selectors';
+import { AppDispatch, createAppAsyncThunk } from '@northern.tech/store/store';
 import { saveUserSettings } from '@northern.tech/store/thunks';
 import { getDemoDeviceAddress } from '@northern.tech/utils/helpers';
 import Tracking from '@northern.tech/utils/tracking';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import Cookies from 'universal-cookie';
 
-import { actions, sliceName } from '.';
+import { OnboardingApproach, actions, sliceName } from '.';
 
 const cookies = new Cookies();
 
 const applyOnboardingFallbacks = progress => {
-  const step = onboardingSteps[progress];
+  const step = onboardingSteps[progress] as any;
   if (step && step.fallbackStep) {
     return step.fallbackStep;
   }
@@ -74,7 +78,7 @@ const deductOnboardingState = ({ devicesById, devicesByStatus, onboardingState, 
   };
 };
 
-export const getOnboardingState = createAsyncThunk(`${sliceName}/getOnboardingState`, (_, { dispatch, getState }) => {
+export const getOnboardingState = createAppAsyncThunk(`${sliceName}/getOnboardingState`, (_, { dispatch, getState }) => {
   const state = getState();
   let onboardingState = getCurrentOnboardingState(state);
   if (!onboardingState.complete) {
@@ -95,20 +99,26 @@ export const getOnboardingState = createAsyncThunk(`${sliceName}/getOnboardingSt
   return Promise.all([
     dispatch(actions.setOnboardingComplete(onboardingState.complete)),
     dispatch(actions.setOnboardingState(onboardingState)),
+    //TODO: remove once userSlice typed
+    //@ts-ignore
     dispatch(saveUserSettings({ onboarding: onboardingState }))
   ]);
 });
 
-export const setOnboardingDeviceType = createAsyncThunk(`${sliceName}/setOnboardingDeviceType`, (value, { dispatch }) =>
+export const setOnboardingDeviceType = createAppAsyncThunk(`${sliceName}/setOnboardingDeviceType`, (value: string[] | string, { dispatch }) =>
+  //TODO: remove once userSlice typed
+  //@ts-ignore
   Promise.all([dispatch(actions.setOnboardingDeviceType(value)), dispatch(saveUserSettings({ onboarding: { deviceType: value } }))])
 );
 
-export const setOnboardingApproach = createAsyncThunk(`${sliceName}/setOnboardingApproach`, (value, { dispatch }) =>
+export const setOnboardingApproach = createAppAsyncThunk(`${sliceName}/setOnboardingApproach`, (value: OnboardingApproach, { dispatch }) =>
+  //TODO: remove once userSlice typed
+  //@ts-ignore
   Promise.all([dispatch(actions.setOnboardingApproach(value)), dispatch(saveUserSettings({ onboarding: { approach: value } }))])
 );
 
-export const setOnboardingComplete = createAsyncThunk(`${sliceName}/setOnboardingComplete`, (value, { dispatch }) => {
-  let tasks = [Promise.resolve(dispatch(actions.setOnboardingComplete(value)))];
+export const setOnboardingComplete = createAppAsyncThunk(`${sliceName}/setOnboardingComplete`, (value: boolean, { dispatch }) => {
+  const tasks: ReturnType<AppDispatch>[] = [Promise.resolve(dispatch(actions.setOnboardingComplete(value)))];
   if (value) {
     tasks.push(Promise.resolve(dispatch(actions.setShowOnboardingHelp(false))));
     tasks.push(Promise.resolve(dispatch(advanceOnboarding(onboardingStepNames.DEPLOYMENTS_PAST_COMPLETED))));
@@ -116,7 +126,7 @@ export const setOnboardingComplete = createAsyncThunk(`${sliceName}/setOnboardin
   return Promise.all(tasks);
 });
 
-export const setOnboardingCanceled = createAsyncThunk(`${sliceName}/setOnboardingCanceled`, (_, { dispatch }) =>
+export const setOnboardingCanceled = createAppAsyncThunk(`${sliceName}/setOnboardingCanceled`, (_, { dispatch }) =>
   Promise.all([
     Promise.resolve(dispatch(actions.setShowOnboardingHelp(false))),
     Promise.resolve(dispatch(actions.setShowDismissOnboardingTipsDialog(false))),
@@ -129,7 +139,7 @@ export const setOnboardingCanceled = createAsyncThunk(`${sliceName}/setOnboardin
     .then(() => Tracking.event({ category: 'onboarding', action: onboardingStepNames.ONBOARDING_CANCELED }))
 );
 
-export const advanceOnboarding = createAsyncThunk(`${sliceName}/advanceOnboarding`, (stepId, { dispatch, getState }) => {
+export const advanceOnboarding = createAppAsyncThunk(`${sliceName}/advanceOnboarding`, (stepId: OnboardingStep, { dispatch, getState }) => {
   const steps = onboardingSteps;
   const progress = steps.findIndex(step => step === getState().onboarding.progress);
   const stepIndex = steps.findIndex(step => step === stepId);
@@ -142,5 +152,7 @@ export const advanceOnboarding = createAsyncThunk(`${sliceName}/advanceOnboardin
   const state = { ...getCurrentOnboardingState(getState()), progress: madeProgress };
   state.complete = stepIndex + 1 >= onboardingSteps.findIndex(step => step === onboardingStepNames.DEPLOYMENTS_PAST_COMPLETED_FAILURE) ? true : state.complete;
   Tracking.event({ category: 'onboarding', action: stepId });
+  //TODO: remove once userSlice typed
+  //@ts-ignore
   return Promise.all([dispatch(actions.setOnboardingProgress(madeProgress)), dispatch(saveUserSettings({ onboarding: state }))]);
 });
