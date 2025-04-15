@@ -219,7 +219,7 @@ export const editArtifact = createAsyncThunk(`${sliceName}/editArtifact`, ({ id,
       }
       const updatedRelease = {
         ...release,
-        artifacts: release.artifacts.map((artifact, i) => (i === index ? { ...artifact, description: body.description } : artifact))
+        artifacts: release.artifacts.map((artifact, i) => (i === index ? { ...artifact, description: body.description || '' } : artifact))
       };
       return Promise.all([
         dispatch(actions.receiveRelease(updatedRelease)),
