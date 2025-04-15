@@ -23,7 +23,7 @@ import { mapTermsToFilters } from '@northern.tech/store/utils';
 import { customSort, deepCompare, isEmpty, standardizePhases } from '@northern.tech/utils/helpers';
 import Tracking from '@northern.tech/utils/tracking';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { isUUID } from 'validator';
+import isUUID from 'validator/lib/isUUID';
 
 import { actions, sliceName } from '.';
 import { DEPLOYMENT_ROUTES, DEPLOYMENT_STATES, DEPLOYMENT_TYPES, deploymentPrototype, deploymentsApiUrl, deploymentsApiUrlV2 } from './constants';
@@ -58,13 +58,13 @@ const transformDeployments = (deployments, deploymentsById) =>
 
 /*Deployments */
 export const getDeploymentsByStatus = createAsyncThunk(`${sliceName}/getDeploymentsByStatus`, (options = {}, { dispatch, getState }) => {
-  const { status, page = defaultPage, per_page = defaultPerPage, startDate, endDate, group, type, shouldSelect = true, sort = SORTING_OPTIONS.desc } = options;
+  const { status, page = defaultPage, perPage = defaultPerPage, startDate, endDate, group, type, shouldSelect = true, sort = SORTING_OPTIONS.desc } = options;
   const created_after = startDate ? `&created_after=${startDate}` : '';
   const created_before = endDate ? `&created_before=${endDate}` : '';
   const search = group ? `&search=${group}` : '';
   const typeFilter = type ? `&type=${type}` : '';
   return GeneralApi.get(
-    `${deploymentsApiUrl}/deployments?status=${status}&per_page=${per_page}&page=${page}${created_after}${created_before}${search}${typeFilter}&sort=${sort}`
+    `${deploymentsApiUrl}/deployments?status=${status}&per_page=${perPage}&page=${page}${created_after}${created_before}${search}${typeFilter}&sort=${sort}`
   ).then(res => {
     const { deployments, deploymentIds } = transformDeployments(res.data, getState().deployments.byId);
     const total = Number(res.headers[headerNames.total]);
@@ -141,7 +141,7 @@ export const createDeployment = createAsyncThunk(`${sliceName}/createDeployment`
       const tasks = [
         dispatch(actions.createdDeployment(deployment)),
         dispatch(getSingleDeployment(deploymentId)),
-        dispatch(setSnackbar('Deployment created successfully', TIMEOUTS.fiveSeconds))
+        dispatch(setSnackbar({ message: 'Deployment created successfully', autoHideDuration: TIMEOUTS.fiveSeconds }))
       ];
       // track in GA
       trackDeploymentCreation(totalDeploymentCount, hasDeployments, trial_expiration);
