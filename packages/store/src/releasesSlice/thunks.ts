@@ -42,7 +42,7 @@ const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
 const sortingDefaults = { direction: SORTING_OPTIONS.desc, key: 'modified' };
 
 const flattenRelease = (release, stateRelease) => {
-  const updatedArtifacts = release.artifacts?.sort(customSort(true, 'modified')) || [];
+  const updatedArtifacts = release.artifacts?.sort(customSort(1, 'modified')) || [];
   const { artifacts, deviceTypes, modified } = updatedArtifacts.reduce(
     (accu, item) => {
       accu.deviceTypes.push(...item.device_types_compatible);
@@ -150,7 +150,7 @@ export const createArtifact = createAsyncThunk(`${sliceName}/createArtifact`, ({
   const cancelSource = new AbortController();
   return Promise.all([
     dispatch(setSnackbar('Generating artifact')),
-    dispatch(initUpload({ id: uploadId, upload: { name: file.name, size: file.size, uploadProgress: 0, cancelSource } })),
+    dispatch(initUpload({ id: uploadId, upload: { name: file.name, size: file.size, progress: 0, cancelSource } })),
     GeneralApi.upload(
       `${deploymentsApiUrl}/artifacts/generate`,
       formData,
@@ -163,11 +163,11 @@ export const createArtifact = createAsyncThunk(`${sliceName}/createArtifact`, ({
         dispatch(getReleases());
         dispatch(selectRelease(file.name));
       }, TIMEOUTS.oneSecond);
-      return Promise.resolve(dispatch(setSnackbar('Upload successful', TIMEOUTS.fiveSeconds)));
+      return Promise.resolve(dispatch(setSnackbar({ message: 'Upload successful', autoHideDuration: TIMEOUTS.fiveSeconds })));
     })
     .catch(err => {
       if (isCancel(err)) {
-        return dispatch(setSnackbar('The artifact generation has been cancelled', TIMEOUTS.fiveSeconds));
+        return dispatch(setSnackbar({ message: 'The artifact generation has been cancelled', autoHideDuration: TIMEOUTS.fiveSeconds }));
       }
       return commonErrorHandler(err, `Artifact couldn't be generated.`, dispatch);
     })
@@ -183,11 +183,11 @@ export const uploadArtifact = createAsyncThunk(`${sliceName}/uploadArtifact`, ({
   const cancelSource = new AbortController();
   return Promise.all([
     dispatch(setSnackbar('Uploading artifact')),
-    dispatch(initUpload({ id: uploadId, upload: { name: file.name, size: file.size, uploadProgress: 0, cancelSource } })),
+    dispatch(initUpload({ id: uploadId, upload: { name: file.name, size: file.size, progress: 0, cancelSource } })),
     GeneralApi.upload(`${deploymentsApiUrl}/artifacts`, formData, e => dispatch(uploadProgress({ id: uploadId, progress: progress(e) })), cancelSource.signal)
   ])
     .then(() => {
-      const tasks = [dispatch(setSnackbar('Upload successful', TIMEOUTS.fiveSeconds)), dispatch(getReleases())];
+      const tasks = [dispatch(setSnackbar({ message: 'Upload successful', autoHideDuration: TIMEOUTS.fiveSeconds })), dispatch(getReleases())];
       if (meta.name) {
         tasks.push(dispatch(selectRelease(meta.name)));
       }
@@ -195,7 +195,7 @@ export const uploadArtifact = createAsyncThunk(`${sliceName}/uploadArtifact`, ({
     })
     .catch(err => {
       if (isCancel(err)) {
-        return dispatch(setSnackbar('The upload has been cancelled', TIMEOUTS.fiveSeconds));
+        return dispatch(setSnackbar({ message: 'The upload has been cancelled', autoHideDuration: TIMEOUTS.fiveSeconds }));
       }
       return commonErrorHandler(err, `Artifact couldn't be uploaded.`, dispatch);
     })
@@ -223,7 +223,7 @@ export const editArtifact = createAsyncThunk(`${sliceName}/editArtifact`, ({ id,
       };
       return Promise.all([
         dispatch(actions.receiveRelease(updatedRelease)),
-        dispatch(setSnackbar('Artifact details were updated successfully.', TIMEOUTS.fiveSeconds, '')),
+        dispatch(setSnackbar({ message: 'Artifact details were updated successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' })),
         dispatch(getRelease(release.name)),
         dispatch(selectRelease(release.name))
       ]);
@@ -251,14 +251,26 @@ export const removeArtifact = createAsyncThunk(`${sliceName}/removeArtifact`, (i
           )
         ]);
       }
-      return Promise.all([dispatch(setSnackbar('Artifact was removed', TIMEOUTS.fiveSeconds, '')), dispatch(actions.receiveRelease(release))]);
+      return Promise.all([
+        dispatch(setSnackbar({ message: 'Artifact was removed', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' })),
+        dispatch(actions.receiveRelease(release))
+      ]);
     })
     .catch(err => commonErrorHandler(err, `Error removing artifact:`, dispatch))
 );
 
 export const removeRelease = createAsyncThunk(`${sliceName}/removeRelease`, (releaseId, { dispatch, getState }) =>
-  Promise.all(getReleasesById(getState())[releaseId].artifacts.map(({ id }) => dispatch(removeArtifact(id)))).then(() => dispatch(selectRelease()))
+  Promise.all(getReleasesById(getState())[releaseId].artifacts.map(({ id }) => dispatch(removeArtifact(id)))).then(() => dispatch(selectRelease(null)))
 );
+
+export const removeReleases = createAsyncThunk(`${sliceName}/removeReleases`, (releaseIds, { dispatch, getState }) => {
+  const deleteRequests = releaseIds.reduce((accu, releaseId) => {
+    const releaseArtifacts = getReleasesById(getState())[releaseId].artifacts;
+    accu.push(releaseArtifacts.map(({ id }) => dispatch(removeArtifact(id))));
+    return accu;
+  }, []);
+  return Promise.all(deleteRequests);
+});
 
 export const selectRelease = createAsyncThunk(`${sliceName}/selectRelease`, (release, { dispatch }) => {
   const name = release ? release.name || release : null;
@@ -353,21 +365,32 @@ export const updateReleaseInfo = createAsyncThunk(`${sliceName}/updateReleaseInf
     .then(() =>
       Promise.all([
         dispatch(actions.receiveRelease({ ...getReleasesById(getState())[name], ...info, name })),
-        dispatch(setSnackbar('Release details were updated successfully.', TIMEOUTS.fiveSeconds, ''))
+        dispatch(setSnackbar({ message: 'Release details were updated successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' }))
       ])
     )
 );
 
-export const setReleaseTags = createAsyncThunk(`${sliceName}/setReleaseTags`, ({ name, tags = [] }, { dispatch, getState }) =>
-  GeneralApi.put(`${deploymentsApiUrlV2}/deployments/releases/${name}/tags`, tags)
-    .catch(err => commonErrorHandler(err, `Release tags couldn't be set.`, dispatch))
-    .then(() =>
-      Promise.all([
-        dispatch(actions.receiveRelease({ ...getReleasesById(getState())[name], name, tags })),
-        dispatch(setSnackbar('Release tags were set successfully.', TIMEOUTS.fiveSeconds, ''))
-      ])
-    )
+export const setSingleReleaseTags = createAsyncThunk(`${sliceName}/setSingleReleaseTags`, ({ name, tags }, { dispatch, getState }) =>
+  GeneralApi.put(`${deploymentsApiUrlV2}/deployments/releases/${name}/tags`, tags).then(() =>
+    Promise.resolve(dispatch(actions.receiveRelease({ ...getReleasesById(getState())[name], name, tags })))
+  )
 );
+
+export const setReleaseTags = createAsyncThunk(`${sliceName}/setReleaseTags`, ({ name, tags = [] }, { dispatch }) =>
+  dispatch(setSingleReleaseTags({ name, tags }))
+    .catch(err => commonErrorHandler(err, `Release tags couldn't be set.`, dispatch))
+    .then(() => Promise.resolve(dispatch(setSnackbar({ message: 'Release tags were set successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' }))))
+);
+
+export const setReleasesTags = createAsyncThunk(`${sliceName}/setReleasesTags`, ({ releases, tags = [] }, { dispatch }) => {
+  const addRequests = releases.reduce((accu, release) => {
+    accu.push(dispatch(setSingleReleaseTags({ name: release.name, tags: [...new Set([...release.tags, ...tags])] })));
+    return accu;
+  }, []);
+  return Promise.all(addRequests)
+    .catch(err => commonErrorHandler(err, `Releases couldn't be tagged.`, dispatch))
+    .then(() => Promise.resolve(dispatch(setSnackbar({ message: 'Releases were tagged successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' }))));
+});
 
 export const getExistingReleaseTags = createAsyncThunk(`${sliceName}/getReleaseTags`, (_, { dispatch }) =>
   GeneralApi.get(`${deploymentsApiUrlV2}/releases/all/tags`)
