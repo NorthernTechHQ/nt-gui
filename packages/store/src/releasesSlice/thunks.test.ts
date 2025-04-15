@@ -11,10 +11,9 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
-import { vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { actions } from '.';
 import { defaultState } from '../../../../tests/mockData';
@@ -64,7 +63,7 @@ const retrievedReleaseIds = [
   'release-982',
   'release-981'
 ];
-
+const mockFile = { name: defaultState.releases.byId.r1.name, size: 1234 } as File;
 describe('release actions', () => {
   it('should retrieve a single release by name', async () => {
     const store = mockStore({ ...defaultState });
@@ -212,7 +211,7 @@ describe('release actions', () => {
         type: appActions.initUpload.type,
         payload: {
           id: 'mock-uuid',
-          upload: { cancelSource: mockAbortController, name: 'createdRelease', size: undefined, progress: 0 }
+          upload: { cancelSource: mockAbortController, name: defaultState.releases.byId.r1.name, size: 1234, progress: 0 }
         }
       },
       { type: appActions.uploadProgress.type, payload: { id: 'mock-uuid', progress: 100 } },
@@ -221,12 +220,10 @@ describe('release actions', () => {
       { type: createArtifact.fulfilled.type },
       { type: getReleases.pending.type },
       { type: selectRelease.pending.type },
-      { type: actions.selectedRelease.type, payload: 'createdRelease' },
+      { type: actions.selectedRelease.type, payload: defaultState.releases.byId.r1.name },
       { type: getRelease.pending.type }
     ];
-    await store.dispatch(
-      createArtifact({ file: { name: 'createdRelease', some: 'thing', someList: ['test', 'more'], complex: { objectThing: 'yes' } }, meta: 'filethings' })
-    );
+    await store.dispatch(createArtifact({ file: mockFile, meta: { description: '' } }));
     vi.runAllTimers();
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
@@ -281,7 +278,7 @@ describe('release actions', () => {
       { type: appActions.cleanUpUpload.type, payload: 'mock-uuid' },
       { type: uploadArtifact.fulfilled.type }
     ];
-    await store.dispatch(uploadArtifact({ file: { name: defaultState.releases.byId.r1.name, size: 1234 }, meta: { description: 'new artifact to upload' } }));
+    await store.dispatch(uploadArtifact({ file: mockFile, meta: { description: 'new artifact to upload' } }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
