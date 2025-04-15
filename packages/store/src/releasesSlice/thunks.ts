@@ -275,8 +275,8 @@ export const removeReleases = createAsyncThunk(`${sliceName}/removeReleases`, (r
   return Promise.all(deleteRequests);
 });
 
-export const selectRelease = createAsyncThunk(`${sliceName}/selectRelease`, (release, { dispatch }) => {
-  const name = release ? release.name || release : null;
+export const selectRelease = createAppAsyncThunk(`${sliceName}/selectRelease`, (release: Release | string | null, { dispatch }) => {
+  const name = release && typeof release === 'object' ? release.name : release;
   let tasks = [dispatch(actions.selectedRelease(name))];
   if (name) {
     tasks.push(dispatch(getRelease(name)));
