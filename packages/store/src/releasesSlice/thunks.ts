@@ -234,7 +234,10 @@ export const removeArtifact = createAsyncThunk(`${sliceName}/removeArtifact`, (i
   GeneralApi.delete(`${deploymentsApiUrl}/artifacts/${id}`)
     .then(() => {
       const state = getState();
-      let { release, index } = findArtifactIndexInRelease(getReleasesById(state), id);
+      const { release, index } = findArtifactIndexInRelease(getReleasesById(state), id);
+      if (!release || index === -1) {
+        return dispatch(getReleases()) as ReturnType<AppDispatch>;
+      }
       const releaseArtifacts = [...release.artifacts];
       releaseArtifacts.splice(index, 1);
       if (!releaseArtifacts.length) {
