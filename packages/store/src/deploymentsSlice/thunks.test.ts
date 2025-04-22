@@ -11,10 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import { getGlobalSettings, saveGlobalSettings, setOfflineThreshold } from '@northern.tech/store/thunks';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { describe, expect, it } from 'vitest';
 
 import { actions } from '.';
 import { defaultState } from '../../../../tests/mockData';
@@ -69,7 +69,13 @@ const defaultResponseActions = {
   creation: {
     type: actions.createdDeployment.type,
     isImportant: true,
-    payload: { id: createdDeployment.id, devices: [{ id: Object.keys(defaultState.devices.byId)[0], status: 'pending' }], statistics: { status: {} } }
+    payload: {
+      id: createdDeployment.id,
+      artifact_name: 'artifact',
+      name: 'new Deployment',
+      devices: [{ id: Object.keys(defaultState.devices.byId)[0], status: 'pending' }],
+      statistics: { status: {} }
+    }
   },
   devices: {
     type: actions.receivedDeploymentDevices.type,
@@ -102,13 +108,16 @@ const defaultResponseActions = {
   },
   setOfflineThreshold: { type: appActions.setOfflineThreshold.type, payload: '2019-01-12T13:00:00.900Z' }
 };
-
+const newDeployment = {
+  newDeployment: { name: 'new Deployment', artifact_name: 'artifact', devices: [Object.keys(defaultState.devices.byId)[0]] },
+  hasNewRetryDefault: true
+};
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { id_attribute, ...retrievedSettings } = defaultState.users.globalSettings;
 
 const assertionFunction =
   storeActions =>
-  ({ type, isImportant, payload }, index) => {
+  ({ type, isImportant, payload }: any, index) => {
     expect(storeActions[index].type).toEqual(type);
     if (isImportant) {
       expect(storeActions[index].payload).toEqual(payload);
@@ -139,7 +148,7 @@ describe('deployment actions', () => {
   it(`should reject aborting deployments that don't exist`, async () => {
     const store = mockStore({ ...defaultState });
     const abortedDeployment = store.dispatch(abortDeployment(`${defaultState.deployments.byId.d1.id}-invalid`)).unwrap();
-    expect(typeof abortedDeployment === Promise);
+    expect(abortedDeployment).toBeInstanceOf(Promise);
     await expect(abortedDeployment).rejects.toBeTruthy();
   });
   it('should allow creating deployments without filter or group', async () => {
@@ -174,7 +183,7 @@ describe('deployment actions', () => {
       { type: saveGlobalSettings.fulfilled.type },
       { type: createDeployment.fulfilled.type }
     ];
-    return store.dispatch(createDeployment({ newDeployment: { devices: [Object.keys(defaultState.devices.byId)[0]] } })).then(() => {
+    return store.dispatch(createDeployment(newDeployment)).then(() => {
       const storeActions = store.getActions();
       expect(storeActions.length).toEqual(expectedActions.length);
       expectedActions.forEach(assertionFunction(storeActions));
@@ -201,7 +210,8 @@ describe('deployment actions', () => {
       { type: saveGlobalSettings.fulfilled.type },
       { type: createDeployment.fulfilled.type }
     ];
-    return store.dispatch(createDeployment({ newDeployment: { filter_id } })).then(() => {
+    const deployment = { ...newDeployment, newDeployment: { ...newDeployment.newDeployment, filter_id, devices: [] } };
+    return store.dispatch(createDeployment(deployment)).then(() => {
       const storeActions = store.getActions();
       expect(storeActions.length).toEqual(expectedActions.length);
       expectedActions.forEach(assertionFunction(storeActions));
@@ -228,7 +238,8 @@ describe('deployment actions', () => {
       { type: saveGlobalSettings.fulfilled.type },
       { type: createDeployment.fulfilled.type }
     ];
-    return store.dispatch(createDeployment({ newDeployment: { group } })).then(() => {
+    const deployment = { ...newDeployment, newDeployment: { ...newDeployment.newDeployment, devices: [], group } };
+    return store.dispatch(createDeployment(deployment)).then(() => {
       const storeActions = store.getActions();
       expect(storeActions.length).toEqual(expectedActions.length);
       expectedActions.forEach(assertionFunction(storeActions));
@@ -355,7 +366,7 @@ describe('deployment actions', () => {
     await store.dispatch(
       setDeploymentsState({
         general: { showCreationDialog: true },
-        [DeploymentConstants.DEPLOYMENT_STATES.finished]: { something: 'new' },
+        [DeploymentConstants.DEPLOYMENT_STATES.finished]: { type: 'new' },
         selectedId: createdDeployment.id
       })
     );
@@ -367,7 +378,7 @@ describe('deployment actions', () => {
           ...defaultState.deployments.selectionState,
           finished: {
             ...defaultState.deployments.selectionState.finished,
-            something: 'new'
+            type: 'new'
           },
           general: {
             ...defaultState.deployments.selectionState.general,
@@ -416,7 +427,7 @@ describe('deployment actions', () => {
     const expectedActions = [
       { type: saveDeltaDeploymentsConfig.pending.type },
       { type: actions.setDeploymentsConfig.type, payload: { ...expectedConfig, binaryDelta: { ...expectedConfig.binaryDelta, ...changedConfig } } },
-      { ...defaultResponseActions.setSnackbar, payload: 'Settings saved successfully' },
+      { ...defaultResponseActions.snackbar, payload: 'Settings saved successfully' },
       { type: saveDeltaDeploymentsConfig.fulfilled.type }
     ];
     return store.dispatch(saveDeltaDeploymentsConfig(changedConfig)).then(() => {
