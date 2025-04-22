@@ -89,7 +89,7 @@ export const DEPLOYMENT_STATES = {
   inprogress: 'inprogress',
   pending: 'pending',
   scheduled: 'scheduled'
-};
+} as const;
 
 export const listDefaultsByState = {
   [DEPLOYMENT_STATES.inprogress]: { page: 1, perPage: 10 },
@@ -119,7 +119,7 @@ export const DEPLOYMENT_ROUTES = {
     states: [DEPLOYMENT_STATES.scheduled],
     title: 'Scheduled'
   }
-};
+} as const;
 export const DEPLOYMENT_TYPES = {
   software: 'software',
   configuration: 'configuration'
