@@ -34,17 +34,18 @@ const { receivedDevice, setSnackbar } = storeActions;
 // default per page until pagination and counting integrated
 const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
 
-export const deriveDeploymentGroup = ({ filter = {}, group, groups = [], name }) => (group || (groups.length === 1 && !isUUID(name)) ? groups[0] : filter.name);
+export const deriveDeploymentGroup = ({ filter, group, groups = [], name }: Deployment) =>
+  group || (groups.length === 1 && !isUUID(name)) ? groups[0] : filter?.name;
 
 const transformDeployments = (deployments, deploymentsById) =>
   deployments.sort(customSort(true, 'created')).reduce(
     (accu, item) => {
-      const filter = item.filter ?? {};
+      const filter = item.filter;
       let deployment = {
         ...deploymentPrototype,
         ...deploymentsById[item.id],
         ...item,
-        filter: item.filter ? { ...filter, name: filter.name ?? filter.id, filters: mapTermsToFilters(filter.terms) } : undefined,
+        filter: filter ? { ...filter, name: filter.name ?? filter.id, filters: mapTermsToFilters(filter.terms) } : undefined,
         name: decodeURIComponent(item.name)
       };
       // deriving the group in a second step to potentially make use of the merged data from the existing group state + the decoded name
@@ -117,9 +118,9 @@ const trackDeploymentCreation = (totalDeploymentCount, hasDeployments, trial_exp
 const MAX_PREVIOUS_PHASES_COUNT = 5;
 export const createDeployment = createAsyncThunk(`${sliceName}/createDeployment`, ({ newDeployment, hasNewRetryDefault = false }, { dispatch, getState }) => {
   let request;
-  if (newDeployment.filter_id) {
+  if ('filter_id' in newDeployment && newDeployment.filter_id) {
     request = GeneralApi.post(`${deploymentsApiUrlV2}/deployments`, newDeployment);
-  } else if (newDeployment.group) {
+  } else if ('group' in newDeployment && newDeployment.group) {
     request = GeneralApi.post(`${deploymentsApiUrl}/deployments/group/${newDeployment.group}`, newDeployment);
   } else {
     request = GeneralApi.post(`${deploymentsApiUrl}/deployments`, newDeployment);
@@ -135,7 +136,7 @@ export const createDeployment = createAsyncThunk(`${sliceName}/createDeployment`
       const deployment = {
         ...newDeployment,
         id: deploymentId,
-        devices: newDeployment.devices ? newDeployment.devices.map(id => ({ id, status: 'pending' })) : [],
+        devices: 'devices' in newDeployment && newDeployment.devices ? newDeployment.devices.map(id => ({ id, status: 'pending' })) : [],
         statistics: { status: {} }
       };
       const tasks = [
