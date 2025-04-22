@@ -11,15 +11,95 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
+import {
+  DeploymentDeployments as BackendDeployment,
+  Filter as BackendFilter,
+  DeviceWithImage,
+  FilterPredicate,
+  Limit
+} from '@northern.tech/store/api/types/MenderTypes';
 import { DEVICE_LIST_DEFAULTS } from '@northern.tech/store/constants';
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { DEFAULT_PENDING_INPROGRESS_COUNT, DEPLOYMENT_ROUTES, DEPLOYMENT_STATES, deploymentPrototype, limitDefault } from './constants';
 
 export const sliceName = 'deployments';
 
-export const initialState = {
+type Filter = {
+  key: string;
+  operator: FilterPredicate.type;
+  scope: string;
+  value: any;
+};
+export type Deployment = BackendDeployment & {
+  devices: Record<string, DeviceWithImage>;
+  filter?: BackendFilter & { filters: Filter[]; name?: string };
+  group?: string;
+  totalDeviceCount: number;
+};
+
+export type DeploymentStatus = { deploymentIds: string[]; total: number };
+export type DeploymentByStatus = {
+  finished: DeploymentStatus;
+  inprogress: DeploymentStatus;
+  pending: DeploymentStatus;
+  scheduled: DeploymentStatus;
+};
+export type DeploymentByStatusKey = keyof DeploymentByStatus;
+export type DeploymentConfig = {
+  binaryDelta: {
+    compressionLevel: number;
+    disableChecksum: boolean;
+    disableDecompression: boolean;
+    duplicatesWindow: number;
+    inputWindow: number;
+    instructionBuffer: number;
+    sourceWindow: number;
+    timeout: number;
+  };
+  binaryDeltaLimits: {
+    duplicatesWindow: Limit;
+    inputWindow: Limit;
+    instructionBuffer: Limit;
+    sourceWindow: Limit;
+    timeout: Limit;
+  };
+};
+
+export type SelectionListState = {
+  endDate?: string;
+  page?: number;
+  perPage?: number;
+  search?: string;
+  selection: string[];
+  startDate?: string;
+  total?: number;
+  type?: string;
+};
+export type SelectionState = {
+  finished: SelectionListState;
+  general: {
+    reportType: string | null;
+    showCreationDialog: boolean;
+    showReportDialog: boolean;
+    state: string;
+  };
+  inprogress: SelectionListState;
+  pending: SelectionListState;
+  scheduled: SelectionListState;
+
+  selectedId?: string;
+};
+type DeploymentsSliceType = {
+  byId: Record<string, Deployment>;
+  byStatus: DeploymentByStatus;
+  config: DeploymentConfig;
+  deploymentDeviceLimit: number;
+  selectedDeviceIds: string[];
+  selectionState: SelectionState;
+};
+
+export const initialState: DeploymentsSliceType = {
   byId: {
     // [id]: { statistics: { status: {}, total_size }, devices: { [deploymentId]: { id, log } }, totalDeviceCount }
   },
@@ -77,25 +157,27 @@ export const deploymentsSlice = createSlice({
       state.byStatus[DEPLOYMENT_STATES.pending].total = state.byStatus[DEPLOYMENT_STATES.pending].total + 1;
       state.byStatus[DEPLOYMENT_STATES.pending].deploymentIds = [...state.byStatus.pending.deploymentIds, action.payload.id];
       state.selectionState[DEPLOYMENT_STATES.pending].selection = [action.payload.id, ...state.selectionState[DEPLOYMENT_STATES.pending].selection];
-      state.selectionState[DEPLOYMENT_STATES.pending].total = state.selectionState[DEPLOYMENT_STATES.pending].total + 1;
+      state.selectionState[DEPLOYMENT_STATES.pending].total = (state.selectionState[DEPLOYMENT_STATES.pending].total || 0) + 1;
     },
-    removedDeployment: (state, action) => {
+    removedDeployment: (state, action: PayloadAction<string>) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [action.payload]: removedDeployment, ...remainder } = state.byId;
       state.byId = remainder;
     },
-    receivedDeployment: (state, action) => {
+    receivedDeployment: (state, action: PayloadAction<Deployment>) => {
       state.byId[action.payload.id] = {
         ...(state.byId[action.payload.id] || {}),
         ...action.payload
       };
     },
-    receivedDeploymentDeviceLog: (state, action) => {
+    receivedDeploymentDeviceLog: (state, action: PayloadAction<{ deviceId: string; id: string; log: boolean }>) => {
       const { id, deviceId, log } = action.payload;
       const deployment = {
         ...deploymentPrototype,
         ...state.byId[id]
       };
+      //TODO: deploymentPrototype requires changes to fix this
+      //@ts-ignore
       state.byId[id] = {
         ...deployment,
         devices: {
@@ -107,7 +189,10 @@ export const deploymentsSlice = createSlice({
         }
       };
     },
-    receivedDeploymentDevices: (state, action) => {
+    receivedDeploymentDevices: (
+      state,
+      action: PayloadAction<{ devices: Record<string, DeviceWithImage>; id: string; selectedDeviceIds: string[]; totalDeviceCount: number }>
+    ) => {
       const { id, devices, selectedDeviceIds, totalDeviceCount } = action.payload;
       state.byId[id] = {
         ...state.byId[id],
@@ -116,26 +201,26 @@ export const deploymentsSlice = createSlice({
       };
       state.selectedDeviceIds = selectedDeviceIds;
     },
-    receivedDeployments: (state, action) => {
+    receivedDeployments: (state, action: PayloadAction<Record<string, Deployment>>) => {
       state.byId = {
         ...state.byId,
         ...action.payload
       };
     },
-    receivedDeploymentsForStatus: (state, action) => {
+    receivedDeploymentsForStatus: (state, action: PayloadAction<{ deploymentIds: string[]; status: DeploymentByStatusKey; total: number }>) => {
       const { status, deploymentIds, total } = action.payload;
       state.byStatus[status].deploymentIds = deploymentIds;
       state.byStatus[status].total = total;
     },
-    selectDeploymentsForStatus: (state, action) => {
+    selectDeploymentsForStatus: (state, action: PayloadAction<{ deploymentIds: string[]; status: DeploymentByStatusKey; total: number }>) => {
       const { status, deploymentIds, total } = action.payload;
       state.selectionState[status].selection = deploymentIds;
       state.selectionState[status].total = total;
     },
-    setDeploymentsState: (state, action) => {
+    setDeploymentsState: (state, action: PayloadAction<SelectionState>) => {
       state.selectionState = action.payload;
     },
-    setDeploymentsConfig: (state, action) => {
+    setDeploymentsConfig: (state, action: PayloadAction<DeploymentConfig>) => {
       state.config = action.payload;
     }
   }
