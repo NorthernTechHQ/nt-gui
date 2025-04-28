@@ -11,14 +11,13 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import storeActions from '@northern.tech/store/actions';
 import Api from '@northern.tech/store/api/general-api';
-import { DEVICE_LIST_DEFAULTS, TIMEOUTS, alertChannels, headerNames } from '@northern.tech/store/constants';
+import { Alert } from '@northern.tech/store/api/types/MenderTypes';
+import { AlertChannelKey, DEVICE_LIST_DEFAULTS, DeviceIssueOptionKey, TIMEOUTS, alertChannels, headerNames } from '@northern.tech/store/constants';
 import { getDeviceFilters, getSearchEndpoint } from '@northern.tech/store/selectors';
-import { commonErrorFallback, commonErrorHandler } from '@northern.tech/store/store';
+import { AppDispatch, commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
 import { convertDeviceListStateToFilters } from '@northern.tech/store/utils';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { actions, sliceName } from '.';
 import { monitorApiUrlv1 } from './constants';
@@ -27,15 +26,22 @@ const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
 
 const cutoffLength = 75;
 const ellipsis = '...';
-const longTextTrimmer = text => (text.length >= cutoffLength + ellipsis.length ? `${text.substring(0, cutoffLength + ellipsis.length)}${ellipsis}` : text);
+const longTextTrimmer = (text: string): string =>
+  text.length >= cutoffLength + ellipsis.length ? `${text.substring(0, cutoffLength + ellipsis.length)}${ellipsis}` : text;
 
-const sanitizeDeviceAlerts = alerts => alerts.map(alert => ({ ...alert, fullName: alert.name, name: longTextTrimmer(alert.name) }));
+const sanitizeDeviceAlerts = (alerts: Alert[]) => alerts.map(alert => ({ ...alert, fullName: alert.name, name: longTextTrimmer(alert.name || '') }));
 
-export const getDeviceAlerts = createAsyncThunk(`${sliceName}/getDeviceAlerts`, ({ id, config = {} }, { dispatch }) => {
+interface GetDeviceAlertsPayload {
+  config?: { issuedAfter?: string; issuedBefore?: string; page?: number; perPage?: number; sortAscending?: boolean };
+  id: string;
+}
+export const getDeviceAlerts = createAppAsyncThunk(`${sliceName}/getDeviceAlerts`, ({ id, config = {} }: GetDeviceAlertsPayload, { dispatch }) => {
   const { page = defaultPage, perPage = defaultPerPage, issuedBefore, issuedAfter, sortAscending = false } = config;
   const issued_after = issuedAfter ? `&issued_after=${issuedAfter}` : '';
   const issued_before = issuedBefore ? `&issued_before=${issuedBefore}` : '';
-  return Api.get(`${monitorApiUrlv1}/devices/${id}/alerts?page=${page}&per_page=${perPage}${issued_after}${issued_before}&sort_ascending=${sortAscending}`)
+  return Api.get<Alert[]>(
+    `${monitorApiUrlv1}/devices/${id}/alerts?page=${page}&per_page=${perPage}${issued_after}${issued_before}&sort_ascending=${sortAscending}`
+  )
     .catch(err => commonErrorHandler(err, `Retrieving device alerts for device ${id} failed:`, dispatch))
     .then(res =>
       Promise.all([
@@ -45,56 +51,77 @@ export const getDeviceAlerts = createAsyncThunk(`${sliceName}/getDeviceAlerts`, 
     );
 });
 
-export const getLatestDeviceAlerts = createAsyncThunk(`${sliceName}/getLatestDeviceAlerts`, ({ id, config = {} }, { dispatch }) => {
-  const { page = defaultPage, perPage = 10 } = config;
-  return Api.get(`${monitorApiUrlv1}/devices/${id}/alerts/latest?page=${page}&per_page=${perPage}`)
-    .catch(err => commonErrorHandler(err, `Retrieving device alerts for device ${id} failed:`, dispatch))
-    .then(res => Promise.resolve(dispatch(actions.receiveLatestDeviceAlerts({ deviceId: id, alerts: sanitizeDeviceAlerts(res.data) }))));
-});
+interface GetLatestDeviceAlertsPayload {
+  config?: { page?: number; perPage?: number };
+  id: string;
+}
+export const getLatestDeviceAlerts = createAppAsyncThunk(
+  `${sliceName}/getLatestDeviceAlerts`,
+  ({ id, config = {} }: GetLatestDeviceAlertsPayload, { dispatch }) => {
+    const { page = defaultPage, perPage = 10 } = config;
+    return Api.get<Alert[]>(`${monitorApiUrlv1}/devices/${id}/alerts/latest?page=${page}&per_page=${perPage}`)
+      .catch(err => commonErrorHandler(err, `Retrieving device alerts for device ${id} failed:`, dispatch))
+      .then(res => Promise.resolve(dispatch(actions.receiveLatestDeviceAlerts({ deviceId: id, alerts: sanitizeDeviceAlerts(res.data) }))));
+  }
+);
 
-export const getIssueCountsByType = createAsyncThunk(`${sliceName}/getIssueCountsByType`, ({ type, options = {} }, { dispatch, getState }) => {
-  const state = getState();
-  const { filters = getDeviceFilters(state), group, status, ...remainder } = options;
-  const { applicableFilters: nonMonitorFilters, filterTerms } = convertDeviceListStateToFilters({
-    ...remainder,
-    filters,
-    group,
-    offlineThreshold: state.app.offlineThreshold,
-    selectedIssues: [type],
-    status
-  });
-  return Api.post(getSearchEndpoint(getState()), {
-    page: 1,
-    per_page: 1,
-    filters: filterTerms,
-    attributes: [{ scope: 'identity', attribute: 'status' }]
-  })
-    .catch(err => commonErrorHandler(err, `Retrieving issue counts failed:`, dispatch, commonErrorFallback))
-    .then(res => {
-      const total = nonMonitorFilters.length ? state.monitor.issueCounts.byType[type].total : Number(res.headers[headerNames.total]);
-      const filtered = nonMonitorFilters.length ? Number(res.headers[headerNames.total]) : total;
-      if (total === state.monitor.issueCounts.byType[type].total && filtered === state.monitor.issueCounts.byType[type].filtered) {
-        return Promise.resolve();
-      }
-      return Promise.resolve(dispatch(actions.receiveDeviceIssueCounts({ counts: { filtered, total }, issueType: type })));
+interface GetIssueCountsByTypePayload {
+  //TODO: specify type after rest of the store is typed.
+  options?: any;
+  type: DeviceIssueOptionKey;
+}
+export const getIssueCountsByType = createAppAsyncThunk(
+  `${sliceName}/getIssueCountsByType`,
+  ({ type, options = {} }: GetIssueCountsByTypePayload, { dispatch, getState }) => {
+    const state = getState();
+    const { filters = getDeviceFilters(state), group, status, ...remainder } = options;
+    const { applicableFilters: nonMonitorFilters, filterTerms } = convertDeviceListStateToFilters({
+      ...remainder,
+      filters,
+      group,
+      offlineThreshold: state.app.offlineThreshold,
+      selectedIssues: [type],
+      status
     });
-});
+    return Api.post(getSearchEndpoint(getState()), {
+      page: 1,
+      per_page: 1,
+      filters: filterTerms,
+      attributes: [{ scope: 'identity', attribute: 'status' }]
+    })
+      .catch(err => commonErrorHandler(err, `Retrieving issue counts failed:`, dispatch, commonErrorFallback))
+      .then(res => {
+        const total = nonMonitorFilters.length ? state.monitor.issueCounts.byType[type].total : Number(res.headers[headerNames.total]);
+        const filtered = nonMonitorFilters.length ? Number(res.headers[headerNames.total]) : total;
+        if (total === state.monitor.issueCounts.byType[type].total && filtered === state.monitor.issueCounts.byType[type].filtered) {
+          return Promise.resolve();
+        }
+        return Promise.resolve(dispatch(actions.receiveDeviceIssueCounts({ counts: { filtered, total }, issueType: type }))) as ReturnType<AppDispatch>;
+      });
+  }
+);
 
-export const getDeviceMonitorConfig = createAsyncThunk(`${sliceName}/getDeviceMonitorConfig`, (id, { dispatch }) =>
+export const getDeviceMonitorConfig = createAppAsyncThunk(`${sliceName}/getDeviceMonitorConfig`, (id: string, { dispatch }) =>
   Api.get(`${monitorApiUrlv1}/devices/${id}/config`)
     .catch(err => commonErrorHandler(err, `Retrieving device monitor config for device ${id} failed:`, dispatch))
     .then(({ data }) => Promise.all([dispatch(storeActions.receivedDevice({ id, monitors: data }), Promise.resolve(data))]))
 );
 
-export const changeNotificationSetting = createAsyncThunk(
+interface ChangeNotificationSettingPayload {
+  channel?: AlertChannelKey;
+  enabled: boolean;
+}
+export const changeNotificationSetting = createAppAsyncThunk(
   `${sliceName}/changeNotificationSetting`,
-  ({ enabled, channel = alertChannels.email }, { dispatch }) =>
+  ({ enabled, channel = alertChannels.email }: ChangeNotificationSettingPayload, { dispatch }) =>
     Api.put(`${monitorApiUrlv1}/settings/global/channel/alerts/${channel}/status`, { enabled })
       .catch(err => commonErrorHandler(err, `${enabled ? 'En' : 'Dis'}abling  ${channel} alerts failed:`, dispatch))
       .then(() =>
         Promise.all([
           dispatch(actions.changeAlertChannel({ channel, enabled })),
-          dispatch(storeActions.setSnackbar(`Successfully ${enabled ? 'en' : 'dis'}abled ${channel} alerts`, TIMEOUTS.fiveSeconds))
+          dispatch(
+            storeActions.setSnackbar({ message: `Successfully ${enabled ? 'en' : 'dis'}abled ${channel} alerts`, autoHideDuration: TIMEOUTS.fiveSeconds })
+          )
         ])
       )
 );

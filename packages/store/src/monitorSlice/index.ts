@@ -11,25 +11,45 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { DEVICE_ISSUE_OPTIONS, DEVICE_LIST_DEFAULTS } from '@northern.tech/store/commonConstants';
-import { createSlice } from '@reduxjs/toolkit';
+import { Alert } from '@northern.tech/store/api/types/MenderTypes';
+import { DEVICE_ISSUE_OPTIONS, DEVICE_LIST_DEFAULTS, DeviceIssueOptionKey } from '@northern.tech/store/commonConstants';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-import { alertChannels } from './constants';
+import { AlertChannelKey, alertChannels } from './constants';
 
 export const sliceName = 'monitor';
+type IssueCounts = Record<DeviceIssueOptionKey, { filtered: number; total: number }>;
+type ChannelSettings = Record<AlertChannelKey, { enabled: boolean }>;
+type SanitizedAlert = Alert & { fullName?: string };
 
-export const initialState = {
+type MonitorSliceType = {
+  alerts: {
+    alertList: {
+      page: number;
+      perPage: number;
+      total: number;
+    };
+    byDeviceId: { alerts?: Record<string, SanitizedAlert>; latest?: Record<string, SanitizedAlert> };
+  };
+  issueCounts: { byType: IssueCounts };
+  settings: {
+    global: {
+      channels: ChannelSettings;
+    };
+  };
+};
+export const initialState: MonitorSliceType = {
   alerts: {
     alertList: { ...DEVICE_LIST_DEFAULTS, total: 0 },
     byDeviceId: {}
   },
   issueCounts: {
-    byType: Object.values(DEVICE_ISSUE_OPTIONS).reduce((accu, { key }) => ({ ...accu, [key]: { filtered: 0, total: 0 } }), {})
+    byType: Object.values(DEVICE_ISSUE_OPTIONS).reduce<IssueCounts>((accu, { key }) => ({ ...accu, [key]: { filtered: 0, total: 0 } }), {} as IssueCounts)
   },
   settings: {
     global: {
       channels: {
-        ...Object.keys(alertChannels).reduce((accu, item) => ({ ...accu, [item]: { enabled: true } }), {})
+        ...Object.keys(alertChannels).reduce((accu, item) => ({ ...accu, [item]: { enabled: true } }), {} as ChannelSettings)
       }
     }
   }
@@ -39,19 +59,19 @@ export const monitorSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    changeAlertChannel: (state, action) => {
+    changeAlertChannel: (state, action: PayloadAction<{ channel: AlertChannelKey; enabled: boolean }>) => {
       const { channel, enabled } = action.payload;
       state.settings.global.channels[channel] = { enabled };
     },
-    receiveDeviceAlerts: (state, action) => {
+    receiveDeviceAlerts: (state, action: PayloadAction<{ alerts: SanitizedAlert[]; deviceId: string }>) => {
       const { deviceId, alerts } = action.payload;
       state.alerts.byDeviceId[deviceId] = { alerts };
     },
-    receiveLatestDeviceAlerts: (state, action) => {
+    receiveLatestDeviceAlerts: (state, action: PayloadAction<{ alerts: SanitizedAlert[]; deviceId: string }>) => {
       const { deviceId, alerts } = action.payload;
       state.alerts.byDeviceId[deviceId] = { ...state.alerts.byDeviceId[deviceId], latest: alerts };
     },
-    receiveDeviceIssueCounts: (state, action) => {
+    receiveDeviceIssueCounts: (state, action: PayloadAction<{ counts: { filtered: number; total: number }; issueType: DeviceIssueOptionKey }>) => {
       const { issueType, counts } = action.payload;
       state.issueCounts.byType[issueType] = counts;
     },

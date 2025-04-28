@@ -11,10 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import { DEVICE_ISSUE_OPTIONS } from '@northern.tech/store/commonConstants';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { describe, expect, it } from 'vitest';
 
 import { actions } from '.';
 import { defaultState } from '../../../../tests/mockData';
@@ -46,7 +46,7 @@ describe('monitor actions', () => {
   });
   it('should handle device based latest alert retrieval', async () => {
     const store = mockStore({ ...defaultState });
-    await expect(store.getActions()).toHaveLength(0);
+    expect(store.getActions()).toHaveLength(0);
     const expectedActions = [
       { type: getLatestDeviceAlerts.pending.type },
       { type: actions.receiveLatestDeviceAlerts.type, payload: { deviceId: defaultState.devices.byId.a1.id, alerts: [] } },
@@ -62,7 +62,7 @@ describe('monitor actions', () => {
   });
   it('should handle device issue count retrieval', async () => {
     const store = mockStore({ ...defaultState });
-    await expect(store.getActions()).toHaveLength(0);
+    expect(store.getActions()).toHaveLength(0);
     const expectedActions = [
       { type: getIssueCountsByType.pending.type },
       { type: actions.receiveDeviceIssueCounts.type, payload: { issueType: DEVICE_ISSUE_OPTIONS.monitoring.key, counts: { filtered: 4, total: 4 } } },
@@ -98,7 +98,7 @@ describe('monitor actions', () => {
     const expectedActions = [
       { type: changeNotificationSetting.pending.type },
       { type: actions.changeAlertChannel.type, payload: { channel: 'email', enabled: false } },
-      { type: appActions.setSnackbar.type, payload: 'Successfully disabled email alerts' },
+      { type: appActions.setSnackbar.type, payload: { message: 'Successfully disabled email alerts', autoHideDuration: 5000 } },
       { type: changeNotificationSetting.fulfilled.type }
     ];
     const request = store.dispatch(changeNotificationSetting({ enabled: false }));

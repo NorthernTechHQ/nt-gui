@@ -152,7 +152,9 @@ export const DEVICE_ISSUE_OPTIONS = {
     filterRule: { scope: 'inventory', key: 'mender_is_gateway', operator: DEVICE_FILTERING_OPTIONS.$eq.key, value: 'true' },
     title: 'Gateway devices'
   }
-};
+} as const;
+export type DeviceIssueOptionKey = keyof typeof DEVICE_ISSUE_OPTIONS;
+
 const oneSecond = 1000;
 export const TIMEOUTS = {
   debounceDefault: 700,

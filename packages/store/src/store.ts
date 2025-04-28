@@ -15,7 +15,7 @@
 import { useDispatch } from 'react-redux';
 
 import { extractErrorMessage, preformatWithRequestID } from '@northern.tech/utils/helpers';
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore, createAsyncThunk } from '@reduxjs/toolkit';
 
 import actions from './actions';
 import appSlice from './appSlice';
@@ -38,7 +38,7 @@ const resetEnvironment = () => keys.forEach(key => window.sessionStorage.removeI
 resetEnvironment();
 
 export const commonErrorFallback = 'Please check your connection.';
-export const commonErrorHandler = (err, errorContext, dispatch, fallback, mightBeAuthRelated = false) => {
+export const commonErrorHandler = (err, errorContext, dispatch, fallback?: string, mightBeAuthRelated = false): Promise<never> => {
   const errMsg = extractErrorMessage(err, fallback);
   if (mightBeAuthRelated || getToken()) {
     dispatch(setSnackbar({ message: preformatWithRequestID(err.response, `${errorContext} ${errMsg}`), action: 'Copy to clipboard' }));
@@ -98,3 +98,8 @@ export const store = getConfiguredStore({
 export type AppDispatch = typeof store.dispatch;
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export type RootState = ReturnType<typeof store.getState>;
+
+export const createAppAsyncThunk = createAsyncThunk.withTypes<{
+  dispatch: AppDispatch;
+  state: RootState;
+}>();
