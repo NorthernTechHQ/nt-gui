@@ -16,8 +16,16 @@
       "import": "./dist/Mender/index.js",
       "require": "./dist/Mender/index.cjs"
     },
+    "./MenderNext": {
+      "types": "./dist/MenderNext/index.d.ts",
+      "import": "./dist/MenderNext/index.js",
+      "require": "./dist/MenderNext/index.cjs"
+    },
     "./Mender/styles/main.css": {
       "default": "./dist/Mender/styles/main.css"
+    },
+    "./MenderNext/styles/main.css": {
+      "default": "./dist/MenderNext/styles/main.css"
     },
     "./Alvaldi": {
       "types": "./dist/Alvaldi/index.d.ts",
