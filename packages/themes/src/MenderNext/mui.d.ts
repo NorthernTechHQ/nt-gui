@@ -15,7 +15,7 @@ import { PaletteOptions as MuiPaletteOptions } from '@mui/material';
 
 declare module '@mui/material' {
   interface PaletteOptions extends MuiPaletteOptions {
-    neutral: {
+    neutral?: {
       contrastText: string;
       dark: string;
       light: string;
