@@ -83,7 +83,7 @@ export const convertDeviceListStateToFilters = ({ filters = [], group, groups = 
   return { applicableFilters: nonMonitorFilters, filterTerms: mapFiltersToTerms(effectiveFilters) };
 };
 
-const filterCompare = (filter, item) => Object.keys(emptyFilter).every(key => item[key].toString() === filter[key].toString());
+const filterCompare = (filter, item) => Object.keys(emptyFilter).every(key => item[key]?.toString() === filter[key]?.toString());
 
 export const filtersFilter = (item, index, array) => {
   const firstIndex = array.findIndex(filter => filterCompare(filter, item));
@@ -136,6 +136,27 @@ export const progress = ({ loaded, total }) => {
   let uploadProgress = (loaded / total) * 100;
   return (uploadProgress = uploadProgress < 50 ? Math.ceil(uploadProgress) : Math.round(uploadProgress));
 };
+
+export const extractErrorMessage = (err, fallback = '') =>
+  err.response?.data?.error?.message || err.response?.data?.error || err.error || err.message || fallback;
+
+export const preformatWithRequestID = (res, failMsg) => {
+  // ellipsis line
+  if (failMsg.length > 100) failMsg = `${failMsg.substring(0, 220)}...`;
+
+  try {
+    if (res?.data && Object.keys(res.data).includes('request_id')) {
+      let shortRequestUUID = res.data['request_id'].substring(0, 8);
+      return `${failMsg} [Request ID: ${shortRequestUUID}]`;
+    }
+  } catch (e) {
+    console.log('failed to extract request id:', e);
+  }
+  return failMsg;
+};
+
+export const ensureVersionString = (software, fallback) =>
+  software.length && software !== 'artifact_name' ? (software.endsWith('.version') ? software : `${software}.version`) : fallback;
 
 export const getComparisonCompatibleVersion = version => (isNaN(version.charAt(0)) && version !== 'next' ? 'master' : version);
 

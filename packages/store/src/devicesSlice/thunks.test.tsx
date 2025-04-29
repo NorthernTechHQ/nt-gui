@@ -80,12 +80,17 @@ import {
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
-const groupUpdateSuccessMessage = 'The group was updated successfully';
-const getGroupSuccessNotification = groupName => (
-  <>
-    {groupUpdateSuccessMessage} - <Link to={`/devices?inventory=group:eq:${groupName}`}>click here</Link> to see it.
-  </>
-);
+const groupUpdateSuccess = 'The group was updated successfully';
+const groupUpdateSuccessMessage = { autoHideDuration: 5000, message: 'The group was updated successfully' };
+const getGroupSuccessNotification = groupName => ({
+  ...groupUpdateSuccessMessage,
+  message: (
+    <>
+      {groupUpdateSuccess} - <Link to={`/devices?inventory=group:eq:${groupName}`}>click here</Link> to see it.
+    </>
+  ),
+  preventClickToCopy: true
+});
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { attributes, check_in_time, updated_ts, ...expectedDevice } = defaultState.devices.byId.a1;
@@ -643,7 +648,7 @@ describe('device auth handling', () => {
 
     const expectedActions = [
       { type: preauthDevice.pending.type },
-      { type: appActions.setSnackbar.type, payload: 'Device was successfully added to the preauthorization list' },
+      { type: appActions.setSnackbar.type, payload: { message: 'Device was successfully added to the preauthorization list', autoHideDuration: 5000 } },
       { type: preauthDevice.fulfilled.type }
     ];
     await store.dispatch(
@@ -782,7 +787,7 @@ describe('static grouping related actions', () => {
     const expectedActions = [
       { type: removeDevicesFromGroup.pending.type },
       { type: actions.removeFromGroup.type, payload: { group: groupName, deviceIds: [defaultState.devices.byId.b1.id] } },
-      { type: appActions.setSnackbar.type, payload: 'The device was removed from the group' },
+      { type: appActions.setSnackbar.type, payload: { autoHideDuration: 5000, message: 'The device was removed from the group' } },
       { type: removeDevicesFromGroup.fulfilled.type }
     ];
     await store.dispatch(removeDevicesFromGroup({ group: groupName, deviceIds: [defaultState.devices.byId.b1.id] }));
@@ -797,7 +802,7 @@ describe('static grouping related actions', () => {
       { type: removeStaticGroup.pending.type },
       { type: actions.removeGroup.type, payload: groupName },
       { type: getGroups.pending.type },
-      { type: appActions.setSnackbar.type, payload: 'Group was removed successfully' },
+      { type: appActions.setSnackbar.type, payload: { autoHideDuration: 5000, message: 'Group was removed successfully' } },
       { type: actions.receivedGroups.type, payload: { testGroup: defaultState.devices.groups.byId.testGroup } },
       { type: getDevicesByStatus.pending.type },
       {
@@ -943,7 +948,7 @@ describe('dynamic grouping related actions', () => {
     const expectedActions = [
       { type: removeDynamicGroup.pending.type },
       { type: actions.removeGroup.type, payload: groupName },
-      { type: appActions.setSnackbar.type, payload: 'Group was removed successfully' },
+      { type: appActions.setSnackbar.type, payload: { autoHideDuration: 5000, message: 'Group was removed successfully' } },
       { type: removeDynamicGroup.fulfilled.type }
     ];
     await store.dispatch(removeDynamicGroup(groupName));
@@ -972,7 +977,7 @@ describe('device retrieval ', () => {
   it('should allow single device retrieval from detailed sources', async () => {
     const store = mockStore({
       ...defaultState,
-      app: { ...defaultState.app, features: { ...defaultState.app.features, hasDeviceConnect: true } },
+      app: { ...defaultState.app, features: { ...defaultState.app.features, isHosted: false, hasDeviceConnect: true } },
       organization: { ...defaultState.organization, addons: [], externalDeviceIntegrations: [{ ...EXTERNAL_PROVIDER['iot-hub'], id: 'test' }] }
     });
     const { attributes, updated_ts, id, ...expectedDevice } = defaultState.devices.byId.a1;
@@ -1162,7 +1167,7 @@ describe('device config ', () => {
       { type: actions.receivedDevice.type, payload: { attributes, id } },
       { type: getDeviceById.fulfilled.type },
       { type: actions.receivedDevice.type, payload: { id, tags: { something: 'asdl' } } },
-      { type: appActions.setSnackbar.type, payload: 'Device name changed' },
+      { type: appActions.setSnackbar.type, payload: 'Device tags changed' },
       { type: setDeviceTags.fulfilled.type }
     ];
     await store.dispatch(setDeviceTags({ deviceId: defaultState.devices.byId.a1.id, tags: { something: 'asdl' } }));
@@ -1228,10 +1233,10 @@ describe('troubleshooting related actions', () => {
       { type: appActions.setSnackbar.type, payload: 'Uploading file' },
       {
         type: appActions.initUpload.type,
-        payload: { id: 'mock-uuid', upload: { cancelSource: mockAbortController, uploadProgress: 0 } }
+        payload: { id: 'mock-uuid', upload: { cancelSource: mockAbortController, progress: 0 } }
       },
       { type: appActions.uploadProgress.type, payload: { id: 'mock-uuid', progress: 100 } },
-      { type: appActions.setSnackbar.type, payload: 'Upload successful' },
+      { type: appActions.setSnackbar.type, payload: { autoHideDuration: 5000, message: 'Upload successful' } },
       { type: appActions.cleanUpUpload.type, payload: 'mock-uuid' },
       { type: deviceFileUpload.fulfilled.type }
     ];
