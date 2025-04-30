@@ -6,6 +6,7 @@ import { dark as darkAlvaldiTheme, light as lightAlvaldiTheme } from '@northern.
 import { dark as darkCFEngineTheme, light as lightCFEngineTheme } from '@northern.tech/themes/CFEngine';
 import { dark as darkMenderTheme, light as lightMenderTheme } from '@northern.tech/themes/Mender';
 import '@northern.tech/themes/Mender/styles/main.css';
+import { dark as darkMenderNextTheme, light as lightMenderNextTheme } from '@northern.tech/themes/MenderNext';
 
 const reducePalette =
   prefix =>
@@ -45,6 +46,11 @@ const THEMES = {
     id: 'Mender',
     light: lightMenderTheme,
     dark: darkMenderTheme
+  },
+  MenderNext: {
+    id: 'MenderNext',
+    light: lightMenderNextTheme,
+    dark: darkMenderNextTheme
   },
   CFEngine: {
     id: 'CFEngine',
@@ -88,11 +94,7 @@ export const globalProductType = {
   toolbar: {
     icon: 'repository',
     dynamicTitle: true,
-    items: [
-      { value: THEMES.Alvaldi.id, title: THEMES.Alvaldi.id },
-      { value: THEMES.Mender.id, title: THEMES.Mender.id },
-      { value: THEMES.CFEngine.id, title: THEMES.CFEngine.id }
-    ]
+    items: Object.values(THEMES).map(({ id }) => ({ value: id, title: id }))
   }
 };
 
