@@ -42,7 +42,7 @@
     "typescript": "5.8.2"
   },
   "dependencies": {
-    "@mui/icons-material": "^6.x",
+    "@mui/icons-material": "^7.x",
     "@mui/material": "^6.x",
     "@northern.tech/common-ui": "*",
     "@northern.tech/store": "*",
