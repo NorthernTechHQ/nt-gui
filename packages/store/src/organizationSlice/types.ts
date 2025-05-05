@@ -26,7 +26,7 @@ interface Card {
   last4: string;
 }
 
-interface SortOptions {
+export interface SortOptions {
   direction: 'asc' | 'desc';
   key?: string;
 }

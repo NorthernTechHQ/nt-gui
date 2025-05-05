@@ -11,9 +11,9 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import storeActions from '@northern.tech/store/actions';
 import GeneralApi from '@northern.tech/store/api/general-api';
+import { ArtifactUpdate, ReleaseUpdate, Tags } from '@northern.tech/store/api/types/MenderTypes';
 import {
   DEVICE_LIST_DEFAULTS,
   SORTING_OPTIONS,
@@ -24,15 +24,15 @@ import {
   headerNames
 } from '@northern.tech/store/constants';
 import { formatReleases } from '@northern.tech/store/locationutils';
+import { SortOptions } from '@northern.tech/store/organizationSlice/types';
 import { getSearchEndpoint } from '@northern.tech/store/selectors';
-import { commonErrorFallback, commonErrorHandler } from '@northern.tech/store/store';
+import { AppDispatch, commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
 import { convertDeviceListStateToFilters, progress } from '@northern.tech/store/utils';
 import { customSort, deepCompare, duplicateFilter, extractSoftwareItem } from '@northern.tech/utils/helpers';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import { isCancel } from 'axios';
 import { v4 as uuid } from 'uuid';
 
-import { actions, sliceName } from '.';
+import { Artifact, Release, ReleaseSliceType, ReleasesList, actions, sliceName } from '.';
 import { ARTIFACT_GENERATION_TYPE } from './constants';
 import { getReleasesById } from './selectors';
 
@@ -41,9 +41,9 @@ const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
 
 const sortingDefaults = { direction: SORTING_OPTIONS.desc, key: 'modified' };
 
-const flattenRelease = (release, stateRelease) => {
+const flattenRelease = (release: Release, stateRelease: Release) => {
   const updatedArtifacts = release.artifacts?.sort(customSort(true, 'modified')) || [];
-  const { artifacts, deviceTypes, modified } = updatedArtifacts.reduce(
+  const { artifacts, deviceTypes, modified } = updatedArtifacts.reduce<{ artifacts: Artifact[]; deviceTypes: string[]; modified: undefined | string }>(
     (accu, item) => {
       accu.deviceTypes.push(...item.device_types_compatible);
       const stateArtifact = stateRelease.artifacts?.find(releaseArtifact => releaseArtifact.id === item.id) || {};
@@ -59,17 +59,17 @@ const flattenRelease = (release, stateRelease) => {
   return { ...stateRelease, ...release, artifacts, device_types_compatible: deviceTypes.filter(duplicateFilter), modified };
 };
 
-const reduceReceivedReleases = (releases, stateReleasesById) =>
+const reduceReceivedReleases = (releases: Release[], stateReleasesById: Record<string, Release>) =>
   releases.reduce((accu, release) => {
     const stateRelease = stateReleasesById[release.name] || {};
     accu[release.name] = flattenRelease(release, stateRelease);
     return accu;
   }, {});
 
-const findArtifactIndexInRelease = (releases, id) =>
-  Object.values(releases).reduce(
+const findArtifactIndexInRelease = (releases: Record<string, Release>, id: string) =>
+  Object.values(releases).reduce<{ index: number; release: Release | null }>(
     (accu, item) => {
-      let index = item.artifacts.findIndex(releaseArtifact => releaseArtifact.id === id);
+      const index = item.artifacts.findIndex(releaseArtifact => releaseArtifact.id === id);
       if (index > -1) {
         accu = { release: item, index };
       }
@@ -79,8 +79,8 @@ const findArtifactIndexInRelease = (releases, id) =>
   );
 
 /* Artifacts */
-export const getArtifactInstallCount = createAsyncThunk(`${sliceName}/getArtifactInstallCount`, (id, { dispatch, getState }) => {
-  let { release, index } = findArtifactIndexInRelease(getReleasesById(getState()), id);
+export const getArtifactInstallCount = createAppAsyncThunk(`${sliceName}/getArtifactInstallCount`, (id: string, { dispatch, getState }) => {
+  const { release, index } = findArtifactIndexInRelease(getReleasesById(getState()), id);
   if (!release || index === -1) {
     return;
   }
@@ -89,6 +89,8 @@ export const getArtifactInstallCount = createAsyncThunk(`${sliceName}/getArtifac
   const { key, name, version } = extractSoftwareItem(artifact.artifact_provides) ?? {};
   const attribute = `${key}${name ? `.${name}` : ''}.version`;
   const { filterTerms } = convertDeviceListStateToFilters({
+    //TODO: remove once utils types added
+    //@ts-ignore
     filters: [{ ...emptyFilter, key: attribute, value: version, scope: 'inventory' }]
   });
   return GeneralApi.post(getSearchEndpoint(getState()), {
@@ -114,11 +116,11 @@ export const getArtifactInstallCount = createAsyncThunk(`${sliceName}/getArtifac
     });
 });
 
-export const getArtifactUrl = createAsyncThunk(`${sliceName}/getArtifactUrl`, (id, { dispatch, getState }) =>
+export const getArtifactUrl = createAppAsyncThunk(`${sliceName}/getArtifactUrl`, (id: string, { dispatch, getState }) =>
   GeneralApi.get(`${deploymentsApiUrl}/artifacts/${id}/download`).then(response => {
     let { release, index } = findArtifactIndexInRelease(getReleasesById(getState()), id);
     if (!release || index === -1) {
-      return dispatch(getReleases());
+      return dispatch(getReleases()) as ReturnType<AppDispatch>;
     }
     const releaseArtifacts = [...release.artifacts];
     releaseArtifacts[index] = {
@@ -133,8 +135,23 @@ export const getArtifactUrl = createAsyncThunk(`${sliceName}/getArtifactUrl`, (i
   })
 );
 
-export const createArtifact = createAsyncThunk(`${sliceName}/createArtifact`, ({ file, meta }, { dispatch }) => {
-  let formData = Object.entries(meta).reduce((accu, [key, value]) => {
+type ArtifactPayload = {
+  file: File;
+  meta: {
+    args?: {
+      dest_dir: string;
+      filename: string;
+      software_filesystem: string;
+      software_name: string;
+      software_version: string;
+    };
+    description: string;
+    device_types_compatible?: string[];
+    name?: string;
+  };
+};
+export const createArtifact = createAppAsyncThunk(`${sliceName}/createArtifact`, ({ file, meta }: ArtifactPayload, { dispatch }) => {
+  const formData = Object.entries(meta).reduce((accu, [key, value]) => {
     if (Array.isArray(value)) {
       accu.append(key, value.join(','));
     } else if (value instanceof Object) {
@@ -150,11 +167,11 @@ export const createArtifact = createAsyncThunk(`${sliceName}/createArtifact`, ({
   const cancelSource = new AbortController();
   return Promise.all([
     dispatch(setSnackbar('Generating artifact')),
-    dispatch(initUpload({ id: uploadId, upload: { name: file.name, size: file.size, uploadProgress: 0, cancelSource } })),
+    dispatch(initUpload({ id: uploadId, upload: { name: file.name, size: file.size, progress: 0, cancelSource } })),
     GeneralApi.upload(
       `${deploymentsApiUrl}/artifacts/generate`,
       formData,
-      e => dispatch(uploadProgress({ id: uploadId, progress: progress(e) })),
+      (e: { loaded: number; total: number }) => dispatch(uploadProgress({ id: uploadId, progress: progress(e) })),
       cancelSource.signal
     )
   ])
@@ -163,31 +180,39 @@ export const createArtifact = createAsyncThunk(`${sliceName}/createArtifact`, ({
         dispatch(getReleases());
         dispatch(selectRelease(file.name));
       }, TIMEOUTS.oneSecond);
-      return Promise.resolve(dispatch(setSnackbar('Upload successful', TIMEOUTS.fiveSeconds)));
+      return Promise.resolve(dispatch(setSnackbar({ message: 'Upload successful', autoHideDuration: TIMEOUTS.fiveSeconds })));
     })
     .catch(err => {
       if (isCancel(err)) {
-        return dispatch(setSnackbar('The artifact generation has been cancelled', TIMEOUTS.fiveSeconds));
+        return dispatch(setSnackbar({ message: 'The artifact generation has been cancelled', autoHideDuration: TIMEOUTS.fiveSeconds }));
       }
       return commonErrorHandler(err, `Artifact couldn't be generated.`, dispatch);
     })
     .finally(() => dispatch(cleanUpUpload(uploadId)));
 });
 
-export const uploadArtifact = createAsyncThunk(`${sliceName}/uploadArtifact`, ({ file, meta }, { dispatch }) => {
-  let formData = new FormData();
-  formData.append('size', file.size);
+export const uploadArtifact = createAppAsyncThunk(`${sliceName}/uploadArtifact`, ({ file, meta }: ArtifactPayload, { dispatch }) => {
+  const formData = new FormData();
+  formData.append('size', file.size.toString());
   formData.append('description', meta.description);
   formData.append('artifact', file);
   const uploadId = uuid();
   const cancelSource = new AbortController();
   return Promise.all([
     dispatch(setSnackbar('Uploading artifact')),
-    dispatch(initUpload({ id: uploadId, upload: { name: file.name, size: file.size, uploadProgress: 0, cancelSource } })),
-    GeneralApi.upload(`${deploymentsApiUrl}/artifacts`, formData, e => dispatch(uploadProgress({ id: uploadId, progress: progress(e) })), cancelSource.signal)
+    dispatch(initUpload({ id: uploadId, upload: { name: file.name, size: file.size, progress: 0, cancelSource } })),
+    GeneralApi.upload(
+      `${deploymentsApiUrl}/artifacts`,
+      formData,
+      (e: { loaded: number; total: number }) => dispatch(uploadProgress({ id: uploadId, progress: progress(e) })),
+      cancelSource.signal
+    )
   ])
     .then(() => {
-      const tasks = [dispatch(setSnackbar('Upload successful', TIMEOUTS.fiveSeconds)), dispatch(getReleases())];
+      const tasks: ReturnType<AppDispatch>[] = [
+        dispatch(setSnackbar({ message: 'Upload successful', autoHideDuration: TIMEOUTS.fiveSeconds })),
+        dispatch(getReleases())
+      ];
       if (meta.name) {
         tasks.push(dispatch(selectRelease(meta.name)));
       }
@@ -195,46 +220,51 @@ export const uploadArtifact = createAsyncThunk(`${sliceName}/uploadArtifact`, ({
     })
     .catch(err => {
       if (isCancel(err)) {
-        return dispatch(setSnackbar('The upload has been cancelled', TIMEOUTS.fiveSeconds));
+        return dispatch(setSnackbar({ message: 'The upload has been cancelled', autoHideDuration: TIMEOUTS.fiveSeconds }));
       }
       return commonErrorHandler(err, `Artifact couldn't be uploaded.`, dispatch);
     })
     .finally(() => dispatch(cleanUpUpload(uploadId)));
 });
 
-export const cancelFileUpload = createAsyncThunk(`${sliceName}/cancelFileUpload`, (id, { dispatch, getState }) => {
+export const cancelFileUpload = createAppAsyncThunk(`${sliceName}/cancelFileUpload`, (id: string, { dispatch, getState }) => {
+  //TODO: remove when app Slice types merged
+  //@ts-ignore
   const { [id]: current } = getState().app.uploadsById;
   current.cancelSource.abort();
   return Promise.resolve(dispatch(cleanUpUpload(id)));
 });
 
-export const editArtifact = createAsyncThunk(`${sliceName}/editArtifact`, ({ id, body }, { dispatch, getState }) =>
+export const editArtifact = createAppAsyncThunk(`${sliceName}/editArtifact`, ({ id, body }: { body: ArtifactUpdate; id: string }, { dispatch, getState }) =>
   GeneralApi.put(`${deploymentsApiUrl}/artifacts/${id}`, body)
     .catch(err => commonErrorHandler(err, `Artifact details couldn't be updated.`, dispatch))
     .then(() => {
       const state = getState();
-      let { release, index } = findArtifactIndexInRelease(getReleasesById(state), id);
+      const { release, index } = findArtifactIndexInRelease(getReleasesById(state), id);
       if (!release || index === -1) {
-        return dispatch(getReleases());
+        return dispatch(getReleases()) as ReturnType<AppDispatch>;
       }
       const updatedRelease = {
         ...release,
-        artifacts: release.artifacts.map((artifact, i) => (i === index ? { ...artifact, description: body.description } : artifact))
+        artifacts: release.artifacts.map((artifact, i) => (i === index ? { ...artifact, description: body.description || '' } : artifact))
       };
       return Promise.all([
         dispatch(actions.receiveRelease(updatedRelease)),
-        dispatch(setSnackbar('Artifact details were updated successfully.', TIMEOUTS.fiveSeconds, '')),
+        dispatch(setSnackbar({ message: 'Artifact details were updated successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' })),
         dispatch(getRelease(release.name)),
         dispatch(selectRelease(release.name))
       ]);
     })
 );
 
-export const removeArtifact = createAsyncThunk(`${sliceName}/removeArtifact`, (id, { dispatch, getState }) =>
+export const removeArtifact = createAppAsyncThunk(`${sliceName}/removeArtifact`, (id: string, { dispatch, getState }) =>
   GeneralApi.delete(`${deploymentsApiUrl}/artifacts/${id}`)
     .then(() => {
       const state = getState();
-      let { release, index } = findArtifactIndexInRelease(getReleasesById(state), id);
+      const { release, index } = findArtifactIndexInRelease(getReleasesById(state), id);
+      if (!release || index === -1) {
+        return dispatch(getReleases()) as ReturnType<AppDispatch>;
+      }
       const releaseArtifacts = [...release.artifacts];
       releaseArtifacts.splice(index, 1);
       if (!releaseArtifacts.length) {
@@ -249,60 +279,79 @@ export const removeArtifact = createAsyncThunk(`${sliceName}/removeArtifact`, (i
               total: releasesList.total - 1
             })
           )
-        ]);
+        ]) as ReturnType<AppDispatch>;
       }
-      return Promise.all([dispatch(setSnackbar('Artifact was removed', TIMEOUTS.fiveSeconds, '')), dispatch(actions.receiveRelease(release))]);
+      return Promise.all([
+        dispatch(setSnackbar({ message: 'Artifact was removed', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' })),
+        dispatch(actions.receiveRelease(release))
+      ]) as ReturnType<AppDispatch>;
     })
     .catch(err => commonErrorHandler(err, `Error removing artifact:`, dispatch))
 );
 
-export const removeRelease = createAsyncThunk(`${sliceName}/removeRelease`, (releaseId, { dispatch, getState }) =>
-  Promise.all(getReleasesById(getState())[releaseId].artifacts.map(({ id }) => dispatch(removeArtifact(id)))).then(() => dispatch(selectRelease()))
+export const removeRelease = createAppAsyncThunk(`${sliceName}/removeRelease`, (releaseId: string, { dispatch, getState }) =>
+  Promise.all(getReleasesById(getState())[releaseId].artifacts.map(({ id }) => dispatch(removeArtifact(id)))).then(() => dispatch(selectRelease(null)))
 );
 
-export const selectRelease = createAsyncThunk(`${sliceName}/selectRelease`, (release, { dispatch }) => {
-  const name = release ? release.name || release : null;
-  let tasks = [dispatch(actions.selectedRelease(name))];
+export const removeReleases = createAppAsyncThunk(`${sliceName}/removeReleases`, (releaseIds: string[], { dispatch, getState }) => {
+  const deleteRequests = releaseIds.reduce<ReturnType<AppDispatch>>((accu, releaseId) => {
+    const releaseArtifacts = getReleasesById(getState())[releaseId].artifacts;
+    accu.push(releaseArtifacts.map(({ id }) => dispatch(removeArtifact(id))));
+    return accu;
+  }, []);
+  return Promise.all(deleteRequests);
+});
+
+export const selectRelease = createAppAsyncThunk(`${sliceName}/selectRelease`, (release: Release | string | null, { dispatch }) => {
+  const name = (release && typeof release === 'object' ? release.name : release) || null;
+  const tasks: ReturnType<AppDispatch> = [dispatch(actions.selectedRelease(name))];
   if (name) {
     tasks.push(dispatch(getRelease(name)));
   }
   return Promise.all(tasks);
 });
 
-export const setReleasesListState = createAsyncThunk(`${sliceName}/setReleasesListState`, (selectionState, { dispatch, getState }) => {
-  const currentState = getState().releases.releasesList;
-  let nextState = {
-    ...currentState,
-    ...selectionState,
-    sort: { ...currentState.sort, ...selectionState.sort }
-  };
-  let tasks = [];
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { isLoading: currentLoading, ...currentRequestState } = currentState;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { isLoading: selectionLoading, ...selectionRequestState } = nextState;
-  if (!deepCompare(currentRequestState, selectionRequestState)) {
-    nextState.isLoading = true;
-    tasks.push(dispatch(getReleases(nextState)).finally(() => dispatch(setReleasesListState({ isLoading: false }))));
+export const setReleasesListState = createAppAsyncThunk(
+  `${sliceName}/setReleasesListState`,
+  (selectionState: Partial<ReleasesList>, { dispatch, getState }) => {
+    const currentState = getState().releases.releasesList;
+    const nextState = {
+      ...currentState,
+      ...selectionState,
+      sort: { ...currentState.sort, ...selectionState.sort } as SortOptions
+    };
+    const tasks: ReturnType<AppDispatch> = [];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { isLoading: currentLoading, ...currentRequestState } = currentState;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { isLoading: selectionLoading, ...selectionRequestState } = nextState;
+    //TODO: remove once utils are properly typed
+    //@ts-ignore
+    if (!deepCompare(currentRequestState, selectionRequestState)) {
+      nextState.isLoading = true;
+      tasks.push(dispatch(getReleases(nextState)).finally(() => dispatch(setReleasesListState({ isLoading: false }))));
+    }
+    tasks.push(dispatch(actions.setReleaseListState(nextState)));
+    return Promise.all(tasks);
   }
-  tasks.push(dispatch(actions.setReleaseListState(nextState)));
-  return Promise.all(tasks);
-});
+);
 
 /* Releases */
 
-const releaseListRetrieval = config => {
+const releaseListRetrieval = (config: Partial<ReleasesList>) => {
   const { searchTerm = '', page = defaultPage, perPage = defaultPerPage, sort = sortingDefaults, selectedTags = [], type = '' } = config;
   const { key: attribute, direction } = sort;
+  //TODO: remove once utils typed
+  //@ts-ignore
   const filterQuery = formatReleases({ pageState: { searchTerm, selectedTags } });
   const updateType = type ? `update_type=${type}` : '';
   const sorting = attribute ? `sort=${attribute}:${direction}`.toLowerCase() : '';
-  return GeneralApi.get(
+  return GeneralApi.get<Array<Release>>(
     `${deploymentsApiUrlV2}/deployments/releases?${[`page=${page}`, `per_page=${perPage}`, filterQuery, updateType, sorting].filter(i => i).join('&')}`
   );
 };
 
-const deductSearchState = (receivedReleases, config, total, state) => {
+const deductSearchState = (receivedReleases: Release[], config, total: number, state: ReleaseSliceType) => {
   let releaseListState = { ...state.releasesList };
   const { searchTerm, searchOnly, sort = {}, selectedTags = [], type } = config;
   const flattenedReleases = Object.values(receivedReleases).sort(customSort(sort.direction === SORTING_OPTIONS.desc, sort.key));
@@ -321,7 +370,7 @@ const deductSearchState = (receivedReleases, config, total, state) => {
   return releaseListState;
 };
 
-export const getReleases = createAsyncThunk(`${sliceName}/getReleases`, (passedConfig = {}, { dispatch, getState }) => {
+export const getReleases = createAppAsyncThunk(`${sliceName}/getReleases`, (passedConfig: Partial<ReleasesList> | undefined = {}, { dispatch, getState }) => {
   const config = { ...getState().releases.releasesList, ...passedConfig };
   return releaseListRetrieval(config)
     .then(({ data: receivedReleases = [], headers = {} }) => {
@@ -329,7 +378,7 @@ export const getReleases = createAsyncThunk(`${sliceName}/getReleases`, (passedC
       const state = getState().releases;
       const flatReleases = reduceReceivedReleases(receivedReleases, state.byId);
       const combinedReleases = { ...state.byId, ...flatReleases };
-      let tasks = [dispatch(actions.receiveReleases(combinedReleases))];
+      const tasks: ReturnType<AppDispatch> = [dispatch(actions.receiveReleases(combinedReleases))];
       const releaseListState = deductSearchState(receivedReleases, config, total, state);
       tasks.push(dispatch(actions.setReleaseListState(releaseListState)));
       return Promise.all(tasks);
@@ -337,7 +386,7 @@ export const getReleases = createAsyncThunk(`${sliceName}/getReleases`, (passedC
     .catch(err => commonErrorHandler(err, `Please check your connection`, dispatch));
 });
 
-export const getRelease = createAsyncThunk(`${sliceName}/getReleases`, async (name, { dispatch, getState }) => {
+export const getRelease = createAppAsyncThunk(`${sliceName}/getReleases`, async (name: string, { dispatch, getState }) => {
   const releaseResponse = await GeneralApi.get(`${deploymentsApiUrlV2}/deployments/releases/${name}`);
   const { data: release } = releaseResponse;
   if (release) {
@@ -347,35 +396,55 @@ export const getRelease = createAsyncThunk(`${sliceName}/getReleases`, async (na
   return Promise.resolve(null);
 });
 
-export const updateReleaseInfo = createAsyncThunk(`${sliceName}/updateReleaseInfo`, ({ name, info }, { dispatch, getState }) =>
-  GeneralApi.patch(`${deploymentsApiUrlV2}/deployments/releases/${name}`, info)
-    .catch(err => commonErrorHandler(err, `Release details couldn't be updated.`, dispatch))
-    .then(() =>
-      Promise.all([
-        dispatch(actions.receiveRelease({ ...getReleasesById(getState())[name], ...info, name })),
-        dispatch(setSnackbar('Release details were updated successfully.', TIMEOUTS.fiveSeconds, ''))
-      ])
+export const updateReleaseInfo = createAppAsyncThunk(
+  `${sliceName}/updateReleaseInfo`,
+  ({ name, info }: { info: ReleaseUpdate; name: string }, { dispatch, getState }) =>
+    GeneralApi.patch(`${deploymentsApiUrlV2}/deployments/releases/${name}`, info)
+      .catch(err => commonErrorHandler(err, `Release details couldn't be updated.`, dispatch))
+      .then(() =>
+        Promise.all([
+          dispatch(actions.receiveRelease({ ...getReleasesById(getState())[name], ...info, name })),
+          dispatch(setSnackbar({ message: 'Release details were updated successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' }))
+        ])
+      )
+);
+
+export const setSingleReleaseTags = createAppAsyncThunk(
+  `${sliceName}/setSingleReleaseTags`,
+  ({ name, tags }: { name: string; tags: Tags }, { dispatch, getState }) =>
+    GeneralApi.put(`${deploymentsApiUrlV2}/deployments/releases/${name}/tags`, tags).then(() =>
+      Promise.resolve(dispatch(actions.receiveRelease({ ...getReleasesById(getState())[name], name, tags })))
     )
 );
 
-export const setReleaseTags = createAsyncThunk(`${sliceName}/setReleaseTags`, ({ name, tags = [] }, { dispatch, getState }) =>
-  GeneralApi.put(`${deploymentsApiUrlV2}/deployments/releases/${name}/tags`, tags)
+export const setReleaseTags = createAppAsyncThunk(`${sliceName}/setReleaseTags`, ({ name, tags = [] }: { name: string; tags: Tags }, { dispatch }) =>
+  dispatch(setSingleReleaseTags({ name, tags }))
     .catch(err => commonErrorHandler(err, `Release tags couldn't be set.`, dispatch))
-    .then(() =>
-      Promise.all([
-        dispatch(actions.receiveRelease({ ...getReleasesById(getState())[name], name, tags })),
-        dispatch(setSnackbar('Release tags were set successfully.', TIMEOUTS.fiveSeconds, ''))
-      ])
-    )
+    .then(() => Promise.resolve(dispatch(setSnackbar({ message: 'Release tags were set successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' }))))
 );
 
-export const getExistingReleaseTags = createAsyncThunk(`${sliceName}/getReleaseTags`, (_, { dispatch }) =>
+export const setReleasesTags = createAppAsyncThunk(
+  `${sliceName}/setReleasesTags`,
+  ({ releases, tags = [] }: { releases: Release[]; tags: Tags }, { dispatch }) => {
+    const addRequests = releases.reduce<ReturnType<AppDispatch>>((accu, release) => {
+      accu.push(dispatch(setSingleReleaseTags({ name: release.name, tags: [...new Set([...(release.tags ? release.tags : []), ...tags])] })));
+      return accu;
+    }, []);
+    return Promise.all(addRequests)
+      .catch(err => commonErrorHandler(err, `Releases couldn't be tagged.`, dispatch))
+      .then(() =>
+        Promise.resolve(dispatch(setSnackbar({ message: 'Releases were tagged successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' })))
+      );
+  }
+);
+
+export const getExistingReleaseTags = createAppAsyncThunk(`${sliceName}/getReleaseTags`, (_, { dispatch }) =>
   GeneralApi.get(`${deploymentsApiUrlV2}/releases/all/tags`)
     .catch(err => commonErrorHandler(err, `Existing release tags couldn't be retrieved.`, dispatch))
     .then(({ data: tags }) => Promise.resolve(dispatch(actions.receiveReleaseTags(tags))))
 );
 
-export const getUpdateTypes = createAsyncThunk(`${sliceName}/getReleaseTypes`, (_, { dispatch }) =>
+export const getUpdateTypes = createAppAsyncThunk(`${sliceName}/getReleaseTypes`, (_, { dispatch }) =>
   GeneralApi.get(`${deploymentsApiUrlV2}/releases/all/types`)
     .catch(err => commonErrorHandler(err, `Existing update types couldn't be retrieved.`, dispatch))
     .then(({ data: types }) => Promise.resolve(dispatch(actions.receiveReleaseTypes(types))))
