@@ -95,7 +95,9 @@ export const DEVICE_FILTERING_OPTIONS = {
     shortform: `matches`,
     help: `The "regular expression" operator matches the selected field's value with a Perl compatible regular expression (PCRE), automatically anchored by ^. If the regular expression is not valid, the filter will produce no results. If you need to specify options and flags, you can provide the full regex in the format of /regex/flags, for example.`
   }
-};
+} as const;
+
+export type FilterOperator = keyof typeof DEVICE_FILTERING_OPTIONS;
 
 export const DEVICE_ISSUE_OPTIONS = {
   issues: {
@@ -238,25 +240,7 @@ export const MAX_PAGE_SIZE = 500;
 
 export const ALL_RELEASES = 'All releases';
 
-export type UiPermissionsDefinition = Readonly<{
-  auditlog: string[];
-  deployments?: string[]; // deployments are so far only covered indirectly through releases + device group permissions
-  groups: Record<string, string[]>;
-  releases: Record<string, string[]>;
-  tenantManagement: string[];
-  userManagement: string[];
-}>;
-
-export type UiRoleDefinition = {
-  description: string;
-  editable?: boolean;
-  isCustom?: boolean;
-  name: string;
-  permissions?: object[];
-  uiPermissions: UiPermissionsDefinition;
-};
-
-export const emptyUiPermissions: UiPermissionsDefinition = Object.freeze({
+export const emptyUiPermissions = Object.freeze({
   auditlog: [],
   deployments: [],
   groups: Object.freeze({}),
@@ -265,7 +249,7 @@ export const emptyUiPermissions: UiPermissionsDefinition = Object.freeze({
   userManagement: []
 });
 
-export const emptyRole: UiRoleDefinition = Object.freeze({
+export const emptyRole = Object.freeze({
   name: undefined,
   description: '',
   permissions: [],

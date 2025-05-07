@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import { HELPTOOLTIPS } from '@northern.tech/common-ui/helptips';
 import { getSessionInfo } from '@northern.tech/store/auth';
 import { emptyRole } from '@northern.tech/store/commonConstants';
@@ -20,7 +19,7 @@ import { act } from '@testing-library/react';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import Cookies from 'universal-cookie';
-import { vi } from 'vitest';
+import { Mock, describe, expect, it, vi } from 'vitest';
 
 import { actions } from '.';
 import { accessTokens, defaultPassword, defaultState, receivedPermissionSets, receivedRoles, testSsoId, userId } from '../../../../tests/mockData';
@@ -98,7 +97,7 @@ describe('user actions', () => {
       { type: get2FAQRCode.fulfilled.type }
     ];
     const store = mockStore({ ...defaultState });
-    await store.dispatch(get2FAQRCode(true));
+    await store.dispatch(get2FAQRCode());
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -218,7 +217,7 @@ describe('user actions', () => {
   });
   it('should prevent logging in with a limited user', async () => {
     vi.clearAllMocks();
-    window.localStorage.getItem.mockReturnValueOnce(JSON.stringify({ token: 'limitedToken' }));
+    (window.localStorage.getItem as Mock).mockReturnValueOnce(JSON.stringify({ token: 'limitedToken' }));
     const expectedActions = [
       { type: loginUser.pending.type },
       { type: getUser.pending.type },
@@ -241,7 +240,7 @@ describe('user actions', () => {
       vi.runAllTicks();
     });
     expect(window.localStorage.removeItem).toHaveBeenCalledWith('JWT');
-    window.localStorage.getItem.mockReset();
+    (window.localStorage.getItem as Mock).mockReset();
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -257,13 +256,13 @@ describe('user actions', () => {
   });
   it('should not allow logging out with an active upload', async () => {
     vi.clearAllMocks();
-    const store = mockStore({ ...defaultState, releases: { ...defaultState.releases, uploadProgress: 42 } });
+    const store = mockStore({ ...defaultState, releases: { ...defaultState.releases, progress: 42 } });
     await store.dispatch(logoutUser()).catch(() => expect(true).toEqual(true));
   });
   it('should allow switching users', async () => {
     vi.clearAllMocks();
     const reloadSpy = vi.spyOn(window.location, 'reload');
-    const store = mockStore({ ...defaultState, releases: { ...defaultState.releases, uploadProgress: 42 } });
+    const store = mockStore({ ...defaultState, releases: { ...defaultState.releases, progress: 42 } });
     await store.dispatch(switchUserOrganization('a1'));
     expect(localStorage.getItem).toHaveBeenCalledWith('JWT');
     expect(localStorage.setItem).toHaveBeenCalledWith('JWT', JSON.stringify({ token: 'differentToken' }));
@@ -271,7 +270,7 @@ describe('user actions', () => {
   });
   it('should not allow switching users during uploads', async () => {
     vi.clearAllMocks();
-    const store = mockStore({ ...defaultState, releases: { ...defaultState.releases, uploadProgress: 42 } });
+    const store = mockStore({ ...defaultState, releases: { ...defaultState.releases, progress: 42 } });
     await store.dispatch(switchUserOrganization('a1')).catch(() => expect(true).toEqual(true));
   });
   it('should allow single user retrieval', async () => {
@@ -322,7 +321,6 @@ describe('user actions', () => {
     const createdUser = { email: 'a@b.com', password: defaultPassword };
     const expectedActions = [
       { type: createUser.pending.type },
-      { type: actions.createdUser.type, payload: createdUser },
       { type: getUserList.pending.type },
       { type: appActions.setSnackbar.type, payload: 'The user was created successfully.' },
       { type: actions.receivedUserList.type, payload: defaultState.users.byId },
@@ -344,7 +342,7 @@ describe('user actions', () => {
       { type: editUser.fulfilled.type }
     ];
     const store = mockStore({ ...defaultState });
-    await store.dispatch(editUser({ id: 'a1', email: defaultState.users.byId.a1.email, password: defaultPassword }));
+    await store.dispatch(editUser({ id: 'a1', email: defaultState.users.byId.a1.email, password: defaultPassword, current_password: 'current_password' }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -352,7 +350,9 @@ describe('user actions', () => {
   it('should not allow current user edits without proper password', async () => {
     vi.clearAllMocks();
     const store = mockStore({ ...defaultState });
-    await expect(store.dispatch(editUser({ id: 'a1', email: 'a@evil.com', password: 'mySecretPasswordNot' })).unwrap()).rejects.toBeTruthy();
+    await expect(
+      store.dispatch(editUser({ id: 'a1', email: 'a@evil.com', password: 'mySecretPasswordNot', current_password: 'current_password' })).unwrap()
+    ).rejects.toBeTruthy();
   });
   it('should allow single user removal', async () => {
     vi.clearAllMocks();
@@ -549,7 +549,7 @@ describe('user actions', () => {
     vi.clearAllMocks();
     const expectedActions = [
       { type: setHideAnnouncement.pending.type },
-      { type: appActions.setAnnouncement.type, payload: undefined },
+      { type: appActions.setAnnouncement.type, payload: '' },
       { type: setHideAnnouncement.fulfilled.type }
     ];
     const store = mockStore({ ...defaultState, app: { ...defaultState.app, hostedAnnouncement: 'something' } });
@@ -564,11 +564,11 @@ describe('user actions', () => {
     vi.clearAllMocks();
     const expectedActions = [
       { type: updateUserColumnSettings.pending.type },
-      { type: actions.setCustomColumns.type, payload: [{ asd: 'asd' }] },
+      { type: actions.setCustomColumns.type, payload: [{ attribute: { name: 'asd', scope: '' }, size: 123 }] },
       { type: updateUserColumnSettings.fulfilled.type }
     ];
     const store = mockStore({ ...defaultState, users: { ...defaultState.users, customColumns: [{ asd: 'asd' }] } });
-    await store.dispatch(updateUserColumnSettings({ columns: [{ asd: 'asd' }] }));
+    await store.dispatch(updateUserColumnSettings({ columns: [{ attribute: { name: 'asd', scope: '' }, size: 123 }] }));
     const storeActions = store.getActions();
     expect(localStorage.getItem).not.toHaveBeenCalled();
     expect(localStorage.setItem).toHaveBeenCalled();
@@ -621,7 +621,7 @@ describe('user actions', () => {
       { type: revokeToken.fulfilled.type }
     ];
     const store = mockStore({ ...defaultState });
-    await store.dispatch(revokeToken({ id: 'some-id-1' }));
+    await store.dispatch(revokeToken({ id: 'some-id-1', created_ts: '2022-06-02T11:11:21.725Z', expiration_date: '2022-06-02T11:11:21.725Z', name: 'name' }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -631,7 +631,7 @@ describe('user actions', () => {
     const store = mockStore({ ...defaultState });
     const expectedActions = [
       { type: setTooltipReadState.pending.type },
-      { type: actions.setTooltipState.type, payload: { id: 'foo', readState: 'testRead' } },
+      { type: actions.setTooltipState.type, payload: { id: 'foo', readState: 'read' } },
       { type: saveUserSettings.pending.type },
       { type: getUserSettings.pending.type },
       { type: actions.setUserSettings.type, payload: { ...defaultState.users.userSettings } },
@@ -640,8 +640,12 @@ describe('user actions', () => {
       { type: saveUserSettings.fulfilled.type },
       { type: setTooltipReadState.fulfilled.type }
     ];
-    await store.dispatch(setTooltipReadState({ id: 'foo', readState: 'testRead', persist: true }));
+    await store.dispatch(setTooltipReadState({ id: 'foo', readState: 'read', persist: true }));
     const storeActions = store.getActions();
+    await act(async () => {
+      vi.runOnlyPendingTimers();
+      vi.runAllTicks();
+    });
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
@@ -652,7 +656,7 @@ describe('user actions', () => {
       { type: setAllTooltipsReadState.pending.type },
       {
         type: actions.setTooltipsState.type,
-        payload: { ...Object.values(HELPTOOLTIPS).reduce((accu, { id }) => ({ ...accu, [id]: { readState: 'testRead' } }), {}) }
+        payload: { ...Object.values(HELPTOOLTIPS).reduce((accu, { id }) => ({ ...accu, [id]: { readState: 'read' } }), {}) }
       },
       { type: saveUserSettings.pending.type },
       { type: getUserSettings.pending.type },
@@ -662,7 +666,7 @@ describe('user actions', () => {
       { type: saveUserSettings.fulfilled.type },
       { type: setAllTooltipsReadState.fulfilled.type }
     ];
-    await store.dispatch(setAllTooltipsReadState('testRead'));
+    await store.dispatch(setAllTooltipsReadState('read'));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));

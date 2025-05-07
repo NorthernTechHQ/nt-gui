@@ -11,19 +11,19 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
+import { UserSession } from '@northern.tech/store/usersSlice';
 import Cookies from 'universal-cookie';
 
 import { TIMEOUTS } from './constants';
 
 const cookies = new Cookies();
 
-const emptySession = Object.freeze({ token: '', exiresAt: undefined });
+const emptySession = Object.freeze({ token: '', exiresAt: undefined }) as Readonly<UserSession>;
 
 let tokenCache = '';
 
-export const getSessionInfo = () => {
-  let sessionInfo = { ...emptySession };
+export const getSessionInfo = (): UserSession => {
+  let sessionInfo = { ...emptySession } as UserSession;
   try {
     sessionInfo = JSON.parse(window.localStorage.getItem('JWT') ?? '');
   } catch {
@@ -36,20 +36,20 @@ export const getSessionInfo = () => {
   if (!sessionInfo.token) {
     let jwtTokenFromCookie = cookies.get('JWT', { doNotParse: true }) ?? '';
     if (jwtTokenFromCookie) {
-      setSessionInfo({ token: jwtTokenFromCookie, undefined });
+      setSessionInfo({ token: jwtTokenFromCookie });
       sessionInfo.token = jwtTokenFromCookie;
       cookies.remove('JWT');
       cookies.remove('JWT', { path: '/' });
     }
   }
-  sessionInfo.token = sessionInfo.token || undefined;
+  sessionInfo.token = sessionInfo.token || '';
   tokenCache = sessionInfo.token;
   return sessionInfo;
 };
 
 export const getToken = () => (tokenCache ? tokenCache : getSessionInfo().token);
 
-export const setSessionInfo = ({ token, expiresAt }) => {
+export const setSessionInfo = ({ token, expiresAt }: UserSession) => {
   tokenCache = token;
   window.localStorage.setItem('JWT', JSON.stringify({ token, expiresAt }));
 };
