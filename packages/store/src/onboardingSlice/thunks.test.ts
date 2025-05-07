@@ -11,10 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import { getUserSettings, saveUserSettings } from '@northern.tech/store/thunks';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { describe, expect, it } from 'vitest';
 
 import { actions } from '.';
 import { defaultState } from '../../../../tests/mockData';
@@ -108,10 +108,10 @@ describe('onboarding actions', () => {
   });
   it('should pass on onboarding approach', async () => {
     const store = mockStore({ ...defaultState });
-    await store.dispatch(setOnboardingApproach('test'));
+    await store.dispatch(setOnboardingApproach('physical'));
     const expectedActions = [
       { type: setOnboardingApproach.pending.type },
-      { type: actions.setOnboardingApproach.type, payload: 'test' },
+      { type: actions.setOnboardingApproach.type, payload: 'physical' },
       { type: saveUserSettings.pending.type },
       { type: getUserSettings.pending.type },
       { type: userActions.setUserSettings.type, payload: { ...defaultState.users.userSettings } },
@@ -122,7 +122,7 @@ describe('onboarding actions', () => {
           ...defaultState.users.userSettings,
           onboarding: {
             ...defaultOnboardingState,
-            approach: 'test'
+            approach: 'physical'
           }
         }
       },
@@ -135,10 +135,10 @@ describe('onboarding actions', () => {
   });
   it('should pass on onboarding device type', async () => {
     const store = mockStore({ ...defaultState });
-    await store.dispatch(setOnboardingDeviceType('testtype'));
+    await store.dispatch(setOnboardingDeviceType(['testtype']));
     const expectedActions = [
       { type: setOnboardingDeviceType.pending.type },
-      { type: actions.setOnboardingDeviceType.type, payload: 'testtype' },
+      { type: actions.setOnboardingDeviceType.type, payload: ['testtype'] },
       { type: saveUserSettings.pending.type },
       { type: getUserSettings.pending.type },
       { type: userActions.setUserSettings.type, payload: { ...defaultState.users.userSettings } },
@@ -150,7 +150,7 @@ describe('onboarding actions', () => {
           columnSelection: [],
           onboarding: {
             ...defaultOnboardingState,
-            deviceType: 'testtype'
+            deviceType: ['testtype']
           }
         }
       },
@@ -225,8 +225,7 @@ describe('onboarding actions', () => {
   });
   it('should try to derive the onboarding state based on the stored state of the environment', async () => {
     const store = mockStore({ ...defaultState });
-    const stepNames = Object.keys(onboardingSteps);
-    await store.dispatch(getOnboardingState(stepNames[0]));
+    await store.dispatch(getOnboardingState());
     const expectedActions = expectedOnboardingActions;
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
