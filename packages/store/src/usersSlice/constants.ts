@@ -13,12 +13,48 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { PermissionSet as BackendPermissionSet, Role as BackendRole, RolePermission, RoleUseradm } from '@northern.tech/store/api/types/MenderTypes';
 import { ALL_DEVICES, ALL_RELEASES, apiUrl, emptyUiPermissions } from '@northern.tech/store/constants';
 
 export const useradmApiUrlv1 = `${apiUrl.v1}/useradm`;
 export const useradmApiUrlv2 = `${apiUrl.v2}/useradm`;
 export { useradmApiUrlv1 as useradmApiUrl };
 
+export type ReadPermission = 'read';
+export type ManagePermission = 'manage';
+export type DeployPermission = 'deploy';
+export type ConfigurePermission = 'configure';
+export type ConnectPermission = 'connect';
+export type UploadPermission = 'upload';
+export type AuditLogPermission = ReadPermission;
+export type UserManagementPermission = ReadPermission | ManagePermission;
+export type DeploymentPermission = ReadPermission | ManagePermission | DeployPermission;
+export type GroupsPermission = ReadPermission | ManagePermission | DeployPermission | ConfigurePermission | ConnectPermission;
+export type ReleasesPermission = ReadPermission | ManagePermission | UploadPermission;
+export type AnyPermission = UiPermissionsByIdKey;
+
+export type UiPermissions = {
+  auditlog: AuditLogPermission[];
+  deployments: DeploymentPermission[];
+  groups: Record<string, GroupsPermission[]>;
+  releases: Record<string, ReleasesPermission[]>;
+  tenantManagement?: UserManagementPermission[];
+  userManagement: UserManagementPermission[];
+};
+
+export type Role = BackendRole &
+  Omit<RoleUseradm, 'name' | 'description'> & {
+    editable?: boolean;
+    isCustom?: boolean;
+    uiPermissions: UiPermissions;
+    value?: string;
+  };
+export type PermissionSet = Omit<BackendPermissionSet, 'name' | 'permissions'> & {
+  isCustom?: boolean;
+  name: PermissionSetId;
+  permissions?: RolePermission[];
+  result: Partial<UiPermissions>;
+};
 export type UiPermission = {
   explanations: object;
   permissionLevel: number;
@@ -86,7 +122,8 @@ const permissionSetIds = {
   ReadUsers: 'ReadUsers',
   SuperUser: 'SuperUser',
   UploadArtifacts: 'UploadArtifacts'
-};
+} as const;
+export type PermissionSetId = keyof typeof permissionSetIds;
 
 export const uiPermissionsById = {
   configure: {
@@ -152,7 +189,10 @@ export const uiPermissionsById = {
     value: 'upload',
     verbs: [PermissionTypes.Post, PermissionTypes.Put, PermissionTypes.Patch]
   }
-};
+} as const;
+
+export type UiPermissionsByIdKey = keyof typeof uiPermissionsById;
+export type PermissionObject = (typeof uiPermissionsById)[UiPermissionsByIdKey];
 
 /**
  * _uiPermissions_ represent the possible permissions/ rights that can be given for the area
@@ -163,8 +203,10 @@ export const uiPermissionsById = {
 export const scopedPermissionAreas = {
   groups: { key: 'groups', excessiveAccessSelector: ALL_DEVICES, scopeType: 'DeviceGroups' },
   releases: { key: 'releases', excessiveAccessSelector: ALL_RELEASES, scopeType: 'Releases' }
-};
+} as const;
+export type ScopedPermissionsByAreaKey = keyof typeof scopedPermissionAreas;
 
+export type UiPermissionsByAreaKey = keyof typeof uiPermissionsByArea;
 export const uiPermissionsByArea = {
   auditlog: {
     endpoints: [{ path: /\/(auditlog)/i, types: [PermissionTypes.Get], uiPermissions: [uiPermissionsById.read] }],
@@ -244,7 +286,7 @@ export const uiPermissionsByArea = {
     uiPermissions: [uiPermissionsById.read, uiPermissionsById.manage],
     title: 'User Management'
   }
-};
+} as const;
 
 const permissionMapper = permission => permission.value;
 export const itemUiPermissionsReducer = (accu, { item, uiPermissions }) => (item ? { ...accu, [item]: uiPermissions } : accu);
@@ -256,7 +298,7 @@ export const checkPermissionsObject = (permissions, requiredPermission, scopedAc
   permissions[superAccess]?.some(permission => checkSinglePermission(permission, requiredPermission)) ||
   permissions[scopedAccess]?.some(permission => checkSinglePermission(permission, requiredPermission));
 
-export const rolesById = Object.freeze({
+export const rolesById: Record<string, Role> = Object.freeze({
   [staticRolesByName.admin]: {
     name: 'Admin',
     value: staticRolesByName.admin,
@@ -345,7 +387,7 @@ export const serviceProviderRolesById = {
   }
 };
 
-export const defaultPermissionSets = {
+export const defaultPermissionSets: Record<string, Omit<PermissionSet, 'permissions'>> = {
   [permissionSetIds.Basic]: {
     name: permissionSetIds.Basic,
     result: {
@@ -455,11 +497,13 @@ export const twoFAStates = {
   enabled: 'enabled',
   disabled: 'disabled',
   unverified: 'unverified'
-};
+} as const;
+
 export const settingsKeys = { initialized: 'settings-initialized' };
 
 export const READ_STATES = {
   read: 'read',
   seen: 'seen',
   unread: 'unread'
-};
+} as const;
+export type ReadState = keyof typeof READ_STATES;

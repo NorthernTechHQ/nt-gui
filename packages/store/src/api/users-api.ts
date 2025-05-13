@@ -11,15 +11,22 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import axios from 'axios';
 
 import { getToken } from '../auth';
 import { commonRequestConfig } from './general-api';
 
+type PostLoginBody = {
+  email: string;
+  no_expiry?: boolean;
+  password?: string;
+  token2fa?: string;
+};
+
 const Api = {
-  postLogin: (url, { email: username, password, ...body }) =>
+  postLogin: (url: string, { email: username, password, ...body }: PostLoginBody) =>
     axios
+      // @ts-ignore
       .post(url, body, { ...commonRequestConfig, auth: { username, password } })
       .then(res => ({ text: res.data, code: res.status, contentType: res.headers?.['content-type'] })),
   putVerifyTFA: (url, userData) => {
