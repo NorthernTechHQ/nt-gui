@@ -39,7 +39,7 @@
     "@types/react-dom": "^19.x",
     "eslint": "8.57.0",
     "tsup": "8.4.0",
-    "typescript": "5.8.2"
+    "typescript": "5.8.3"
   },
   "dependencies": {
     "@mui/icons-material": "^6.x",
