@@ -30,8 +30,12 @@ export const onboardingSteps = {
   DEPLOYMENTS_PAST_COMPLETED: 'deployments-past-completed',
   DEPLOYMENTS_PAST_COMPLETED_FAILURE: 'deployments-past-completed-failure',
   ONBOARDING_CANCELED: 'onboarding-canceled'
-};
+} as const;
 
+export type OnboardingStepKey = keyof typeof onboardingSteps;
+export type OnboardingStep = (typeof onboardingSteps)[OnboardingStepKey];
+
+// TODO: Update this to reflect the onboarding steps used in Mender?
 export const orderedOnboardingSteps = [
   onboardingSteps.DASHBOARD_ONBOARDING_START,
   onboardingSteps.DEVICES_PENDING_ONBOARDING_START,
