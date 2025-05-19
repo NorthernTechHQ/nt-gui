@@ -11,14 +11,14 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { DeploymentPhase, TenantInfo, TenantsIdName, UserUseradm } from '@northern.tech/store/api/types/MenderTypes';
+import { User as BackendUser, DeploymentPhase, TenantInfo, TenantsIdName } from '@northern.tech/store/api/types/MenderTypes';
 import { FilterOperator } from '@northern.tech/store/commonConstants';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { PermissionSet, READ_STATES, ReadState, Role, defaultPermissionSets, rolesById } from './constants';
 
 export const sliceName = 'users';
-export type User = UserUseradm & TenantInfo & { tenants?: TenantsIdName };
+export type User = BackendUser & TenantInfo & { tenants?: TenantsIdName };
 export type UserSession = {
   expiresAt?: string;
   token: string;
