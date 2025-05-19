@@ -9,7 +9,7 @@ export type ErrorDeployments = {
   /**
    * Description of the error.
    */
-  error?: string;
+  error: string;
   /**
    * Request ID (same as in X-MEN-RequestID header).
    */

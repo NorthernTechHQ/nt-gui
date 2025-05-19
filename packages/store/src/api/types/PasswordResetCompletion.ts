@@ -9,7 +9,7 @@ export type PasswordResetCompletion = {
   /**
    * Secret hash received by email by the user
    */
-  secret: string;
+  secret_hash: string;
   /**
    * New password of the user
    */
