@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { HELPTOOLTIPS } from '@northern.tech/common-ui/helptips';
 import { getSessionInfo } from '@northern.tech/store/auth';
 import { emptyRole } from '@northern.tech/store/commonConstants';
 import { setOfflineThreshold } from '@northern.tech/store/thunks';
@@ -86,6 +85,7 @@ vi.mock('universal-cookie', () => {
   return { default: vi.fn(() => mockCookie) };
 });
 const cookies = new Cookies();
+const tooltipIds = ['foo', 'bar'];
 
 /* eslint-disable sonarjs/no-identical-functions */
 describe('user actions', () => {
@@ -656,7 +656,7 @@ describe('user actions', () => {
       { type: setAllTooltipsReadState.pending.type },
       {
         type: actions.setTooltipsState.type,
-        payload: { ...Object.values(HELPTOOLTIPS).reduce((accu, { id }) => ({ ...accu, [id]: { readState: 'read' } }), {}) }
+        payload: { ...tooltipIds.reduce((accu, id) => ({ ...accu, [id]: { readState: 'testRead' } }), {}) }
       },
       { type: saveUserSettings.pending.type },
       { type: getUserSettings.pending.type },
@@ -666,7 +666,7 @@ describe('user actions', () => {
       { type: saveUserSettings.fulfilled.type },
       { type: setAllTooltipsReadState.fulfilled.type }
     ];
-    await store.dispatch(setAllTooltipsReadState('read'));
+    await store.dispatch(setAllTooltipsReadState({ readState: 'testRead', tooltipIds }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));

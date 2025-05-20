@@ -12,7 +12,6 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 // eslint-disable-next-line import/no-unresolved
-import { HELPTOOLTIPS } from '@northern.tech/common-ui/helptips';
 import storeActions from '@northern.tech/store/actions';
 import GeneralApi from '@northern.tech/store/api/general-api';
 import { PermissionSetWithScope, PersonalAccessToken, RolePermission, RolePermissionObject } from '@northern.tech/store/api/types/MenderTypes';
@@ -883,10 +882,13 @@ export const setTooltipReadState = createAppAsyncThunk(
   }
 );
 
-export const setAllTooltipsReadState = createAppAsyncThunk(`${sliceName}/toggleHelptips`, (readState: string = READ_STATES.read, { dispatch }) => {
-  const updatedTips = Object.keys(HELPTOOLTIPS).reduce((accu, id) => ({ ...accu, [id]: { readState } }), {});
-  return Promise.resolve(dispatch(actions.setTooltipsState(updatedTips))).then(() => dispatch(saveUserSettings()));
-});
+export const setAllTooltipsReadState = createAppAsyncThunk(
+  `${sliceName}/toggleHelptips`,
+  ({ readState = READ_STATES.read, tooltipIds }: { readState: string; tooltipIds: string[] }, { dispatch }) => {
+    const updatedTips = tooltipIds.reduce((accu, id) => ({ ...accu, [id]: { readState } }), {});
+    return Promise.resolve(dispatch(actions.setTooltipsState(updatedTips))).then(() => dispatch(saveUserSettings()));
+  }
+);
 
 type SubmitFeedbackPayload = {
   feedback: string;
