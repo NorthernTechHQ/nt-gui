@@ -3,9 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Tenant ids data.
+ * A request identification
  */
-export type TenantIdsData = {
-  tenant_ids?: Array<string>;
-  role?: string;
-};
+export type RequestId = string;

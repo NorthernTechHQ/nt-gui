@@ -8,7 +8,7 @@ import type { TenantApiLimits } from './TenantApiLimits';
 /**
  * Tenant descriptor.
  */
-export type TenantTenantadm = {
+export type TenantV1 = {
     /**
      * Tenant ID.
      */
@@ -24,11 +24,11 @@ export type TenantTenantadm = {
     /**
      * Status of the tenant account.
      */
-    status?: TenantTenantadm.status;
+    status?: TenantV1.status;
     /**
      * Plan assigned to the tenant account.
      */
-    plan?: TenantTenantadm.plan;
+    plan?: TenantV1.plan;
     /**
      * Whether this account is free trial.
      */
@@ -51,16 +51,8 @@ export type TenantTenantadm = {
      * Creation date and time, in ISO8601 format.
      */
     created_at?: string;
-    /**
-     * Count of accepted devices for the tenant.
-     */
-    device_count?: number;
-    /**
-     * Device limit for the tenant.
-     */
-    device_limit?: number;
 };
-export namespace TenantTenantadm {
+export namespace TenantV1 {
     /**
      * Status of the tenant account.
      */

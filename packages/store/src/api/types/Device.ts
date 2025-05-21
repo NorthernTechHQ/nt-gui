@@ -2,19 +2,28 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { DeviceAttribute } from "./DeviceAttribute";
+import type { DeviceStatus } from "./DeviceStatus";
 export type Device = {
   /**
-   * Device ID.
+   * Device identifier.
    */
-  id?: string;
+  id: string;
+  status: DeviceStatus;
+  created?: string;
+  started?: string;
+  finished?: string;
+  deleted?: string;
+  device_type?: string;
   /**
-   * Last device check-in itme.
+   * Availability of the device's deployment log.
    */
-  check_in_time?: string;
-  attributes?: Array<DeviceAttribute>;
+  log: boolean;
   /**
-   * Timestamp of the last update to the device attributes.
+   * State reported by device
    */
-  updated_ts?: string;
+  state?: string;
+  /**
+   * Additional state information
+   */
+  substate?: string;
 };

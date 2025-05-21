@@ -28,7 +28,7 @@ export type FilterPredicateDeployments = {
    * Supported types: number, string, array of numbers, array of strings.
    * Mixed arrays are not allowed.
    */
-  value: string;
+  value: any;
 };
 export namespace FilterPredicateDeployments {
   /**

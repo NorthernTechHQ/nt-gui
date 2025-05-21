@@ -11,7 +11,8 @@ export type Update = {
   type_info?: ArtifactTypeInfo;
   files?: Array<UpdateFile>;
   /**
-   * meta_data is an object of unknown structure as this is dependent of update type (also custom defined by user)
+   * meta_data is an array of objects of unknown structure as this
+   * is dependent of update type (also custom defined by user)
    */
-  meta_data?: Record<string, any>;
+  meta_data?: Array<Record<string, any>>;
 };
