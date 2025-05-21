@@ -11,9 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
-import { SORTING_OPTIONS } from '@northern.tech/store/constants';
-import { createSlice } from '@reduxjs/toolkit';
+import type { SnackbarProps } from '@mui/material';
+
+import { SORTING_OPTIONS, SortOptions } from '@northern.tech/store/constants';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 export const sliceName = 'app';
 
@@ -23,19 +24,95 @@ const getYesterday = () => {
   return today.toISOString();
 };
 
-export const initialState = {
+export type Repository = {
+  name: string;
+  version: string;
+};
+
+export type VersionRelease = Partial<{ [versionInfo: string]: VersionRelease }> & {
+  release?: string;
+  release_date?: string;
+  repos?: Repository[];
+  supported_until?: string;
+};
+
+export type SaasVersion = {
+  date: string;
+  tag: string;
+};
+
+export type ReleaseData = {
+  lts: string[];
+  releases: {
+    [version: string]: VersionRelease;
+  };
+  saas: SaasVersion[];
+};
+export type TagData = { name: string }[];
+
+export interface SnackbarContent extends Pick<SnackbarProps, 'action' | 'autoHideDuration' | 'message' | 'open'> {
+  preventClickToCopy?: boolean;
+}
+
+export interface SearchState {
+  deviceIds: string[];
+  isSearching: boolean;
+  searchTerm: string;
+  searchTotal: number;
+  sort: SortOptions;
+}
+
+export interface Upload {
+  cancelSource: any;
+  name: string;
+  progress: number;
+  size: number;
+  uploading?: boolean;
+}
+
+type UILatestRelease = {
+  releaseDate: string;
+  repos: Record<string, string>;
+};
+
+type VersionInformation = {
+  [key: string]: string | UILatestRelease | undefined;
+  backend?: string;
+  GUI?: string;
+  latestRelease?: UILatestRelease;
+};
+
+type AppSliceType = {
+  cancelSource: any;
+  demoArtifactLink: string;
+  docsVersion: string;
+  features: Record<string, boolean>;
+  feedbackProbability: number;
+  firstLoginAfterSignup: boolean;
+  hostAddress: string | null;
+  hostedAnnouncement: string;
+  newThreshold: string;
+  offlineThreshold: string;
+  recaptchaSiteKey: string;
+  searchState: SearchState;
+  snackbar: SnackbarContent;
+  stripeAPIKey: string;
+  trackerCode: string;
+  uploadsById: Record<string, Upload>;
+  versionInformation: VersionInformation;
+  yesterday?: string;
+};
+
+export const initialState: AppSliceType = {
   cancelSource: undefined,
   demoArtifactLink: 'https://dgsbl4vditpls.cloudfront.net/mender-demo-artifact.mender',
   hostAddress: null,
   snackbar: {
-    open: false,
-    message: '',
-    maxWidth: 900,
-    autoHideDuration: undefined,
     action: undefined,
-    children: undefined,
-    onClick: undefined,
-    onClose: undefined
+    autoHideDuration: undefined,
+    message: '',
+    open: false,
+    preventClickToCopy: false
   },
   // return boolean rather than organization details
   features: {
@@ -60,6 +137,7 @@ export const initialState = {
     deviceIds: [],
     searchTerm: '',
     searchTotal: 0,
+    isSearching: false,
     sort: {
       direction: SORTING_OPTIONS.desc
       // key: null,
@@ -69,7 +147,7 @@ export const initialState = {
   stripeAPIKey: '',
   trackerCode: '',
   uploadsById: {
-    // id: { uploading: false, uploadProgress: 0, cancelSource: undefined }
+    // id: { uploading: false, progress: 0, cancelSource: undefined }
   },
   newThreshold: getYesterday(),
   offlineThreshold: getYesterday(),
@@ -77,11 +155,7 @@ export const initialState = {
     Integration: '',
     'Mender-Client': '',
     'Mender-Artifact': '',
-    'Meta-Mender': '',
-    Deployments: '',
-    Deviceauth: '',
-    Inventory: '',
-    GUI: 'latest'
+    'Meta-Mender': ''
   },
   yesterday: undefined
 };
@@ -90,32 +164,30 @@ export const appSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    setFeatures: (state, action) => {
+    setFeatures: (state, action: PayloadAction<Record<string, boolean>>) => {
       state.features = {
         ...state.features,
         ...action.payload
       };
     },
-    setSnackbar: (state, { payload }) => {
-      let { message, autoHideDuration, action, children, onClick, onClose } = payload;
-      if (typeof payload === 'string' || payload instanceof String) {
-        message = payload;
+    setSnackbar: (state, { payload }: PayloadAction<SnackbarContent | string>) => {
+      if (typeof payload === 'string') {
+        state.snackbar.message = payload;
+        return;
       }
+      const { message, autoHideDuration, action, preventClickToCopy = false } = payload;
       state.snackbar = {
-        open: message ? true : false,
         message,
-        maxWidth: 900,
         autoHideDuration,
         action,
-        children,
-        onClick,
-        onClose
+        preventClickToCopy,
+        open: !!message
       };
     },
-    setFirstLoginAfterSignup: (state, action) => {
+    setFirstLoginAfterSignup: (state, action: PayloadAction<boolean>) => {
       state.firstLoginAfterSignup = action.payload;
     },
-    setAnnouncement: (state, action) => {
+    setAnnouncement: (state, action: PayloadAction<string>) => {
       state.hostedAnnouncement = action.payload;
     },
     setSearchState: (state, action) => {
@@ -124,26 +196,26 @@ export const appSlice = createSlice({
         ...action.payload
       };
     },
-    setOfflineThreshold: (state, action) => {
+    setOfflineThreshold: (state, action: PayloadAction<string>) => {
       state.offlineThreshold = action.payload;
     },
-    initUpload: (state, action) => {
+    initUpload: (state, action: PayloadAction<{ id: string; upload: Upload }>) => {
       const { id, upload } = action.payload;
       state.uploadsById[id] = upload;
     },
-    uploadProgress: (state, action) => {
+    uploadProgress: (state, action: PayloadAction<{ id: string; progress: number }>) => {
       const { id, progress } = action.payload;
       state.uploadsById[id] = {
         ...state.uploadsById[id],
         progress
       };
     },
-    cleanUpUpload: (state, action) => {
+    cleanUpUpload: (state, action: PayloadAction<string>) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [action.payload]: current, ...remainder } = state.uploadsById;
       state.uploadsById = remainder;
     },
-    setVersionInformation: (state, action) => {
+    setVersionInformation: (state, action: PayloadAction<VersionInformation>) => {
       state.versionInformation = {
         ...state.versionInformation,
         ...action.payload

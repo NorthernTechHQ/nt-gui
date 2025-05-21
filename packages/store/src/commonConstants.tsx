@@ -255,3 +255,8 @@ export const emptyRole = Object.freeze({
   permissions: [],
   uiPermissions: Object.freeze({ ...emptyUiPermissions })
 });
+
+export interface SortOptions {
+  direction: keyof typeof SORTING_OPTIONS;
+  key?: string;
+}

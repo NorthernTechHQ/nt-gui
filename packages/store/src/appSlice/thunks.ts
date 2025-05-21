@@ -11,16 +11,15 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import GeneralApi from '@northern.tech/store/api/general-api';
 import { getOfflineThresholdSettings } from '@northern.tech/store/selectors';
+import { AppDispatch, createAppAsyncThunk } from '@northern.tech/store/store';
 import { searchDevices } from '@northern.tech/store/thunks';
 import { getComparisonCompatibleVersion } from '@northern.tech/store/utils';
 import { deepCompare, extractErrorMessage } from '@northern.tech/utils/helpers';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import Cookies from 'universal-cookie';
 
-import { actions, sliceName } from '.';
+import { ReleaseData, SaasVersion, SearchState, TagData, VersionRelease, actions, sliceName } from '.';
 import { getFeatures, getSearchState } from './selectors';
 
 const cookies = new Cookies();
@@ -28,7 +27,7 @@ const cookies = new Cookies();
 /*
   General
 */
-export const setFirstLoginAfterSignup = createAsyncThunk(`${sliceName}/setFirstLoginAfterSignup`, (firstLoginAfterSignup, { dispatch }) => {
+export const setFirstLoginAfterSignup = createAppAsyncThunk<void, boolean>(`${sliceName}/setFirstLoginAfterSignup`, (firstLoginAfterSignup, { dispatch }) => {
   cookies.set('firstLoginAfterSignup', !!firstLoginAfterSignup, { maxAge: 60, path: '/', domain: '.mender.io', sameSite: false });
   dispatch(actions.setFirstLoginAfterSignup(!!firstLoginAfterSignup));
 });
@@ -37,51 +36,52 @@ const dateFunctionMap = {
   getDays: 'getDate',
   setDays: 'setDate'
 };
-export const setOfflineThreshold = createAsyncThunk(`${sliceName}/setOfflineThreshold`, (_, { dispatch, getState }) => {
+export const setOfflineThreshold = createAppAsyncThunk(`${sliceName}/setOfflineThreshold`, (_, { dispatch, getState }) => {
   const { interval, intervalUnit } = getOfflineThresholdSettings(getState());
   const today = new Date();
   const intervalName = `${intervalUnit.charAt(0).toUpperCase()}${intervalUnit.substring(1)}`;
   const setter = dateFunctionMap[`set${intervalName}`] ?? `set${intervalName}`;
   const getter = dateFunctionMap[`get${intervalName}`] ?? `get${intervalName}`;
   today[setter](today[getter]() - interval);
-  let value;
+  let value: string;
   try {
     value = today.toISOString();
   } catch {
     return Promise.resolve(dispatch(actions.setSnackbar('There was an error saving the offline threshold, please check your settings.')));
   }
-  return Promise.resolve(dispatch(actions.setOfflineThreshold(value)));
+  return Promise.resolve(dispatch(actions.setOfflineThreshold(value))) as ReturnType<AppDispatch>;
 });
 
 const versionRegex = new RegExp(/\d+\.\d+/);
-const getLatestRelease = thing => {
+
+const getLatestRelease = (thing: VersionRelease): VersionRelease => {
   const latestKey = Object.keys(thing)
     .filter(key => versionRegex.test(key))
     .sort()
     .reverse()[0];
-  return thing[latestKey];
+  return thing[latestKey] as VersionRelease;
 };
 
 const repoKeyMap = {
   integration: 'Integration',
   mender: 'Mender-Client',
   'mender-artifact': 'Mender-Artifact'
-};
+} as const;
 
-const deductSaasState = (latestRelease, guiTags, saasReleases) => {
+const deductSaasState = (latestRelease: VersionRelease, guiTags: TagData, saasReleases: SaasVersion[]): string | undefined => {
   const latestGuiTag = guiTags.length ? guiTags[0].name : '';
   const latestSaasRelease = latestGuiTag.startsWith('saas-v') ? { date: latestGuiTag.split('-v')[1].replaceAll('.', '-'), tag: latestGuiTag } : saasReleases[0];
-  return latestSaasRelease.date > latestRelease.release_date ? latestSaasRelease.tag : latestRelease.release;
+  return latestSaasRelease.date > latestRelease.release_date! ? latestSaasRelease.tag : latestRelease.release;
 };
 
-export const getLatestReleaseInfo = createAsyncThunk(`${sliceName}/getLatestReleaseInfo`, (_, { dispatch, getState }) => {
+export const getLatestReleaseInfo = createAppAsyncThunk(`${sliceName}/getLatestReleaseInfo`, (_, { dispatch, getState }) => {
   if (!getFeatures(getState()).isHosted) {
     return Promise.resolve();
   }
-  return Promise.all([GeneralApi.get('/versions.json'), GeneralApi.get('/tags.json')])
+  return Promise.all([GeneralApi.get<ReleaseData>('/versions.json'), GeneralApi.get<TagData>('/tags.json')])
     .catch(err => {
       console.log('init error:', extractErrorMessage(err));
-      return Promise.resolve([{ data: {} }, { data: [] }]);
+      return Promise.resolve([{ data: {} }, { data: [] }]) as any;
     })
     .then(([{ data }, { data: guiTags }]) => {
       if (!guiTags.length) {
@@ -89,7 +89,7 @@ export const getLatestReleaseInfo = createAsyncThunk(`${sliceName}/getLatestRele
       }
       const { releases, saas } = data;
       const latestRelease = getLatestRelease(getLatestRelease(releases));
-      const { latestRepos, latestVersions } = latestRelease.repos.reduce(
+      const { latestRepos, latestVersions } = latestRelease.repos!.reduce(
         (accu, item) => {
           if (repoKeyMap[item.name]) {
             accu.latestVersions[repoKeyMap[item.name]] = getComparisonCompatibleVersion(item.version);
@@ -107,16 +107,16 @@ export const getLatestReleaseInfo = createAsyncThunk(`${sliceName}/getLatestRele
             backend: info,
             GUI: info,
             latestRelease: {
-              releaseDate: latestRelease.release_date,
+              releaseDate: latestRelease.release_date!,
               repos: latestRepos
             }
           })
         )
-      );
+      ) as ReturnType<AppDispatch>;
     });
 });
 
-export const setSearchState = createAsyncThunk(`${sliceName}/setSearchState`, (searchState, { dispatch, getState }) => {
+export const setSearchState = createAppAsyncThunk(`${sliceName}/setSearchState`, (searchState: Partial<SearchState>, { dispatch, getState }) => {
   const currentState = getSearchState(getState());
   let nextState = {
     ...currentState,
@@ -126,14 +126,18 @@ export const setSearchState = createAsyncThunk(`${sliceName}/setSearchState`, (s
       ...searchState.sort
     }
   };
-  let tasks = [];
+  const tasks: ReturnType<AppDispatch>[] = [];
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { isSearching: currentSearching, deviceIds: currentDevices, searchTotal: currentTotal, ...currentRequestState } = currentState;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { isSearching: nextSearching, deviceIds: nextDevices, searchTotal: nextTotal, ...nextRequestState } = nextState;
+  //TODO: remove once deepCompare is typed
+  // @ts-ignore
   if (nextRequestState.searchTerm && !deepCompare(currentRequestState, nextRequestState)) {
     nextState.isSearching = true;
     tasks.push(
+      //TODO: remove once deviceSlice is typed
+      // @ts-ignore
       dispatch(searchDevices(nextState))
         .unwrap()
         .then(results => {
