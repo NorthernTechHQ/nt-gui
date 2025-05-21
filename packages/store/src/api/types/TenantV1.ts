@@ -66,7 +66,8 @@ export namespace TenantV1 {
     export enum plan {
         OS = 'os',
         ENTERPRISE = 'enterprise',
-        PROFESSIONAL = 'professional'
+        PROFESSIONAL = 'professional',
+        = '',
     }
 }
 
