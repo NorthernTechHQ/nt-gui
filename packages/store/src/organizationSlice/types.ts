@@ -13,7 +13,6 @@
 //    limitations under the License.
 import { AvailableAddon } from '@northern.tech/store/appSlice/constants';
 
-import { ApiQuota } from '../api/types/ApiQuota';
 import { Tenant } from '../api/types/Tenant';
 
 //TODO: improve types
@@ -76,17 +75,6 @@ export interface OrganizationState {
   webhooks: Webhook;
 }
 
-interface ApiLimits {
-  devices: {
-    bursts: any[];
-    quota: ApiQuota;
-  };
-  management: {
-    bursts: any[];
-    quota: ApiQuota;
-  };
-}
-
 export interface Addon {
   enabled: boolean;
   name: AvailableAddon;
@@ -94,10 +82,4 @@ export interface Addon {
 
 export interface Organization extends Tenant {
   addons: Addon[];
-  api_limits: ApiLimits;
-  created_at: string;
-  id: string;
-  name: string;
-  status: 'active' | 'inactive';
-  tenant_token: string;
 }

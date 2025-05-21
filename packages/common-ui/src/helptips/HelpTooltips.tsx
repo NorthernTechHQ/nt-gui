@@ -365,6 +365,7 @@ export const MenderHelpTooltip = props => {
       setTooltipReadState={onSetTooltipReadState}
       device={device}
       tooltip={{ Component, SpecialComponent, isRelevant, readState }}
+      allTooltips={HELPTOOLTIPS}
       {...props}
     />
   );

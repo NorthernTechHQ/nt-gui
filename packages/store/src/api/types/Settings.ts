@@ -11,7 +11,6 @@ export type Settings = {
      */
     '2fa'?: Settings.TwoFactorAuth;
 };
-
 export namespace Settings {
     /**
      * Enable/disable two-factor authentication for this user.
@@ -21,3 +20,4 @@ export namespace Settings {
         DISABLED = 'disabled',
     }
 }
+

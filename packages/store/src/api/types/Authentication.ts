@@ -3,9 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Tenant ids data.
+ * The token in base64-encoded form.
  */
-export type TenantIdsData = {
-  tenant_ids?: Array<string>;
-  role?: string;
-};
+export type Authentication = string;

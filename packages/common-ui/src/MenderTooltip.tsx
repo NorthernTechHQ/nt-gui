@@ -167,7 +167,17 @@ const TooltipWrapper = ({ content, onClose, onReadAll }) => (
   </div>
 );
 
-export const HelpTooltip = ({ icon = undefined, id, contentProps = {}, tooltip, device, setAllTooltipsReadState, setTooltipReadState, ...props }) => {
+export const HelpTooltip = ({
+  icon = undefined,
+  allTooltips,
+  id,
+  contentProps = {},
+  tooltip,
+  device,
+  setAllTooltipsReadState,
+  setTooltipReadState,
+  ...props
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const debouncedIsOpen = useDebounce(isOpen, TIMEOUTS.threeSeconds);
   const { classes } = useStyles();
@@ -180,7 +190,7 @@ export const HelpTooltip = ({ icon = undefined, id, contentProps = {}, tooltip, 
     setTooltipReadState({ id, persist: true, readState: READ_STATES.read });
   }, [debouncedIsOpen, id, setTooltipReadState]);
 
-  const onReadAllClick = () => setAllTooltipsReadState(READ_STATES.read);
+  const onReadAllClick = () => setAllTooltipsReadState({ readState: READ_STATES.read, tooltipIds: Object.keys(allTooltips) });
 
   const title = SpecialComponent ? (
     <SpecialComponent device={device} {...contentProps} />

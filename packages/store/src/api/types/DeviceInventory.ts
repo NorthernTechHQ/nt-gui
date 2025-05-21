@@ -5,7 +5,7 @@
 import type { Attribute } from "./Attribute";
 export type DeviceInventory = {
   /**
-   * Mender-assigned unique device ID.
+   * Mender-assigned unique ID.
    */
   id?: string;
   /**

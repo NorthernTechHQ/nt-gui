@@ -2,25 +2,21 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import { UpgradeCompleteRequest } from "./UpgradeCompleteRequest";
-
+import type { TenantV1 } from "./TenantV1";
 /**
- * The tenant descriptor.
+ * Tenant descriptor.
  */
-export type Tenant = {
-  parent_tenant_id: string;
-  additional_info: {
-    marketing: boolean;
-    campaign: string;
-  };
-  plan: UpgradeCompleteRequest.plan;
-  trial: boolean;
-  trial_expiration: string | null;
-  service_provider: boolean;
-  cancelled_at: string | null;
-  children_tenants: any[] | null;
-  max_child_tenants: number;
-  device_count: number;
-  device_limit: number;
-  binary_delta: boolean;
+export type Tenant = TenantV1 & {
+  /**
+   * Count of accepted devices for the tenant.
+   */
+  device_count?: number;
+  /**
+   * Device limit for the tenant.
+   */
+  device_limit?: number;
+  /**
+   * Server side binary delta generation for the tenant is enabled.
+   */
+  binary_delta?: boolean;
 };
