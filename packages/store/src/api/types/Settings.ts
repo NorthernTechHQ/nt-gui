@@ -9,13 +9,13 @@ export type Settings = {
     /**
      * Enable/disable two-factor authentication for this user.
      */
-    '2fa'?: Settings.TwoFactorAuth;
+    '2fa'?: Settings.'2fa';
 };
 export namespace Settings {
     /**
      * Enable/disable two-factor authentication for this user.
      */
-    export enum TwoFactorAuth {
+    export enum '2fa' {
         ENABLED = 'enabled',
         DISABLED = 'disabled',
     }
