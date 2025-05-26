@@ -112,7 +112,6 @@ const assertionFunction =
     }
   };
 
-/* eslint-disable sonarjs/no-identical-functions */
 describe('deployment actions', () => {
   it('should allow aborting deployments', async () => {
     const store = mockStore({ ...defaultState });

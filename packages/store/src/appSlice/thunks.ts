@@ -118,7 +118,7 @@ export const getLatestReleaseInfo = createAppAsyncThunk(`${sliceName}/getLatestR
 
 export const setSearchState = createAppAsyncThunk(`${sliceName}/setSearchState`, (searchState: Partial<SearchState>, { dispatch, getState }) => {
   const currentState = getSearchState(getState());
-  let nextState = {
+  const nextState = {
     ...currentState,
     ...searchState,
     sort: {

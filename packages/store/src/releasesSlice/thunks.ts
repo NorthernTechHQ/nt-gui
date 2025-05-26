@@ -101,7 +101,9 @@ export const getArtifactInstallCount = createAppAsyncThunk(`${sliceName}/getArti
   })
     .catch(err => commonErrorHandler(err, `Retrieving artifact installation count failed:`, dispatch, commonErrorFallback))
     .then(({ headers }) => {
-      let { release, index } = findArtifactIndexInRelease(getReleasesById(getState()), id);
+      const foundRelease = findArtifactIndexInRelease(getReleasesById(getState()), id);
+      const index = foundRelease.index;
+      let release = foundRelease.release;
       if (!release || index === -1) {
         return;
       }
@@ -118,7 +120,9 @@ export const getArtifactInstallCount = createAppAsyncThunk(`${sliceName}/getArti
 
 export const getArtifactUrl = createAppAsyncThunk(`${sliceName}/getArtifactUrl`, (id: string, { dispatch, getState }) =>
   GeneralApi.get(`${deploymentsApiUrl}/artifacts/${id}/download`).then(response => {
-    let { release, index } = findArtifactIndexInRelease(getReleasesById(getState()), id);
+    const foundRelease = findArtifactIndexInRelease(getReleasesById(getState()), id);
+    const index = foundRelease.index;
+    let release = foundRelease.release;
     if (!release || index === -1) {
       return dispatch(getReleases()) as ReturnType<AppDispatch>;
     }

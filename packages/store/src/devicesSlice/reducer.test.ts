@@ -69,7 +69,7 @@ describe('device reducer', () => {
     ).toEqual({ deviceIds: [], total: 0, filters: [] });
   });
   it('should handle ADD_TO_GROUP', async () => {
-    let state = reducer(undefined, { type: actions.receivedGroups, payload: defaultState.devices.groups.byId });
+    const state = reducer(undefined, { type: actions.receivedGroups, payload: defaultState.devices.groups.byId });
     expect(reducer(state, { type: actions.addToGroup, payload: { group: 'testExtra', deviceIds: ['d1'] } }).groups.byId.testExtra.deviceIds).toHaveLength(1);
     expect(
       reducer(initialState, { type: actions.addToGroup, payload: { group: 'testGroup', deviceIds: ['123', '1243'] } }).groups.byId.testGroup.deviceIds
@@ -108,14 +108,14 @@ describe('device reducer', () => {
   });
 
   it('should handle REMOVE_DYNAMIC_GROUP', async () => {
-    let state = reducer(undefined, { type: actions.receivedGroups, payload: defaultState.devices.groups.byId });
+    const state = reducer(undefined, { type: actions.receivedGroups, payload: defaultState.devices.groups.byId });
     expect(Object.keys(reducer(state, { type: actions.removeGroup, payload: 'testGroupDynamic' }).groups.byId)).toHaveLength(
       Object.keys(defaultState.devices.groups.byId).length - 1
     );
     expect(Object.keys(reducer(initialState, { type: actions.removeGroup, payload: 'testGroupDynamic' }).groups.byId)).toHaveLength(0);
   });
   it('should handle REMOVE_STATIC_GROUP', async () => {
-    let state = reducer(undefined, { type: actions.receivedGroups, payload: defaultState.devices.groups.byId });
+    const state = reducer(undefined, { type: actions.receivedGroups, payload: defaultState.devices.groups.byId });
     expect(Object.keys(reducer(state, { type: actions.removeGroup, payload: 'testGroup' }).groups.byId)).toHaveLength(
       Object.keys(defaultState.devices.groups.byId).length - 1
     );

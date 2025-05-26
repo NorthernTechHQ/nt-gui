@@ -13,7 +13,6 @@
 //    limitations under the License.
 // @ts-nocheck
 /*eslint import/namespace: ['error', { allowComputed: true }]*/
-import React from 'react';
 import { Link } from 'react-router-dom';
 
 import storeActions from '@northern.tech/store/actions';
@@ -279,7 +278,7 @@ export const selectGroup = createAsyncThunk(`${sliceName}/selectGroup`, ({ group
   if (getSelectedGroup(getState()) === groupName && ((filters.length === 0 && !groupFilterLength) || filters.length === cleanedFilters.length)) {
     return Promise.resolve();
   }
-  let tasks = [];
+  const tasks = [];
   if (groupFilterLength) {
     tasks.push(dispatch(actions.setDeviceFilters(cleanedFilters)));
   } else {
@@ -443,7 +442,7 @@ export const getDeviceInfo = createAsyncThunk(`${sliceName}/getDeviceInfo`, (dev
   const { hasDeviceConfig, hasDeviceConnect, hasMonitor } = getTenantCapabilities(getState());
   const { canConfigure } = getUserCapabilities(getState());
   const integrations = getDeviceTwinIntegrations(getState());
-  let tasks = [dispatch(getDeviceAuth(deviceId)), ...integrations.map(integration => dispatch(getDeviceTwin({ deviceId, integration })))];
+  const tasks = [dispatch(getDeviceAuth(deviceId)), ...integrations.map(integration => dispatch(getDeviceTwin({ deviceId, integration })))];
   if (hasDeviceConfig && canConfigure && [DEVICE_STATES.accepted, DEVICE_STATES.preauth].includes(device.status)) {
     tasks.push(dispatch(getDeviceConfig(deviceId)));
   }
@@ -512,14 +511,14 @@ export const setDeviceListState = createAsyncThunk(
   ({ shouldSelectDevices = true, forceRefresh, fetchAuth = true, ...selectionState }, { dispatch, getState }) => {
     const currentState = getDeviceListState(getState());
     const refreshTrigger = forceRefresh ? !currentState.refreshTrigger : selectionState.refreshTrigger;
-    let nextState = {
+    const nextState = {
       ...currentState,
       setOnly: false,
       refreshTrigger,
       ...selectionState,
       sort: { ...currentState.sort, ...selectionState.sort }
     };
-    let tasks = [];
+    const tasks = [];
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { isLoading: currentLoading, deviceIds: currentDevices, selection: currentSelection, ...currentRequestState } = currentState;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -583,7 +582,7 @@ export const getDevicesByStatus = createAsyncThunk(`${sliceName}/getDevicesBySta
       if (status && state.devices.byStatus[status].total === deviceAccu.ids.length) {
         total = deviceAccu.ids.length;
       }
-      let tasks = [dispatch(actions.receivedDevices(deviceAccu.devicesById))];
+      const tasks = [dispatch(actions.receivedDevices(deviceAccu.devicesById))];
       if (status) {
         tasks.push(dispatch(actions.setDevicesByStatus({ deviceIds: deviceAccu.ids, status, total })));
       }
@@ -617,7 +616,7 @@ export const getAllDevicesByStatus = createAsyncThunk(`${sliceName}/getAllDevice
       if (total > perPage * page) {
         return getAllDevices(perPage, page + 1, deviceAccu.ids);
       }
-      let tasks = [dispatch(actions.setDevicesByStatus({ deviceIds: deviceAccu.ids, forceUpdate: true, status, total: deviceAccu.ids.length }))];
+      const tasks = [dispatch(actions.setDevicesByStatus({ deviceIds: deviceAccu.ids, forceUpdate: true, status, total: deviceAccu.ids.length }))];
       if (status === DEVICE_STATES.accepted && deviceAccu.ids.length === total) {
         tasks.push(dispatch(deriveInactiveDevices(deviceAccu.ids)));
         tasks.push(dispatch(deriveReportsData()));
@@ -629,7 +628,7 @@ export const getAllDevicesByStatus = createAsyncThunk(`${sliceName}/getAllDevice
 
 export const searchDevices = createAsyncThunk(`${sliceName}/searchDevices`, (passedOptions = {}, { dispatch, getState }) => {
   const state = getState();
-  let options = { ...state.app.searchState, ...passedOptions };
+  const options = { ...state.app.searchState, ...passedOptions };
   const { page = defaultPage, searchTerm, sortOptions = [] } = options;
   const { columnSelection = [] } = getUserSettings(state);
   const selectedAttributes = columnSelection.map(column => ({ attribute: column.key, scope: column.scope }));
@@ -710,7 +709,7 @@ export const getReportsData = createAsyncThunk(`${sliceName}/getReportsData`, (_
     const devicesState = getState().devices;
     const totalDeviceCount = devicesState.byStatus.accepted.total;
     const newReports = results.map(({ data, reportConfig }) => {
-      let { items, other_count } = data[0];
+      const { items, other_count } = data[0];
       const { attribute, group, software = '' } = reportConfig;
       const dataCount = items.reduce((accu, item) => accu + item.count, 0);
       // the following is needed to show reports including both old (artifact_name) & current style (rootfs-image.version) device software
@@ -807,7 +806,7 @@ export const getDeviceFileDownloadLink = createAsyncThunk(`${sliceName}/getDevic
 );
 
 export const deviceFileUpload = createAsyncThunk(`${sliceName}/deviceFileUpload`, ({ deviceId, path, file }, { dispatch }) => {
-  let formData = new FormData();
+  const formData = new FormData();
   formData.append('path', path);
   formData.append('file', file);
   const uploadId = uuid();
@@ -951,7 +950,7 @@ export const applyDeviceConfig = createAsyncThunk(
       .then(({ data }) => {
         const device = getDeviceByIdSelector(getState(), deviceId);
         const { canManageUsers } = getUserCapabilities(getState());
-        let tasks = [
+        const tasks = [
           dispatch(actions.receivedDevice({ ...device, config: { ...device.config, deployment_id: data.deployment_id } })),
           new Promise(resolve => setTimeout(() => resolve(dispatch(getSingleDeployment(data.deployment_id))), TIMEOUTS.oneSecond))
         ];
@@ -1072,7 +1071,7 @@ export const getGatewayDevices = createAsyncThunk(`${sliceName}/getGatewayDevice
     attributes: attributeSelection
   }).then(({ data }) => {
     const { ids } = reduceReceivedDevices(data, [], getState());
-    let tasks = ids.map(deviceId => dispatch(getDeviceInfo(deviceId)));
+    const tasks = ids.map(deviceId => dispatch(getDeviceInfo(deviceId)));
     tasks.push(dispatch(actions.receivedDevice({ id: deviceId, gatewayIds: ids })));
     return Promise.all(tasks);
   });

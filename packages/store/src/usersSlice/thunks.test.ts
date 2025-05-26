@@ -87,7 +87,6 @@ vi.mock('universal-cookie', () => {
 const cookies = new Cookies();
 const tooltipIds = ['foo', 'bar'];
 
-/* eslint-disable sonarjs/no-identical-functions */
 describe('user actions', () => {
   it('should allow retrieving 2fa qr codes', async () => {
     vi.clearAllMocks();
@@ -529,7 +528,6 @@ describe('user actions', () => {
   });
   it('should allow storing user scoped settings', async () => {
     vi.clearAllMocks();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { ...settings } = defaultState.users.userSettings;
     const expectedActions = [
       { type: saveUserSettings.pending.type },
@@ -612,7 +610,6 @@ describe('user actions', () => {
   });
   it('should allow token removal', async () => {
     vi.clearAllMocks();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const expectedActions = [
       { type: revokeToken.pending.type },
       { type: getTokens.pending.type },
