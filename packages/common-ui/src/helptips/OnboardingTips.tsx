@@ -12,7 +12,6 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { Schedule as HelpIcon } from '@mui/icons-material';

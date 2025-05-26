@@ -12,7 +12,6 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { FormControl, FormHelperText, InputLabel, OutlinedInput } from '@mui/material';

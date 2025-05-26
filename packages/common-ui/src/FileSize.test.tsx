@@ -10,8 +10,6 @@
 //    distributed under the License is distributed on an "AS IS" BASIS,
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
-import React from 'react';
-
 import { deepCompare } from '@northern.tech/utils/helpers';
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';

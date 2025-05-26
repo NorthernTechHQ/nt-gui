@@ -51,7 +51,7 @@ export const Secondary: StorySecondary = {
   ),
   decorators: [
     Story => {
-      let store = getConfiguredStore({ preloadedState: defaultState });
+      const store = getConfiguredStore({ preloadedState: defaultState });
       return (
         <Provider store={store}>
           <Story />

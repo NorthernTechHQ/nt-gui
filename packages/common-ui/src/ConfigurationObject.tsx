@@ -88,11 +88,11 @@ interface TwoColumnsProps {
   compact?: boolean;
   items?: Record<string, string>;
   KeyComponent?: (props: KeyColumnProps) => ReactNode;
-  KeyProps?: {};
+  KeyProps?: object;
   setSnackbar?: (message: string) => void;
   style?: CSSProperties;
   ValueComponent?: (props: ValueColumnProps) => ReactNode;
-  ValueProps?: {};
+  ValueProps?: object;
 }
 
 export const TwoColumns = ({
