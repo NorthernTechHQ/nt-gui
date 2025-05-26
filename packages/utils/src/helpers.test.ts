@@ -283,14 +283,14 @@ describe('customSort function', () => {
     expect(creationSortedUp[1].id).toEqual(defaultState.deployments.byId.d1.id);
     expect(creationSortedUp[0].id).toEqual(defaultState.deployments.byId.d2.id);
     const creationSortedDown = Object.values(defaultState.deployments.byId).sort(customSort(true, 'created'));
-    expect(creationSortedDown[0].id).toEqual(defaultState.deployments.byId.d1.id);
-    expect(creationSortedDown[1].id).toEqual(defaultState.deployments.byId.d2.id);
+    expect(creationSortedDown[0].id).toEqual(defaultState.deployments.byId.d3.id);
+    expect(creationSortedDown[1].id).toEqual(defaultState.deployments.byId.d1.id);
     const idSortedUp = Object.values(defaultState.deployments.byId).sort(customSort(false, 'id'));
     expect(idSortedUp[0].id).toEqual(defaultState.deployments.byId.d1.id);
     expect(idSortedUp[1].id).toEqual(defaultState.deployments.byId.d2.id);
     const idSortedDown = Object.values(defaultState.deployments.byId).sort(customSort(true, 'id'));
-    expect(idSortedDown[1].id).toEqual(defaultState.deployments.byId.d1.id);
-    expect(idSortedDown[0].id).toEqual(defaultState.deployments.byId.d2.id);
+    expect(idSortedDown[0].id).toEqual(defaultState.deployments.byId.d3.id);
+    expect(idSortedDown[1].id).toEqual(defaultState.deployments.byId.d2.id);
   });
 });
 describe('deepCompare function', () => {
