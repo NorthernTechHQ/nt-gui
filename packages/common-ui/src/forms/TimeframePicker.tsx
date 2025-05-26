@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -40,7 +40,7 @@ export const TimeframePicker = ({ tonight: propsTonight, format = 'MMMM Do', fro
   const endDate = watch('endDate');
 
   useEffect(() => {
-    let currentEndDate = getValues('endDate');
+    const currentEndDate = getValues('endDate');
     const now = new Date().toISOString().replace('Z', '');
     if (startDate > currentEndDate) {
       setValue('endDate', ensureEndOfDay(startDate));
@@ -51,7 +51,7 @@ export const TimeframePicker = ({ tonight: propsTonight, format = 'MMMM Do', fro
   }, [startDate, getValues, setValue]);
 
   useEffect(() => {
-    let currentStartDate = getValues('startDate');
+    const currentStartDate = getValues('startDate');
     if (endDate < currentStartDate) {
       setValue('startDate', ensureStartOfDay(endDate));
     }

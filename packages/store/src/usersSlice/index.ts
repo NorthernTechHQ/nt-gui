@@ -75,7 +75,7 @@ export type UserSettings = {
 type UserSliceState = {
   activationCode?: string;
   byId: Record<string, User>;
-  currentSession?: UserSession | {};
+  currentSession?: UserSession | object;
   currentUser: string | null;
   customColumns: CustomColumn[];
   globalSettings: GlobalSettings;

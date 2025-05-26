@@ -92,7 +92,7 @@ describe('deployment reducer', () => {
     expect(reducer(initialState, { type: actions.setDeploymentsState, payload: newState }).selectionState).toEqual(newState);
   });
   it('should handle REMOVE_DEPLOYMENT', async () => {
-    let state = reducer(undefined, { type: actions.receivedDeployment, payload: defaultState.deployments.byId.d1 });
+    const state = reducer(undefined, { type: actions.receivedDeployment, payload: defaultState.deployments.byId.d1 });
     expect(reducer(state, { type: actions.removedDeployment, payload: defaultState.deployments.byId.d1.id }).byId).toEqual({});
     expect(reducer(initialState, { type: actions.removedDeployment, payload: 'a1' }).byId).toEqual({});
   });

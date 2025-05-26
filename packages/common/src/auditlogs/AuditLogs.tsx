@@ -12,13 +12,13 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { makeStyles } from 'tss-react/mui';
 
 import EnterpriseNotification, { DefaultUpgradeNotification } from '@northern.tech/common-ui/EnterpriseNotification';
-import { HELPTOOLTIPS, MenderHelpTooltip } from '@northern.tech/common-ui/helptips/HelpTooltips';
+import { HELPTOOLTIPS, MenderHelpTooltip } from '@northern.tech/common-ui/helptips';
 import { AUDIT_LOGS_TYPES, BEGINNING_OF_TIME, BENEFITS, SORTING_OPTIONS, SP_AUDIT_LOGS_TYPES, TIMEOUTS } from '@northern.tech/store/constants';
 import { useLocationParams } from '@northern.tech/store/liststatehook';
 import {
@@ -124,7 +124,7 @@ export const AuditLogs = () => {
       const { detail, endDate, startDate, type, user } = state;
       const resultList = result ? Object.values(result.events) : [];
       if (resultList.length && startDate === today) {
-        let newStartDate = new Date(resultList[resultList.length - 1].time);
+        const newStartDate = new Date(resultList[resultList.length - 1].time);
         const { start } = getISOStringBoundaries(newStartDate);
         state.startDate = start;
       }
@@ -145,7 +145,7 @@ export const AuditLogs = () => {
 
   const updateState = useCallback(
     nextState => {
-      let state = { ...nextState };
+      const state = { ...nextState };
       if (state.id && Boolean(state.open)) {
         state.selectedId = state.id[0];
         const [eventAction, eventTime] = atob(state.selectedId).split('|');
@@ -175,7 +175,7 @@ export const AuditLogs = () => {
     }
     isInitialized.current = false;
     const { id, open, detail, endDate, startDate, type, user } = locationParams;
-    let state = { ...locationParams };
+    const state = { ...locationParams };
     if (id && Boolean(open)) {
       updateState(state);
       return;

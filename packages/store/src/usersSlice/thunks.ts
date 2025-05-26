@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// eslint-disable-next-line import/no-unresolved
 import storeActions from '@northern.tech/store/actions';
 import GeneralApi from '@northern.tech/store/api/general-api';
 import { PermissionSetWithScope, PersonalAccessToken, RolePermission, RolePermissionObject } from '@northern.tech/store/api/types/MenderTypes';
@@ -147,7 +146,7 @@ export const loginUser = createAppAsyncThunk(`${sliceName}/loginUser`, ({ stayLo
         return;
       }
       // save token to local storage & set maxAge if noexpiry checkbox not checked
-      let now = new Date();
+      const now = new Date();
       now.setSeconds(now.getSeconds() + maxSessionAge);
       const expiresAt = stayLoggedIn ? undefined : now.toISOString();
       setSessionInfo({ token, expiresAt });
@@ -426,7 +425,7 @@ const permissionActionTypes = {
 
 const combinePermissions = (existingPermissions: CombinedPermissions, additionalPermissions: CombinedPermissions = {}): CombinedPermissions =>
   Object.entries(additionalPermissions).reduce((accu, [name, permissions]) => {
-    let maybeExistingPermissions = accu[name] || [];
+    const maybeExistingPermissions = accu[name] || [];
     accu[name] = [...permissions, ...maybeExistingPermissions].filter(duplicateFilter);
     return accu;
   }, existingPermissions);
@@ -438,7 +437,7 @@ const tryParseCustomPermission = (permission: RolePermission) => {
 };
 
 const customPermissionHandler = (accu, permission: RolePermission) => {
-  let processor = tryParseCustomPermission(permission);
+  const processor = tryParseCustomPermission(permission);
   return {
     ...accu,
     isCustom: accu.isCustom || processor.isCustom,
@@ -767,13 +766,13 @@ export const saveGlobalSettings = createAppAsyncThunk(
     return dispatch(getGlobalSettings())
       .unwrap()
       .then(result => {
-        let updatedSettings = { ...getState().users.globalSettings, ...settings };
+        const updatedSettings = { ...getState().users.globalSettings, ...settings };
         if (getCurrentUser(getState()).verified) {
           updatedSettings['2fa'] = twoFAStates.enabled;
         } else {
           delete updatedSettings['2fa'];
         }
-        let tasks: ReturnType<AppDispatch> = [dispatch(actions.setGlobalSettings(updatedSettings))];
+        const tasks: ReturnType<AppDispatch> = [dispatch(actions.setGlobalSettings(updatedSettings))];
         const headers = result[result.length - 1] ? { 'If-Match': result[result.length - 1] } : {};
         return GeneralApi.post(`${useradmApiUrl}/settings`, updatedSettings, { headers })
           .then(() => {

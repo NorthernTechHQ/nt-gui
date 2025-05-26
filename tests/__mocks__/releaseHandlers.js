@@ -11,9 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// eslint-disable-next-line import/no-unresolved
 import { SORTING_OPTIONS, deploymentsApiUrl, deploymentsApiUrlV2, headerNames } from '@northern.tech/store/constants';
-// eslint-disable-next-line import/no-unresolved
 import { customSort } from '@northern.tech/utils/helpers';
 import { HttpResponse, http } from 'msw';
 

@@ -12,7 +12,6 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import React from 'react';
 
 export const ClickFilter = ({ disabled = false, children }) => (disabled ? <div style={{ pointerEvents: 'none' }}>{children}</div> : <>{children}</>);
 

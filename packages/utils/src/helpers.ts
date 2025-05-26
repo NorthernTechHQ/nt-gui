@@ -18,7 +18,7 @@ import Cookies from 'universal-cookie';
 
 dayjs.extend(utc);
 
-const isEncoded = (uri: string = '') => uri !== decodeURIComponent(uri);
+const isEncoded = (uri = '') => uri !== decodeURIComponent(uri);
 
 export const fullyDecodeURI = (uri: string) => {
   while (isEncoded(uri)) {
@@ -58,13 +58,12 @@ export const versionCompare = (v1, v2) => {
  * Deep compare
  *
  */
-// eslint-disable-next-line sonarjs/cognitive-complexity
-export function deepCompare() {
-  var i, l, leftChain, rightChain;
+export function deepCompare(...args) {
+  let i, l, leftChain, rightChain;
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
   function compare2Objects(x, y) {
-    var p;
+    let p;
 
     // remember that NaN === NaN returns false
     // and isNaN(undefined) returns true
@@ -152,16 +151,16 @@ export function deepCompare() {
     return true;
   }
 
-  if (arguments.length < 1) {
+  if (args.length < 1) {
     return true; //Die silently? Don't know how to handle such case, please help...
     // throw "Need two or more arguments to compare";
   }
 
-  for (i = 1, l = arguments.length; i < l; i++) {
+  for (i = 1, l = args.length; i < l; i++) {
     leftChain = []; //Todo: this can be cached
     rightChain = [];
 
-    if (!compare2Objects(arguments[0], arguments[i])) {
+    if (!compare2Objects(args[0], args[i])) {
       return false;
     }
   }
@@ -241,13 +240,13 @@ export const getFormattedSize = (bytes: number) => {
 type DeviceAttribute = string | string[];
 
 // should be inferred from ATTRIBUTE_SCOPES instead
-type DeviceAttributes = {
+interface DeviceAttributes {
   identity?: DeviceAttribute;
   inventory?: DeviceAttribute;
   monitor?: DeviceAttribute;
   system?: DeviceAttribute;
   tags?: DeviceAttribute;
-};
+}
 
 interface DeviceWithAttributes {
   attributes: DeviceAttributes;
@@ -313,7 +312,7 @@ type UiDeploymentPhase = DeploymentPhase & StandardizedPhase;
 
 export const standardizePhases = (phases: UiDeploymentPhase[]) =>
   phases.map((phase, index) => {
-    let standardizedPhase = { batch_size: phase.batch_size, start_ts: index } as StandardizedPhase;
+    const standardizedPhase = { batch_size: phase.batch_size, start_ts: index } as StandardizedPhase;
     if (phase.delay) {
       standardizedPhase.delay = phase.delay;
       standardizedPhase.delayUnit = phase.delayUnit || 'hours';
@@ -385,10 +384,10 @@ export const getSnackbarMessage = (skipped: number, done: number) => {
 
 type SoftwareInformationEntry = [string, DeviceAttribute];
 
-type SoftwareInformation = {
+interface SoftwareInformation {
   nonSoftware: SoftwareInformationEntry[];
   software: SoftwareInformationEntry[];
-};
+}
 
 export const extractSoftware = (attributes: DeviceAttributes = {}) => {
   const softwareKeys = Object.keys(attributes).reduce<string[]>((accu, item) => {
@@ -410,12 +409,12 @@ export const extractSoftware = (attributes: DeviceAttributes = {}) => {
   );
 };
 
-type SoftwareItem = {
+interface SoftwareItem {
   key: string;
   name: string;
   nestingLevel: number;
   version: DeviceAttribute;
-};
+}
 
 export const extractSoftwareItem = (artifactProvides: DeviceAttributes = {}) => {
   const { software } = extractSoftware(artifactProvides);
@@ -444,7 +443,7 @@ export const extractSoftwareItem = (artifactProvides: DeviceAttributes = {}) => 
 const cookies = new Cookies();
 
 export const createDownload = (target: string, filename: string, token: string) => {
-  let link = document.createElement('a');
+  const link = document.createElement('a');
   link.setAttribute('href', target);
   link.setAttribute('download', filename);
   link.style.display = 'none';
@@ -468,7 +467,7 @@ export const getISOStringBoundaries = (currentDate: Date) => {
 };
 
 // err format from the backend can unfortunately still not be relied on
-export const extractErrorMessage = (err, fallback: string = '') =>
+export const extractErrorMessage = (err, fallback = '') =>
   err.response?.data?.error?.message || err.response?.data?.error || err.error || err.message || fallback;
 
 // res is "usually" an axios response
@@ -478,7 +477,7 @@ export const preformatWithRequestID = (res, failMsg: string) => {
 
   try {
     if (res?.data && Object.keys(res.data).includes('request_id')) {
-      let shortRequestUUID = res.data['request_id'].substring(0, 8);
+      const shortRequestUUID = res.data['request_id'].substring(0, 8);
       return `${failMsg} [Request ID: ${shortRequestUUID}]`;
     }
   } catch (e) {
@@ -487,7 +486,10 @@ export const preformatWithRequestID = (res, failMsg: string) => {
   return failMsg;
 };
 
-type UnixDateRange = { end: number | null; start: number | null };
+interface UnixDateRange {
+  end: number | null;
+  start: number | null;
+}
 
 type UnixDateRangeParam = string | Date | null;
 
@@ -502,11 +504,11 @@ type UnixDateRangeParam = string | Date | null;
  * @returns {{ start: number|null, end: number|null }} An object containing the start and end times as UNIX timestamps, or null if invalid or not set.
  */
 export const dateRangeToUnix = (startDate: UnixDateRangeParam = null, endDate: UnixDateRangeParam = null): UnixDateRange => {
-  let unixRange: UnixDateRange = { start: null, end: null };
+  const unixRange: UnixDateRange = { start: null, end: null };
   const format = 'YYYY-MM-DD';
 
   if (startDate !== null) {
-    let start = dayjs.utc(dayjs(startDate).format(format));
+    const start = dayjs.utc(dayjs(startDate).format(format));
     if (start.isValid()) {
       unixRange.start = start.startOf('day').unix();
     }
@@ -526,7 +528,7 @@ export const byteArrayToString = (body: Buffer) => String.fromCharCode(...body);
 
 export const blobToString = (blob: Blob) =>
   new Promise(resolve => {
-    let fr = new FileReader();
+    const fr = new FileReader();
     fr.onload = () => {
       resolve(fr.result);
     };

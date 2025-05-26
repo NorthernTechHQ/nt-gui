@@ -62,7 +62,7 @@ class Tracker {
             regionalLaw: false
           },
           onStatusChange: status => {
-            let hasConsented = status == 'allow';
+            const hasConsented = status == 'allow';
             resolve({ trackingConsentGiven: hasConsented });
           }
         });

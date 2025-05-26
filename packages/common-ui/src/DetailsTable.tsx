@@ -75,7 +75,7 @@ export const DetailsTable = ({
   const { classes } = useStyles();
 
   const onRowSelection = selectedRow => {
-    let updatedSelection = [...selectedRows];
+    const updatedSelection = [...selectedRows];
     const selectedIndex = updatedSelection.indexOf(selectedRow);
     if (selectedIndex === -1) {
       updatedSelection.push(selectedRow);

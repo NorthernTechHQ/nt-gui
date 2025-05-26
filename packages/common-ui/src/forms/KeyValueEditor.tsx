@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import React, { createRef, useEffect, useState } from 'react';
+import { createRef, useEffect, useState } from 'react';
 
 import { Clear as ClearIcon, Add as ContentAddIcon } from '@mui/icons-material';
 import { Fab, FormControl, FormHelperText, IconButton, OutlinedInput } from '@mui/material';
@@ -45,7 +45,7 @@ export const KeyValueEditor = ({ disabled, errortext, initialInput = {}, inputHe
   };
 
   const updateInputs = (key, index, event) => {
-    let changedInputs = [...inputs];
+    const changedInputs = [...inputs];
     const {
       target: { value }
     } = event;
@@ -74,7 +74,7 @@ export const KeyValueEditor = ({ disabled, errortext, initialInput = {}, inputHe
   };
 
   const removeInput = index => {
-    let changedInputs = [...inputs];
+    const changedInputs = [...inputs];
     changedInputs.splice(index, 1);
     setInputs(changedInputs);
     const inputObject = reducePairs(changedInputs);

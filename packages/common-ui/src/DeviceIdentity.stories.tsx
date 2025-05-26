@@ -32,7 +32,7 @@ export const Primary: Story = {
   name: 'DeviceIdentityDisplay',
   decorators: [
     Story => {
-      let store = getConfiguredStore({ preloadedState: defaultState });
+      const store = getConfiguredStore({ preloadedState: defaultState });
       return (
         <Provider store={store}>
           <Story />

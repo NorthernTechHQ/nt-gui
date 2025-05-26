@@ -138,7 +138,7 @@ export const createDeployment = createAsyncThunk(`${sliceName}/createDeployment`
         devices: newDeployment.devices ? newDeployment.devices.map(id => ({ id, status: 'pending' })) : [],
         statistics: { status: {} }
       };
-      let tasks = [
+      const tasks = [
         dispatch(actions.createdDeployment(deployment)),
         dispatch(getSingleDeployment(deploymentId)),
         dispatch(setSnackbar('Deployment created successfully', TIMEOUTS.fiveSeconds))
@@ -149,10 +149,10 @@ export const createDeployment = createAsyncThunk(`${sliceName}/createDeployment`
       if (canManageUsers) {
         const { phases, retries } = newDeployment;
         const { previousPhases = [], retries: previousRetries = 0 } = getGlobalSettings(getState());
-        let newSettings = { retries: hasNewRetryDefault ? retries : previousRetries, hasDeployments: true };
+        const newSettings = { retries: hasNewRetryDefault ? retries : previousRetries, hasDeployments: true };
         if (phases) {
           const standardPhases = standardizePhases(phases);
-          let prevPhases = previousPhases.map(standardizePhases);
+          const prevPhases = previousPhases.map(standardizePhases);
           if (!prevPhases.find(previousPhaseList => previousPhaseList.every(oldPhase => standardPhases.find(phase => deepCompare(phase, oldPhase))))) {
             prevPhases.push(standardPhases);
           }
@@ -301,7 +301,7 @@ export const setDeploymentsState = createAsyncThunk(`${sliceName}/setDeployments
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { page, perPage, ...selectionState } = selection;
   const currentState = getState().deployments.selectionState;
-  let nextState = {
+  const nextState = {
     ...currentState,
     ...selectionState,
     ...Object.keys(DEPLOYMENT_STATES).reduce((accu, item) => {
@@ -316,7 +316,7 @@ export const setDeploymentsState = createAsyncThunk(`${sliceName}/setDeployments
       ...selectionState.general
     }
   };
-  let tasks = [dispatch(actions.setDeploymentsState(nextState))];
+  const tasks = [dispatch(actions.setDeploymentsState(nextState))];
   if (nextState.selectedId && currentState.selectedId !== nextState.selectedId) {
     tasks.push(dispatch(getSingleDeployment(nextState.selectedId)));
   }
@@ -370,7 +370,7 @@ export const getDeploymentsConfig = createAsyncThunk(`${sliceName}/getDeployment
 const deepClean = source =>
   Object.entries(source).reduce((accu, [key, value]) => {
     if (value !== undefined) {
-      let cleanedValue = typeof value === 'object' ? deepClean(value) : value;
+      const cleanedValue = typeof value === 'object' ? deepClean(value) : value;
       if (cleanedValue === undefined || (typeof cleanedValue === 'object' && isEmpty(cleanedValue))) {
         return accu;
       }

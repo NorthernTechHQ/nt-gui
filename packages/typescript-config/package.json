@@ -10,6 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/NorthernTechHQ/nt-gui.git"
   },
+  "type": "module",
   "files": [
     "base.json",
     "react-app.json",

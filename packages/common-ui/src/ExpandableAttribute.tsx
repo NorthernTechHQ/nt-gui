@@ -30,7 +30,7 @@ interface ExpandableAttributeProps {
   onExpansion?: () => void;
   primary: string;
   secondary: string;
-  secondaryTypographyProps?: {};
+  secondaryTypographyProps?: object;
   setSnackbar?: (message: string) => void;
   style?: CSSProperties;
   textClasses?: Record<string, string>;
