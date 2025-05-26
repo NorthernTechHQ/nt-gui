@@ -12,7 +12,6 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import React from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -29,7 +28,7 @@ import AuditLogs from './AuditLogs';
 const meta: Meta<typeof AuditLogs> = {
   component: AuditLogs,
   render: () => {
-    let store = getConfiguredStore({ preloadedState });
+    const store = getConfiguredStore({ preloadedState });
     return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <MemoryRouter>
@@ -108,7 +107,7 @@ export const NoLogs: Story = {
 
 export const NoAccess: Story = {
   render: () => {
-    let store = getConfiguredStore({});
+    const store = getConfiguredStore({});
     return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <MemoryRouter>

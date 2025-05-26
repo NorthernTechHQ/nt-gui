@@ -12,8 +12,6 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import React from 'react';
-
 import { Sort as SortIcon } from '@mui/icons-material';
 import { makeStyles } from 'tss-react/mui';
 
@@ -95,9 +93,7 @@ export const AuditLogsList = ({
               <div
                 className={`auditlogs-list-item ${allowsExpansion ? 'clickable' : ''}`}
                 key={`event-${item.time}`}
-                onClick={() => {
-                  onIssueSelection ? onIssueSelection(allowsExpansion ? item : undefined) : null;
-                }}
+                onClick={() => (onIssueSelection ? onIssueSelection(allowsExpansion ? item : undefined) : null)}
               >
                 {auditLogColumns.map((column, index) => column.render(item, index, userCapabilities))}
                 {allowsExpansion ? <DetailsIndicator /> : <div />}
