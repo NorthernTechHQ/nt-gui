@@ -1,6 +1,7 @@
 {
   "extends": "@northern.tech/typescript-config/react-app.json",
   "compilerOptions": {
+    "module": "es2020",
     "moduleResolution": "bundler",
     "rootDir": ".",
     "baseUrl": "."

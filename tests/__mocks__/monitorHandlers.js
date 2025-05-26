@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// eslint-disable-next-line import/no-unresolved
 import { alertChannels, headerNames, monitorApiUrlv1 } from '@northern.tech/store/constants';
 import { HttpResponse, http } from 'msw';
 
@@ -27,8 +26,8 @@ export const monitorHandlers = [
     return HttpResponse.json([]);
   }),
   http.put(`${monitorApiUrlv1}/settings/global/channel/alerts/:channel/status`, async ({ params: { channel }, request }) => {
-    const body = await request.json();
-    if (Object.keys(alertChannels).includes(channel) && body.hasOwnProperty('enabled')) {
+    const { enabled } = await request.json();
+    if (Object.keys(alertChannels).includes(channel) && enabled !== undefined) {
       return new HttpResponse(null, { status: 200 });
     }
     return new HttpResponse(null, { status: 590 });

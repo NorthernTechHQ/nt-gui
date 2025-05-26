@@ -20,7 +20,6 @@ import {
   ssoIdpApiUrlv1,
   tenantadmApiUrlv1,
   tenantadmApiUrlv2
-  // eslint-disable-next-line import/no-unresolved
 } from '@northern.tech/store/constants';
 import { HttpResponse, http } from 'msw';
 
