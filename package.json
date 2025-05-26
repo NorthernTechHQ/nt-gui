@@ -20,7 +20,7 @@
     "publish-packages-next": "turbo pre-publish --continue"
   },
   "dependencies": {
-    "react": "^18.x || ^19.x",
+    "react": "^19.x",
     "react-dom": "^19.x"
   },
   "devDependencies": {
@@ -48,7 +48,7 @@
     "react-idle-timer": "^5.7.2",
     "serve": "^14.2.4",
     "storybook": "^8.5.3",
-    "tsup": "8.4.0",
+    "tsup": "8.5.0",
     "turbo": "^2.5.3",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
