@@ -16,21 +16,21 @@ import { RootState } from '@northern.tech/store/store';
 import { createSelector } from '@reduxjs/toolkit';
 
 export const getOrganization = (state: RootState) => state.organization.organization;
-export const getExternalIntegrations = state => state.organization.externalDeviceIntegrations;
-export const getAuditlogState = state => state.organization.auditlog.selectionState;
-export const getAuditLog = state => state.organization.auditlog.events;
-export const getAuditLogSelectionState = state => state.organization.auditlog.selectionState;
+export const getExternalIntegrations = (state: RootState) => state.organization.externalDeviceIntegrations;
+export const getAuditlogState = (state: RootState) => state.organization.auditlog.selectionState;
+export const getAuditLog = (state: RootState) => state.organization.auditlog.events;
+export const getAuditLogSelectionState = (state: RootState) => state.organization.auditlog.selectionState;
 export const getBillingProfile = (state: RootState) => state.organization.organization.billing_profile;
 export const getCard = (state: RootState) => state.organization.card;
-export const getSsoConfig = ({ organization: { ssoConfigs = [] } }) => ssoConfigs[0];
-export const getTenantsList = state => state.organization.tenantList;
-export const getWebhookEvents = state => state.organization.webhooks.events;
-export const getWebhookEventTotal = state => state.organization.webhooks.eventTotal;
+export const getSsoConfig = ({ organization: { ssoConfigs = [] } }: RootState) => ssoConfigs[0];
+export const getTenantsList = (state: RootState) => state.organization.tenantList;
+export const getWebhookEvents = (state: RootState) => state.organization.webhooks.events;
+export const getWebhookEventTotal = (state: RootState) => state.organization.webhooks.eventsTotal;
 
 export const getDeviceTwinIntegrations = createSelector([getExternalIntegrations], integrations =>
   integrations.filter(integration => integration.id && EXTERNAL_PROVIDER[integration.provider]?.deviceTwin)
 );
-export const getIsServiceProvider = state => state.organization.organization.service_provider;
+export const getIsServiceProvider = (state: RootState) => state.organization.organization.service_provider;
 
 export const getWebhooks = createSelector([getExternalIntegrations], integrations =>
   integrations.filter(integration => integration.id && integration.provider === EXTERNAL_PROVIDER.webhook.provider)

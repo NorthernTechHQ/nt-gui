@@ -40,7 +40,6 @@ import { getCurrentSession, getTenantCapabilities, getTenantsList } from '@north
 import { AppDispatch, commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
 import { getDeviceLimit, setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
 import { dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { jwtDecode } from 'jwt-decode';
@@ -265,7 +264,7 @@ const tenantListRetrieval = async (config): Promise<[BackendTenant[], number]> =
   const totalCount = tenantList.headers[headerNames.total] || TENANT_LIST_DEFAULT.perPage;
   return [tenantList.data, Number(totalCount)];
 };
-export const getTenants = createAsyncThunk(`${sliceName}/getTenants`, async (_, { dispatch, getState }) => {
+export const getTenants = createAppAsyncThunk(`${sliceName}/getTenants`, async (_, { dispatch, getState }) => {
   const currentState = getTenantsList(getState());
   const [tenants, pageCount] = await tenantListRetrieval(currentState);
   dispatch(actions.setTenantListState({ ...currentState, total: pageCount, tenants }));
@@ -324,7 +323,7 @@ export const removeTenant = createAppAsyncThunk(`${sliceName}/editDeviceLimit`, 
 );
 export const getUserOrganization = createAppAsyncThunk(`${sliceName}/getUserOrganization`, (_, { dispatch, getState }) =>
   Api.get<Tenant>(`${tenantadmApiUrlv1}/user/tenant`).then(res => {
-    //TODO: Addon should be array of union
+    //TODO: Addon should be a string literal union (e.g type AvailableAddon) not just a string
     //@ts-ignore
     const tasks: ReturnType<AppDispatch>[] = [dispatch(actions.setOrganization(res.data))];
     const { addons, plan, trial } = res.data;

@@ -45,6 +45,7 @@ export interface AuditLogSelectionState {
   isLoading?: boolean;
   page: number;
   perPage: number;
+  selectedId?: string;
   selectedIssue?: string;
   sort: SortOptions;
   startDate?: string;
