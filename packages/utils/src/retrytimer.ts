@@ -15,7 +15,7 @@ import { extractErrorMessage, preformatWithRequestID } from './helpers';
 
 const oneSecond = 1000;
 
-let timers = {};
+const timers = {};
 
 export function setRetryTimer(err, service, errorContext, timeLeft, setSnackbar) {
   // check if service not already retrying
@@ -26,7 +26,7 @@ export function setRetryTimer(err, service, errorContext, timeLeft, setSnackbar)
   timers[service] = setInterval(() => {
     remaining -= oneSecond;
     const errMsg = extractErrorMessage(err, 'Please check your connection.');
-    remaining > 0
+    return remaining > 0
       ? setSnackbar(preformatWithRequestID(err.response, `${errorContext} ${errMsg} Retrying in ${remaining / 1000} seconds`))
       : clearRetryTimer(service, setSnackbar);
   }, oneSecond);
