@@ -39,7 +39,7 @@
     "@types/react": "^19.x",
     "@types/react-dom": "^19.x",
     "eslint": "9.27.0",
-    "tsup": "8.4.0",
+    "tsup": "8.5.0",
     "typescript": "5.8.3"
   },
   "dependencies": {
@@ -50,11 +50,11 @@
     "@northern.tech/utils": "*",
     "dayjs": "^1.x",
     "msgpack5": "^6.x",
-    "react": "^18.x || ^19.x",
-    "react-dom": "^18.x || ^19.x",
+    "react": "^19.x",
+    "react-dom": "^19.x",
     "react-redux": "^9.x",
     "react-router-dom": "^7.x",
     "tss-react": "^4.x",
-    "universal-cookie": "7.1.x"
+    "universal-cookie": "8.0.x"
   }
 }
