@@ -1359,8 +1359,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
       <label
         class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined emotion-1"
         data-shrink="true"
-        for=":r5:"
-        id=":r5:-label"
+        for="«r5»"
+        id="«r5»-label"
       >
         From
       </label>
@@ -1371,7 +1371,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
           aria-invalid="false"
           autocomplete="off"
           class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd emotion-3"
-          id=":r5:"
+          id="«r5»"
           inputmode="text"
           placeholder="MMMM DD"
           type="text"
@@ -1419,8 +1419,8 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
       <label
         class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined emotion-1"
         data-shrink="true"
-        for=":r8:"
-        id=":r8:-label"
+        for="«r8»"
+        id="«r8»-label"
       >
         To
       </label>
@@ -1431,7 +1431,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-3:focus::-ms-input-p
           aria-invalid="false"
           autocomplete="off"
           class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd emotion-3"
-          id=":r8:"
+          id="«r8»"
           inputmode="text"
           placeholder="MMMM DD"
           type="text"
