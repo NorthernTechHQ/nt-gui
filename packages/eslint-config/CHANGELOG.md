@@ -1,4 +1,24 @@
 ---
+## @northern.tech/eslint-config-0.4.0 - 2025-05-27
+
+
+### Features
+
+#### Eslint-config
+
+
+- *(eslint-config)* Updated config to v9 compatible format
+
+ ([879b2f5](https://github.com/NorthernTechHQ/nt-gui/commit/879b2f5aaf34d3335612d3f6a42aeaf5158b2130))  by @mzedel
+
+
+
+
+
+### Security
+
+
+
 ## @northern.tech/eslint-config-0.3.0 - 2025-02-14
 
 
@@ -17,6 +37,9 @@
 
 
 
+
+
+### Security
 
 
 
