@@ -84,7 +84,10 @@ export const userHandlers = [
     return new HttpResponse(null, { status: 564 });
   }),
   http.put(`${useradmApiUrl}/users/:userId`, async ({ params: { userId }, request }) => {
-    const { email, password } = await request.json();
+    const { email, password, current_password } = await request.json();
+    if (current_password === 'bad_password') {
+      return new HttpResponse(null, { status: 401 });
+    }
     if (
       (defaultState.users.byId[userId] && [email, password].some(value => Object.values(defaultState.users.byId[userId]).includes(value))) ||
       email === 'test@test.com'

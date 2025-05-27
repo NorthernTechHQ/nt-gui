@@ -350,8 +350,10 @@ describe('user actions', () => {
     vi.clearAllMocks();
     const store = mockStore({ ...defaultState });
     await expect(
-      store.dispatch(editUser({ id: 'a1', email: 'a@evil.com', password: 'mySecretPasswordNot', current_password: 'current_password' })).unwrap()
-    ).rejects.toBeTruthy();
+      store.dispatch(editUser({ id: 'a1', email: 'a@evil.com', password: 'mySecretPasswordNot', current_password: 'bad_password' })).unwrap()
+    ).rejects.toMatchObject({
+      message: 'Request failed with status code 401'
+    });
   });
   it('should allow single user removal', async () => {
     vi.clearAllMocks();
