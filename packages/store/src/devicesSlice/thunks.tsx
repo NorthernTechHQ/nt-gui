@@ -1089,29 +1089,3 @@ export const getGatewayDevices = createAsyncThunk(`${sliceName}/getGatewayDevice
     return Promise.all(tasks);
   });
 });
-
-export const getDevicesInBounds = createAsyncThunk(`${sliceName}/getDevicesInBounds`, ({ bounds, group }, { dispatch, getState }) => {
-  const state = getState();
-  const { filterTerms } = convertDeviceListStateToFilters({
-    group: group === ALL_DEVICES ? undefined : group,
-    groups: state.devices.groups,
-    status: DEVICE_STATES.accepted
-  });
-  return GeneralApi.post(getSearchEndpoint(getState()), {
-    page: 1,
-    per_page: MAX_PAGE_SIZE,
-    filters: filterTerms,
-    attributes: geoAttributes,
-    geo_bounding_box_filter: {
-      geo_bounding_box: {
-        location: {
-          top_left: { lat: bounds._northEast.lat, lon: bounds._southWest.lng },
-          bottom_right: { lat: bounds._southWest.lat, lon: bounds._northEast.lng }
-        }
-      }
-    }
-  }).then(({ data }) => {
-    const { devicesById } = reduceReceivedDevices(data, [], getState());
-    return Promise.resolve(dispatch(actions.receivedDevices(devicesById)));
-  });
-});
