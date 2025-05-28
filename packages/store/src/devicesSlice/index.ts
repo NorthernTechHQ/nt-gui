@@ -11,16 +11,117 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
-import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS } from '@northern.tech/store/commonConstants';
+import type {
+  DeviceDeviceauth as BackendDeviceAuth,
+  DeviceStateDeviceconnect as BackendDeviceState,
+  DeviceConfiguration,
+  DeviceState,
+  MonitorConfiguration,
+  SortCriteria
+} from '@northern.tech/store/api/types/MenderTypes';
+import { DEVICE_LIST_DEFAULTS, DeviceIssueOptionKey, FilterOperator, SORTING_OPTIONS, SortOptions } from '@northern.tech/store/commonConstants';
+import { DeviceDeployment } from '@northern.tech/store/deploymentsSlice';
 import { deepCompare, duplicateFilter } from '@northern.tech/utils/helpers';
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-import { DEVICE_STATES } from './constants';
+import { ALL_DEVICE_STATES, DEVICE_STATES, DeviceAuthState } from './constants';
 
 export const sliceName = 'devices';
+export type DeviceSelectedAttribute = { attribute: string; scope: string };
+export type DeviceListState = {
+  detailsTab: string;
+  deviceIds: string[];
+  isLoading: boolean;
+  open?: boolean;
+  page: number;
+  perPage: number;
+  refreshTrigger: boolean;
+  selectedAttributes: DeviceSelectedAttribute[];
+  selectedId?: string;
+  selectedIssues: DeviceIssueOptionKey[];
+  selection: number[];
+  setOnly?: boolean;
+  sort: SortOptions & Partial<SortCriteria>;
+  state?: DeviceAuthState | typeof ALL_DEVICE_STATES;
+  total: number;
+};
+type DeviceReport = {
+  items: { count: number; key: string }[];
+  otherCount: number;
+  total: number;
+};
+export type DeviceGroup = { deviceIds?: string[]; filters?: DeviceFilter[]; id?: string; total?: number };
+export type InventoryAttributes = {
+  [key: string]: string | string[];
+  artifact_name: string;
+  device_type: string[];
+};
 
-export const initialState = {
+// based on the api docs the Record values might be even: "Supported types: number, string, array of numbers, array of strings" - but I guess "string" or "string | sting[]" should be good enough
+type UiDeviceAttributes = {
+  attributes: InventoryAttributes;
+  identity: Record<string, string>;
+  monitor: Record<string, string>;
+  system: Record<string, string>;
+  tags: Record<string, string>;
+};
+
+export type Device = BackendDeviceAuth &
+  UiDeviceAttributes & {
+    check_in_time_exact?: string;
+    check_in_time_rounded?: string;
+    config?: DeviceConfiguration;
+    connect_status?: BackendDeviceState['status'];
+    connect_updated_ts?: string;
+    deploymentsCount?: number;
+    deviceDeployments?: DeviceDeployment;
+    etag?: string;
+    gatewayIds?: string[];
+    group?: string;
+    id: string;
+    isNew?: boolean;
+    isOffline?: boolean;
+    monitors?: MonitorConfiguration[];
+    status: BackendDeviceAuth.status;
+    twinsByIntegration?: Record<string, DeviceState & { twinError?: string }>;
+  };
+export type DeviceFilter = {
+  key: string;
+  operator: FilterOperator;
+  scope: string;
+  value: string | string[];
+};
+type FilteringAttributes = {
+  identityAttributes: string[];
+  inventoryAttributes: string[];
+  systemAttributes: string[];
+  tagAttributes: string[];
+};
+type FilteringAttributesConfig = {
+  attributes: Record<string, string[]>;
+  count: number;
+  limit: number;
+};
+export type DeviceStatus = DeviceAuthState | 'active' | 'inactive';
+
+export type DeviceGroups = {
+  byId: Record<string, DeviceGroup>;
+  selectedGroup?: string;
+};
+export type DeviceSliceType = {
+  byId: Record<string, Device>;
+  byStatus: Record<DeviceStatus, { deviceIds: string[]; total: number }>;
+  deviceList: DeviceListState;
+  filteringAttributes: FilteringAttributes;
+  filteringAttributesConfig: FilteringAttributesConfig;
+  filteringAttributesLimit: number;
+  filters: DeviceFilter[];
+  groups: DeviceGroups;
+  limit: number;
+  reports: DeviceReport[];
+  total: number;
+};
+export const initialState: DeviceSliceType = {
   byId: {
     // [deviceId]: {
     //   ...,
@@ -47,7 +148,11 @@ export const initialState = {
       // scope: null
     },
     state: DEVICE_STATES.accepted,
-    total: 0
+    total: 0,
+    refreshTrigger: false,
+    isLoading: false,
+    detailsTab: '',
+    open: false
   },
   filters: [
     // { key: 'device_type', value: 'raspberry', operator: '$eq', scope: 'inventory' }
@@ -79,10 +184,10 @@ export const devicesSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    receivedGroups: (state, action) => {
+    receivedGroups: (state, action: PayloadAction<Record<string, DeviceGroup>>) => {
       state.groups.byId = action.payload;
     },
-    addToGroup: (state, action) => {
+    addToGroup: (state, action: PayloadAction<{ deviceIds: string[]; group: string }>) => {
       const { group, deviceIds } = action.payload;
       const maybeExistingGroup = {
         filters: [],
@@ -95,7 +200,7 @@ export const devicesSlice = createSlice({
         total: (maybeExistingGroup.total || 0) + 1
       };
     },
-    removeFromGroup: (state, action) => {
+    removeFromGroup: (state, action: PayloadAction<{ deviceIds: string[]; group: string }>) => {
       const { group, deviceIds: removedIds } = action.payload;
       const { deviceIds = [], total = 0, ...maybeExistingGroup } = state.groups.byId[group] || {};
       const changedGroup = {
@@ -113,24 +218,27 @@ export const devicesSlice = createSlice({
       const { [group]: removal, ...remainingById } = state.groups.byId;
       state.groups.byId = remainingById;
     },
-    addGroup: (state, action) => {
+    addGroup: (state, action: PayloadAction<{ group: DeviceGroup; groupName: string }>) => {
       const { groupName, group } = action.payload;
       state.groups.byId[groupName] = {
         ...state.groups.byId[groupName],
         ...group
       };
     },
-    selectGroup: (state, { payload: group }) => {
-      state.deviceList.deviceIds = state.groups.byId[group] && state.groups.byId[group].deviceIds?.length > 0 ? state.groups.byId[group].deviceIds : [];
+    selectGroup: (state, { payload: group }: PayloadAction<string | undefined>) => {
+      state.deviceList.deviceIds =
+        group && state.groups.byId[group] && state.groups.byId[group].deviceIds && state.groups.byId[group].deviceIds.length > 0
+          ? state.groups.byId[group].deviceIds
+          : [];
       state.groups.selectedGroup = group;
     },
-    removeGroup: (state, action) => {
+    removeGroup: (state, action: PayloadAction<string>) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [action.payload]: removal, ...remainingById } = state.groups.byId;
       state.groups.byId = remainingById;
       state.groups.selectedGroup = state.groups.selectedGroup === action.payload ? undefined : state.groups.selectedGroup;
     },
-    setDeviceListState: (state, action) => {
+    setDeviceListState: (state, action: PayloadAction<Partial<DeviceListState>>) => {
       state.deviceList = {
         ...state.deviceList,
         ...action.payload,
@@ -140,57 +248,57 @@ export const devicesSlice = createSlice({
         }
       };
     },
-    setFilterAttributes: (state, action) => {
+    setFilterAttributes: (state, action: PayloadAction<FilteringAttributes>) => {
       state.filteringAttributes = action.payload;
     },
-    setFilterablesConfig: (state, action) => {
+    setFilterablesConfig: (state, action: PayloadAction<FilteringAttributesConfig>) => {
       state.filteringAttributesConfig = action.payload;
     },
-    receivedDevices: (state, action) => {
+    receivedDevices: (state, action: PayloadAction<Record<string, Device>>) => {
       state.byId = {
         ...state.byId,
         ...action.payload
       };
     },
-    setDeviceFilters: (state, action) => {
+    setDeviceFilters: (state, action: PayloadAction<DeviceFilter[]>) => {
       if (deepCompare(action.payload, state.filters)) {
         return;
       }
       state.filters = action.payload.filter(filter => filter.key && filter.operator && filter.scope && typeof filter.value !== 'undefined');
     },
-    setInactiveDevices: (state, action) => {
+    setInactiveDevices: (state, action: PayloadAction<{ activeDeviceTotal: number; inactiveDeviceTotal: number }>) => {
       const { activeDeviceTotal, inactiveDeviceTotal } = action.payload;
       state.byStatus.active.total = activeDeviceTotal;
       state.byStatus.inactive.total = inactiveDeviceTotal;
     },
-    setDeviceReports: (state, action) => {
+    setDeviceReports: (state, action: PayloadAction<DeviceReport[]>) => {
       state.reports = action.payload;
     },
-    setDevicesByStatus: (state, action) => {
+    setDevicesByStatus: (state, action: PayloadAction<{ deviceIds: string[]; forceUpdate?: boolean; status: DeviceStatus; total: number }>) => {
       const { forceUpdate, status, total, deviceIds } = action.payload;
       state.byStatus[status] = total || forceUpdate ? { deviceIds, total } : state.byStatus[status];
     },
-    setDevicesCountByStatus: (state, action) => {
+    setDevicesCountByStatus: (state, action: PayloadAction<{ count: number; status: DeviceStatus }>) => {
       const { count, status } = action.payload;
       state.byStatus[status].total = count;
     },
-    setTotalDevices: (state, action) => {
+    setTotalDevices: (state, action: PayloadAction<number>) => {
       state.total = action.payload;
     },
-    setDeviceLimit: (state, action) => {
+    setDeviceLimit: (state, action: PayloadAction<number>) => {
       state.limit = action.payload;
     },
-    receivedDevice: (state, action) => {
+    receivedDevice: (state, action: PayloadAction<{ id: string } & Partial<Device>>) => {
       state.byId[action.payload.id] = {
         ...state.byId[action.payload.id],
         ...action.payload
       };
     },
-    maybeUpdateDevicesByStatus: (state, action) => {
+    maybeUpdateDevicesByStatus: (state, action: PayloadAction<{ authId: string; deviceId: string }>) => {
       const { deviceId, authId } = action.payload;
       const device = state.byId[deviceId];
-      const hasMultipleAuthSets = authId ? device.auth_sets.filter(authset => authset.id !== authId).length > 0 : false;
-      if (!hasMultipleAuthSets && Object.values(DEVICE_STATES).includes(device.status)) {
+      const hasMultipleAuthSets = authId && device.auth_sets ? device.auth_sets.filter(authset => authset.id !== authId).length > 0 : false;
+      if (!hasMultipleAuthSets && (Object.values(DEVICE_STATES) as string[]).includes(device.status)) {
         const deviceIds = state.byStatus[device.status].deviceIds.filter(id => id !== deviceId);
         state.byStatus[device.status] = { deviceIds, total: Math.max(0, state.byStatus[device.status].total - 1) };
       }
