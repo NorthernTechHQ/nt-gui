@@ -6,18 +6,17 @@
  * User settings.
  */
 export type Settings = {
-    /**
-     * Enable/disable two-factor authentication for this user.
-     */
-    '2fa'?: Settings.TwoFactorAuth;
+  /**
+   * Enable/disable two-factor authentication for this user.
+   */
+  "2fa"?: Settings.TwoFactorAuth;
 };
 export namespace Settings {
-    /**
-     * Enable/disable two-factor authentication for this user.
-     */
-    export enum TwoFactorAuth {
-        ENABLED = 'enabled',
-        DISABLED = 'disabled',
-    }
+  /**
+   * Enable/disable two-factor authentication for this user.
+   */
+  export enum TwoFactorAuth {
+    ENABLED = "enabled",
+    DISABLED = "disabled",
+  }
 }
-
