@@ -294,7 +294,7 @@ export const devicesSlice = createSlice({
         ...action.payload
       };
     },
-    maybeUpdateDevicesByStatus: (state, action: PayloadAction<{ authId: string; deviceId: string }>) => {
+    maybeUpdateDevicesByStatus: (state, action: PayloadAction<{ authId?: string; deviceId: string }>) => {
       const { deviceId, authId } = action.payload;
       const device = state.byId[deviceId];
       const hasMultipleAuthSets = authId && device.auth_sets ? device.auth_sets.filter(authset => authset.id !== authId).length > 0 : false;
