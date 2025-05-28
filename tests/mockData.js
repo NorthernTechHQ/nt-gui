@@ -527,6 +527,7 @@ export const defaultState = {
         }
       ],
       selectionState: {
+        ...initialOrganizationState.auditlog.selectionState,
         ...DEVICE_LIST_DEFAULTS,
         sort: {},
         total: 3
@@ -536,7 +537,7 @@ export const defaultState = {
     organization: {
       ...initialOrganizationState.organization,
       addons: [],
-      id: 1,
+      id: '1',
       name: 'test',
       plan: 'os',
       trial: false

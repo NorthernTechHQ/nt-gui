@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import { EXTERNAL_PROVIDER, apiUrl, useradmApiUrl } from '@northern.tech/store/constants';
 
 import { Integration } from '../api/types/Integration';
@@ -52,7 +51,9 @@ export const SSO_TYPES = {
     getStartUrl: getOidcStartUrl,
     configDetails: [{ key: 'startURL', label: 'Start Url', getValue: getOidcStartUrl }]
   }
-};
+} as const;
+
+export type ContentType = (typeof SSO_TYPES)[keyof typeof SSO_TYPES]['contentType'];
 
 export const auditlogTypes = {
   artifact: { title: 'Artifact', queryParameter: 'object_type', value: 'artifact' },
@@ -68,12 +69,11 @@ export const SP_AUDIT_LOGS_TYPES = [auditlogTypes.user, auditlogTypes.tenant];
 
 export interface Webhook extends Integration {
   provider: Integration.provider.WEBHOOK;
-  scopes?: string[];
 }
 
 export const emptyWebhook: Webhook = {
   description: '',
-  enabled: true,
+  provider: Integration.provider.WEBHOOK,
   credentials: {
     type: EXTERNAL_PROVIDER.webhook.credentialsType,
     [EXTERNAL_PROVIDER.webhook.credentialsType]: {

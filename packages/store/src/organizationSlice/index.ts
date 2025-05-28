@@ -11,10 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
+import type { AuditLog, BillingProfile, Integration, Event as WebhookEvent } from '@northern.tech/store/api/types/MenderTypes';
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TENANT_LIST_DEFAULT } from '@northern.tech/store/constants';
-import { OrganizationState } from '@northern.tech/store/organizationSlice/types';
-import { createSlice } from '@reduxjs/toolkit';
+import { AuditLogSelectionState, Card, Organization, OrganizationState, SSOConfig, TenantList } from '@northern.tech/store/organizationSlice/types';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 export const sliceName = 'organization';
 
@@ -49,7 +49,8 @@ export const initialState: OrganizationState = {
       startDate: undefined,
       total: 0,
       type: undefined,
-      user: undefined
+      user: undefined,
+      isLoading: false
     }
   },
   externalDeviceIntegrations: [
@@ -68,36 +69,39 @@ export const organizationSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    receiveAuditLogs: (state, action) => {
+    receiveAuditLogs: (state, action: PayloadAction<{ events: AuditLog[]; total: number }>) => {
       const { events, total } = action.payload;
       state.auditlog.events = events;
       state.auditlog.selectionState.total = total;
     },
-    setAuditLogState: (state, action) => {
+    setAuditLogState: (state, action: PayloadAction<Partial<AuditLogSelectionState>>) => {
       state.auditlog.selectionState = {
         ...state.auditlog.selectionState,
         ...action.payload
       };
     },
-    receiveCurrentCard: (state, action) => {
+    receiveCurrentCard: (state, action: PayloadAction<Card>) => {
       state.card = action.payload;
     },
-    receiveSetupIntent: (state, action) => {
+    receiveSetupIntent: (state, action: PayloadAction<string | null>) => {
       state.intentId = action.payload;
     },
-    setOrganization: (state, action) => {
+    setOrganization: (state, action: PayloadAction<Partial<Organization>>) => {
       state.organization = { ...state.organization, ...action.payload };
     },
-    setTenantListState: (state, action) => {
+    setBillingProfile: (state, action: PayloadAction<BillingProfile>) => {
+      state.organization.billing_profile = action.payload;
+    },
+    setTenantListState: (state, action: PayloadAction<TenantList>) => {
       state.tenantList = action.payload;
     },
-    receiveExternalDeviceIntegrations: (state, action) => {
+    receiveExternalDeviceIntegrations: (state, action: PayloadAction<Integration[]>) => {
       state.externalDeviceIntegrations = action.payload;
     },
-    receiveSsoConfigs: (state, action) => {
+    receiveSsoConfigs: (state, action: PayloadAction<SSOConfig[]>) => {
       state.ssoConfigs = action.payload;
     },
-    receiveWebhookEvents: (state, action) => {
+    receiveWebhookEvents: (state, action: PayloadAction<{ total: number; value: WebhookEvent[] }>) => {
       const { value, total } = action.payload;
       state.webhooks.events = value;
       state.webhooks.eventsTotal = total;

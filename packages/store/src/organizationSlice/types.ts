@@ -11,66 +11,85 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type {
+  AuditLog as AuditLogEvent,
+  Tenant as BackendTenant,
+  TenantTenantadm as BackendTenantAdminTenant,
+  BillingProfile,
+  Event,
+  Integration,
+  SAMLMetadata
+} from '@northern.tech/store/api/types/MenderTypes';
 import { AvailableAddon } from '@northern.tech/store/appSlice/constants';
+import { SSO_TYPES } from '@northern.tech/store/organizationSlice/constants';
 
-import { Tenant } from '../api/types/Tenant';
+import { SORTING_OPTIONS } from '../commonConstants';
 
-//TODO: improve types
-interface Card {
-  brand: string;
+export interface Card {
+  brand?: string;
   expiration: {
-    month: number;
-    year: number;
+    month?: number;
+    year?: number;
   };
-  last4: string;
+  last4?: string;
 }
 
 export interface SortOptions {
-  direction: 'asc' | 'desc';
+  direction: keyof typeof SORTING_OPTIONS;
   key?: string;
 }
 
-interface AuditLogSelectionState {
+export interface AuditLogSelectionState {
   detail?: string;
   endDate?: string;
+  isLoading?: boolean;
+  page: number;
+  perPage: number;
+  selectedId?: string;
   selectedIssue?: string;
   sort: SortOptions;
   startDate?: string;
   total: number;
-  type?: string;
-  user?: string;
+  type?: {
+    queryParameter: string;
+    title: string;
+    value: string;
+  };
+  user?: { id: string };
 }
 
 interface AuditLog {
-  events: Array<any>;
+  events: Array<AuditLogEvent>;
   selectionState: AuditLogSelectionState;
 }
 
-interface ExternalDeviceIntegration {
-  connection_string: string;
-  id: string;
-  provider: string;
-}
-
-interface Webhook {
-  events: Array<any>;
+export interface Webhook {
+  events: Event[];
   eventsTotal: number;
 }
+export type Tenant = BackendTenant & BackendTenantAdminTenant;
 
-interface TenantList {
-  selectedTenant: Tenant | null;
+export interface TenantList {
+  page: number;
+  perPage: number;
+  selectedTenant: BackendTenantAdminTenant | null;
   sort: SortOptions;
-  tenants: Tenant[];
+  tenants: BackendTenantAdminTenant[];
   total: number;
 }
+
+export type SSOConfig = SAMLMetadata & {
+  config: string;
+  type: [keyof typeof SSO_TYPES];
+};
 
 export interface OrganizationState {
   auditlog: AuditLog;
   card: Card;
-  externalDeviceIntegrations: ExternalDeviceIntegration[];
+  externalDeviceIntegrations: Integration[];
   intentId: string | null;
-  organization: Organization;
-  ssoConfigs: any[];
+  organization: Partial<Organization>;
+  ssoConfigs: SSOConfig[];
   tenantList: TenantList;
   webhooks: Webhook;
 }
@@ -82,4 +101,5 @@ export interface Addon {
 
 export interface Organization extends Tenant {
   addons: Addon[];
+  billing_profile: BillingProfile;
 }

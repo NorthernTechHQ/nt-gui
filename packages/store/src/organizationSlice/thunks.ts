@@ -11,12 +11,21 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import storeActions from '@northern.tech/store/actions';
 import Api from '@northern.tech/store/api/general-api';
-import { Tenant } from '@northern.tech/store/api/types/Tenant';
+import {
+  AuditLog,
+  TenantTenantadm as BackendTenant,
+  BillingInfo,
+  BillingProfile,
+  Event,
+  Integration,
+  NewTenant,
+  SupportRequest
+} from '@northern.tech/store/api/types/MenderTypes';
 import {
   AvailablePlans,
+  ContentType,
   DEVICE_LIST_DEFAULTS,
   SORTING_OPTIONS,
   TENANT_LIST_DEFAULT,
@@ -26,34 +35,35 @@ import {
   iotManagerBaseURL,
   locations
 } from '@northern.tech/store/constants';
-import { getDeviceLimit } from '@northern.tech/store/devicesSlice/thunks';
+import { AuditLogSelectionState, SSOConfig, SortOptions, Tenant, TenantList } from '@northern.tech/store/organizationSlice/types';
 import { getCurrentSession, getTenantCapabilities, getTenantsList } from '@northern.tech/store/selectors';
-import { commonErrorFallback, commonErrorHandler } from '@northern.tech/store/store';
-import { setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
+import { AppDispatch, commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
+import { getDeviceLimit, setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
 import { dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { jwtDecode } from 'jwt-decode';
 import hashString from 'md5';
 import Cookies from 'universal-cookie';
 
 import { actions, sliceName } from '.';
-import { BillingProfile } from '../api/types/BillingProfile';
 import { SSO_TYPES, auditLogsApiUrl, ssoIdpApiUrlv1, tenantadmApiUrlv1, tenantadmApiUrlv2 } from './constants';
 import { getAuditlogState, getOrganization } from './selectors';
 
 const cookies = new Cookies();
 
+dayjs.extend(utc);
 const { setAnnouncement, setSnackbar } = storeActions;
 const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
 
-export const cancelRequest = createAsyncThunk(`${sliceName}/cancelRequest`, (reason, { dispatch, getState }) => {
+export const cancelRequest = createAppAsyncThunk(`${sliceName}/cancelRequest`, (reason: string, { dispatch, getState }) => {
   const { id: tenantId } = getOrganization(getState());
   return Api.post(`${tenantadmApiUrlv2}/tenants/${tenantId}/cancel`, { reason }).then(() =>
     Promise.resolve(dispatch(setSnackbar({ message: 'Deactivation request was sent successfully', autoHideDuration: TIMEOUTS.fiveSeconds })))
   );
 });
 
-export const getTargetLocation = key => {
+export const getTargetLocation = (key: string) => {
   if (devLocations.includes(window.location.hostname)) {
     return '';
   }
@@ -67,32 +77,49 @@ export const getTargetLocation = key => {
 };
 
 const devLocations = ['localhost', 'docker.mender.io'];
-export const createOrganizationTrial = createAsyncThunk(`${sliceName}/createOrganizationTrial`, (data, { dispatch }) => {
+
+type OrganizationTrialPayload = {
+  email: string;
+  'g-recaptcha-response': string;
+  location: keyof typeof locations;
+  name: string;
+  organization: string;
+  password: string;
+  plan: string;
+  tos: boolean;
+  ts?: number;
+};
+export const createOrganizationTrial = createAppAsyncThunk(`${sliceName}/createOrganizationTrial`, (data: OrganizationTrialPayload, { dispatch }) => {
   const { key } = locations[data.location];
   const targetLocation = getTargetLocation(key);
   const target = `${targetLocation}${tenantadmApiUrlv2}/tenants/trial`;
-  return Api.postUnauthorized(target, data)
-    .catch(err => {
-      if (err.response.status >= 400 && err.response.status < 500) {
-        dispatch(setSnackbar({ message: err.response.data.error, autoHideDuration: TIMEOUTS.fiveSeconds }));
-        return Promise.reject(err);
-      }
-    })
-    .then(({ headers }) => {
-      cookies.remove('oauth');
-      cookies.remove('externalID');
-      cookies.remove('email');
-      dispatch(setFirstLoginAfterSignup(true));
-      return new Promise(resolve =>
-        setTimeout(() => {
-          window.location.assign(`${targetLocation}${headers.location || ''}`);
-          return resolve();
-        }, TIMEOUTS.fiveSeconds)
-      );
-    });
+  return (
+    Api.postUnauthorized(target, data)
+      .catch(err => {
+        if (err.response.status >= 400 && err.response.status < 500) {
+          dispatch(setSnackbar({ message: err.response.data.error, autoHideDuration: TIMEOUTS.fiveSeconds }));
+          return Promise.reject(err);
+        }
+      })
+      //TODO: resolve the case with no response more gracefully
+      // @ts-ignore
+      .then(({ headers }) => {
+        cookies.remove('oauth');
+        cookies.remove('externalID');
+        cookies.remove('email');
+        //@ts-ignore
+        dispatch(setFirstLoginAfterSignup(true));
+        return new Promise<void>(resolve =>
+          setTimeout(() => {
+            window.location.assign(`${targetLocation}${headers.location || ''}`);
+            return resolve();
+          }, TIMEOUTS.fiveSeconds)
+        );
+      })
+  );
 });
 
-export const startCardUpdate = createAsyncThunk(`${sliceName}/startCardUpdate`, (_, { dispatch }) =>
+export const startCardUpdate = createAppAsyncThunk(`${sliceName}/startCardUpdate`, (_, { dispatch }) =>
   Api.post(`${tenantadmApiUrlv2}/billing/card`)
     .then(({ data }) => {
       dispatch(actions.receiveSetupIntent(data.intent_id));
@@ -101,40 +128,65 @@ export const startCardUpdate = createAsyncThunk(`${sliceName}/startCardUpdate`, 
     .catch(err => commonErrorHandler(err, `Updating the card failed:`, dispatch))
 );
 
-export const confirmCardUpdate = createAsyncThunk(`${sliceName}/confirmCardUpdate`, (_, { dispatch, getState }) =>
+export const confirmCardUpdate = createAppAsyncThunk(`${sliceName}/confirmCardUpdate`, (_, { dispatch, getState }) =>
   Api.post(`${tenantadmApiUrlv2}/billing/card/${getState().organization.intentId}/confirm`)
     .then(() => Promise.all([dispatch(setSnackbar('Payment card was updated successfully')), dispatch(actions.receiveSetupIntent(null))]))
     .catch(err => commonErrorHandler(err, `Updating the card failed:`, dispatch))
 );
 
-export const getCurrentCard = createAsyncThunk(`${sliceName}/getCurrentCard`, (_, { dispatch }) =>
-  Api.get(`${tenantadmApiUrlv2}/billing`).then(res => {
+export const getCurrentCard = createAppAsyncThunk(`${sliceName}/getCurrentCard`, (_, { dispatch }) =>
+  Api.get<BillingInfo>(`${tenantadmApiUrlv2}/billing`).then(res => {
     const { last4, exp_month, exp_year, brand } = res.data.card || {};
     return Promise.resolve(dispatch(actions.receiveCurrentCard({ brand, last4, expiration: { month: exp_month, year: exp_year } })));
   })
 );
 
-export const startUpgrade = createAsyncThunk(`${sliceName}/startUpgrade`, (tenantId, { dispatch }) =>
+export const startUpgrade = createAppAsyncThunk(`${sliceName}/startUpgrade`, (tenantId: string, { dispatch }) =>
   Api.post(`${tenantadmApiUrlv2}/tenants/${tenantId}/upgrade/start`)
     .then(({ data }) => Promise.resolve(data.secret))
     .catch(err => commonErrorHandler(err, `There was an error upgrading your account:`, dispatch))
 );
 
-export const cancelUpgrade = createAsyncThunk(`${sliceName}/cancelUpgrade`, tenantId => Api.post(`${tenantadmApiUrlv2}/tenants/${tenantId}/upgrade/cancel`));
+export const cancelUpgrade = createAppAsyncThunk(`${sliceName}/cancelUpgrade`, (tenantId: string) =>
+  Api.post(`${tenantadmApiUrlv2}/tenants/${tenantId}/upgrade/cancel`)
+);
+
 interface completeUpgradePayload {
   billing_profile: BillingProfile;
   plan: AvailablePlans;
   tenantId: string;
 }
-export const completeUpgrade = createAsyncThunk(`${sliceName}/completeUpgrade`, ({ tenantId, plan, billing_profile }: completeUpgradePayload, { dispatch }) =>
-  Api.post(`${tenantadmApiUrlv2}/tenants/${tenantId}/upgrade/complete`, { plan, billing_profile })
-    .catch(err => commonErrorHandler(err, `There was an error upgrading your account:`, dispatch))
-    .then(() => Promise.all([dispatch(getDeviceLimit()), dispatch(getUserOrganization())]))
+export const completeUpgrade = createAppAsyncThunk(
+  `${sliceName}/completeUpgrade`,
+  ({ tenantId, plan, billing_profile }: completeUpgradePayload, { dispatch }) =>
+    Api.post(`${tenantadmApiUrlv2}/tenants/${tenantId}/upgrade/complete`, { plan, billing_profile })
+      .catch(err => commonErrorHandler(err, `There was an error upgrading your account:`, dispatch))
+      .then(() => Promise.all([dispatch(getDeviceLimit()), dispatch(getUserOrganization())]))
 );
 
-const prepareAuditlogQuery = ({ startDate, endDate, user: userFilter, type, detail: detailFilter, sort = {} }) => {
-  const userId = userFilter?.id || userFilter;
-  const detail = detailFilter?.id || detailFilter;
+type AuditLogQuery = {
+  detail?: { id: string } | string;
+
+  endDate?: string;
+  sort?: SortOptions;
+  startDate?: string;
+  type?: {
+    queryParameter: string;
+    title: string;
+    value: string;
+  } | null;
+  user?: { id: string } | string;
+};
+const prepareAuditlogQuery = ({
+  startDate,
+  endDate,
+  user: userFilter,
+  type,
+  detail: detailFilter,
+  sort = { direction: SORTING_OPTIONS.desc }
+}: AuditLogQuery) => {
+  const userId = typeof userFilter === 'object' && userFilter ? userFilter.id : userFilter;
+  const detail = typeof detailFilter === 'object' && detailFilter ? detailFilter.id : detailFilter;
   const { start: startUnix, end: endUnix } = dateRangeToUnix(startDate, endDate);
   const createdAfter = startDate ? `&created_after=${startUnix}` : '';
   const createdBefore = endDate ? `&created_before=${endUnix}` : '';
@@ -145,51 +197,56 @@ const prepareAuditlogQuery = ({ startDate, endDate, user: userFilter, type, deta
   return `${createdAfter}${createdBefore}${userSearch}${typeSearch}${objectSearch}&sort=${direction}`;
 };
 
-export const getAuditLogs = createAsyncThunk(`${sliceName}/getAuditLogs`, (selectionState, { dispatch, getState }) => {
+type GetAuditLogPayload = { page: number; perPage: number } & AuditLogQuery;
+export const getAuditLogs = createAppAsyncThunk(`${sliceName}/getAuditLogs`, (selectionState: GetAuditLogPayload, { dispatch, getState }) => {
   const { page, perPage } = selectionState;
   const { hasAuditlogs } = getTenantCapabilities(getState());
   if (!hasAuditlogs) {
     return Promise.resolve();
   }
-  return Api.get(`${auditLogsApiUrl}/logs?page=${page}&per_page=${perPage}${prepareAuditlogQuery(selectionState)}`)
+  return Api.get<AuditLog[]>(`${auditLogsApiUrl}/logs?page=${page}&per_page=${perPage}${prepareAuditlogQuery(selectionState)}`)
     .then(({ data, headers }) => {
       let total = headers[headerNames.total];
       total = Number(total || data.length);
-      return Promise.resolve(dispatch(actions.receiveAuditLogs({ events: data, total })));
+      return Promise.resolve(dispatch(actions.receiveAuditLogs({ events: data, total }))) as ReturnType<AppDispatch>;
     })
     .catch(err => commonErrorHandler(err, `There was an error retrieving audit logs:`, dispatch));
 });
 
-export const getAuditLogsCsvLink = createAsyncThunk(`${sliceName}/getAuditLogsCsvLink`, (_, { getState }) =>
+export const getAuditLogsCsvLink = createAppAsyncThunk(`${sliceName}/getAuditLogsCsvLink`, (_, { getState }) =>
   Promise.resolve(`${window.location.origin}${auditLogsApiUrl}/logs/export?limit=20000${prepareAuditlogQuery(getAuditlogState(getState()))}`)
 );
 
-export const setAuditlogsState = createAsyncThunk(`${sliceName}/setAuditlogsState`, (selectionState, { dispatch, getState }) => {
-  const currentState = getAuditlogState(getState());
-  const nextState = {
-    ...currentState,
-    ...selectionState,
-    sort: { ...currentState.sort, ...selectionState.sort }
-  };
-  const tasks = [];
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { isLoading: currentLoading, selectedIssue: currentIssue, ...currentRequestState } = currentState;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { isLoading: selectionLoading, selectedIssue: selectionIssue, ...selectionRequestState } = nextState;
-  if (!deepCompare(currentRequestState, selectionRequestState)) {
-    nextState.isLoading = true;
-    tasks.push(dispatch(getAuditLogs(nextState)).finally(() => dispatch(actions.setAuditLogState({ isLoading: false }))));
+export const setAuditlogsState = createAppAsyncThunk(
+  `${sliceName}/setAuditlogsState`,
+  (selectionState: Partial<AuditLogSelectionState>, { dispatch, getState }) => {
+    const currentState = getAuditlogState(getState());
+    const nextState = {
+      ...currentState,
+      ...selectionState,
+      sort: { ...currentState.sort, ...selectionState.sort }
+    };
+    const tasks: ReturnType<AppDispatch>[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { isLoading: currentLoading, selectedIssue: currentIssue, ...currentRequestState } = currentState;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { isLoading: selectionLoading, selectedIssue: selectionIssue, ...selectionRequestState } = nextState;
+    //@ts-ignore
+    if (!deepCompare(currentRequestState, selectionRequestState)) {
+      nextState.isLoading = true;
+      tasks.push(dispatch(getAuditLogs(nextState)).finally(() => dispatch(actions.setAuditLogState({ isLoading: false }))));
+    }
+    tasks.push(dispatch(actions.setAuditLogState(nextState)));
+    return Promise.all(tasks);
   }
-  tasks.push(dispatch(actions.setAuditLogState(nextState)));
-  return Promise.all(tasks);
-});
+);
 
 /*
   Tenant management + Hosted Mender
 */
 export const tenantDataDivergedMessage = 'The system detected there is a change in your plan or purchased add-ons. Please log out and log in again';
 
-export const addTenant = createAsyncThunk(`${sliceName}/createTenant`, (selectionState, { dispatch }) =>
+export const addTenant = createAppAsyncThunk(`${sliceName}/createTenant`, (selectionState: NewTenant, { dispatch }) =>
   Api.post(`${tenantadmApiUrlv2}/tenants`, selectionState)
     .then(() =>
       Promise.all([
@@ -200,38 +257,42 @@ export const addTenant = createAsyncThunk(`${sliceName}/createTenant`, (selectio
     .catch(err => commonErrorHandler(err, 'There was an error creating tenant', dispatch, commonErrorFallback))
 );
 
-const tenantListRetrieval = async (config): Promise<[Tenant[], number]> => {
+const tenantListRetrieval = async (config): Promise<[BackendTenant[], number]> => {
   const { page, perPage } = config;
   const params = new URLSearchParams({ page, per_page: perPage }).toString();
-  const tenantList = await Api.get(`${tenantadmApiUrlv2}/tenants?${params}`);
+  const tenantList = await Api.get<BackendTenant[]>(`${tenantadmApiUrlv2}/tenants?${params}`);
   const totalCount = tenantList.headers[headerNames.total] || TENANT_LIST_DEFAULT.perPage;
   return [tenantList.data, Number(totalCount)];
 };
-export const getTenants = createAsyncThunk(`${sliceName}/getTenants`, async (_, { dispatch, getState }) => {
+export const getTenants = createAppAsyncThunk(`${sliceName}/getTenants`, async (_, { dispatch, getState }) => {
   const currentState = getTenantsList(getState());
   const [tenants, pageCount] = await tenantListRetrieval(currentState);
   dispatch(actions.setTenantListState({ ...currentState, total: pageCount, tenants }));
 });
 
-export const setTenantsListState = createAsyncThunk(`${sliceName}/setTenantsListState`, async (selectionState: any, { dispatch, getState }) => {
-  const currentState = getTenantsList(getState());
-  const nextState = {
-    ...currentState,
-    ...selectionState
-  };
-  if (!deepCompare(currentState, selectionState)) {
-    const [tenants, pageCount] = await tenantListRetrieval(nextState);
-    return dispatch(actions.setTenantListState({ ...nextState, tenants, total: pageCount }));
+export const setTenantsListState = createAppAsyncThunk(
+  `${sliceName}/setTenantsListState`,
+  async (selectionState: Partial<TenantList>, { dispatch, getState }) => {
+    const currentState = getTenantsList(getState());
+    const nextState = {
+      ...currentState,
+      ...selectionState
+    };
+    //@ts-ignore
+    if (!deepCompare(currentState, selectionState)) {
+      const [tenants, pageCount] = await tenantListRetrieval(nextState);
+      return dispatch(actions.setTenantListState({ ...nextState, tenants, total: pageCount }));
+    }
+    return dispatch(actions.setTenantListState({ ...nextState }));
   }
-  return dispatch(actions.setTenantListState({ ...nextState }));
-});
+);
 
 interface editTenantBody {
   id: string;
   name: string;
   newLimit: number;
 }
-export const editTenantDeviceLimit = createAsyncThunk(`${sliceName}/editDeviceLimit`, ({ newLimit, id, name }: editTenantBody, { dispatch }) =>
+export const editTenantDeviceLimit = createAppAsyncThunk(`${sliceName}/editDeviceLimit`, ({ newLimit, id, name }: editTenantBody, { dispatch }) =>
   Api.put(`${tenantadmApiUrlv2}/tenants/${id}/child`, { device_limit: newLimit, name })
     .catch(err => commonErrorHandler(err, `Device Limit cannot be changed`, dispatch))
     .then(() =>
@@ -242,7 +303,14 @@ export const editTenantDeviceLimit = createAsyncThunk(`${sliceName}/editDeviceLi
       ])
     )
 );
-export const removeTenant = createAsyncThunk(`${sliceName}/editDeviceLimit`, ({ id }: { id: string }, { dispatch }) =>
+export const editBillingProfile = createAppAsyncThunk(
+  `${sliceName}/editBillingProfileEmail`,
+  ({ billingProfile }: { billingProfile: BillingProfile }, { dispatch }) =>
+    Api.patch(`${tenantadmApiUrlv2}/billing/profile`, billingProfile)
+      .catch(err => commonErrorHandler(err, `Failed to change billing profile`, dispatch))
+      .then(() => Promise.all([dispatch(setSnackbar('Billing Profile was changed successfully')), dispatch(getUserBilling())]))
+);
+export const removeTenant = createAppAsyncThunk(`${sliceName}/editDeviceLimit`, ({ id }: { id: string }, { dispatch }) =>
   Api.post(`${tenantadmApiUrlv2}/tenants/${id}/remove/start`)
     .catch(err => commonErrorHandler(err, `There was an error removing the tenant`, dispatch))
     .then(() =>
@@ -253,13 +321,16 @@ export const removeTenant = createAsyncThunk(`${sliceName}/editDeviceLimit`, ({ 
       ])
     )
 );
-export const getUserOrganization = createAsyncThunk(`${sliceName}/getUserOrganization`, (_, { dispatch, getState }) =>
-  Api.get(`${tenantadmApiUrlv1}/user/tenant`).then(res => {
-    const tasks = [dispatch(actions.setOrganization(res.data))];
+export const getUserOrganization = createAppAsyncThunk(`${sliceName}/getUserOrganization`, (_, { dispatch, getState }) =>
+  Api.get<Tenant>(`${tenantadmApiUrlv1}/user/tenant`).then(res => {
+    //TODO: Addon should be a string literal union (e.g type AvailableAddon) not just a string
+    //@ts-ignore
+    const tasks: ReturnType<AppDispatch>[] = [dispatch(actions.setOrganization(res.data))];
     const { addons, plan, trial } = res.data;
     const { token } = getCurrentSession(getState());
     const jwt = jwtDecode(token);
     const jwtData = { addons: jwt['mender.addons'], plan: jwt['mender.plan'], trial: jwt['mender.trial'] };
+    //@ts-ignore
     if (!deepCompare({ addons, plan, trial }, jwtData)) {
       const hash = hashString(tenantDataDivergedMessage);
       cookies.remove(`${jwt.sub}${hash}`);
@@ -268,8 +339,11 @@ export const getUserOrganization = createAsyncThunk(`${sliceName}/getUserOrganiz
     return Promise.all(tasks);
   })
 );
+export const getUserBilling = createAppAsyncThunk(`${sliceName}/getUserBilling`, (_, { dispatch }) =>
+  Api.get(`${tenantadmApiUrlv2}/billing/profile`).then(res => dispatch(actions.setBillingProfile(res.data)))
+);
 
-export const sendSupportMessage = createAsyncThunk(`${sliceName}/sendSupportMessage`, (content, { dispatch }) =>
+export const sendSupportMessage = createAppAsyncThunk(`${sliceName}/sendSupportMessage`, (content: SupportRequest, { dispatch }) =>
   Api.post(`${tenantadmApiUrlv2}/contact/support`, content)
     .catch(err => commonErrorHandler(err, 'There was an error sending your request', dispatch, commonErrorFallback))
     .then(() => Promise.resolve(dispatch(setSnackbar({ message: 'Your request was sent successfully', autoHideDuration: TIMEOUTS.fiveSeconds }))))
@@ -284,7 +358,7 @@ interface requestPlanChangePayload {
   };
   tenantId: string;
 }
-export const requestPlanChange = createAsyncThunk(
+export const requestPlanChange = createAppAsyncThunk(
   `${sliceName}/requestPlanChange`,
   ({ content, tenantId }: requestPlanChangePayload, { dispatch, rejectWithValue }) =>
     Api.post(`${tenantadmApiUrlv2}/tenants/${tenantId}/plan`, content)
@@ -295,43 +369,45 @@ export const requestPlanChange = createAsyncThunk(
       .then(() => Promise.resolve(dispatch(setSnackbar({ message: 'Your request was sent successfully', autoHideDuration: TIMEOUTS.fiveSeconds }))))
 );
 
-export const downloadLicenseReport = createAsyncThunk(`${sliceName}/downloadLicenseReport`, (_, { dispatch }) =>
+export const downloadLicenseReport = createAppAsyncThunk(`${sliceName}/downloadLicenseReport`, (_, { dispatch }) =>
   Api.get(`${deviceAuthV2}/reports/devices`)
     .catch(err => commonErrorHandler(err, 'There was an error downloading the report', dispatch, commonErrorFallback))
     .then(res => res.data)
 );
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const createIntegration = createAsyncThunk(`${sliceName}/createIntegration`, ({ id, ...integration }, { dispatch }) =>
+export const createIntegration = createAppAsyncThunk(`${sliceName}/createIntegration`, ({ id, ...integration }: Integration, { dispatch }) =>
   Api.post(`${iotManagerBaseURL}/integrations`, integration)
     .catch(err => commonErrorHandler(err, 'There was an error creating the integration', dispatch, commonErrorFallback))
     .then(() => Promise.all([dispatch(setSnackbar('The integration was set up successfully')), dispatch(getIntegrations())]))
 );
 
-export const changeIntegration = createAsyncThunk(`${sliceName}/changeIntegration`, ({ id, credentials }, { dispatch }) =>
+export const changeIntegration = createAppAsyncThunk(`${sliceName}/changeIntegration`, ({ id, credentials }: Integration, { dispatch }) =>
   Api.put(`${iotManagerBaseURL}/integrations/${id}/credentials`, credentials)
     .catch(err => commonErrorHandler(err, 'There was an error updating the integration', dispatch, commonErrorFallback))
     .then(() => Promise.all([dispatch(setSnackbar('The integration was updated successfully')), dispatch(getIntegrations())]))
 );
 
-export const deleteIntegration = createAsyncThunk(`${sliceName}/deleteIntegration`, ({ id, provider }, { dispatch, getState }) =>
-  Api.delete(`${iotManagerBaseURL}/integrations/${id}`, {})
-    .catch(err => commonErrorHandler(err, 'There was an error removing the integration', dispatch, commonErrorFallback))
-    .then(() => {
-      const integrations = getState().organization.externalDeviceIntegrations.filter(item => provider !== item.provider);
-      return Promise.all([
-        dispatch(setSnackbar('The integration was removed successfully')),
-        dispatch(actions.receiveExternalDeviceIntegrations(integrations))
-      ]);
-    })
+export const deleteIntegration = createAppAsyncThunk(
+  `${sliceName}/deleteIntegration`,
+  ({ id, provider }: { id: string } & Integration, { dispatch, getState }) =>
+    Api.delete(`${iotManagerBaseURL}/integrations/${id}`, {})
+      .catch(err => commonErrorHandler(err, 'There was an error removing the integration', dispatch, commonErrorFallback))
+      .then(() => {
+        const integrations = getState().organization.externalDeviceIntegrations.filter(item => provider !== item.provider);
+        return Promise.all([
+          dispatch(setSnackbar('The integration was removed successfully')),
+          dispatch(actions.receiveExternalDeviceIntegrations(integrations))
+        ]);
+      })
 );
 
-export const getIntegrations = createAsyncThunk(`${sliceName}/getIntegrations`, (_, { dispatch, getState }) =>
-  Api.get(`${iotManagerBaseURL}/integrations`)
+export const getIntegrations = createAppAsyncThunk(`${sliceName}/getIntegrations`, (_, { dispatch, getState }) =>
+  Api.get<Integration[]>(`${iotManagerBaseURL}/integrations`)
     .catch(err => commonErrorHandler(err, 'There was an error retrieving the integration', dispatch, commonErrorFallback))
     .then(({ data }) => {
       const existingIntegrations = getState().organization.externalDeviceIntegrations;
-      const integrations = data.reduce((accu, item) => {
+      const integrations = data.reduce<Integration[]>((accu, item) => {
         const existingIntegration = existingIntegrations.find(integration => item.id === integration.id) ?? {};
         const integration = { ...existingIntegration, ...item };
         accu.push(integration);
@@ -341,12 +417,17 @@ export const getIntegrations = createAsyncThunk(`${sliceName}/getIntegrations`, 
     })
 );
 
-export const getWebhookEvents = createAsyncThunk(`${sliceName}/getWebhookEvents`, (config = {}, { dispatch, getState }) => {
+type GetWebhookEventsPayload = {
+  isFollowUp?: boolean;
+  page?: number;
+  perPage?: number;
+};
+export const getWebhookEvents = createAppAsyncThunk(`${sliceName}/getWebhookEvents`, (config: GetWebhookEventsPayload = {}, { dispatch, getState }) => {
   const { isFollowUp, page = defaultPage, perPage = defaultPerPage } = config;
-  return Api.get(`${iotManagerBaseURL}/events?page=${page}&per_page=${perPage}`)
+  return Api.get<Event[]>(`${iotManagerBaseURL}/events?page=${page}&per_page=${perPage}`)
     .catch(err => commonErrorHandler(err, 'There was an error retrieving activity for this integration', dispatch, commonErrorFallback))
     .then(({ data }) => {
-      const tasks = [
+      const tasks: ReturnType<AppDispatch>[] = [
         dispatch(
           actions.receiveWebhookEvents({
             value: isFollowUp ? getState().organization.webhooks.events : data,
@@ -367,26 +448,32 @@ const ssoConfigActions = {
   read: { success: '', error: 'retrieving' },
   remove: { success: 'removed', error: 'removing' },
   readMultiple: { success: '', error: 'retrieving' }
-};
+} as const;
+type SsoConfigActionKeys = keyof typeof ssoConfigActions;
 
-const ssoConfigActionErrorHandler = (err, type) => dispatch =>
+const ssoConfigActionErrorHandler = (err, type: keyof typeof ssoConfigActions) => (dispatch: AppDispatch) =>
   commonErrorHandler(err, `There was an error ${ssoConfigActions[type].error} the SSO configuration.`, dispatch, commonErrorFallback);
 
-const ssoConfigActionSuccessHandler = type => dispatch => dispatch(setSnackbar(`The SSO configuration was ${ssoConfigActions[type].success} successfully`));
+const ssoConfigActionSuccessHandler = (type: SsoConfigActionKeys) => (dispatch: AppDispatch) =>
+  dispatch(setSnackbar(`The SSO configuration was ${ssoConfigActions[type].success} successfully`));
 
-export const storeSsoConfig = createAsyncThunk(`${sliceName}/storeSsoConfig`, ({ config, contentType }, { dispatch }) =>
-  Api.post(ssoIdpApiUrlv1, config, { headers: { 'Content-Type': contentType, Accept: 'application/json' } })
-    .catch(err => dispatch(ssoConfigActionErrorHandler(err, 'create')))
-    .then(() => Promise.all([dispatch(ssoConfigActionSuccessHandler('create')), dispatch(getSsoConfigs())]))
+export const storeSsoConfig = createAppAsyncThunk(
+  `${sliceName}/storeSsoConfig`,
+  ({ config, contentType }: { config: string; contentType: ContentType }, { dispatch }) =>
+    Api.post(ssoIdpApiUrlv1, config, { headers: { 'Content-Type': contentType, Accept: 'application/json' } })
+      .catch(err => dispatch(ssoConfigActionErrorHandler(err, 'create')))
+      .then(() => Promise.all([dispatch(ssoConfigActionSuccessHandler('create')), dispatch(getSsoConfigs())]))
 );
 
-export const changeSsoConfig = createAsyncThunk(`${sliceName}/changeSsoConfig`, ({ config, contentType }, { dispatch }) =>
-  Api.put(`${ssoIdpApiUrlv1}/${config.id}`, config, { headers: { 'Content-Type': contentType, Accept: 'application/json' } })
-    .catch(err => dispatch(ssoConfigActionErrorHandler(err, 'edit')))
-    .then(() => Promise.all([dispatch(ssoConfigActionSuccessHandler('edit')), dispatch(getSsoConfigs())]))
+export const changeSsoConfig = createAppAsyncThunk(
+  `${sliceName}/changeSsoConfig`,
+  ({ config, contentType }: { config: SSOConfig; contentType: ContentType }, { dispatch }) =>
+    Api.put(`${ssoIdpApiUrlv1}/${config.id}`, config, { headers: { 'Content-Type': contentType, Accept: 'application/json' } })
+      .catch(err => dispatch(ssoConfigActionErrorHandler(err, 'edit')))
+      .then(() => Promise.all([dispatch(ssoConfigActionSuccessHandler('edit')), dispatch(getSsoConfigs())]))
 );
 
-export const deleteSsoConfig = createAsyncThunk(`${sliceName}/deleteSsoConfig`, ({ id }, { dispatch, getState }) =>
+export const deleteSsoConfig = createAppAsyncThunk(`${sliceName}/deleteSsoConfig`, ({ id }: SSOConfig, { dispatch, getState }) =>
   Api.delete(`${ssoIdpApiUrlv1}/${id}`)
     .catch(err => dispatch(ssoConfigActionErrorHandler(err, 'remove')))
     .then(() => {
@@ -395,21 +482,23 @@ export const deleteSsoConfig = createAsyncThunk(`${sliceName}/deleteSsoConfig`, 
     })
 );
 
-export const getSsoConfigById = createAsyncThunk(`${sliceName}/getSsoConfigById`, (config, { dispatch }) =>
-  Api.get(`${ssoIdpApiUrlv1}/${config.id}`)
+export const getSsoConfigById = createAppAsyncThunk(`${sliceName}/getSsoConfigById`, (config: SSOConfig, { dispatch }) =>
+  Api.get<string>(`${ssoIdpApiUrlv1}/${config.id}`)
     .catch(err => dispatch(ssoConfigActionErrorHandler(err, 'read')))
     .then(({ data, headers }) => {
       const sso = Object.values(SSO_TYPES).find(({ contentType }) => contentType === headers['content-type']);
-      return sso ? Promise.resolve({ ...config, config: data, type: sso.id }) : Promise.reject('Unsupported SSO config content type.');
+      return sso
+        ? (Promise.resolve({ ...config, config: data, type: sso.id }) as ReturnType<AppDispatch>)
+        : (Promise.reject('Unsupported SSO config content type.') as ReturnType<AppDispatch>);
     })
 );
 
-export const getSsoConfigs = createAsyncThunk(`${sliceName}/getSsoConfigs`, (_, { dispatch }) =>
-  Api.get(ssoIdpApiUrlv1)
+export const getSsoConfigs = createAppAsyncThunk(`${sliceName}/getSsoConfigs`, (_, { dispatch }) =>
+  Api.get<SSOConfig[]>(ssoIdpApiUrlv1)
     .catch(err => dispatch(ssoConfigActionErrorHandler(err, 'readMultiple')))
     .then(({ data }) =>
       Promise.all(data.map(config => dispatch(getSsoConfigById(config)).unwrap()))
-        .then(configs => dispatch(actions.receiveSsoConfigs(configs)))
+        .then((configs: SSOConfig[]) => dispatch(actions.receiveSsoConfigs(configs)))
         .catch(err => commonErrorHandler(err, err, dispatch, ''))
     )
 );
