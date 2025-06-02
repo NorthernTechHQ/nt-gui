@@ -11,18 +11,20 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 /*eslint import/namespace: ['error', { allowComputed: true }]*/
 import { Link } from 'react-router-dom';
 
 import { getSingleDeployment } from '@northern.tech/store/thunks';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { describe, expect, it, vi } from 'vitest';
 
 import { actions } from '.';
 import { inventoryDevice } from '../../../../tests/__mocks__/deviceHandlers';
 import { defaultState } from '../../../../tests/mockData';
 import { act, mockAbortController } from '../../../../tests/setupTests';
+import { Integration } from '../api/types/Integration';
+import { StatusDeviceauth } from '../api/types/MenderTypes';
 import { actions as appActions } from '../appSlice';
 import { EXTERNAL_PROVIDER, TIMEOUTS, UNGROUPED_GROUP } from '../constants';
 import { actions as deploymentActions } from '../deploymentsSlice';
@@ -80,12 +82,19 @@ import {
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
-const groupUpdateSuccessMessage = 'The group was updated successfully';
-const getGroupSuccessNotification = groupName => (
-  <>
-    {groupUpdateSuccessMessage} - <Link to={`/devices?inventory=group:eq:${groupName}`}>click here</Link> to see it.
-  </>
-);
+const mockFile = { name: defaultState.releases.byId.r1.name, size: 1234 } as File;
+
+const groupUpdateSuccess = 'The group was updated successfully';
+const groupUpdateSuccessMessage = { autoHideDuration: 5000, message: 'The group was updated successfully' };
+const getGroupSuccessNotification = groupName => ({
+  ...groupUpdateSuccessMessage,
+  message: (
+    <>
+      {groupUpdateSuccess} - <Link to={`/devices?inventory=group:eq:${groupName}`}>click here</Link> to see it.
+    </>
+  ),
+  preventClickToCopy: true
+});
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { attributes, check_in_time, updated_ts, ...expectedDevice } = defaultState.devices.byId.a1;
@@ -193,7 +202,7 @@ describe('selecting things', () => {
   it('should allow static group selection', async () => {
     const store = mockStore({ ...defaultState });
     const groupName = 'testGroup';
-    await store.dispatch(selectGroup({ group: groupName }));
+    await store.dispatch(selectGroup({ group: groupName, filters: [] }));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { attributes, updated_ts, ...expectedDevice } = defaultState.devices.byId.a1;
     const expectedActions = [
@@ -220,7 +229,7 @@ describe('selecting things', () => {
   });
   it('should allow dynamic group selection', async () => {
     const store = mockStore({ ...defaultState });
-    await store.dispatch(selectGroup({ group: 'testGroupDynamic' }));
+    await store.dispatch(selectGroup({ group: 'testGroupDynamic', filters: [] }));
     const expectedActions = [
       { type: selectGroup.pending.type },
       { type: actions.setDeviceFilters.type, payload: [{ scope: 'system', key: 'group', operator: '$eq', value: 'things' }] },
@@ -248,6 +257,7 @@ describe('selecting things', () => {
     await store.dispatch(
       selectGroup({
         group: 'testGroupDynamic',
+        //@ts-ignore
         filters: [...defaultState.devices.groups.byId.testGroupDynamic.filters, { scope: 'system', key: 'group2', operator: '$eq', value: 'things2' }]
       })
     );
@@ -286,7 +296,7 @@ describe('overall device information retrieval', () => {
       { type: getDeviceCount.fulfilled.type },
       { type: getDeviceCount.fulfilled.type }
     ];
-    await Promise.all(Object.values(DEVICE_STATES).map(status => store.dispatch(getDeviceCount(status)))).then(() => {
+    await Promise.all(Object.values(DEVICE_STATES).map(status => store.dispatch(getDeviceCount(status as StatusDeviceauth.status)))).then(() => {
       const storeActions = store.getActions();
       expect(storeActions.length).toEqual(expectedActions.length);
       expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -493,7 +503,7 @@ describe('overall device information retrieval', () => {
       },
       { type: getSystemDevices.fulfilled.type }
     ];
-    await store.dispatch(getSystemDevices({ id: defaultState.devices.byId.a1.id }));
+    await store.dispatch(getSystemDevices({ id: defaultState.devices.byId.a1.id, sortOptions: [] }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -587,7 +597,11 @@ describe('device auth handling', () => {
       { type: updateDeviceAuth.fulfilled.type }
     ];
     await store.dispatch(
-      updateDeviceAuth({ deviceId: defaultState.devices.byId.a1.id, authId: defaultState.devices.byId.a1.auth_sets[0].id, status: DEVICE_STATES.pending })
+      updateDeviceAuth({
+        deviceId: defaultState.devices.byId.a1.id,
+        authId: defaultState.devices.byId.a1.auth_sets[0].id,
+        status: DEVICE_STATES.pending as StatusDeviceauth.status
+      })
     );
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
@@ -629,7 +643,12 @@ describe('device auth handling', () => {
       },
       { type: updateDevicesAuth.fulfilled.type }
     ];
-    await store.dispatch(updateDevicesAuth({ deviceIds: [defaultState.devices.byId.a1.id, defaultState.devices.byId.c1.id], status: DEVICE_STATES.pending }));
+    await store.dispatch(
+      updateDevicesAuth({
+        deviceIds: [defaultState.devices.byId.a1.id, defaultState.devices.byId.c1.id],
+        status: DEVICE_STATES.pending as StatusDeviceauth.status
+      })
+    );
     await act(async () => {
       vi.runOnlyPendingTimers();
       vi.runAllTicks();
@@ -643,7 +662,7 @@ describe('device auth handling', () => {
 
     const expectedActions = [
       { type: preauthDevice.pending.type },
-      { type: appActions.setSnackbar.type, payload: 'Device was successfully added to the preauthorization list' },
+      { type: appActions.setSnackbar.type, payload: { message: 'Device was successfully added to the preauthorization list', autoHideDuration: 5000 } },
       { type: preauthDevice.fulfilled.type }
     ];
     await store.dispatch(
@@ -758,6 +777,7 @@ describe('static grouping related actions', () => {
       { type: getGroups.fulfilled.type },
       { type: addStaticGroup.fulfilled.type }
     ];
+    //@ts-ignore
     await store.dispatch(addStaticGroup({ group: groupName, devices: [defaultState.devices.byId.a1] }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
@@ -771,7 +791,7 @@ describe('static grouping related actions', () => {
       { type: actions.addToGroup.type, payload: { group: groupName, deviceIds: [defaultState.devices.byId.b1.id] } },
       { type: addDevicesToGroup.fulfilled.type }
     ];
-    await store.dispatch(addDevicesToGroup({ group: groupName, deviceIds: [defaultState.devices.byId.b1.id] }));
+    await store.dispatch(addDevicesToGroup({ group: groupName, deviceIds: [defaultState.devices.byId.b1.id], isCreation: false }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -782,7 +802,7 @@ describe('static grouping related actions', () => {
     const expectedActions = [
       { type: removeDevicesFromGroup.pending.type },
       { type: actions.removeFromGroup.type, payload: { group: groupName, deviceIds: [defaultState.devices.byId.b1.id] } },
-      { type: appActions.setSnackbar.type, payload: 'The device was removed from the group' },
+      { type: appActions.setSnackbar.type, payload: { autoHideDuration: 5000, message: 'The device was removed from the group' } },
       { type: removeDevicesFromGroup.fulfilled.type }
     ];
     await store.dispatch(removeDevicesFromGroup({ group: groupName, deviceIds: [defaultState.devices.byId.b1.id] }));
@@ -797,7 +817,7 @@ describe('static grouping related actions', () => {
       { type: removeStaticGroup.pending.type },
       { type: actions.removeGroup.type, payload: groupName },
       { type: getGroups.pending.type },
-      { type: appActions.setSnackbar.type, payload: 'Group was removed successfully' },
+      { type: appActions.setSnackbar.type, payload: { autoHideDuration: 5000, message: 'Group was removed successfully' } },
       { type: actions.receivedGroups.type, payload: { testGroup: defaultState.devices.groups.byId.testGroup } },
       { type: getDevicesByStatus.pending.type },
       {
@@ -836,6 +856,7 @@ describe('static grouping related actions', () => {
       { type: getDevicesByStatus.fulfilled.type },
       { type: getGroupDevices.fulfilled.type }
     ];
+    //@ts-ignore
     await store.dispatch(getGroupDevices(groupName));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
@@ -943,7 +964,7 @@ describe('dynamic grouping related actions', () => {
     const expectedActions = [
       { type: removeDynamicGroup.pending.type },
       { type: actions.removeGroup.type, payload: groupName },
-      { type: appActions.setSnackbar.type, payload: 'Group was removed successfully' },
+      { type: appActions.setSnackbar.type, payload: { autoHideDuration: 5000, message: 'Group was removed successfully' } },
       { type: removeDynamicGroup.fulfilled.type }
     ];
     await store.dispatch(removeDynamicGroup(groupName));
@@ -972,7 +993,7 @@ describe('device retrieval ', () => {
   it('should allow single device retrieval from detailed sources', async () => {
     const store = mockStore({
       ...defaultState,
-      app: { ...defaultState.app, features: { ...defaultState.app.features, hasDeviceConnect: true } },
+      app: { ...defaultState.app, features: { ...defaultState.app.features, isHosted: false, hasDeviceConnect: true } },
       organization: { ...defaultState.organization, addons: [], externalDeviceIntegrations: [{ ...EXTERNAL_PROVIDER['iot-hub'], id: 'test' }] }
     });
     const { attributes, updated_ts, id, ...expectedDevice } = defaultState.devices.byId.a1;
@@ -1010,7 +1031,7 @@ describe('device retrieval ', () => {
       { type: getDevicesWithAuth.fulfilled.type },
       { type: getDevicesByStatus.fulfilled.type }
     ];
-    await store.dispatch(getDevicesByStatus({ status: DEVICE_STATES.accepted }));
+    await store.dispatch(getDevicesByStatus({ status: DEVICE_STATES.accepted as StatusDeviceauth.status }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -1029,7 +1050,7 @@ describe('device retrieval ', () => {
       { type: getDevicesWithAuth.fulfilled.type },
       { type: getDevicesByStatus.fulfilled.type }
     ];
-    await store.dispatch(getDevicesByStatus({ status: DEVICE_STATES.accepted, perPage: 1, shouldSelectDevices: true }));
+    await store.dispatch(getDevicesByStatus({ status: DEVICE_STATES.accepted as StatusDeviceauth.status, perPage: 1 }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -1069,7 +1090,7 @@ describe('device retrieval ', () => {
       { type: deriveReportsData.fulfilled.type },
       { type: getAllDevicesByStatus.fulfilled.type }
     ];
-    await store.dispatch(getAllDevicesByStatus(DEVICE_STATES.accepted));
+    await store.dispatch(getAllDevicesByStatus(DEVICE_STATES.accepted as StatusDeviceauth.status));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -1145,7 +1166,17 @@ describe('device config ', () => {
       { type: getSingleDeployment.fulfilled.type },
       { type: applyDeviceConfig.fulfilled.type }
     ];
-    const result = store.dispatch(applyDeviceConfig({ deviceId: defaultState.devices.byId.a1.id, config: { something: 'asdl' } }));
+    const result = store.dispatch(
+      applyDeviceConfig({
+        deviceId: defaultState.devices.byId.a1.id,
+        config: { id: 'asdl' },
+        isDefault: false,
+        configDeploymentConfiguration: {
+          retries: undefined,
+          update_control_map: undefined
+        }
+      })
+    );
     await act(async () => vi.runAllTicks());
     result.then(() => {
       const storeActions = store.getActions();
@@ -1162,7 +1193,7 @@ describe('device config ', () => {
       { type: actions.receivedDevice.type, payload: { attributes, id } },
       { type: getDeviceById.fulfilled.type },
       { type: actions.receivedDevice.type, payload: { id, tags: { something: 'asdl' } } },
-      { type: appActions.setSnackbar.type, payload: 'Device name changed' },
+      { type: appActions.setSnackbar.type, payload: 'Device tags changed' },
       { type: setDeviceTags.fulfilled.type }
     ];
     await store.dispatch(setDeviceTags({ deviceId: defaultState.devices.byId.a1.id, tags: { something: 'asdl' } }));
@@ -1178,7 +1209,15 @@ describe('troubleshooting related actions', () => {
     const endDate = '2019-01-01T12:16:22.667Z';
     const sessionId = 'abd313a8-ee88-48ab-9c99-fbcd80048e6e';
     const result = await store
-      .dispatch(getSessionDetails({ sessionId, deviceId: defaultState.devices.byId.a1.id, userId: defaultState.users.currentUser, endDate }))
+      .dispatch(
+        getSessionDetails({
+          sessionId,
+          deviceId: defaultState.devices.byId.a1.id,
+          userId: defaultState.users.currentUser,
+          endDate,
+          startDate: ''
+        })
+      )
       .unwrap();
 
     expect(result).toMatchObject({ start: new Date(endDate), end: new Date(endDate) });
@@ -1228,19 +1267,33 @@ describe('troubleshooting related actions', () => {
       { type: appActions.setSnackbar.type, payload: 'Uploading file' },
       {
         type: appActions.initUpload.type,
-        payload: { id: 'mock-uuid', upload: { cancelSource: mockAbortController, uploadProgress: 0 } }
+        payload: { id: 'mock-uuid', upload: { cancelSource: mockAbortController, progress: 0 } }
       },
       { type: appActions.uploadProgress.type, payload: { id: 'mock-uuid', progress: 100 } },
-      { type: appActions.setSnackbar.type, payload: 'Upload successful' },
+      { type: appActions.setSnackbar.type, payload: { autoHideDuration: 5000, message: 'Upload successful' } },
       { type: appActions.cleanUpUpload.type, payload: 'mock-uuid' },
       { type: deviceFileUpload.fulfilled.type }
     ];
-    await store.dispatch(deviceFileUpload({ deviceId: defaultState.devices.byId.a1.id, path: '/tmp/file', file: 'file' }));
+    await store.dispatch(deviceFileUpload({ deviceId: defaultState.devices.byId.a1.id, path: '/tmp/file', file: mockFile }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
 });
+
+const integrationMock = {
+  ...EXTERNAL_PROVIDER['iot-hub'],
+  provider: Integration.provider.IOT_HUB,
+  credentials: {
+    type: EXTERNAL_PROVIDER['iot-hub'].credentialsType,
+    aws: {
+      access_key_id: 'string',
+      secret_access_key: 'string',
+      region: 'string',
+      device_policy_name: 'string'
+    }
+  }
+};
 
 describe('device twin related actions', () => {
   it('should allow retrieving twin data from azure', async () => {
@@ -1250,7 +1303,7 @@ describe('device twin related actions', () => {
       { type: actions.receivedDevice.type, payload: defaultState.devices.byId.a1 },
       { type: getDeviceTwin.fulfilled.type }
     ];
-    await store.dispatch(getDeviceTwin({ deviceId: defaultState.devices.byId.a1.id, integration: EXTERNAL_PROVIDER['iot-hub'] }));
+    await store.dispatch(getDeviceTwin({ deviceId: defaultState.devices.byId.a1.id, integration: integrationMock }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -1265,7 +1318,7 @@ describe('device twin related actions', () => {
     await store.dispatch(
       setDeviceTwin({
         deviceId: defaultState.devices.byId.a1.id,
-        integration: EXTERNAL_PROVIDER['iot-hub'],
+        integration: integrationMock,
         settings: { something: 'asdl' }
       })
     );
