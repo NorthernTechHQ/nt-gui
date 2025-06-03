@@ -121,6 +121,12 @@
                     "values": {
                         "Mode 1": "Red Hat Text"
                     }
+                },
+                "fontFamily (mono)": {
+                    "type": "string",
+                    "values": {
+                        "Mode 1": "Red Hat Mono"
+                    }
                 }
             }
         }
