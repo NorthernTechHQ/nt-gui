@@ -3,6 +3,5 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig(options => ({
   ...config,
-  entry: [...config.entry, '!src/api/types'],
   ...options
 }));

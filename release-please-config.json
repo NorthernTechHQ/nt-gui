@@ -20,6 +20,9 @@
     "packages/store": {
       "release-type": "node"
     },
+    "packages/types": {
+      "release-type": "node"
+    },
     "packages/typescript-config": {
       "release-type": "node"
     },
