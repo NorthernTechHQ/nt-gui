@@ -16,20 +16,6 @@ import { Link } from 'react-router-dom';
 
 import storeActions from '@northern.tech/store/actions';
 import GeneralApi from '@northern.tech/store/api/general-api';
-import type {
-  AttributeInventory,
-  Device as BackendDevice,
-  DeviceConfiguration,
-  DeviceDeviceauth,
-  DeviceReporting,
-  DeviceState,
-  Integration,
-  ManagementAPIConfiguration,
-  NewConfigurationDeployment,
-  PreAuthSet,
-  SortCriteria,
-  StatusDeviceauth
-} from '@northern.tech/store/api/types/MenderTypes';
 import type { SearchState } from '@northern.tech/store/appSlice';
 import type { DeviceIssueOptionKey } from '@northern.tech/store/constants';
 import {
@@ -70,6 +56,20 @@ import {
   mapTermsToFilters,
   progress
 } from '@northern.tech/store/utils';
+import type {
+  AttributeInventory,
+  Device as BackendDevice,
+  DeviceConfiguration,
+  DeviceDeviceauth,
+  DeviceReporting,
+  DeviceState,
+  Integration,
+  ManagementAPIConfiguration,
+  NewConfigurationDeployment,
+  PreAuthSet,
+  SortCriteria,
+  StatusDeviceauth
+} from '@northern.tech/types/MenderTypes';
 import { attributeDuplicateFilter, dateRangeToUnix, deepCompare, getSnackbarMessage } from '@northern.tech/utils/helpers';
 import { isCancel } from 'axios';
 import pluralize from 'pluralize';

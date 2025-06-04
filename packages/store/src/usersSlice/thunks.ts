@@ -13,7 +13,6 @@
 //    limitations under the License.
 import storeActions from '@northern.tech/store/actions';
 import GeneralApi from '@northern.tech/store/api/general-api';
-import type { PermissionSetWithScope, PersonalAccessToken, RolePermission, RolePermissionObject } from '@northern.tech/store/api/types/MenderTypes';
 import UsersApi from '@northern.tech/store/api/users-api';
 import { cleanUp, getSessionInfo, maxSessionAge, setSessionInfo } from '@northern.tech/store/auth';
 import type {
@@ -40,6 +39,7 @@ import type { AppDispatch } from '@northern.tech/store/store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
 import { setOfflineThreshold } from '@northern.tech/store/thunks';
 import { mergePermissions } from '@northern.tech/store/utils';
+import type { PermissionSetWithScope, PersonalAccessToken, RolePermission, RolePermissionObject } from '@northern.tech/types/MenderTypes';
 import { duplicateFilter, extractErrorMessage, isEmpty } from '@northern.tech/utils/helpers';
 import { clearAllRetryTimers } from '@northern.tech/utils/retrytimer';
 import hashString from 'md5';

@@ -13,16 +13,6 @@
 //    limitations under the License.
 import storeActions from '@northern.tech/store/actions';
 import Api from '@northern.tech/store/api/general-api';
-import type {
-  AuditLog,
-  TenantTenantadm as BackendTenant,
-  BillingInfo,
-  BillingProfile,
-  Event,
-  Integration,
-  NewTenant,
-  SupportRequest
-} from '@northern.tech/store/api/types/MenderTypes';
 import type { AvailablePlans, ContentType } from '@northern.tech/store/constants';
 import {
   DEVICE_LIST_DEFAULTS,
@@ -39,6 +29,16 @@ import { getCurrentSession, getTenantCapabilities, getTenantsList } from '@north
 import type { AppDispatch } from '@northern.tech/store/store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
 import { getDeviceLimit, setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
+import type {
+  AuditLog,
+  TenantTenantadm as BackendTenant,
+  BillingInfo,
+  BillingProfile,
+  Event,
+  Integration,
+  NewTenant,
+  SupportRequest
+} from '@northern.tech/types/MenderTypes';
 import { dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';

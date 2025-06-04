@@ -110,7 +110,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup && cp -r src/api/types dist/api/",
+    "build": "tsup",
     "lint": "eslint src/**/*.{ts,tsx} src/*.{ts,tsx}",
     "publish": "npm publish",
     "pre-publish": "npm publish --tag next"
@@ -129,6 +129,7 @@
     "@emotion/react": "^11.x",
     "@emotion/styled": "^11.x",
     "@mdi/js": "^7.x",
+    "@northern.tech/types": "*",
     "@northern.tech/utils": "*",
     "@mui/icons-material": "^7.x",
     "@reduxjs/toolkit": "^2.x",

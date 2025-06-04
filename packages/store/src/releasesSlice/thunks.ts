@@ -13,7 +13,6 @@
 //    limitations under the License.
 import storeActions from '@northern.tech/store/actions';
 import GeneralApi from '@northern.tech/store/api/general-api';
-import type { ArtifactUpdate, ReleaseUpdate, Tags } from '@northern.tech/store/api/types/MenderTypes';
 import {
   DEVICE_LIST_DEFAULTS,
   SORTING_OPTIONS,
@@ -23,12 +22,13 @@ import {
   emptyFilter,
   headerNames
 } from '@northern.tech/store/constants';
+import type { SortOptions } from '@northern.tech/store/constants';
 import { formatReleases } from '@northern.tech/store/locationutils';
-import type { SortOptions } from '@northern.tech/store/organizationSlice/types';
 import { getSearchEndpoint } from '@northern.tech/store/selectors';
 import type { AppDispatch } from '@northern.tech/store/store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
 import { convertDeviceListStateToFilters, progress } from '@northern.tech/store/utils';
+import type { ArtifactUpdate, ReleaseUpdate, Tags } from '@northern.tech/types/MenderTypes';
 import { customSort, deepCompare, duplicateFilter, extractSoftwareItem } from '@northern.tech/utils/helpers';
 import { isCancel } from 'axios';
 import { v4 as uuid } from 'uuid';

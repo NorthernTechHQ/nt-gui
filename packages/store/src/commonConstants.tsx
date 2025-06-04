@@ -13,8 +13,7 @@
 //    limitations under the License.
 // @ts-nocheck
 import { mdiAws as AWS, mdiMicrosoftAzure as Azure } from '@mdi/js';
-
-import { Credentials } from './api/types/Credentials';
+import { Credentials } from '@northern.tech/types/MenderTypes';
 
 export const DEVICE_LIST_DEFAULTS = {
   page: 1,
