@@ -20,7 +20,7 @@ import type {
   NewDeployment,
   NewDeploymentForGroup,
   NewDeploymentV2
-} from '@northern.tech/store/api/types/MenderTypes';
+} from '@northern.tech/types/MenderTypes';
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TIMEOUTS, headerNames } from '@northern.tech/store/constants';
 import type { SortOptions } from '@northern.tech/store/organizationSlice/types';
 import { getDevicesById, getGlobalSettings, getOrganization, getUserCapabilities } from '@northern.tech/store/selectors';

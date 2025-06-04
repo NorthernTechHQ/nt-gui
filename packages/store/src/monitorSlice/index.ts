@@ -11,11 +11,11 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { Alert } from '@northern.tech/store/api/types/MenderTypes';
 import type { DeviceIssueOptionKey } from '@northern.tech/store/commonConstants';
 import { DEVICE_ISSUE_OPTIONS, DEVICE_LIST_DEFAULTS } from '@northern.tech/store/commonConstants';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { Alert } from '@northern.tech/types/MenderTypes';
 import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 
 import type { AlertChannelKey } from './constants';
 import { alertChannels } from './constants';

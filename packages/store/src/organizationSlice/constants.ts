@@ -13,7 +13,7 @@
 //    limitations under the License.
 import { EXTERNAL_PROVIDER, apiUrl, useradmApiUrl } from '@northern.tech/store/constants';
 
-import { Integration } from '../api/types/Integration';
+import { Integration } from '@northern.tech/types/MenderTypes';
 
 export const auditLogsApiUrl = `${apiUrl.v1}/auditlogs`;
 export const tenantadmApiUrlv1 = `${apiUrl.v1}/tenantadm`;

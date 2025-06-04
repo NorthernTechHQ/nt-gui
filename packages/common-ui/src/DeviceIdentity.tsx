@@ -18,8 +18,8 @@ import { useSelector } from 'react-redux';
 
 import { makeStyles } from 'tss-react/mui';
 
-import type { Device } from '@northern.tech/store/api/types/Device';
 import { getDeviceById as getDeviceByIdSelector, getIdAttribute } from '@northern.tech/store/selectors';
+import type { Device } from '@northern.tech/types/Device';
 import { stringToBoolean } from '@northern.tech/utils/helpers';
 
 import GatewayConnectionIcon from '../../../assets/img/gateway-connection.svg';

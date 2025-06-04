@@ -11,6 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { AvailableAddon, SORTING_OPTIONS } from '@northern.tech/store/constants';
 import type {
   AuditLog as AuditLogEvent,
   Tenant as BackendTenant,
@@ -19,8 +20,7 @@ import type {
   Event,
   Integration,
   SAMLMetadata
-} from '@northern.tech/store/api/types/MenderTypes';
-import type { AvailableAddon, SORTING_OPTIONS } from '@northern.tech/store/constants';
+} from '@northern.tech/types/MenderTypes';
 
 import type { SSO_TYPES } from './constants';
 
