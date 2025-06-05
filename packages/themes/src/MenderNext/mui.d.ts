@@ -23,3 +23,12 @@ declare module '@mui/material' {
     };
   }
 }
+
+declare module '@mui/material/styles' {
+  interface TypographyVariants {
+    mono: React.CSSProperties;
+  }
+  interface TypographyVariantsOptions {
+    mono?: React.CSSProperties;
+  }
+}
