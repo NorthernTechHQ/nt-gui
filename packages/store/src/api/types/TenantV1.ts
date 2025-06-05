@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Addon } from "./Addon";
+import type { Plan } from "./Plan";
 import type { TenantAdditionalInfo } from "./TenantAdditionalInfo";
 import type { TenantApiLimits } from "./TenantApiLimits";
 /**
@@ -25,10 +26,7 @@ export type TenantV1 = {
    * Status of the tenant account.
    */
   status?: TenantV1.status;
-  /**
-   * Plan assigned to the tenant account.
-   */
-  plan?: TenantV1.plan;
+  plan?: Plan;
   /**
    * Whether this account is free trial.
    */
@@ -59,13 +57,5 @@ export namespace TenantV1 {
   export enum status {
     ACTIVE = "active",
     SUSPENDED = "suspended",
-  }
-  /**
-   * Plan assigned to the tenant account.
-   */
-  export enum plan {
-    OS = "os",
-    ENTERPRISE = "enterprise",
-    PROFESSIONAL = "professional",
   }
 }
