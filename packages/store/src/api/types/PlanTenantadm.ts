@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Addon = {
-  name: string;
-};
+export enum PlanTenantadm {
+  BASIC = "basic",
+  PROFESSIONAL = "professional",
+}

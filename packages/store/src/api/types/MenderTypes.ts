@@ -4,6 +4,7 @@
 /* eslint-disable */
 export { Actor } from "./Actor";
 export type { Addon } from "./Addon";
+export type { AddonEnabled } from "./AddonEnabled";
 export type { AddonTenantadm } from "./AddonTenantadm";
 export type { Address } from "./Address";
 export type { AddressUpdate } from "./AddressUpdate";
@@ -164,7 +165,9 @@ export type { Plan } from "./Plan";
 export type { PlanBindingDetails } from "./PlanBindingDetails";
 export type { PlanChangeRequest } from "./PlanChangeRequest";
 export type { PlanLimits } from "./PlanLimits";
+export { PlanTenantadm } from "./PlanTenantadm";
 export type { PreAuthSet } from "./PreAuthSet";
+export { Product } from "./Product";
 export type { Release } from "./Release";
 export type { ReleaseDeployments } from "./ReleaseDeployments";
 export type { Releases } from "./Releases";
@@ -187,6 +190,7 @@ export { Status } from "./Status";
 export { StatusDeviceauth } from "./StatusDeviceauth";
 export type { StorageLimit } from "./StorageLimit";
 export type { SubscriptionData } from "./SubscriptionData";
+export type { SubscriptionRequest } from "./SubscriptionRequest";
 export type { SupportRequest } from "./SupportRequest";
 export type { Tag } from "./Tag";
 export type { Tags } from "./Tags";

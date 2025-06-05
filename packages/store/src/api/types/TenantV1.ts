@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Addon } from "./Addon";
+import type { AddonEnabled } from "./AddonEnabled";
 import type { TenantAdditionalInfo } from "./TenantAdditionalInfo";
 import type { TenantApiLimits } from "./TenantApiLimits";
 /**
@@ -40,7 +40,7 @@ export type TenantV1 = {
   /**
    * Addons configuration.
    */
-  addons?: Array<Addon>;
+  addons?: Array<AddonEnabled>;
   /**
    * Whether this account is a service provider.
    */
