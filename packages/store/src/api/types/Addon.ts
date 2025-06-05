@@ -9,7 +9,7 @@ export type Addon = {
   /**
    * Name of the addon (one of ['configure', 'troubleshoot']).
    */
-  name?: string;
+  name: string;
   /**
    * Enabled/disabled flag.
    */
