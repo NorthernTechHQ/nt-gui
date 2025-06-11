@@ -57,6 +57,8 @@ export interface SnackbarContent extends Pick<SnackbarProps, 'action' | 'autoHid
 export interface SearchState {
   deviceIds: string[];
   isSearching: boolean;
+  page?: number;
+  perPage?: number;
   searchTerm: string;
   searchTotal: number;
   sort: SortOptions;
@@ -64,9 +66,10 @@ export interface SearchState {
 
 export interface Upload {
   cancelSource: any;
-  name: string;
+  inprogress?: boolean;
+  name?: string;
   progress: number;
-  size: number;
+  size?: number;
   uploading?: boolean;
 }
 

@@ -31,6 +31,18 @@ type Filter = {
   scope: string;
   value: any;
 };
+export type DeviceDeployment = {
+  created?: string;
+  deleted?: string;
+  deviceId: string;
+  finished?: string;
+  id: string;
+  log: boolean;
+  release: string;
+  route: string;
+  status: string;
+};
+
 export type Deployment = BackendDeployment & {
   devices: Record<string, DeviceWithImage>;
   filter?: BackendFilter & { filters: Filter[]; name?: string };

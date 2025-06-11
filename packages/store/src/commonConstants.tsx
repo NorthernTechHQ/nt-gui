@@ -231,11 +231,12 @@ export const EXTERNAL_PROVIDER = {
   webhook: {
     credentialsType: credentialTypes.http as Credentials.type.HTTP,
     deviceTwin: false,
+    twinTitle: '',
     // disable the webhook provider here, since it is treated different than other integrations, with a custom configuration & management view, etc.
     enabled: false,
     provider: 'webhook'
   }
-};
+} as const;
 export const MAX_PAGE_SIZE = 500;
 
 export const ALL_RELEASES = 'All releases';

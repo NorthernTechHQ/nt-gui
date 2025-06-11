@@ -11,29 +11,30 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import { DEVICE_STATES, UNGROUPED_GROUP } from '@northern.tech/store/constants';
+import { DeviceFilter, DeviceGroup } from '@northern.tech/store/devicesSlice/index';
+import { RootState } from '@northern.tech/store/store';
 import { duplicateFilter } from '@northern.tech/utils/helpers';
 import { createSelector } from '@reduxjs/toolkit';
 
-export const getAcceptedDevices = state => state.devices.byStatus.accepted;
-export const getDevicesByStatus = state => state.devices.byStatus;
-export const getDevicesById = state => state.devices.byId;
-export const getDeviceReports = state => state.devices.reports;
-export const getGroupsById = state => state.devices.groups.byId;
-export const getSelectedGroup = state => state.devices.groups.selectedGroup;
+export const getAcceptedDevices = (state: RootState) => state.devices.byStatus.accepted;
+export const getDevicesByStatus = (state: RootState) => state.devices.byStatus;
+export const getDevicesById = (state: RootState) => state.devices.byId;
+export const getDeviceReports = (state: RootState) => state.devices.reports;
+export const getGroupsById = (state: RootState) => state.devices.groups.byId;
+export const getSelectedGroup = (state: RootState) => state.devices.groups.selectedGroup;
 
-export const getDeviceListState = state => state.devices.deviceList;
-export const getListedDevices = state => state.devices.deviceList.deviceIds;
-export const getFilteringAttributes = state => state.devices.filteringAttributes;
-export const getDeviceFilters = state => state.devices.filters || [];
-const getFilteringAttributesFromConfig = state => state.devices.filteringAttributesConfig.attributes;
+export const getDeviceListState = (state: RootState) => state.devices.deviceList;
+export const getListedDevices = (state: RootState) => state.devices.deviceList.deviceIds;
+export const getFilteringAttributes = (state: RootState) => state.devices.filteringAttributes;
+export const getDeviceFilters = (state: RootState) => state.devices.filters || [];
+const getFilteringAttributesFromConfig = (state: RootState) => state.devices.filteringAttributesConfig.attributes;
 export const getSortedFilteringAttributes = createSelector([getFilteringAttributes], filteringAttributes => ({
   ...filteringAttributes,
   identityAttributes: [...filteringAttributes.identityAttributes, 'id']
 }));
-export const getDeviceLimit = state => state.devices.limit;
-const getFilteringAttributesLimit = state => state.devices.filteringAttributesLimit;
+export const getDeviceLimit = (state: RootState) => state.devices.limit;
+const getFilteringAttributesLimit = (state: RootState) => state.devices.filteringAttributesLimit;
 
 export const getDeviceIdentityAttributes = createSelector(
   [getFilteringAttributes, getFilteringAttributesLimit],
@@ -66,9 +67,9 @@ export const getSelectedGroupInfo = createSelector(
   [getAcceptedDevices, getGroupsById, getSelectedGroup],
   ({ total: acceptedDeviceTotal }, groupsById, selectedGroup) => {
     let groupCount = acceptedDeviceTotal;
-    let groupFilters = [];
+    let groupFilters: DeviceFilter[] = [];
     if (selectedGroup && groupsById[selectedGroup]) {
-      groupCount = groupsById[selectedGroup].total;
+      groupCount = groupsById[selectedGroup].total || 0;
       groupFilters = groupsById[selectedGroup].filters || [];
     }
     return { groupCount, selectedGroup, groupFilters };
@@ -76,21 +77,24 @@ export const getSelectedGroupInfo = createSelector(
 );
 
 export const getLimitMaxed = createSelector([getAcceptedDevices, getDeviceLimit], ({ total: acceptedDevices = 0 }, deviceLimit) =>
-  Boolean(deviceLimit && deviceLimit <= acceptedDevices)
+  Boolean(acceptedDevices && deviceLimit && deviceLimit <= acceptedDevices)
 );
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getGroupsByIdWithoutUngrouped = createSelector([getGroupsById], ({ [UNGROUPED_GROUP.id]: ungrouped, ...groups }) => groups);
 
+type SelectorGroup = DeviceGroup & { groupId: string };
+type SelectorGroups = { dynamic: SelectorGroup[]; static: SelectorGroup[]; ungrouped: SelectorGroup[] };
+
 export const getGroups = createSelector([getGroupsById], groupsById => {
   const groupNames = Object.keys(groupsById).sort();
   const groupedGroups = Object.entries(groupsById)
     .sort((a, b) => a[0].localeCompare(b[0]))
-    .reduce(
+    .reduce<SelectorGroups>(
       (accu, [groupname, group]) => {
         const name = groupname === UNGROUPED_GROUP.id ? UNGROUPED_GROUP.name : groupname;
         const groupItem = { ...group, groupId: name, name: groupname };
-        if (group.filters?.length > 0) {
+        if ((group.filters ?? []).length > 0) {
           if (groupname !== UNGROUPED_GROUP.id) {
             accu.dynamic.push(groupItem);
           } else {
@@ -115,12 +119,14 @@ export const getDeviceTypes = createSelector([getAcceptedDevices, getDevicesById
   Object.keys(
     deviceIds.slice(0, 200).reduce((accu, item) => {
       const { device_type: deviceTypes = [] } = devicesById[item] ? devicesById[item].attributes : {};
-      accu = deviceTypes.reduce((deviceTypeAccu, deviceType) => {
-        if (deviceType.length > 1) {
-          deviceTypeAccu[deviceType] = deviceTypeAccu[deviceType] ? deviceTypeAccu[deviceType] + 1 : 1;
-        }
-        return deviceTypeAccu;
-      }, accu);
+      accu = Array.isArray(deviceTypes)
+        ? deviceTypes.reduce((deviceTypeAccu, deviceType) => {
+            if (deviceType.length > 1) {
+              deviceTypeAccu[deviceType] = deviceTypeAccu[deviceType] ? deviceTypeAccu[deviceType] + 1 : 1;
+            }
+            return deviceTypeAccu;
+          }, accu)
+        : { [deviceTypes]: 1 };
       return accu;
     }, {})
   )
