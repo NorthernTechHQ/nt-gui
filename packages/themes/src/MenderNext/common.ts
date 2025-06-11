@@ -24,6 +24,9 @@ export const typography = {
   fontFamily: typographyTokens?.variables.fontFamily.values['Mode 1'],
   body1: {
     fontFamily: typographyTokens?.variables['fontFamily (body)'].values['Mode 1']
+  },
+  mono: {
+    fontFamily: typographyTokens?.variables['fontFamily (mono)'].values['Mode 1']
   }
 };
 
