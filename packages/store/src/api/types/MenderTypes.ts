@@ -17,6 +17,7 @@ export type { ApiLimitsTenantadm } from "./ApiLimitsTenantadm";
 export type { ApiQuota } from "./ApiQuota";
 export type { ApiQuotaTenantadm } from "./ApiQuotaTenantadm";
 export type { Artifact } from "./Artifact";
+export type { ArtifactAuditlogs } from "./ArtifactAuditlogs";
 export type { ArtifactDeployments } from "./ArtifactDeployments";
 export type { ArtifactInfo } from "./ArtifactInfo";
 export type { ArtifactInfoDeployments } from "./ArtifactInfoDeployments";

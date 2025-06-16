@@ -5,7 +5,7 @@
 import type { Actor } from "./Actor";
 import type { Object } from "./Object";
 /**
- * The audit log.
+ * Audit log entry
  */
 export type AuditLog = {
   actor: Actor;
@@ -22,5 +22,14 @@ export namespace AuditLog {
     ABORT = "abort",
     REJECT = "reject",
     DECOMMISSION = "decommission",
+    OPEN_TERMINAL = "open_terminal",
+    CLOSE_TERMINAL = "close_terminal",
+    OPEN_PORTFORWARD = "open_portforward",
+    CLOSE_PORTFORWARD = "close_portforward",
+    DOWNLOAD_FILE = "download_file",
+    UPLOAD_FILE = "upload_file",
+    SET_CONFIGURATION = "set_configuration",
+    DEPLOY_CONFIGURATION = "deploy_configuration",
+    UPLOAD = "upload",
   }
 }

@@ -8,7 +8,7 @@
  */
 export type Actor = {
   /**
-   * An unique identifier of the actor.
+   * A unique identifier of the actor.
    */
   id: string;
   /**
@@ -20,7 +20,7 @@ export type Actor = {
    */
   email?: string;
   /**
-   * The Indentity data of the device.
+   * The identity data of the device.
    */
   identity_data?: string;
 };
