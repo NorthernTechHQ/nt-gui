@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { Artifact } from "./Artifact";
 import type { Deployment } from "./Deployment";
 import type { Device } from "./Device";
 import type { Tenant } from "./Tenant";
@@ -12,7 +13,7 @@ import type { User } from "./User";
  */
 export type Object = {
   /**
-   * An unique identifier of the object.
+   * A unique identifier of the object.
    */
   id: string;
   /**
@@ -22,6 +23,7 @@ export type Object = {
   tenant?: Tenant;
   user?: User;
   deployment?: Deployment;
+  artifact?: Artifact;
   device?: Device;
 };
 export namespace Object {
