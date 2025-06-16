@@ -130,7 +130,7 @@
     "@emotion/styled": "^11.x",
     "@mdi/js": "^7.x",
     "@northern.tech/utils": "*",
-    "@mui/icons-material": "^6.x",
+    "@mui/icons-material": "^7.x",
     "@reduxjs/toolkit": "^2.x",
     "axios": "^1.x",
     "dayjs": "^1.x",
