@@ -7,8 +7,6 @@ updates:
     package-ecosystem: npm
     schedule:
       interval: monthly
-    reviewers:
-      - 'northerntechhq/frontend-dependabot-reviewers'
     groups:
       development-dependencies:
         dependency-type: development
