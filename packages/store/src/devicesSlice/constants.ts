@@ -47,7 +47,10 @@ export const DEVICE_STATES = {
   pending: 'pending',
   preauth: 'preauthorized',
   rejected: 'rejected'
-};
+} as const;
+
+export type DeviceAuthState = (typeof DEVICE_STATES)[keyof typeof DEVICE_STATES];
+
 export const DEVICE_CONNECT_STATES = {
   connected: 'connected',
   disconnected: 'disconnected',

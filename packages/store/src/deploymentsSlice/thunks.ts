@@ -37,6 +37,7 @@ import {
   DeploymentByStatusKey,
   DeploymentConfig,
   DeploymentStatus,
+  DeviceDeployment,
   SelectionListState,
   SelectionState,
   actions,
@@ -181,7 +182,7 @@ export const createDeployment = createAppAsyncThunk(
           dispatch(actions.createdDeployment(deployment)),
           dispatch(getSingleDeployment(deploymentId)),
           dispatch(setSnackbar({ message: 'Deployment created successfully', autoHideDuration: TIMEOUTS.fiveSeconds }))
-        ];
+        ] as ReturnType<AppDispatch>;
         // track in GA
         trackDeploymentCreation(totalDeploymentCount, hasDeployments, trial_expiration);
         const { canManageUsers } = getUserCapabilities(getState());
@@ -224,7 +225,7 @@ export const getDeploymentDevices = createAppAsyncThunk(
         return accu;
       }, {});
       const selectedDeviceIds = Object.keys(devices);
-      let tasks = [
+      let tasks: ReturnType<AppDispatch> = [
         dispatch(
           actions.receivedDeploymentDevices({
             id,
@@ -257,7 +258,7 @@ const parseDeviceDeployment = ({
 }: {
   deployment: Deployment;
   device: DeviceWithImage;
-}) => ({
+}): DeviceDeployment => ({
   id,
   release,
   created,

@@ -17,7 +17,7 @@ import { useEffect, useRef, useState } from 'react';
 import { InputAdornment, OutlinedInput } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
-import { Device } from '@northern.tech/store/api/types/MenderTypes';
+import { Device } from '@northern.tech/store/devicesSlice';
 import { useAppDispatch } from '@northern.tech/store/store';
 import { setDeviceTags } from '@northern.tech/store/thunks';
 
@@ -34,7 +34,7 @@ const useStyles = makeStyles()(theme => ({
 }));
 
 export interface DeviceNameInputProps {
-  device: Device; // TODO: replace with a UI device type
+  device: Device;
   isHovered: boolean;
 }
 
@@ -46,7 +46,6 @@ export const DeviceNameInput = ({ device, isHovered }: DeviceNameInputProps) => 
 
   const dispatch = useAppDispatch();
 
-  // @ts-expect-error: see TODO on Device UI type above
   const { id = '', tags = {} } = device;
   const { name = '' } = tags;
 
@@ -63,7 +62,6 @@ export const DeviceNameInput = ({ device, isHovered }: DeviceNameInputProps) => 
     inputRef.current.focus();
   }, [isEditing]);
 
-  // @ts-expect-error: needs setDeviceTags to be typed
   const onSubmit = () => dispatch(setDeviceTags({ deviceId: id, tags: { ...tags, name: value } })).then(() => setIsEditing(false));
 
   const onCancel = () => {

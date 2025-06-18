@@ -12,9 +12,18 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 // @ts-nocheck
+import { DeviceAttribute } from '@northern.tech/store/api/types/DeviceAttribute';
+import { DeviceFilter, DeviceGroup, InventoryAttributes } from '@northern.tech/store/devicesSlice';
 import { duplicateFilter, yes } from '@northern.tech/utils/helpers';
 
-import { ATTRIBUTE_SCOPES, DEVICE_FILTERING_OPTIONS, DEVICE_ISSUE_OPTIONS, DEVICE_LIST_MAXIMUM_LENGTH, emptyUiPermissions } from './commonConstants';
+import {
+  ATTRIBUTE_SCOPES,
+  DEVICE_FILTERING_OPTIONS,
+  DEVICE_ISSUE_OPTIONS,
+  DEVICE_LIST_MAXIMUM_LENGTH,
+  DeviceIssueOptionKey,
+  emptyUiPermissions
+} from './commonConstants';
 import {
   DARK_MODE,
   DEPLOYMENT_STATES,
@@ -64,7 +73,21 @@ const convertIssueOptionsToFilters = (issuesSelection, filtersState = {}) =>
     return DEVICE_ISSUE_OPTIONS[item].filterRule;
   });
 
-export const convertDeviceListStateToFilters = ({ filters = [], group, groups = { byId: {} }, offlineThreshold, selectedIssues = [], status }) => {
+export const convertDeviceListStateToFilters = ({
+  filters = [],
+  group,
+  groups = { byId: {} },
+  offlineThreshold,
+  selectedIssues = [],
+  status
+}: {
+  filters?: DeviceFilter[];
+  group?: string;
+  groups?: { byId: Record<string, DeviceGroup> };
+  offlineThreshold: string;
+  selectedIssues: DeviceIssueOptionKey[];
+  status?: string;
+}) => {
   let applicableFilters = [...filters];
   if (typeof group === 'string' && !(groups.byId[group]?.filters || applicableFilters).length) {
     applicableFilters.push({ key: 'group', value: group, operator: DEVICE_FILTERING_OPTIONS.$eq.key, scope: 'system' });
@@ -83,7 +106,7 @@ export const convertDeviceListStateToFilters = ({ filters = [], group, groups = 
   return { applicableFilters: nonMonitorFilters, filterTerms: mapFiltersToTerms(effectiveFilters) };
 };
 
-const filterCompare = (filter, item) => Object.keys(emptyFilter).every(key => item[key].toString() === filter[key].toString());
+const filterCompare = (filter, item) => Object.keys(emptyFilter).every(key => item[key]?.toString() === filter[key]?.toString());
 
 export const filtersFilter = (item, index, array) => {
   const firstIndex = array.findIndex(filter => filterCompare(filter, item));
@@ -136,6 +159,27 @@ export const progress = ({ loaded, total }) => {
   let uploadProgress = (loaded / total) * 100;
   return (uploadProgress = uploadProgress < 50 ? Math.ceil(uploadProgress) : Math.round(uploadProgress));
 };
+
+export const extractErrorMessage = (err, fallback = '') =>
+  err.response?.data?.error?.message || err.response?.data?.error || err.error || err.message || fallback;
+
+export const preformatWithRequestID = (res, failMsg) => {
+  // ellipsis line
+  if (failMsg.length > 100) failMsg = `${failMsg.substring(0, 220)}...`;
+
+  try {
+    if (res?.data && Object.keys(res.data).includes('request_id')) {
+      const shortRequestUUID = res.data['request_id'].substring(0, 8);
+      return `${failMsg} [Request ID: ${shortRequestUUID}]`;
+    }
+  } catch (e) {
+    console.log('failed to extract request id:', e);
+  }
+  return failMsg;
+};
+
+export const ensureVersionString = (software, fallback) =>
+  software.length && software !== 'artifact_name' ? (software.endsWith('.version') ? software : `${software}.version`) : fallback;
 
 export const getComparisonCompatibleVersion = version => (isNaN(version.charAt(0)) && version !== 'next' ? 'master' : version);
 
@@ -214,7 +258,15 @@ export const generateDeploymentGroupDetails = (filter, groupName) =>
         .join(', ')})`
     : groupName;
 
-export const mapDeviceAttributes = (attributes = []) =>
+export const mapDeviceAttributes = (
+  attributes: DeviceAttribute[] = []
+): {
+  identity: Record<string, string>;
+  inventory: InventoryAttributes;
+  monitor: Record<string, string>;
+  system: Record<string, string>;
+  tags: Record<string, string>;
+} =>
   attributes.reduce(
     (accu, attribute) => {
       if (!(attribute.value && attribute.name) && attribute.scope === ATTRIBUTE_SCOPES.inventory) {

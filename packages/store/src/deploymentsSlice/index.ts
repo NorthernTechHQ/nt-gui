@@ -11,6 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { DeviceDeployments as BackendDeviceDeployment } from '@northern.tech/store/api/types/DeviceDeployments';
 import {
   DeploymentDeployments as BackendDeployment,
   Filter as BackendFilter,
@@ -31,6 +32,12 @@ type Filter = {
   scope: string;
   value: any;
 };
+export type DeviceDeployment = BackendDeviceDeployment & {
+  deviceId: string;
+  release: string;
+  route: string;
+};
+
 export type Deployment = BackendDeployment & {
   devices: Record<string, DeviceWithImage>;
   filter?: BackendFilter & { filters: Filter[]; name?: string };
