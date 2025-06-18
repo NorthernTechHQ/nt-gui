@@ -1,5 +1,5 @@
 ---
-## @northern.tech/eslint-config-0.4.0 - 2025-06-02
+## @northern.tech/eslint-config-0.4.0 - 2025-06-18
 
 
 ### Features
