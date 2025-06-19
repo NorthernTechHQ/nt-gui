@@ -14,7 +14,7 @@
 import { versionCompare } from '@northern.tech/utils/helpers';
 import { createSelector } from '@reduxjs/toolkit';
 
-import { RootState } from '../store';
+import type { RootState } from '../store';
 
 export const getDocsVersion = (state: RootState) => state.app.docsVersion;
 export const getFeatures = (state: RootState) => state.app.features;

@@ -30,11 +30,11 @@ import type {
   SortCriteria,
   StatusDeviceauth
 } from '@northern.tech/store/api/types/MenderTypes';
-import { SearchState } from '@northern.tech/store/appSlice';
+import type { SearchState } from '@northern.tech/store/appSlice';
+import type { DeviceIssueOptionKey } from '@northern.tech/store/constants';
 import {
   DEVICE_FILTERING_OPTIONS,
   DEVICE_LIST_DEFAULTS,
-  DeviceIssueOptionKey,
   EXTERNAL_PROVIDER,
   MAX_PAGE_SIZE,
   SORTING_OPTIONS,
@@ -57,7 +57,8 @@ import {
   getUserCapabilities,
   getUserSettings
 } from '@northern.tech/store/selectors';
-import { AppDispatch, RootState, commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
+import type { AppDispatch, RootState } from '@northern.tech/store/store';
+import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
 import { getDeviceMonitorConfig, getLatestDeviceAlerts, getSingleDeployment, saveGlobalSettings } from '@northern.tech/store/thunks';
 import {
   convertDeviceListStateToFilters,
@@ -74,7 +75,8 @@ import { isCancel } from 'axios';
 import pluralize from 'pluralize';
 import { v4 as uuid } from 'uuid';
 
-import { Device, DeviceFilter, DeviceGroup, DeviceGroups, DeviceListState, DeviceSelectedAttribute, DeviceStatus, actions, sliceName } from '.';
+import type { Device, DeviceFilter, DeviceGroup, DeviceGroups, DeviceListState, DeviceSelectedAttribute, DeviceStatus } from '.';
+import { actions, sliceName } from '.';
 import {
   ALL_DEVICE_STATES,
   DEVICE_STATES,

@@ -13,10 +13,12 @@
 //    limitations under the License.
 import storeActions from '@northern.tech/store/actions';
 import Api from '@northern.tech/store/api/general-api';
-import { Alert } from '@northern.tech/store/api/types/MenderTypes';
-import { AlertChannelKey, DEVICE_LIST_DEFAULTS, DeviceIssueOptionKey, TIMEOUTS, alertChannels, headerNames } from '@northern.tech/store/constants';
+import type { Alert } from '@northern.tech/store/api/types/MenderTypes';
+import type { AlertChannelKey, DeviceIssueOptionKey } from '@northern.tech/store/constants';
+import { DEVICE_LIST_DEFAULTS, TIMEOUTS, alertChannels, headerNames } from '@northern.tech/store/constants';
 import { getDeviceFilters, getSearchEndpoint } from '@northern.tech/store/selectors';
-import { AppDispatch, commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
+import type { AppDispatch } from '@northern.tech/store/store';
+import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
 import { convertDeviceListStateToFilters } from '@northern.tech/store/utils';
 
 import { actions, sliceName } from '.';

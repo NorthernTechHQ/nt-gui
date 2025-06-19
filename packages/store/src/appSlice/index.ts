@@ -13,8 +13,10 @@
 //    limitations under the License.
 import type { SnackbarProps } from '@mui/material';
 
-import { SORTING_OPTIONS, SortOptions } from '@northern.tech/store/constants';
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import type { SortOptions } from '@northern.tech/store/constants';
+import { SORTING_OPTIONS } from '@northern.tech/store/constants';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 export const sliceName = 'app';
 
