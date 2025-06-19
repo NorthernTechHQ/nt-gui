@@ -12,7 +12,8 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import React, { CSSProperties, Fragment, ReactNode, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
+import React, { Fragment, useState } from 'react';
 
 // material ui
 import { FileCopyOutlined as CopyToClipboardIcon } from '@mui/icons-material';

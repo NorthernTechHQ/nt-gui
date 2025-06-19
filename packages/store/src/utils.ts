@@ -12,18 +12,12 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 // @ts-nocheck
-import { DeviceAttribute } from '@northern.tech/store/api/types/DeviceAttribute';
-import { DeviceFilter, DeviceGroup, InventoryAttributes } from '@northern.tech/store/devicesSlice';
+import type { DeviceAttribute } from '@northern.tech/store/api/types/DeviceAttribute';
+import type { DeviceFilter, DeviceGroup, InventoryAttributes } from '@northern.tech/store/devicesSlice';
 import { duplicateFilter, yes } from '@northern.tech/utils/helpers';
 
-import {
-  ATTRIBUTE_SCOPES,
-  DEVICE_FILTERING_OPTIONS,
-  DEVICE_ISSUE_OPTIONS,
-  DEVICE_LIST_MAXIMUM_LENGTH,
-  DeviceIssueOptionKey,
-  emptyUiPermissions
-} from './commonConstants';
+import type { DeviceIssueOptionKey } from './commonConstants';
+import { ATTRIBUTE_SCOPES, DEVICE_FILTERING_OPTIONS, DEVICE_ISSUE_OPTIONS, DEVICE_LIST_MAXIMUM_LENGTH, emptyUiPermissions } from './commonConstants';
 import {
   DARK_MODE,
   DEPLOYMENT_STATES,

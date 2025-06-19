@@ -13,28 +13,31 @@
 //    limitations under the License.
 import storeActions from '@northern.tech/store/actions';
 import GeneralApi from '@northern.tech/store/api/general-api';
-import { PermissionSetWithScope, PersonalAccessToken, RolePermission, RolePermissionObject } from '@northern.tech/store/api/types/MenderTypes';
+import type { PermissionSetWithScope, PersonalAccessToken, RolePermission, RolePermissionObject } from '@northern.tech/store/api/types/MenderTypes';
 import UsersApi from '@northern.tech/store/api/users-api';
 import { cleanUp, getSessionInfo, maxSessionAge, setSessionInfo } from '@northern.tech/store/auth';
+import type {
+  PermissionObject,
+  PermissionSetId,
+  ReadState,
+  ScopedPermissionsByAreaKey,
+  UiPermissionsByAreaKey,
+  UiPermissionsByIdKey
+} from '@northern.tech/store/constants';
 import {
   ALL_RELEASES,
   APPLICATION_JSON_CONTENT_TYPE,
   APPLICATION_JWT_CONTENT_TYPE,
-  PermissionObject,
-  PermissionSetId,
-  ReadState,
   SSO_TYPES,
-  ScopedPermissionsByAreaKey,
   TIMEOUTS,
-  UiPermissionsByAreaKey,
-  UiPermissionsByIdKey,
   apiRoot,
   emptyRole,
   emptyUiPermissions,
   tenantadmApiUrlv2
 } from '@northern.tech/store/constants';
 import { getOnboardingState, getOrganization, getTooltipsState, getUserSettings as getUserSettingsSelector } from '@northern.tech/store/selectors';
-import { AppDispatch, commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
+import type { AppDispatch } from '@northern.tech/store/store';
+import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
 import { setOfflineThreshold } from '@northern.tech/store/thunks';
 import { mergePermissions } from '@northern.tech/store/utils';
 import { duplicateFilter, extractErrorMessage, isEmpty } from '@northern.tech/utils/helpers';
@@ -42,21 +45,24 @@ import { clearAllRetryTimers } from '@northern.tech/utils/retrytimer';
 import hashString from 'md5';
 import Cookies from 'universal-cookie';
 
-import { CustomColumn, GlobalSettings, User, UserSettings, actions, sliceName } from '.';
-import {
+import type { CustomColumn, GlobalSettings, User, UserSettings } from '.';
+import { actions, sliceName } from '.';
+import type {
   AnyPermission,
   AuditLogPermission,
   DeploymentPermission,
   GroupsPermission,
-  OWN_USER_ID,
   PermissionSet,
-  PermissionTypes,
-  READ_STATES,
   ReleasesPermission,
   Role,
-  USER_LOGOUT,
   UiPermissions,
-  UserManagementPermission,
+  UserManagementPermission
+} from './constants';
+import {
+  OWN_USER_ID,
+  PermissionTypes,
+  READ_STATES,
+  USER_LOGOUT,
   defaultPermissionSets,
   rolesById as defaultRolesById,
   itemUiPermissionsReducer,

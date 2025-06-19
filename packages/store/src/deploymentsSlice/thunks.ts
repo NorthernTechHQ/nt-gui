@@ -14,7 +14,7 @@
 /*eslint import/namespace: ['error', { allowComputed: true }]*/
 import storeActions from '@northern.tech/store/actions';
 import GeneralApi from '@northern.tech/store/api/general-api';
-import {
+import type {
   DeploymentDeployments as BackendDeployment,
   DeviceWithImage,
   NewDeployment,
@@ -22,16 +22,17 @@ import {
   NewDeploymentV2
 } from '@northern.tech/store/api/types/MenderTypes';
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TIMEOUTS, headerNames } from '@northern.tech/store/constants';
-import { SortOptions } from '@northern.tech/store/organizationSlice/types';
+import type { SortOptions } from '@northern.tech/store/organizationSlice/types';
 import { getDevicesById, getGlobalSettings, getOrganization, getUserCapabilities } from '@northern.tech/store/selectors';
-import { AppDispatch, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
+import type { AppDispatch } from '@northern.tech/store/store';
+import { commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
 import { getDeviceAuth, getDeviceById, saveGlobalSettings } from '@northern.tech/store/thunks';
 import { mapTermsToFilters } from '@northern.tech/store/utils';
 import { customSort, deepCompare, isEmpty, standardizePhases } from '@northern.tech/utils/helpers';
 import Tracking from '@northern.tech/utils/tracking';
 import isUUID from 'validator/lib/isUUID';
 
-import {
+import type {
   Deployment,
   DeploymentByStatus,
   DeploymentByStatusKey,
@@ -39,10 +40,9 @@ import {
   DeploymentStatus,
   DeviceDeployment,
   SelectionListState,
-  SelectionState,
-  actions,
-  sliceName
+  SelectionState
 } from '.';
+import { actions, sliceName } from '.';
 import { DEPLOYMENT_ROUTES, DEPLOYMENT_STATES, DEPLOYMENT_TYPES, deploymentPrototype, deploymentsApiUrl, deploymentsApiUrlV2 } from './constants';
 import { getDeploymentsById, getDeploymentsByStatus as getDeploymentsByStatusSelector } from './selectors';
 

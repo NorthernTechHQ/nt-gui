@@ -16,7 +16,8 @@ import { useState } from 'react';
 
 import { Checkbox, FormControl, FormHelperText, InputLabel, MenuItem, Select } from '@mui/material';
 
-import { ADDONS, AddonId } from '@northern.tech/store/constants';
+import type { AddonId } from '@northern.tech/store/constants';
+import { ADDONS } from '@northern.tech/store/constants';
 
 interface AddonSelectProps {
   initialState: AddonId[];

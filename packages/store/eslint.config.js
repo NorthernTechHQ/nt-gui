@@ -9,6 +9,9 @@ export default [
         mender_environment: true,
         vi: false
       }
+    },
+    rules: {
+      '@typescript-eslint/consistent-type-imports': 'error'
     }
   }
 ];

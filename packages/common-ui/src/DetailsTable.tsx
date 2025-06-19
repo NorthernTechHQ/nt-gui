@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 // material ui
-import { CSSProperties, ReactNode, Ref } from 'react';
+import type { CSSProperties, ReactNode, Ref } from 'react';
 
 import { Sort as SortIcon } from '@mui/icons-material';
 import { Checkbox, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';

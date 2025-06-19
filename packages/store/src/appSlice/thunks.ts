@@ -13,13 +13,15 @@
 //    limitations under the License.
 import GeneralApi from '@northern.tech/store/api/general-api';
 import { getOfflineThresholdSettings } from '@northern.tech/store/selectors';
-import { AppDispatch, createAppAsyncThunk } from '@northern.tech/store/store';
+import type { AppDispatch } from '@northern.tech/store/store';
+import { createAppAsyncThunk } from '@northern.tech/store/store';
 import { searchDevices } from '@northern.tech/store/thunks';
 import { getComparisonCompatibleVersion } from '@northern.tech/store/utils';
 import { deepCompare, extractErrorMessage } from '@northern.tech/utils/helpers';
 import Cookies from 'universal-cookie';
 
-import { ReleaseData, SaasVersion, SearchState, TagData, VersionRelease, actions, sliceName } from '.';
+import type { ReleaseData, SaasVersion, SearchState, TagData, VersionRelease } from '.';
+import { actions, sliceName } from '.';
 import { getFeatures, getSearchState } from './selectors';
 
 const cookies = new Cookies();

@@ -12,12 +12,13 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import { CSSProperties, ReactNode, useMemo } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 import { makeStyles } from 'tss-react/mui';
 
-import { Device } from '@northern.tech/store/api/types/Device';
+import type { Device } from '@northern.tech/store/api/types/Device';
 import { getDeviceById as getDeviceByIdSelector, getIdAttribute } from '@northern.tech/store/selectors';
 import { stringToBoolean } from '@northern.tech/utils/helpers';
 

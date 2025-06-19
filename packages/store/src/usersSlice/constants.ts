@@ -13,7 +13,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { PermissionSet as BackendPermissionSet, Role as BackendRole, RolePermission, RoleUseradm } from '@northern.tech/store/api/types/MenderTypes';
+import type { PermissionSet as BackendPermissionSet, Role as BackendRole, RolePermission, RoleUseradm } from '@northern.tech/store/api/types/MenderTypes';
 import { ALL_DEVICES, ALL_RELEASES, apiUrl, emptyUiPermissions } from '@northern.tech/store/constants';
 
 export const useradmApiUrlv1 = `${apiUrl.v1}/useradm`;

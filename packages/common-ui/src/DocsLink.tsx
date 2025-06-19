@@ -12,7 +12,8 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import { ReactNode, forwardRef, useState } from 'react';
+import type { ReactNode } from 'react';
+import { forwardRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { Description as DescriptionIcon } from '@mui/icons-material';
