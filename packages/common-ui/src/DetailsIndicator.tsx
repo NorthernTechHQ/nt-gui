@@ -15,7 +15,7 @@
 //@ts-nocheck
 import { ArrowForward as ArrowForwardIcon } from '@mui/icons-material';
 
-import { ClassesOverrides } from './List';
+import type { ClassesOverrides } from './List';
 
 const defaultClasses = { icon: '', wrapper: '' };
 export const DetailsIndicator = ({ classes = defaultClasses }: ClassesOverrides) => {

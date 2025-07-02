@@ -12,7 +12,8 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import { CSSProperties, ReactNode, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
+import { useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 import { FileCopy as CopyPasteIcon } from '@mui/icons-material';

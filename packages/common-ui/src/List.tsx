@@ -12,7 +12,8 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import { CSSProperties, ComponentType, MutableRefObject, ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import type { CSSProperties, ComponentType, MutableRefObject, ReactElement } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Settings as SettingsIcon, Sort as SortIcon } from '@mui/icons-material';
 import { Checkbox } from '@mui/material';

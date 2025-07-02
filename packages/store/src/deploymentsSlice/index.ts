@@ -11,8 +11,8 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { DeviceDeployments as BackendDeviceDeployment } from '@northern.tech/store/api/types/DeviceDeployments';
-import {
+import type { DeviceDeployments as BackendDeviceDeployment } from '@northern.tech/store/api/types/DeviceDeployments';
+import type {
   DeploymentDeployments as BackendDeployment,
   Filter as BackendFilter,
   DeviceWithImage,
@@ -20,7 +20,8 @@ import {
   Limit
 } from '@northern.tech/store/api/types/MenderTypes';
 import { DEVICE_LIST_DEFAULTS } from '@northern.tech/store/constants';
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 import { DEFAULT_PENDING_INPROGRESS_COUNT, DEPLOYMENT_ROUTES, DEPLOYMENT_STATES, deploymentPrototype, limitDefault } from './constants';
 

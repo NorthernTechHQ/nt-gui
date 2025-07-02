@@ -19,12 +19,15 @@ import type {
   MonitorConfiguration,
   SortCriteria
 } from '@northern.tech/store/api/types/MenderTypes';
-import { DEVICE_LIST_DEFAULTS, DeviceIssueOptionKey, FilterOperator, SORTING_OPTIONS, SortOptions } from '@northern.tech/store/commonConstants';
-import { DeviceDeployment } from '@northern.tech/store/deploymentsSlice';
+import type { DeviceIssueOptionKey, FilterOperator, SortOptions } from '@northern.tech/store/commonConstants';
+import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS } from '@northern.tech/store/commonConstants';
+import type { DeviceDeployment } from '@northern.tech/store/deploymentsSlice';
 import { deepCompare, duplicateFilter } from '@northern.tech/utils/helpers';
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
-import { ALL_DEVICE_STATES, DEVICE_STATES, DeviceAuthState } from './constants';
+import type { ALL_DEVICE_STATES, DeviceAuthState } from './constants';
+import { DEVICE_STATES } from './constants';
 
 export const sliceName = 'devices';
 export type DeviceSelectedAttribute = { attribute: string; scope: string };

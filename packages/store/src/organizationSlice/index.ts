@@ -13,8 +13,9 @@
 //    limitations under the License.
 import type { AuditLog, BillingProfile, Integration, Event as WebhookEvent } from '@northern.tech/store/api/types/MenderTypes';
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TENANT_LIST_DEFAULT } from '@northern.tech/store/constants';
-import { AuditLogSelectionState, Card, Organization, OrganizationState, SSOConfig, TenantList } from '@northern.tech/store/organizationSlice/types';
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import type { AuditLogSelectionState, Card, Organization, OrganizationState, SSOConfig, TenantList } from '@northern.tech/store/organizationSlice/types';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 export const sliceName = 'organization';
 
