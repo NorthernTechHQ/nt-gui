@@ -20,7 +20,15 @@ export type InvoiceLineItem = {
    */
   currency: string;
   /**
-   * The unique Stripe price ID for this item.
+   * The name of the product for this item.
    */
-  price_id?: string;
+  product?: string;
+  /**
+   * The name of the addon for this item if this is an addon.
+   */
+  addon?: string;
+  /**
+   * Whether this item was generated to prorate changes to the subscription within the subscription period.
+   */
+  proration?: boolean;
 };
