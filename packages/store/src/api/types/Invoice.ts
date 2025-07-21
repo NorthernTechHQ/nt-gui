@@ -5,8 +5,8 @@
 import type { InvoiceLineItem } from "./InvoiceLineItem";
 export type Invoice = {
   id?: string;
-  preiod_start?: string;
-  preiod_end?: string;
+  period_start?: string;
+  period_end?: string;
   /**
    * Total amount in the minimum transactable unit for the given currency (cents for USD).
    */
