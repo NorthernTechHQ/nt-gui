@@ -11,7 +11,8 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //@ts-nocheck
-import React, { ForwardRefRenderFunction, memo } from 'react';
+import type { ForwardRefRenderFunction } from 'react';
+import React, { memo } from 'react';
 
 import { getFormattedSize } from '@northern.tech/utils/helpers';
 

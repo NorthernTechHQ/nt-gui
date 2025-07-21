@@ -24,7 +24,7 @@ import { inventoryDevice } from '../../../../tests/__mocks__/deviceHandlers';
 import { defaultState } from '../../../../tests/mockData';
 import { act, mockAbortController } from '../../../../tests/setupTests';
 import { Integration } from '../api/types/Integration';
-import { StatusDeviceauth } from '../api/types/MenderTypes';
+import type { StatusDeviceauth } from '../api/types/MenderTypes';
 import { actions as appActions } from '../appSlice';
 import { EXTERNAL_PROVIDER, TIMEOUTS, UNGROUPED_GROUP } from '../constants';
 import { actions as deploymentActions } from '../deploymentsSlice';

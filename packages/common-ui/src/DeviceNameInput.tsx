@@ -17,7 +17,7 @@ import { useEffect, useRef, useState } from 'react';
 import { InputAdornment, OutlinedInput } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
-import { Device } from '@northern.tech/store/devicesSlice';
+import type { Device } from '@northern.tech/store/devicesSlice';
 import { useAppDispatch } from '@northern.tech/store/store';
 import { setDeviceTags } from '@northern.tech/store/thunks';
 

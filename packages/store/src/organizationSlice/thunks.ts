@@ -13,7 +13,7 @@
 //    limitations under the License.
 import storeActions from '@northern.tech/store/actions';
 import Api from '@northern.tech/store/api/general-api';
-import {
+import type {
   AuditLog,
   TenantTenantadm as BackendTenant,
   BillingInfo,
@@ -23,9 +23,8 @@ import {
   NewTenant,
   SupportRequest
 } from '@northern.tech/store/api/types/MenderTypes';
+import type { AvailablePlans, ContentType } from '@northern.tech/store/constants';
 import {
-  AvailablePlans,
-  ContentType,
   DEVICE_LIST_DEFAULTS,
   SORTING_OPTIONS,
   TENANT_LIST_DEFAULT,
@@ -35,9 +34,10 @@ import {
   iotManagerBaseURL,
   locations
 } from '@northern.tech/store/constants';
-import { AuditLogSelectionState, SSOConfig, SortOptions, Tenant, TenantList } from '@northern.tech/store/organizationSlice/types';
+import type { AuditLogSelectionState, SSOConfig, SortOptions, Tenant, TenantList } from '@northern.tech/store/organizationSlice/types';
 import { getCurrentSession, getTenantCapabilities, getTenantsList } from '@northern.tech/store/selectors';
-import { AppDispatch, commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
+import type { AppDispatch } from '@northern.tech/store/store';
+import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
 import { getDeviceLimit, setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
 import { dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
 import dayjs from 'dayjs';

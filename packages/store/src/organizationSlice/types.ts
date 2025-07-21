@@ -20,10 +20,9 @@ import type {
   Integration,
   SAMLMetadata
 } from '@northern.tech/store/api/types/MenderTypes';
-import { AvailableAddon } from '@northern.tech/store/appSlice/constants';
-import { SSO_TYPES } from '@northern.tech/store/organizationSlice/constants';
+import type { AvailableAddon, SORTING_OPTIONS } from '@northern.tech/store/constants';
 
-import { SORTING_OPTIONS } from '../commonConstants';
+import type { SSO_TYPES } from './constants';
 
 export interface Card {
   brand?: string;

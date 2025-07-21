@@ -14,7 +14,8 @@
 //@ts-nocheck
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 
-import { ADDONS, Plan } from '@northern.tech/store/constants';
+import type { Plan } from '@northern.tech/store/constants';
+import { ADDONS } from '@northern.tech/store/constants';
 
 interface ConfirmUpgradeProps {
   addOns: { name: string }[];
