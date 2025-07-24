@@ -57,6 +57,6 @@
     "tsup": "8.5.0"
   },
   "dependencies": {
-    "@mui/material": "^6.x || ^7.x"
+    "@mui/material": "^7.x"
   }
 }

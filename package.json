@@ -57,6 +57,12 @@
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "*"
   },
+  "overrides": {
+    "@mui/system": "^7.x",
+    "react-copy-to-clipboard": {
+      "react": "^19.x"
+    }
+  },
   "packageManager": "npm@11.0.0",
   "type": "module",
   "workspaces": [
