@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@mui/icons-material": "^7.x",
-    "@mui/material": "^6.x || ^7.x",
+    "@mui/material": "^7.x",
     "@northern.tech/common-ui": "*",
     "@northern.tech/store": "*",
     "@northern.tech/utils": "*",
