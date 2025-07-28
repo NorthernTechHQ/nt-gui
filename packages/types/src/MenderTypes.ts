@@ -83,6 +83,7 @@ export type { DeviceAuditlogs } from "./DeviceAuditlogs";
 export type { DeviceAuthEvent } from "./DeviceAuthEvent";
 export type { DeviceConfiguration } from "./DeviceConfiguration";
 export type { DeviceDeployment } from "./DeviceDeployment";
+export type { DeviceDeployments } from "./DeviceDeployments";
 export { DeviceDeviceauth } from "./DeviceDeviceauth";
 export type { DeviceFilterAttribute } from "./DeviceFilterAttribute";
 export { DeviceFilterTerm } from "./DeviceFilterTerm";
