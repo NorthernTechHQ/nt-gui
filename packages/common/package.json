@@ -34,6 +34,7 @@
   },
   "type": "module",
   "devDependencies": {
+    "@mui/x-date-pickers": "^8.x",
     "@northern.tech/eslint-config": "*",
     "@northern.tech/typescript-config": "*",
     "@types/react": "^19.x",
