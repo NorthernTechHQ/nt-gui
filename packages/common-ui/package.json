@@ -75,9 +75,9 @@
   },
   "dependencies": {
     "@mdi/js": "^7.x",
-    "@mui/icons-material": "^6.x",
-    "@mui/material": "^6.x || ^7.x",
-    "@mui/x-date-pickers": "^7.x",
+    "@mui/icons-material": "^7.x",
+    "@mui/material": "^7.x",
+    "@mui/x-date-pickers": "^8.x",
     "@northern.tech/store": "*",
     "@northern.tech/utils": "*",
     "@xterm/addon-fit": "^0.10.x",
