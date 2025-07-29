@@ -52,7 +52,7 @@ describe('TerminalSession Component', () => {
     window.matchMedia = oldMatchMedia;
   });
   it('renders correctly', async () => {
-    const DeviceActions = await import('@northern.tech/store/devicesSlice/thunks');
+    const DeviceActions = await import('@northern.tech/store/thunks');
     const sessionSpy = vi.spyOn(DeviceActions, 'getSessionDetails');
     const ui = <TerminalSession item={defaultState.organization.auditlog.events[2]} />;
     const { baseElement, rerender } = render(ui, {
