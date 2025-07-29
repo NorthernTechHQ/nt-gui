@@ -18,15 +18,16 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
+import { defaultState, render } from '@/testUtils';
 import { TIMEOUTS } from '@northern.tech/store/constants';
 import { getConfiguredStore } from '@northern.tech/store/store';
+import { undefineds } from '@northern.tech/testing/mockData';
+import { light as lightTheme } from '@northern.tech/testing/theme/light';
+import { selectMaterialUiSelectOption } from '@northern.tech/testing/utils';
 import { act, prettyDOM, screen, render as testingLibRender, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import { defaultState, undefineds } from '../../../../tests/mockData';
-import { render, selectMaterialUiSelectOption } from '../../../../tests/setupTests';
-import { light as lightTheme } from '../../../../tests/theme/light';
 import AuditLogs from './AuditLogs';
 
 const preloadedState = {
@@ -70,13 +71,10 @@ describe('Auditlogs Component', () => {
   });
 
   it('works as expected', async () => {
-    const store = getConfiguredStore({ preloadedState });
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     render(
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Provider store={store}>
-          <AuditLogs />
-        </Provider>
+        <AuditLogs />
       </LocalizationProvider>,
       { preloadedState }
     );
