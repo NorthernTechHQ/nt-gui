@@ -14,21 +14,20 @@
 /*eslint import/namespace: ['error', { allowComputed: true }]*/
 import { Link } from 'react-router-dom';
 
-import { EXTERNAL_PROVIDER, TIMEOUTS, UNGROUPED_GROUP } from '@northern.tech/store/constants';
+import { act, defaultState } from '@/testUtils';
+import { DEVICE_STATES, EXTERNAL_PROVIDER, TIMEOUTS, UNGROUPED_GROUP } from '@northern.tech/store/constants';
 import { getSingleDeployment } from '@northern.tech/store/thunks';
+import { inventoryDevice } from '@northern.tech/testing/requestHandlers/deviceHandlers';
+import { mockAbortController } from '@northern.tech/testing/setupTests';
+import type { StatusDeviceauth } from '@northern.tech/types/MenderTypes';
+import { Integration } from '@northern.tech/types/MenderTypes';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { describe, expect, it, vi } from 'vitest';
 
 import { actions } from '.';
-import { inventoryDevice } from '../../../../tests/__mocks__/deviceHandlers';
-import { defaultState } from '../../../../tests/mockData';
-import { act, mockAbortController } from '../../../../tests/setupTests';
-import { Integration } from '../api/types/Integration';
-import type { StatusDeviceauth } from '../api/types/MenderTypes';
 import { actions as appActions } from '../appSlice';
 import { actions as deploymentActions } from '../deploymentsSlice';
-import { DEVICE_STATES } from './constants';
 import {
   addDevicesToGroup,
   addDynamicGroup,

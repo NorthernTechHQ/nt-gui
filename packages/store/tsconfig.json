@@ -1,11 +1,11 @@
 {
   "extends": "@northern.tech/typescript-config/react-library.json",
-  "exclude": ["dist", "build", "node_modules", "**/*.test.js"],
+  "exclude": ["dist", "build", "node_modules"],
   "compilerOptions": {
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@northern.tech/store/*": ["src/*"]
+      "@/*": ["./*"]
     }
   }
 }

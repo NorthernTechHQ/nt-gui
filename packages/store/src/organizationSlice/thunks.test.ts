@@ -11,15 +11,16 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { defaultState } from '@/testUtils';
 import { EXTERNAL_PROVIDER, TIMEOUTS, locations } from '@northern.tech/store/constants';
 import { setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
+import { tenants, webhookEvents } from '@northern.tech/testing/mockData';
 import { Credentials, Integration } from '@northern.tech/types/MenderTypes';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { describe, expect, it, vi } from 'vitest';
 
 import { actions } from '.';
-import { defaultState, tenants, webhookEvents } from '../../../../tests/mockData';
 import { actions as appActions } from '../appSlice';
 import { getSessionInfo } from '../auth';
 import { actions as deviceActions } from '../devicesSlice';
@@ -658,7 +659,7 @@ describe('organization actions', () => {
         name: 'Mikita',
         users: [{ email: 'test@example.com', role: 'RBAC_ROLE_PERMIT_ALL' }],
         sso: false,
-        device_limit: '2',
+        device_limit: 2,
         binary_delta: true
       })
     );

@@ -11,12 +11,11 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { DEVICE_ISSUE_OPTIONS, DEVICE_LIST_DEFAULTS } from '@northern.tech/store/constants';
+import { defaultState } from '@/testUtils';
+import { DEVICE_ISSUE_OPTIONS, DEVICE_LIST_DEFAULTS, alertChannels } from '@northern.tech/store/constants';
 import { describe, expect, it } from 'vitest';
 
 import reducer, { actions, initialState } from '.';
-import { defaultState } from '../../../../tests/mockData';
-import { alertChannels } from './constants';
 
 describe('monitor reducer', () => {
   it('should return the initial state', async () => {
