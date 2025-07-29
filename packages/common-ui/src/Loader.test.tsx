@@ -12,10 +12,10 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
+import { render } from '@/testUtils';
+import { undefineds } from '@northern.tech/testing/mockData';
 import { describe, expect, it } from 'vitest';
 
-import { undefineds } from '../../../tests/mockData';
-import { render } from '../../../tests/setupTests';
 import Loader from './Loader';
 
 describe('Loader Component', () => {

@@ -15,9 +15,9 @@ import { Provider } from 'react-redux';
 
 import { BENEFITS } from '@northern.tech/store/constants';
 import { getConfiguredStore } from '@northern.tech/store/store';
+import { defaultState } from '@northern.tech/testing/mockData';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { defaultState } from '../../../tests/mockData';
 import { EnterpriseNotification } from './EnterpriseNotification';
 
 const meta: Meta<typeof EnterpriseNotification> = {
