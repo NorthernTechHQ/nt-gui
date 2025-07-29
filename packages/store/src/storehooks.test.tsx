@@ -14,6 +14,7 @@
 // @ts-nocheck
 import { Provider } from 'react-redux';
 
+import { defaultState } from '@/testUtils';
 import {
   getDeploymentsByStatus,
   getDeviceAttributes,
@@ -27,12 +28,12 @@ import {
   getUserOrganization,
   tenantDataDivergedMessage
 } from '@northern.tech/store/thunks';
+import { receivedPermissionSets, receivedRoles, userId } from '@northern.tech/testing/mockData';
+import { inventoryDevice } from '@northern.tech/testing/requestHandlers/deviceHandlers';
 import { renderHook, waitFor } from '@testing-library/react';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 
-import { inventoryDevice } from '../../../tests/__mocks__/deviceHandlers';
-import { defaultState, receivedPermissionSets, receivedRoles, userId } from '../../../tests/mockData';
 import { actions as appActions } from './appSlice';
 import { getLatestReleaseInfo, setOfflineThreshold } from './appSlice/thunks';
 import { latestSaasReleaseTag } from './appSlice/thunks.test';

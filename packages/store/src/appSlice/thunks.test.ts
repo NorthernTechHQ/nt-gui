@@ -11,6 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { defaultState } from '@/testUtils';
 import { commonErrorHandler } from '@northern.tech/store/store';
 import { searchDevices } from '@northern.tech/store/thunks';
 import configureMockStore from 'redux-mock-store';
@@ -18,7 +19,6 @@ import { thunk } from 'redux-thunk';
 import { describe, expect, it } from 'vitest';
 
 import { actions } from '.';
-import { defaultState } from '../../../../tests/mockData';
 import { actions as deviceActions } from '../devicesSlice';
 import { getLatestReleaseInfo, setFirstLoginAfterSignup, setOfflineThreshold, setSearchState } from './thunks';
 

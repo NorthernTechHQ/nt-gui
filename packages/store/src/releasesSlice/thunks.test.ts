@@ -11,13 +11,13 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { defaultState } from '@/testUtils';
+import { mockAbortController } from '@northern.tech/testing/setupTests';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { describe, expect, it, vi } from 'vitest';
 
 import { actions } from '.';
-import { defaultState } from '../../../../tests/mockData';
-import { mockAbortController } from '../../../../tests/setupTests';
 import { actions as appActions } from '../appSlice';
 import {
   createArtifact,
