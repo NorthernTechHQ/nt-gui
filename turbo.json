@@ -24,6 +24,11 @@
       ],
       "cache": false
     },
+    "@northern.tech/testing#build": {
+      "dependsOn": [
+        "@northern.tech/utils#build"
+      ]
+    },
     "@northern.tech/utils#build": {
       "dependsOn": [
         "@northern.tech/types#build"
@@ -46,8 +51,23 @@
         "test"
       ]
     },
-    "test": {
-      "cache": true
+    "test-ci": {
+      "cache": true,
+      "dependsOn": [
+        "^@northern.tech/testing#build"
+      ]
+    },
+    "@northern.tech/common-ui#test-ci": {
+      "dependsOn": [
+        "@northern.tech/store#build",
+        "@northern.tech/store#test-ci"
+      ]
+    },
+    "@northern.tech/common#test-ci": {
+      "dependsOn": [
+        "@northern.tech/common-ui#build",
+        "@northern.tech/common-ui#test-ci"
+      ]
     },
     "publish": {
       "dependsOn": [
