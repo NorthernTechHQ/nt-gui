@@ -15,7 +15,7 @@ import { Provider } from 'react-redux';
 
 import { BENEFITS } from '@northern.tech/store/constants';
 import { getConfiguredStore } from '@northern.tech/store/store';
-import { defaultState } from '@northern.tech/testing/mockData';
+import { mockApiResponses as defaultState } from '@northern.tech/testing/mockData';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { EnterpriseNotification } from './EnterpriseNotification';

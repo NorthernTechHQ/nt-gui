@@ -19,7 +19,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import { getConfiguredStore } from '@northern.tech/store/store';
-import { defaultState } from '@northern.tech/testing/mockData';
+import { mockApiResponses as defaultState } from '@northern.tech/testing/mockData';
 import type { Meta, StoryObj } from '@storybook/react';
 import { HttpResponse, http } from 'msw';
 
