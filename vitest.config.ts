@@ -15,8 +15,8 @@ export default defineConfig({
         replacement: path.resolve(__dirname, 'packages/common-ui/src/')
       },
       {
-        find: '@northern.tech/helptips',
-        replacement: path.resolve(__dirname, 'packages/common-ui/src/helptips')
+        find: '@northern.tech/testing',
+        replacement: path.resolve(__dirname, 'packages/testing/src')
       },
       {
         find: '@northern.tech/utils',
@@ -39,7 +39,7 @@ export default defineConfig({
     retry: 0,
     environment: 'jsdom',
     globals: true,
-    setupFiles: './tests/setupTests.jsx',
+    setupFiles: path.resolve(__dirname, 'tests', 'setupTests.jsx'),
     fakeTimers: {
       toFake: ['setTimeout', 'clearTimeout', 'Date']
     }

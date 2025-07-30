@@ -11,31 +11,17 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { initialState as initialAppState } from '../packages/store/src/appSlice';
-import { maxSessionAge } from '../packages/store/src/auth';
 import {
   ALL_DEVICES,
   ALL_RELEASES,
-  DEVICE_ISSUE_OPTIONS,
-  DEVICE_LIST_DEFAULTS,
-  DEVICE_STATES,
-  SORTING_OPTIONS,
   defaultPermissionSets,
   emptyRole,
   emptyUiPermissions,
+  maxSessionAge,
   rolesById,
-  rolesByName,
   scopedPermissionAreas,
-  twoFAStates,
   uiPermissionsById
-} from '../packages/store/src/constants';
-import { initialState as initialDeploymentsState } from '../packages/store/src/deploymentsSlice';
-import { initialState as initialDevicesState } from '../packages/store/src/devicesSlice';
-import { initialState as initialMonitorState } from '../packages/store/src/monitorSlice';
-import { initialState as initialOnboardingState } from '../packages/store/src/onboardingSlice';
-import { initialState as initialOrganizationState } from '../packages/store/src/organizationSlice';
-import { initialState as initialReleasesState } from '../packages/store/src/releasesSlice';
-import { initialState as initialUsersState } from '../packages/store/src/usersSlice';
+} from '@northern.tech/utils/constants';
 
 export const undefineds = /undefined|\[object Object\]/;
 export const menderEnvironment = {
@@ -61,7 +47,6 @@ export const defaultMacAddress = 'dc:a6:32:12:ad:bf';
 
 export const testSsoId = 'sso_id';
 
-const deviceTypes = { qemu: 'qemux86-64' };
 const permissionSetObjectTypes = {
   any: 'Any',
   artifacts: 'Artifacts',
@@ -143,478 +128,31 @@ export const adminUserCapabilities = {
   canWriteDevices: true
 };
 
-let checkInTimeRounded = '2019-01-01T00:00:00.000Z';
-let checkInTimeExact = '2019-01-01T10:25:00.000Z';
-
 export const userId = 'a30a780b-b843-5344-80e3-0fd95a4f6fc3';
-export const defaultState = {
-  app: {
-    ...initialAppState,
-    searchState: {
-      deviceIds: [],
-      searchTerm: '',
-      searchTotal: 0,
-      sort: {}
-    },
-    snackbar: {},
-    uploadsById: {},
-    versionInformation: {}
-  },
-  deployments: {
-    ...initialDeploymentsState,
-    byId: {
-      d1: {
-        id: 'd1',
-        name: 'test deployment',
-        artifact_name: 'r1',
-        artifacts: ['123'],
-        created: '2019-01-01T12:30:00.000Z',
-        device_count: 1,
-        devices: {
-          a1: {
-            attributes: {},
-            id: 'a1',
-            image: { size: 123 },
-            status: 'installing'
-          }
-        },
-        filter: undefined,
-        group: undefined,
-        statistics: {
-          status: {
-            downloading: 0,
-            decommissioned: 0,
-            failure: 0,
-            installing: 1,
-            noartifact: 0,
-            pending: 0,
-            rebooting: 0,
-            success: 0,
-            'already-installed': 0
-          },
-          total_size: 1234
-        }
-      },
-      d2: {
-        id: 'd2',
-        name: 'test deployment 2',
-        artifact_name: 'r1',
-        artifacts: ['123'],
-        created: '2019-01-01T12:25:00.000Z',
-        device_count: 1,
-        devices: {
-          b1: {
-            attributes: {},
-            id: 'b1',
-            status: 'pending'
-          }
-        },
-        filter: undefined,
-        group: undefined,
-        statistics: {
-          status: {
-            downloading: 0,
-            decommissioned: 0,
-            failure: 0,
-            installing: 0,
-            noartifact: 0,
-            pending: 1,
-            rebooting: 0,
-            success: 0,
-            'already-installed': 0
-          }
-        }
-      },
-      d3: {
-        id: 'd3',
-        name: 'Test',
-        phases: [
-          { id: '0', batch_size: 2, device_count: 2 },
-          { id: '1', start_ts: '2019-02-04T11:45:10.002Z', batch_size: 3, device_count: 3 },
-          { id: '2', start_ts: '2019-02-05T11:45:10.002Z', batch_size: 5, device_count: 5 },
-          { id: '3', start_ts: '2019-02-06T11:45:10.002Z', batch_size: 5, device_count: 5 },
-          { id: '4', start_ts: '2019-02-21T11:45:10.002Z', batch_size: 5, device_count: 0 }
-        ],
-        max_devices: 0,
-        created: '2019-01-31T12:59:30.020Z',
-        devices: {},
-        filter: undefined,
-        group: undefined,
-        stats: {
-          pending: 3,
-          decommissioned: 0,
-          failure: 23,
-          pause_before_committing: 0,
-          pause_before_rebooting: 0,
-          installing: 0,
-          rebooting: 0,
-          'already-installed': 0,
-          pause_before_installing: 0,
-          downloading: 0,
-          success: 6,
-          aborted: 0,
-          noartifact: 0
-        },
-        statistics: { total_size: '1234' },
-        status: 'inprogress',
-        active: true,
-        device_count: 100,
-        retries: '0',
-        type: 'software'
-      }
-    },
-    byStatus: {
-      finished: { deploymentIds: ['d1'], total: 1 },
-      inprogress: { deploymentIds: ['d3'], total: 1 },
-      pending: { deploymentIds: ['d2'], total: 1 },
-      scheduled: { deploymentIds: ['d2'], total: 1 }
-    },
-    deploymentDeviceLimit: 500,
-    selectedDeviceIds: [],
-    selectionState: {
-      finished: {
-        ...DEVICE_LIST_DEFAULTS,
-        selection: ['d1'],
-        endDate: undefined,
-        search: '',
-        total: 1,
-        type: ''
-      },
-      inprogress: { ...DEVICE_LIST_DEFAULTS, selection: ['d1'], total: 1 },
-      pending: { ...DEVICE_LIST_DEFAULTS, selection: ['d2'], total: 1 },
-      scheduled: { ...DEVICE_LIST_DEFAULTS, selection: ['d2'], total: 1 },
-      general: {
-        state: 'active',
-        showCreationDialog: false,
-        showReportDialog: false,
-        reportType: null
-      },
-      selectedId: 'd1'
-    }
-  },
-  devices: {
-    ...initialDevicesState,
-    byId: {
-      a1: {
-        id: 'a1',
-        attributes: {
-          device_type: ['raspberrypi4'],
-          ipv4_wlan0: '192.168.10.141/24'
-        },
-        system: {
-          check_in_time: checkInTimeRounded
-        },
-        check_in_time: checkInTimeExact,
-        check_in_time_exact: checkInTimeExact,
-        check_in_time_rounded: checkInTimeRounded,
-        identity_data: { mac: defaultMacAddress },
-        status: 'accepted',
-        decommissioning: false,
-        created_ts: defaultCreationDate,
-        updated_ts: '2019-01-01T09:25:00.000Z',
-        auth_sets: [
-          {
-            id: 'auth1',
-            identity_data: { mac: defaultMacAddress },
-            pubkey: '-----BEGIN PUBLIC KEY-----\nMIIBojWELzgJ62hcXIhAfqfoNiaB1326XZByZwcnHr5BuSPAgMBAAE=\n-----END PUBLIC KEY-----\n',
-            ts: defaultCreationDate,
-            status: 'accepted'
-          }
-        ]
-      },
-      b1: {
-        id: 'b1',
-        attributes: {
-          ipv4_wlan0: '192.168.10.141/24',
-          device_type: [deviceTypes.qemu]
-        },
-        system: {
-          check_in_time: checkInTimeRounded
-        },
-        check_in_time: checkInTimeExact,
-        check_in_time_exact: checkInTimeExact,
-        check_in_time_rounded: checkInTimeRounded,
-        identity_data: { mac: defaultMacAddress },
-        status: 'accepted',
-        decommissioning: false,
-        created_ts: defaultCreationDate,
-        updated_ts: '2019-01-01T09:25:00.000Z',
-        auth_sets: [
-          {
-            id: 'auth1',
-            identity_data: { mac: defaultMacAddress },
-            pubkey: '-----BEGIN PUBLIC KEY-----\nMIIBojWELzgJ62hcXIhAfqfoNiaB1326XZByZwcnHr5BuSPAgMBAAE=\n-----END PUBLIC KEY-----\n',
-            ts: defaultCreationDate,
-            status: 'accepted'
-          }
-        ]
-      },
-      c1: {
-        id: 'c1',
-        auth_sets: [],
-        attributes: {
-          device_type: ['qemux86-128']
-        }
-      }
-    },
-    byStatus: {
-      accepted: { deviceIds: ['a1', 'b1'], total: 2 },
-      active: { deviceIds: [], total: 0 },
-      inactive: { deviceIds: [], total: 0 },
-      pending: { deviceIds: ['c1'], total: 1 },
-      preauthorized: { deviceIds: [], total: 0 },
-      rejected: { deviceIds: [], total: 0 }
-    },
-    deviceList: {
-      deviceIds: [],
-      isLoading: false,
-      page: 1,
-      perPage: 20,
-      selectedAttributes: [],
-      selectedIssues: [],
-      selection: [],
-      sort: {
-        direction: SORTING_OPTIONS.desc
-        // key: null,
-        // scope: null
-      },
-      state: DEVICE_STATES.accepted,
-      total: 0
-    },
-    filteringAttributes: {
-      identityAttributes: ['mac'],
-      inventoryAttributes: ['artifact_name'],
-      systemAttributes: [],
-      tagAttributes: []
-    },
-    filteringAttributesLimit: 10,
-    filters: [],
-    groups: {
-      byId: {
-        testGroup: {
-          deviceIds: ['a1', 'b1'],
-          filters: [],
-          total: 2
-        },
-        testGroupDynamic: {
-          id: 'filter1',
-          name: 'filter1',
-          filters: [{ scope: 'system', key: 'group', operator: '$eq', value: 'things' }]
-        }
-      },
-      selectedGroup: undefined
-    },
-    limit: 500
-  },
-  onboarding: {
-    ...initialOnboardingState,
-    progress: undefined,
-    complete: false,
-    demoArtifactPort: 85,
-    showConnectDeviceDialog: false,
-    showTipsDialog: false
-  },
-  monitor: {
-    ...initialMonitorState,
-    alerts: {
-      alertList: { ...DEVICE_LIST_DEFAULTS, total: 0 },
-      byDeviceId: {
-        a1: {
-          alerts: [
-            {
-              description: 'something',
-              id: '31346239-3839-6262-2d63-3365622d3437',
-              name: 'SSH Daemon is not running',
-              device_id: 'a1',
-              level: 'CRITICAL',
-              subject: {
-                name: 'sshd',
-                type: 'systemd',
-                status: 'not-running',
-                details: { description: 'Jul 22 10:40:56 raspberrypi sshd[32031]: pam_unix(sshd:session): session closed for user root' }
-              },
-              timestamp: '2021-07-23T12:22:36Z'
-            }
-          ],
-          latest: []
-        }
-      }
-    },
-    issueCounts: {
-      byType: Object.values(DEVICE_ISSUE_OPTIONS).reduce(
-        (accu, { isCategory, key }) => {
-          if (isCategory) {
-            return accu;
-          }
-          const current = accu[key] ?? {};
-          accu[key] = { filtered: 0, total: 0, ...current };
-          return accu;
-        },
-        {
-          [DEVICE_ISSUE_OPTIONS.authRequests.key]: { filtered: 0, total: 0 },
-          [DEVICE_ISSUE_OPTIONS.monitoring.key]: { filtered: 3, total: 0 },
-          [DEVICE_ISSUE_OPTIONS.offline.key]: { filtered: 0, total: 0 }
-        }
-      )
-    },
-    settings: {
-      global: {
-        channels: { email: { enabled: true } }
-      }
-    }
-  },
-  organization: {
-    ...initialOrganizationState,
-    card: {
-      brand: 'testCorp',
-      last4: '7890',
-      expiration: { month: 1, year: 2024 }
-    },
-    auditlog: {
-      events: [
-        {
-          actor: {
-            id: 'string',
-            type: 'user',
-            email: 'string@example.com'
-          },
-          time: '2019-01-01T12:10:22.667Z',
-          action: 'create',
-          object: {
-            id: 'string',
-            type: 'user',
-            user: {
-              email: 'user@acme.com'
-            }
-          },
-          change: 'change1'
-        },
-        {
-          actor: {
-            id: 'string',
-            type: 'user',
-            email: 'string',
-            identity_data: 'string'
-          },
-          time: '2019-01-01T12:16:22.667Z',
-          action: 'create',
-          object: {
-            id: 'string',
-            type: 'deployment',
-            deployment: {
-              name: 'production',
-              artifact_name: 'Application 0.0.1'
-            }
-          },
-          change: 'change2'
-        },
-        {
-          actor: {
-            id: 'string',
-            type: 'user',
-            email: 'string@example.com'
-          },
-          time: '2019-01-01T12:10:22.669Z',
-          action: 'open_terminal',
-          meta: {
-            session_id: ['abd313a8-ee88-48ab-9c99-fbcd80048e6e']
-          },
-          object: {
-            id: 'a1',
-            type: 'device'
-          },
-          change: 'change3'
-        }
-      ],
-      selectionState: {
-        ...initialOrganizationState.auditlog.selectionState,
-        ...DEVICE_LIST_DEFAULTS,
-        sort: {},
-        total: 3
-      }
-    },
-    intentId: 'testIntent',
-    organization: {
-      ...initialOrganizationState.organization,
-      addons: [],
-      id: '1',
-      name: 'test',
-      plan: 'os',
-      trial: false
-    }
-  },
-  releases: {
-    ...initialReleasesState,
-    byId: {
-      r1: {
-        name: 'r1',
-        artifacts: [
-          {
-            id: 'art1',
-            description: 'test description',
-            device_types_compatible: [deviceTypes.qemu],
-            modified: '2020-09-10T12:16:22.667Z',
-            updates: [{ type_info: 'testtype' }],
-            artifact_depends: {
-              device_type: [deviceTypes.qemu]
-            },
-            artifact_provides: {
-              artifact_name: 'myapp',
-              'data-partition.myapp.version': 'v2020.10',
-              list_of_fancy: [deviceTypes.qemu, 'x172']
-            },
-            clears_artifact_provides: ['data-partition.myapp.*']
-          }
-        ],
-        device_types_compatible: [deviceTypes.qemu],
-        modified: '2020-09-10T12:16:22.667Z',
-        metaData: {}
-      }
-    },
-    releasesList: {
-      ...DEVICE_LIST_DEFAULTS,
-      searchedIds: [],
-      isLoading: false,
-      releaseIds: ['r1'],
-      selection: [],
-      sort: {
-        direction: SORTING_OPTIONS.desc,
-        key: 'name'
-      },
-      searchTerm: '',
-      searchTotal: 0,
-      total: 1
-    }
-  },
-  users: {
-    ...initialUsersState,
-    byId: {
-      a1: { email: 'a@b.com', id: 'a1', created_ts: '2019-01-01T10:30:00.000Z', roles: [rolesByName.admin], verified: true },
-      [userId]: { email: 'a2@b.com', id: userId, created_ts: '2019-01-01T12:30:00.000Z', roles: [rolesByName.admin], tfa_status: twoFAStates.enabled }
-    },
-    currentUser: 'a1',
-    globalSettings: { '2fa': 'enabled', id_attribute: undefined, previousFilters: [] },
-    rolesById: {
-      ...rolesById,
-      test: {
-        ...emptyRole,
-        name: 'test',
-        description: 'test description',
-        editable: true,
-        uiPermissions: {
-          ...emptyUiPermissions,
-          groups: { testGroup: [uiPermissionsById.read.value] },
-          releases: { bar: [uiPermissionsById.read.value] }
-        }
-      }
-    },
-    settingsInitialized: true,
-    userSettings: { columnSelection: [], onboarding: { something: 'here' }, tooltips: {} }
-  }
-};
+
+const deviceTypes = { qemu: 'qemux86-64' };
 
 export const releasesList = Array.from({ length: 5000 }, (x, i) => ({
-  ...defaultState.releases.byId.r1,
+  artifacts: [
+    {
+      id: 'art1',
+      description: 'test description',
+      device_types_compatible: [deviceTypes.qemu],
+      modified: '2020-09-10T12:16:22.667Z',
+      updates: [{ type_info: 'testtype' }],
+      artifact_depends: {
+        device_type: [deviceTypes.qemu]
+      },
+      artifact_provides: {
+        artifact_name: 'myapp',
+        'data-partition.myapp.version': 'v2020.10',
+        list_of_fancy: [deviceTypes.qemu, 'x172']
+      },
+      clears_artifact_provides: ['data-partition.myapp.*']
+    }
+  ],
+  device_types_compatible: [deviceTypes.qemu],
+  metaData: {},
   name: `release-${i + 1}`,
   modified: i
 }));
@@ -949,16 +487,31 @@ const expectedParsedRoles = {
   }
 };
 
+const defaultRolesById = {
+  ...rolesById,
+  test: {
+    ...emptyRole,
+    name: 'test',
+    description: 'test description',
+    editable: true,
+    uiPermissions: {
+      ...emptyUiPermissions,
+      groups: { testGroup: [uiPermissionsById.read.value] },
+      releases: { bar: [uiPermissionsById.read.value] }
+    }
+  }
+};
+
 export const receivedRoles = rbacRoles.reduce(
   (accu, role) => {
     const { name, description, ...roleRemainder } = role;
     if (name.startsWith('RBAC')) {
       accu[name] = {
-        ...defaultState.users.rolesById[name],
+        ...defaultRolesById[name],
         ...roleRemainder,
         editable: false,
         isCustom: false,
-        description: defaultState.users.rolesById[name].description ? defaultState.users.rolesById[name].description : description
+        description: defaultRolesById[name].description ? defaultRolesById[name].description : description
       };
     } else {
       const result = expectedParsedRoles[name] ?? {};
@@ -971,7 +524,7 @@ export const receivedRoles = rbacRoles.reduce(
     }
     return accu;
   },
-  { ...defaultState.users.rolesById }
+  { ...defaultRolesById }
 );
 
 export const receivedPermissionSets = permissionSets.reduce((accu, set) => {
