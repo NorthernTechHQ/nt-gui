@@ -130,7 +130,312 @@ export const adminUserCapabilities = {
 
 export const userId = 'a30a780b-b843-5344-80e3-0fd95a4f6fc3';
 
+const defaultUser = {
+  created_ts: '2019-01-01T10:30:00.000Z',
+  email: 'a@b.com',
+  id: 'a1',
+  roles: ['RBAC_ROLE_PERMIT_ALL'],
+  tfa_status: 'enabled',
+  verified: true
+};
+
 const deviceTypes = { qemu: 'qemux86-64' };
+
+const checkInTimeRounded = '2019-01-01T00:00:00.000Z';
+const checkInTimeExact = '2019-01-01T10:25:00.000Z';
+
+export const mockApiResponses = {
+  deployments: {
+    byId: {
+      d1: {
+        id: 'd1',
+        name: 'test deployment',
+        created: '2019-01-01T12:30:00.000Z',
+        devices: {
+          a1: {
+            id: 'a1',
+            status: 'installing',
+            attributes: {},
+            image: { size: 123 }
+          }
+        },
+        statistics: {
+          status: {
+            'already-installed': 0,
+            decommissioned: 0,
+            downloading: 0,
+            failure: 0,
+            installing: 1,
+            noartifact: 0,
+            pending: 0,
+            rebooting: 0,
+            success: 0
+          },
+          total_size: 1234
+        }
+      },
+      d2: {
+        id: 'd2',
+        name: 'test deployment 2',
+        artifact_name: 'r1',
+        artifacts: ['123'],
+        created: '2019-01-01T12:25:00.000Z',
+        device_count: 1,
+        devices: {
+          b1: {
+            attributes: {},
+            id: 'b1',
+            status: 'pending'
+          }
+        },
+        filter: undefined,
+        group: undefined,
+        statistics: {
+          status: {
+            downloading: 0,
+            decommissioned: 0,
+            failure: 0,
+            installing: 0,
+            noartifact: 0,
+            pending: 1,
+            rebooting: 0,
+            success: 0,
+            'already-installed': 0
+          }
+        }
+      },
+      d3: {
+        id: 'd3',
+        name: 'Test',
+        phases: [
+          { id: '0', batch_size: 2, device_count: 2 },
+          { id: '1', start_ts: '2019-02-04T11:45:10.002Z', batch_size: 3, device_count: 3 },
+          { id: '2', start_ts: '2019-02-05T11:45:10.002Z', batch_size: 5, device_count: 5 },
+          { id: '3', start_ts: '2019-02-06T11:45:10.002Z', batch_size: 5, device_count: 5 },
+          { id: '4', start_ts: '2019-02-21T11:45:10.002Z', batch_size: 5, device_count: 0 }
+        ],
+        max_devices: 0,
+        created: '2019-01-31T12:59:30.020Z',
+        devices: {},
+        filter: undefined,
+        group: undefined,
+        stats: {
+          pending: 3,
+          decommissioned: 0,
+          failure: 23,
+          pause_before_committing: 0,
+          pause_before_rebooting: 0,
+          installing: 0,
+          rebooting: 0,
+          'already-installed': 0,
+          pause_before_installing: 0,
+          downloading: 0,
+          success: 6,
+          aborted: 0,
+          noartifact: 0
+        },
+        statistics: { total_size: '1234' },
+        status: 'inprogress',
+        active: true,
+        device_count: 100,
+        retries: '0',
+        type: 'software'
+      }
+    },
+    byStatus: {
+      pending: { deploymentIds: ['d2'] },
+      inprogress: { deploymentIds: ['d3'] }
+    }
+  },
+  devices: {
+    byId: {
+      a1: {
+        id: 'a1',
+        auth_sets: [
+          {
+            id: 'auth1',
+            identity_data: { mac: defaultMacAddress },
+            pubkey: '-----BEGIN PUBLIC KEY-----\nMIIBojWELzgJ62hcXIhAfqfoNiaB1326XZByZwcnHr5BuSPAgMBAAE=\n-----END PUBLIC KEY-----\n',
+            status: 'accepted',
+            ts: defaultCreationDate
+          }
+        ],
+        updated_ts: '2019-01-01T09:25:00.000Z'
+      },
+      b1: {
+        id: 'b1',
+        attributes: {
+          ipv4_wlan0: '192.168.10.141/24',
+          device_type: [deviceTypes.qemu]
+        },
+        system: {
+          check_in_time: checkInTimeRounded
+        },
+        check_in_time: checkInTimeExact,
+        check_in_time_exact: checkInTimeExact,
+        check_in_time_rounded: checkInTimeRounded,
+        identity_data: { mac: defaultMacAddress },
+        status: 'accepted',
+        decommissioning: false,
+        created_ts: defaultCreationDate,
+        updated_ts: '2019-01-01T09:25:00.000Z',
+        auth_sets: [
+          {
+            id: 'auth1',
+            identity_data: { mac: defaultMacAddress },
+            pubkey: '-----BEGIN PUBLIC KEY-----\nMIIBojWELzgJ62hcXIhAfqfoNiaB1326XZByZwcnHr5BuSPAgMBAAE=\n-----END PUBLIC KEY-----\n',
+            ts: defaultCreationDate,
+            status: 'accepted'
+          }
+        ]
+      }
+    },
+    groups: {
+      byId: {
+        testGroup: {
+          deviceIds: ['a1', 'b1'],
+          filters: [],
+          total: 2
+        },
+        testGroupDynamic: {
+          id: 'filter1',
+          name: 'filter1',
+          filters: [{ scope: 'system', key: 'group', operator: '$eq', value: 'things' }]
+        }
+      }
+    },
+    limit: 500,
+    byStatus: {
+      accepted: { deviceIds: ['a1', 'b1'], total: 2 },
+      active: { deviceIds: [], total: 0 },
+      inactive: { deviceIds: [], total: 0 },
+      pending: { deviceIds: ['c1'], total: 1 },
+      preauthorized: { deviceIds: [], total: 0 },
+      rejected: { deviceIds: [], total: 0 }
+    }
+  },
+  organization: {
+    organization: {
+      id: '1',
+      addons: [],
+      name: 'test',
+      plan: 'os',
+      trial: false
+    },
+    intentId: 'testIntent',
+    auditlog: {
+      events: [
+        {
+          actor: {
+            id: 'string',
+            type: 'user',
+            email: 'string@example.com'
+          },
+          time: '2019-01-01T12:10:22.667Z',
+          action: 'create',
+          object: {
+            id: 'string',
+            type: 'user',
+            user: {
+              email: 'user@acme.com'
+            }
+          },
+          change: 'change1'
+        },
+        {
+          actor: {
+            id: 'string',
+            type: 'user',
+            email: 'string',
+            identity_data: 'string'
+          },
+          time: '2019-01-01T12:16:22.667Z',
+          action: 'create',
+          object: {
+            id: 'string',
+            type: 'deployment',
+            deployment: {
+              name: 'production',
+              artifact_name: 'Application 0.0.1'
+            }
+          },
+          change: 'change2'
+        },
+        {
+          actor: {
+            id: 'string',
+            type: 'user',
+            email: 'string@example.com'
+          },
+          time: '2019-01-01T12:10:22.669Z',
+          action: 'open_terminal',
+          meta: {
+            session_id: ['abd313a8-ee88-48ab-9c99-fbcd80048e6e']
+          },
+          object: {
+            id: 'a1',
+            type: 'device'
+          },
+          change: 'change3'
+        }
+      ]
+    }
+  },
+  releases: {
+    byId: {
+      r1: {
+        name: 'r1',
+        artifacts: [
+          {
+            id: 'art1',
+            description: 'test description',
+            device_types_compatible: [deviceTypes.qemu],
+            modified: '2020-09-10T12:16:22.667Z',
+            updates: [{ type_info: 'testtype' }],
+            artifact_depends: {
+              device_type: [deviceTypes.qemu]
+            },
+            artifact_provides: {
+              artifact_name: 'myapp',
+              'data-partition.myapp.version': 'v2020.10',
+              list_of_fancy: [deviceTypes.qemu, 'x172']
+            },
+            clears_artifact_provides: ['data-partition.myapp.*']
+          }
+        ],
+        device_types_compatible: [deviceTypes.qemu],
+        modified: '2020-09-10T12:16:22.667Z',
+        metaData: {}
+      }
+    }
+  },
+  users: {
+    byId: {
+      a1: defaultUser,
+      [userId]: { ...defaultUser, id: userId, email: 'a2@b.com', created_ts: '2019-01-01T12:30:00.000Z' }
+    },
+    rolesById: {
+      admin: {
+        name: 'admin',
+        description: 'Administrator role',
+        permissions: []
+      },
+      test: { name: 'test', description: 'test description', permissions: [] }
+    },
+    globalSettings: {
+      '2fa': 'enabled',
+      id_attribute: undefined,
+      previousFilters: []
+    },
+    userSettings: {
+      '2fa': 'disabled',
+      columnSelection: [],
+      onboarding: { something: 'here' },
+      tooltips: {},
+      previousFilters: []
+    }
+  }
+};
 
 export const releasesList = Array.from({ length: 5000 }, (x, i) => ({
   artifacts: [
