@@ -14,8 +14,6 @@
 /*eslint import/namespace: ['error', { allowComputed: true }]*/
 import { Link } from 'react-router-dom';
 
-import storeActions from '@northern.tech/store/actions';
-import GeneralApi from '@northern.tech/store/api/general-api';
 import type {
   AttributeInventory,
   Device as BackendDevice,
@@ -29,12 +27,22 @@ import type {
   PreAuthSet,
   SortCriteria,
   StatusDeviceauth
-} from '@northern.tech/store/api/types/MenderTypes';
-import type { SearchState } from '@northern.tech/store/appSlice';
-import type { DeviceIssueOptionKey } from '@northern.tech/store/constants';
+} from '@northern.tech/types/MenderTypes';
+import { attributeDuplicateFilter, dateRangeToUnix, deepCompare, getSnackbarMessage } from '@northern.tech/utils/helpers';
+import { isCancel } from 'axios';
+import pluralize from 'pluralize';
+import { v4 as uuid } from 'uuid';
+
+import type { Device, DeviceFilter, DeviceGroup, DeviceGroups, DeviceListState, DeviceSelectedAttribute, DeviceStatus } from '.';
+import { actions, sliceName } from '.';
+import storeActions from '../actions';
+import GeneralApi from '../api/general-api';
+import type { SearchState } from '../appSlice';
 import {
+  ALL_DEVICE_STATES,
   DEVICE_FILTERING_OPTIONS,
   DEVICE_LIST_DEFAULTS,
+  DEVICE_STATES,
   EXTERNAL_PROVIDER,
   MAX_PAGE_SIZE,
   SORTING_OPTIONS,
@@ -42,9 +50,17 @@ import {
   UNGROUPED_GROUP,
   auditLogsApiUrl,
   defaultReports,
+  deviceAuthV2,
+  deviceConfig,
+  deviceConnect,
   headerNames,
+  inventoryApiUrl,
+  inventoryApiUrlV2,
+  iotManagerBaseURL,
+  reportingApiUrl,
   rootfsImageVersion
-} from '@northern.tech/store/constants';
+} from '../constants';
+import type { DeviceIssueOptionKey } from '../constants';
 import {
   getAttrsEndpoint,
   getCurrentUser,
@@ -56,10 +72,10 @@ import {
   getTenantCapabilities,
   getUserCapabilities,
   getUserSettings
-} from '@northern.tech/store/selectors';
-import type { AppDispatch, RootState } from '@northern.tech/store/store';
-import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
-import { getDeviceMonitorConfig, getLatestDeviceAlerts, getSingleDeployment, saveGlobalSettings } from '@northern.tech/store/thunks';
+} from '../selectors';
+import type { AppDispatch, RootState } from '../store';
+import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
+import { getDeviceMonitorConfig, getLatestDeviceAlerts, getSingleDeployment, saveGlobalSettings } from '../thunks';
 import {
   convertDeviceListStateToFilters,
   ensureVersionString,
@@ -69,27 +85,8 @@ import {
   mapFiltersToTerms,
   mapTermsToFilters,
   progress
-} from '@northern.tech/store/utils';
-import { attributeDuplicateFilter, dateRangeToUnix, deepCompare, getSnackbarMessage } from '@northern.tech/utils/helpers';
-import { isCancel } from 'axios';
-import pluralize from 'pluralize';
-import { v4 as uuid } from 'uuid';
-
-import type { Device, DeviceFilter, DeviceGroup, DeviceGroups, DeviceListState, DeviceSelectedAttribute, DeviceStatus } from '.';
-import { actions, sliceName } from '.';
-import {
-  ALL_DEVICE_STATES,
-  DEVICE_STATES,
-  REPORT_CHART_SIZE_LIMIT,
-  deviceAuthV2,
-  deviceConfig,
-  deviceConnect,
-  emptyFilter,
-  inventoryApiUrl,
-  inventoryApiUrlV2,
-  iotManagerBaseURL,
-  reportingApiUrl
-} from './constants';
+} from '../utils';
+import { REPORT_CHART_SIZE_LIMIT, emptyFilter } from './constants';
 import {
   getDeviceById as getDeviceByIdSelector,
   getDeviceFilters,

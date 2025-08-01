@@ -3,6 +3,9 @@
   "exclude": ["dist", "build", "node_modules"],
   "compilerOptions": {
     "rootDir": ".",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
   }
 }

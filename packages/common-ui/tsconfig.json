@@ -3,6 +3,9 @@
   "exclude": ["dist", "build", "node_modules", "**/*.test.js"],
   "compilerOptions": {
     "baseUrl": ".",
-    "rootDir": "."
+    "rootDir": ".",
+    "paths": {
+      "@/testUtils": ["./testUtils"]
+    }
   }
 }

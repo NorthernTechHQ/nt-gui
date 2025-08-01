@@ -12,7 +12,8 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 // @ts-nocheck
-import { defaultState } from '../../../tests/mockData';
+import { defaultState } from '@/testUtils';
+
 import { DARK_MODE, LIGHT_MODE } from './constants';
 import { generateDeploymentGroupDetails, groupDeploymentDevicesStats, groupDeploymentStats, isDarkMode, mapDeviceAttributes } from './utils';
 

@@ -11,16 +11,17 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { alertChannels, headerNames, monitorApiUrlv1 } from '@northern.tech/store/constants';
+//@ts-nocheck
+import { alertChannels, headerNames, monitorApiUrlv1 } from '@northern.tech/utils/constants';
 import { HttpResponse, http } from 'msw';
 
-import { defaultState } from '../mockData';
+import { mockApiResponses } from '../mockData';
 
 export const monitorHandlers = [
   http.get(`${monitorApiUrlv1}/devices/:id/alerts`, () => new HttpResponse(JSON.stringify([]), { headers: { [headerNames.total]: 1 } })),
   http.get(`${monitorApiUrlv1}/devices/:id/alerts/latest`, () => HttpResponse.json([])),
   http.get(`${monitorApiUrlv1}/devices/:id/config`, ({ params: { id } }) => {
-    if (id === defaultState.devices.byId.a1.id) {
+    if (id === mockApiResponses.devices.byId.a1.id) {
       return HttpResponse.json([{ something: 'here' }]);
     }
     return HttpResponse.json([]);

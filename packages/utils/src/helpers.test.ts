@@ -11,9 +11,8 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { defaultState, token } from '../../../tests/mockData';
 import {
   customSort,
   dateRangeToUnix,
@@ -35,7 +34,17 @@ import {
   versionCompare
 } from './helpers';
 
-const deploymentCreationTime = defaultState.deployments.byId.d1.created;
+const deploymentCreationTime = '2019-01-01T12:30:00.000Z';
+
+const mockDeployments = {
+  d1: { id: 'd1', created: deploymentCreationTime },
+  d2: { id: 'd2', created: '2019-01-01T13:30:00.000Z' },
+  d3: { id: 'd3', created: '2019-01-01T14:30:00.000Z' }
+};
+
+const mockDevices = {
+  a1: { id: 'a1', attributes: { ipv4_wlan0: '192.168.10.141/24' } }
+};
 
 describe('getFormattedSize function', () => {
   it('converts correctly', async () => {
@@ -279,39 +288,33 @@ describe('unionizeStrings function', () => {
 
 describe('customSort function', () => {
   it('works as expected', async () => {
-    const creationSortedUp = Object.values(defaultState.deployments.byId).sort(customSort(false, 'created'));
-    expect(creationSortedUp[1].id).toEqual(defaultState.deployments.byId.d1.id);
-    expect(creationSortedUp[0].id).toEqual(defaultState.deployments.byId.d2.id);
-    const creationSortedDown = Object.values(defaultState.deployments.byId).sort(customSort(true, 'created'));
-    expect(creationSortedDown[0].id).toEqual(defaultState.deployments.byId.d3.id);
-    expect(creationSortedDown[1].id).toEqual(defaultState.deployments.byId.d1.id);
-    const idSortedUp = Object.values(defaultState.deployments.byId).sort(customSort(false, 'id'));
-    expect(idSortedUp[0].id).toEqual(defaultState.deployments.byId.d1.id);
-    expect(idSortedUp[1].id).toEqual(defaultState.deployments.byId.d2.id);
-    const idSortedDown = Object.values(defaultState.deployments.byId).sort(customSort(true, 'id'));
-    expect(idSortedDown[0].id).toEqual(defaultState.deployments.byId.d3.id);
-    expect(idSortedDown[1].id).toEqual(defaultState.deployments.byId.d2.id);
+    const creationSortedUp = Object.values(mockDeployments).sort(customSort(false, 'created'));
+    expect(creationSortedUp[0].id).toEqual(mockDeployments.d1.id);
+    expect(creationSortedUp[1].id).toEqual(mockDeployments.d2.id);
+    const creationSortedDown = Object.values(mockDeployments).sort(customSort(true, 'created'));
+    expect(creationSortedDown[0].id).toEqual(mockDeployments.d3.id);
+    expect(creationSortedDown[2].id).toEqual(mockDeployments.d1.id);
+    const idSortedUp = Object.values(mockDeployments).sort(customSort(false, 'id'));
+    expect(idSortedUp[0].id).toEqual(mockDeployments.d1.id);
+    expect(idSortedUp[1].id).toEqual(mockDeployments.d2.id);
+    const idSortedDown = Object.values(mockDeployments).sort(customSort(true, 'id'));
+    expect(idSortedDown[0].id).toEqual(mockDeployments.d3.id);
+    expect(idSortedDown[1].id).toEqual(mockDeployments.d2.id);
   });
 });
 describe('deepCompare function', () => {
   it('works as expected', async () => {
     expect(deepCompare(false, 12)).toBeFalsy();
-    expect(deepCompare(defaultState, {})).toBeFalsy();
+    expect(deepCompare(mockDevices, {})).toBeFalsy();
     expect(
-      deepCompare(defaultState, {
-        ...defaultState,
-        devices: {
-          ...defaultState.devices,
-          byId: {
-            ...defaultState.devices.byId,
-            a1: { ...defaultState.devices.byId.a1, id: 'test' }
-          }
-        }
+      deepCompare(mockDevices, {
+        ...mockDevices,
+        a1: { ...mockDevices.a1, id: 'test' }
       })
     ).toBeFalsy();
     expect(deepCompare({}, {})).toBeTruthy();
     expect(deepCompare({}, {}, {})).toBeTruthy();
-    expect(deepCompare(defaultState.devices.byId, { ...defaultState.devices.byId }, { ...defaultState.devices.byId })).toBeTruthy();
+    expect(deepCompare(mockDevices, { ...mockDevices }, { ...mockDevices })).toBeTruthy();
     expect(deepCompare(['test', { test: 'test' }, 1], ['test', { test: 'test' }, 1])).toBeTruthy();
     expect(deepCompare(undefined, null)).toBeFalsy();
     expect(deepCompare(1, 2)).toBeFalsy();
@@ -319,7 +322,6 @@ describe('deepCompare function', () => {
     const date = new Date();
     expect(deepCompare(date, date)).toBeTruthy();
     expect(deepCompare(date, new Date().setDate(date.getDate() - 1))).toBeFalsy();
-    expect(deepCompare(defaultState, {})).toBeFalsy();
   });
 });
 describe('detectOsIdentifier function', () => {
@@ -344,8 +346,8 @@ describe('fullyDecodeURI function', () => {
 });
 describe('getDemoDeviceAddress function', () => {
   it('works as expected', async () => {
-    expect(getDemoDeviceAddress(Object.values(defaultState.devices.byId), 'virtual')).toEqual('localhost');
-    expect(getDemoDeviceAddress(Object.values(defaultState.devices.byId), 'physical')).toEqual('192.168.10.141');
+    expect(getDemoDeviceAddress(Object.values(mockDevices), 'virtual')).toEqual('localhost');
+    expect(getDemoDeviceAddress(Object.values(mockDevices), 'physical')).toEqual('192.168.10.141');
   });
 });
 
@@ -407,14 +409,15 @@ describe('standardizePhases function', () => {
 
 describe('preformatWithRequestID function', () => {
   it('works as expected', async () => {
-    expect(preformatWithRequestID({ data: { request_id: 'someUuidLikeLongerText' } }, token)).toEqual(
-      'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjZTNkMGY4Yy1hZWRlLTQwMzAtYjM5MS03ZDUwMjBlYjg3M2UiLCJzdWIiOiJhMzBhNzgwYi1iODQzLTUzNDQtODBlMy0wZmQ5NWE0ZjZmYzMiLCJleHAiOjE2MDY4MTUzNjksImlhdCI6MTYwNjIxMDU2OSwibWVuZGVyLnRlbmF... [Request ID: someUuid]'
+    const expectedLongText = Array.from({ length: 100 }, () => 'long text').join(' ');
+    expect(preformatWithRequestID({ data: { request_id: 'someUuidLikeLongerText' } }, expectedLongText)).toEqual(
+      'long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text ... [Request ID: someUuid]'
     );
-    expect(preformatWithRequestID({ data: {} }, token)).toEqual(
-      'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjZTNkMGY4Yy1hZWRlLTQwMzAtYjM5MS03ZDUwMjBlYjg3M2UiLCJzdWIiOiJhMzBhNzgwYi1iODQzLTUzNDQtODBlMy0wZmQ5NWE0ZjZmYzMiLCJleHAiOjE2MDY4MTUzNjksImlhdCI6MTYwNjIxMDU2OSwibWVuZGVyLnRlbmF...'
+    expect(preformatWithRequestID({ data: {} }, expectedLongText)).toEqual(
+      'long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text ...'
     );
-    expect(preformatWithRequestID(undefined, token)).toEqual(
-      'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjZTNkMGY4Yy1hZWRlLTQwMzAtYjM5MS03ZDUwMjBlYjg3M2UiLCJzdWIiOiJhMzBhNzgwYi1iODQzLTUzNDQtODBlMy0wZmQ5NWE0ZjZmYzMiLCJleHAiOjE2MDY4MTUzNjksImlhdCI6MTYwNjIxMDU2OSwibWVuZGVyLnRlbmF...'
+    expect(preformatWithRequestID(undefined, expectedLongText)).toEqual(
+      'long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text ...'
     );
     const expectedText = 'short text';
     expect(preformatWithRequestID({ data: { request_id: 'someUuidLikeLongerText' } }, expectedText)).toEqual('short text [Request ID: someUuid]');

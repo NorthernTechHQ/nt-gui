@@ -5,7 +5,7 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@northern.tech/store/*": ["src/*"]
+      "@/testUtils": ["./testUtils"]
     }
   }
 }

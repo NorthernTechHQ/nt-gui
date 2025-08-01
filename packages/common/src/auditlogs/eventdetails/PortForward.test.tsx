@@ -11,16 +11,16 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { defaultState, render } from '@/testUtils';
+import { undefineds } from '@northern.tech/testing/mockData';
 import { act, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { defaultState, undefineds } from '../../../../../tests/mockData';
-import { render } from '../../../../../tests/setupTests';
 import PortForward from './PortForward';
 
 describe('PortForward Component', () => {
   it('renders correctly', async () => {
-    const DeviceActions = await import('@northern.tech/store/devicesSlice/thunks');
+    const DeviceActions = await import('@northern.tech/store/thunks');
     const sessionSpy = vi.spyOn(DeviceActions, 'getSessionDetails');
     const ui = <PortForward item={defaultState.organization.auditlog.events[2]} />;
     const { baseElement, rerender } = render(ui, {

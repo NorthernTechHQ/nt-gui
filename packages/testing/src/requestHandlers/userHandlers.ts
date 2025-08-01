@@ -11,10 +11,11 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { APPLICATION_JWT_CONTENT_TYPE, useradmApiUrl, useradmApiUrlv2 } from '@northern.tech/store/constants';
+//@ts-nocheck
+import { APPLICATION_JWT_CONTENT_TYPE, useradmApiUrl, useradmApiUrlv2 } from '@northern.tech/utils/constants';
 import { HttpResponse, http } from 'msw';
 
-import { accessTokens, defaultPassword, defaultState, userId as defaultUserId, permissionSets, rbacRoles, testSsoId, token } from '../mockData';
+import { accessTokens, defaultPassword, userId as defaultUserId, mockApiResponses, permissionSets, rbacRoles, testSsoId, token } from '../mockData';
 
 export const userHandlers = [
   http.post(`${useradmApiUrl}/auth/login`, ({ request }) => {
@@ -61,25 +62,25 @@ export const userHandlers = [
     }
     return new HttpResponse(null, { status: 200 });
   }),
-  http.get(`${useradmApiUrl}/users`, () => HttpResponse.json(Object.values(defaultState.users.byId))),
+  http.get(`${useradmApiUrl}/users`, () => HttpResponse.json(Object.values(mockApiResponses.users.byId))),
   http.get(`${useradmApiUrl}/users/me`, ({ request }) => {
     const authHeader = request.headers.get('authorization');
     if (authHeader?.includes('limited')) {
       return new HttpResponse(JSON.stringify({ error: 'forbidden by role-based access control' }), { status: 403 });
     }
-    return HttpResponse.json(defaultState.users.byId[defaultUserId]);
+    return HttpResponse.json(mockApiResponses.users.byId[defaultUserId]);
   }),
   http.get(`${useradmApiUrl}/users/:userId`, ({ params: { userId } }) => {
-    if (userId === 'me' || defaultState.users.byId[userId]) {
+    if (userId === 'me' || mockApiResponses.users.byId[userId]) {
       const user = userId === 'me' ? defaultUserId : userId;
-      return HttpResponse.json(defaultState.users.byId[user]);
+      return HttpResponse.json(mockApiResponses.users.byId[user]);
     }
     return new HttpResponse(null, { status: 563 });
   }),
   http.post(`${useradmApiUrl}/users`, async ({ request }) => {
     const { email, password } = await request.json();
     if (email === 'test@test.com' || [email, password].every(value => value)) {
-      return HttpResponse.json(defaultState.users.byId.a1);
+      return HttpResponse.json(mockApiResponses.users.byId.a1);
     }
     return new HttpResponse(null, { status: 564 });
   }),
@@ -89,14 +90,17 @@ export const userHandlers = [
       return new HttpResponse(null, { status: 401 });
     }
     if (
-      (defaultState.users.byId[userId] && [email, password].some(value => Object.values(defaultState.users.byId[userId]).includes(value))) ||
+      (mockApiResponses.users.byId[userId] && [email, password].some(value => Object.values(mockApiResponses.users.byId[userId]).includes(value))) ||
       email === 'test@test.com'
     ) {
       return new HttpResponse(null, { status: 200 });
     }
     return new HttpResponse(null, { status: 565 });
   }),
-  http.delete(`${useradmApiUrl}/users/:userId`, ({ params: { userId } }) => new HttpResponse(null, { status: defaultState.users.byId[userId] ? 200 : 566 })),
+  http.delete(
+    `${useradmApiUrl}/users/:userId`,
+    ({ params: { userId } }) => new HttpResponse(null, { status: mockApiResponses.users.byId[userId] ? 200 : 566 })
+  ),
   http.get(`${useradmApiUrl}/roles`, () => HttpResponse.json(rbacRoles)),
   http.post(`${useradmApiUrl}/roles`, async ({ request }) => {
     const { name, permissions } = await request.json();
@@ -110,19 +114,19 @@ export const userHandlers = [
   }),
   http.put(`${useradmApiUrl}/roles/:roleId`, async ({ params: { roleId }, request }) => {
     const { description, name, permissions } = await request.json();
-    if (defaultState.users.rolesById[roleId] && [description, name, permissions].some(value => value)) {
+    if (mockApiResponses.users.rolesById[roleId] && [description, name, permissions].some(value => value)) {
       return new HttpResponse(null, { status: 200 });
     }
     return new HttpResponse(null, { status: 568 });
   }),
   http.delete(
     `${useradmApiUrl}/roles/:roleId`,
-    ({ params: { roleId } }) => new HttpResponse(null, { status: defaultState.users.rolesById[roleId] ? 200 : 569 })
+    ({ params: { roleId } }) => new HttpResponse(null, { status: mockApiResponses.users.rolesById[roleId] ? 200 : 569 })
   ),
   http.get(`${useradmApiUrlv2}/roles`, () => HttpResponse.json(rbacRoles)),
   http.get(`${useradmApiUrlv2}/roles/:roleId`, async ({ params: { roleId } }) => {
-    if (defaultState.users.rolesById[roleId]) {
-      return HttpResponse.json(defaultState.users.rolesById[roleId]);
+    if (mockApiResponses.users.rolesById[roleId]) {
+      return HttpResponse.json(mockApiResponses.users.rolesById[roleId]);
     }
     return new HttpResponse(null, { status: 571 });
   }),
@@ -138,20 +142,20 @@ export const userHandlers = [
   }),
   http.put(`${useradmApiUrlv2}/roles/:roleId`, async ({ params: { roleId }, request }) => {
     const { description, name, permission_sets_with_scope } = await request.json();
-    if (defaultState.users.rolesById[roleId] && [description, name, permission_sets_with_scope].some(value => value)) {
+    if (mockApiResponses.users.rolesById[roleId] && [description, name, permission_sets_with_scope].some(value => value)) {
       return new HttpResponse(null, { status: 200 });
     }
     return new HttpResponse(null, { status: 573 });
   }),
   http.delete(`${useradmApiUrlv2}/roles/:roleId`, ({ params: { roleId } }) => {
-    if (defaultState.users.rolesById[roleId]) {
+    if (mockApiResponses.users.rolesById[roleId]) {
       return new HttpResponse(null, { status: 200 });
     }
     return new HttpResponse(null, { status: 574 });
   }),
-  http.get(`${useradmApiUrl}/settings`, () => HttpResponse.json(defaultState.users.globalSettings)),
+  http.get(`${useradmApiUrl}/settings`, () => HttpResponse.json(mockApiResponses.users.globalSettings)),
   http.post(`${useradmApiUrl}/settings`, () => new HttpResponse(null, { status: 200 })),
-  http.get(`${useradmApiUrl}/settings/me`, () => HttpResponse.json(defaultState.users.userSettings)),
+  http.get(`${useradmApiUrl}/settings/me`, () => HttpResponse.json(mockApiResponses.users.userSettings)),
   http.post(`${useradmApiUrl}/settings/me`, () => new HttpResponse(null, { status: 200 })),
   http.get(`${useradmApiUrl}/settings/tokens`, () => HttpResponse.json(accessTokens)),
   http.post(`${useradmApiUrl}/settings/tokens`, () => HttpResponse.json('aNewToken')),
@@ -161,13 +165,13 @@ export const userHandlers = [
   ),
   http.get(`${useradmApiUrl}/2faqr`, () => HttpResponse.json({ qr: btoa('test') })),
   http.post(`${useradmApiUrl}/users/:userId/2fa/enable`, ({ params: { userId } }) => {
-    if (defaultState.users.byId[userId] || userId === 'me') {
+    if (mockApiResponses.users.byId[userId] || userId === 'me') {
       return new HttpResponse(null, { status: 200 });
     }
     return new HttpResponse(null, { status: 570 });
   }),
   http.post(`${useradmApiUrl}/users/:userId/2fa/disable`, ({ params: { userId } }) => {
-    if (defaultState.users.byId[userId] || userId === 'me') {
+    if (mockApiResponses.users.byId[userId] || userId === 'me') {
       return new HttpResponse(null, { status: 200 });
     }
     return new HttpResponse(null, { status: 571 });

@@ -11,14 +11,14 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { CommonList } from '@northern.tech/common-ui/List';
+import { defaultState, render } from '@/testUtils';
+import { tenants, undefineds } from '@northern.tech/testing/mockData';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import { defaultState, tenants, undefineds } from '../../../tests/mockData';
-import { render } from '../../../tests/setupTests';
 import DetailsIndicator from './DetailsIndicator';
+import { CommonList } from './List';
 
 const ListItemComponentMock = ({ onClick }) => (
   <div onClick={onClick}>

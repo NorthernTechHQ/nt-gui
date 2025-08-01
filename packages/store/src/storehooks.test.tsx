@@ -14,25 +14,13 @@
 // @ts-nocheck
 import { Provider } from 'react-redux';
 
-import {
-  getDeploymentsByStatus,
-  getDeviceAttributes,
-  getDeviceLimit,
-  getDevicesByStatus,
-  getDevicesWithAuth,
-  getDynamicGroups,
-  getGroups,
-  getIntegrations,
-  getReleases,
-  getUserOrganization,
-  tenantDataDivergedMessage
-} from '@northern.tech/store/thunks';
+import { defaultState } from '@/testUtils';
+import { receivedPermissionSets, receivedRoles, userId } from '@northern.tech/testing/mockData';
+import { inventoryDevice } from '@northern.tech/testing/requestHandlers/deviceHandlers';
 import { renderHook, waitFor } from '@testing-library/react';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 
-import { inventoryDevice } from '../../../tests/__mocks__/deviceHandlers';
-import { defaultState, receivedPermissionSets, receivedRoles, userId } from '../../../tests/mockData';
 import { actions as appActions } from './appSlice';
 import { getLatestReleaseInfo, setOfflineThreshold } from './appSlice/thunks';
 import { latestSaasReleaseTag } from './appSlice/thunks.test';
@@ -46,6 +34,19 @@ import { defaultOnboardingState, expectedOnboardingActions } from './onboardingS
 import { actions as organizationActions } from './organizationSlice';
 import { actions as releasesActions } from './releasesSlice';
 import { useAppInit } from './storehooks';
+import {
+  getDeploymentsByStatus,
+  getDeviceAttributes,
+  getDeviceLimit,
+  getDevicesByStatus,
+  getDevicesWithAuth,
+  getDynamicGroups,
+  getGroups,
+  getIntegrations,
+  getReleases,
+  getUserOrganization,
+  tenantDataDivergedMessage
+} from './thunks';
 import { actions as userActions } from './usersSlice';
 import { getGlobalSettings, getPermissionSets, getRoles, getUserSettings, saveUserSettings } from './usersSlice/thunks';
 
@@ -64,11 +65,11 @@ const attributeReducer = (accu, item) => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { attributes, ...expectedDevice } = defaultState.devices.byId.a1;
-export const receivedInventoryDevice = {
+const receivedInventoryDevice = {
   ...defaultState.devices.byId.a1,
   attributes: inventoryDevice.attributes.reduce(attributeReducer, {}),
   identity_data: { ...defaultState.devices.byId.a1.identity_data, status: DEVICE_STATES.accepted },
-  isNew: false,
+  isNew: true,
   isOffline: true,
   monitor: {},
   tags: {},
@@ -254,20 +255,15 @@ const appInitActions = [
   {
     type: deviceActions.receivedDevices.type,
     payload: {
-      [expectedDevice.id]: { ...defaultState.devices.byId.a1, group: undefined, isNew: false, isOffline: true, monitor: {}, tags: {} },
-      [defaultState.devices.byId.b1.id]: { ...defaultState.devices.byId.b1, group: undefined, isNew: false, isOffline: true, monitor: {}, tags: {} }
+      [expectedDevice.id]: { ...defaultState.devices.byId.a1, group: undefined, isNew: true, isOffline: true, monitor: {}, tags: {} },
+      [defaultState.devices.byId.b1.id]: { ...defaultState.devices.byId.b1, group: undefined, isNew: true, isOffline: true, monitor: {}, tags: {} }
     }
   },
   {
     type: deviceActions.receivedDevices.type,
     payload: {
-      [expectedDevice.id]: { ...defaultState.devices.byId.a1, group: undefined, isNew: false, isOffline: true, monitor: {}, tags: {} }
+      [expectedDevice.id]: { ...defaultState.devices.byId.a1, group: undefined, isNew: true, isOffline: true, monitor: {}, tags: {} }
     }
-  },
-  { type: releasesActions.receiveReleases.type, payload: defaultState.releases.byId },
-  {
-    type: releasesActions.setReleaseListState.type,
-    payload: { ...defaultState.releases.releasesList, releaseIds: [defaultState.releases.byId.r1.name], page: 42 }
   },
   { type: getDevicesWithAuth.fulfilled.type },
   { type: getDevicesWithAuth.fulfilled.type },
@@ -279,20 +275,25 @@ const appInitActions = [
     }
   },
   { type: getDevicesWithAuth.pending.type },
+  { type: releasesActions.receiveReleases.type, payload: defaultState.releases.byId },
+  {
+    type: releasesActions.setReleaseListState.type,
+    payload: { ...defaultState.releases.releasesList, releaseIds: [defaultState.releases.byId.r1.name], page: 42 }
+  },
+  { type: getDevicesByStatus.fulfilled.type },
+  { type: getDevicesByStatus.fulfilled.type },
   { type: getReleases.fulfilled.type },
-  { type: getDevicesByStatus.fulfilled.type },
-  { type: getDevicesByStatus.fulfilled.type },
   { type: userActions.receivedPermissionSets.type, payload: receivedPermissionSets },
   { type: getPermissionSets.fulfilled.type },
   { type: userActions.receivedRoles.type, payload: receivedRoles },
-  { type: getRoles.fulfilled.type },
   {
     type: deviceActions.receivedDevices.type,
     payload: {
-      [defaultState.devices.byId.a1.id]: { ...defaultState.devices.byId.a1, group: undefined, isNew: false, isOffline: true, monitor: {}, tags: {} },
-      [defaultState.devices.byId.b1.id]: { ...defaultState.devices.byId.b1, group: undefined, isNew: false, isOffline: true, monitor: {}, tags: {} }
+      [defaultState.devices.byId.a1.id]: { ...defaultState.devices.byId.a1, group: undefined, isNew: true, isOffline: true, monitor: {}, tags: {} },
+      [defaultState.devices.byId.b1.id]: { ...defaultState.devices.byId.b1, group: undefined, isNew: true, isOffline: true, monitor: {}, tags: {} }
     }
   },
+  { type: getRoles.fulfilled.type },
   { type: getDevicesWithAuth.fulfilled.type },
   { type: getDevicesByStatus.fulfilled.type },
   {

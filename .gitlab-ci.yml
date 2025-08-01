@@ -16,7 +16,7 @@ variables:
       - 'true'
       - 'false'
   NODE_IMAGE:
-    value: 'node:22'
+    value: 'node:24'
     description: 'Node version to use for building and testing'
   GITHUB_STATUS_API_URL:
     value: 'https://api.github.com/repos/NorthernTechHQ/$CI_PROJECT_NAME/statuses/$CI_COMMIT_SHA'

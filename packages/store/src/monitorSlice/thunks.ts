@@ -11,18 +11,17 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import storeActions from '@northern.tech/store/actions';
-import Api from '@northern.tech/store/api/general-api';
-import type { Alert } from '@northern.tech/store/api/types/MenderTypes';
-import type { AlertChannelKey, DeviceIssueOptionKey } from '@northern.tech/store/constants';
-import { DEVICE_LIST_DEFAULTS, TIMEOUTS, alertChannels, headerNames } from '@northern.tech/store/constants';
-import { getDeviceFilters, getSearchEndpoint } from '@northern.tech/store/selectors';
-import type { AppDispatch } from '@northern.tech/store/store';
-import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
-import { convertDeviceListStateToFilters } from '@northern.tech/store/utils';
+import type { Alert } from '@northern.tech/types/MenderTypes';
 
 import { actions, sliceName } from '.';
-import { monitorApiUrlv1 } from './constants';
+import storeActions from '../actions';
+import Api from '../api/general-api';
+import type { AlertChannelKey, DeviceIssueOptionKey } from '../constants';
+import { DEVICE_LIST_DEFAULTS, TIMEOUTS, alertChannels, headerNames, monitorApiUrlv1 } from '../constants';
+import { getDeviceFilters, getSearchEndpoint } from '../selectors';
+import type { AppDispatch } from '../store';
+import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
+import { convertDeviceListStateToFilters } from '../utils';
 
 const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
 
@@ -115,7 +114,7 @@ interface ChangeNotificationSettingPayload {
 }
 export const changeNotificationSetting = createAppAsyncThunk(
   `${sliceName}/changeNotificationSetting`,
-  ({ enabled, channel = alertChannels.email }: ChangeNotificationSettingPayload, { dispatch }) =>
+  ({ enabled, channel = alertChannels.email as AlertChannelKey }: ChangeNotificationSettingPayload, { dispatch }) =>
     Api.put(`${monitorApiUrlv1}/settings/global/channel/alerts/${channel}/status`, { enabled })
       .catch(err => commonErrorHandler(err, `${enabled ? 'En' : 'Dis'}abling  ${channel} alerts failed:`, dispatch))
       .then(() =>

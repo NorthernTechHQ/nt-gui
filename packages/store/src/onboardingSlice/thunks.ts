@@ -11,18 +11,18 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { OnboardingStep } from '@northern.tech/store/constants';
-import { DEVICE_STATES, onboardingSteps as onboardingStepNames, orderedOnboardingSteps as onboardingSteps } from '@northern.tech/store/constants';
-import { getOnboardingState as getCurrentOnboardingState, getUserCapabilities } from '@northern.tech/store/selectors';
-import type { AppDispatch } from '@northern.tech/store/store';
-import { createAppAsyncThunk } from '@northern.tech/store/store';
-import { saveUserSettings } from '@northern.tech/store/thunks';
 import { getDemoDeviceAddress } from '@northern.tech/utils/helpers';
 import Tracking from '@northern.tech/utils/tracking';
 import Cookies from 'universal-cookie';
 
 import type { OnboardingApproach } from '.';
 import { actions, sliceName } from '.';
+import type { OnboardingStep } from '../constants';
+import { DEVICE_STATES, onboardingSteps as onboardingStepNames, orderedOnboardingSteps as onboardingSteps } from '../constants';
+import { getOnboardingState as getCurrentOnboardingState, getUserCapabilities } from '../selectors';
+import type { AppDispatch } from '../store';
+import { createAppAsyncThunk } from '../store';
+import { saveUserSettings } from '../thunks';
 
 const cookies = new Cookies();
 
