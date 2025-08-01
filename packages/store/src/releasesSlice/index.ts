@@ -11,9 +11,9 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { Artifact as BackendArtifact, Release as BackendRelease } from '@northern.tech/store/api/types/MenderTypes';
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS } from '@northern.tech/store/constants';
-import type { SortOptions } from '@northern.tech/store/organizationSlice/types';
+import type { SortOptions } from '@northern.tech/store/constants';
+import type { Artifact as BackendArtifact, Release as BackendRelease } from '@northern.tech/types/MenderTypes';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 

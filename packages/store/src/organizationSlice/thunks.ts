@@ -13,18 +13,22 @@
 //    limitations under the License.
 import storeActions from '@northern.tech/store/actions';
 import Api from '@northern.tech/store/api/general-api';
-import type { AvailablePlans, ContentType } from '@northern.tech/store/constants';
+import type { AvailablePlans, ContentType, SortOptions } from '@northern.tech/store/constants';
 import {
   DEVICE_LIST_DEFAULTS,
   SORTING_OPTIONS,
   TENANT_LIST_DEFAULT,
   TIMEOUTS,
+  auditLogsApiUrl,
   deviceAuthV2,
   headerNames,
   iotManagerBaseURL,
-  locations
+  locations,
+  ssoIdpApiUrlv1,
+  tenantadmApiUrlv1,
+  tenantadmApiUrlv2
 } from '@northern.tech/store/constants';
-import type { AuditLogSelectionState, SSOConfig, SortOptions, Tenant, TenantList } from '@northern.tech/store/organizationSlice/types';
+import type { AuditLogSelectionState, SSOConfig, Tenant, TenantList } from '@northern.tech/store/organizationSlice/types';
 import { getCurrentSession, getTenantCapabilities, getTenantsList } from '@northern.tech/store/selectors';
 import type { AppDispatch } from '@northern.tech/store/store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
@@ -47,7 +51,7 @@ import hashString from 'md5';
 import Cookies from 'universal-cookie';
 
 import { actions, sliceName } from '.';
-import { SSO_TYPES, auditLogsApiUrl, ssoIdpApiUrlv1, tenantadmApiUrlv1, tenantadmApiUrlv2 } from './constants';
+import { SSO_TYPES } from './constants';
 import { getAuditlogState, getOrganization } from './selectors';
 
 const cookies = new Cookies();

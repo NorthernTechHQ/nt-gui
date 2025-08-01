@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { SORTING_OPTIONS, deploymentsApiUrl, deploymentsApiUrlV2, headerNames } from '@northern.tech/store/constants';
+import { SORTING_OPTIONS, deploymentsApiUrl, deploymentsApiUrlV2, headerNames } from '@northern.tech/utils/constants';
 import { customSort } from '@northern.tech/utils/helpers';
 import { HttpResponse, http } from 'msw';
 

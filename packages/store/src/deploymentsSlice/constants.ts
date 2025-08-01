@@ -11,12 +11,9 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, apiUrl } from '@northern.tech/store/constants';
+import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS } from '@northern.tech/store/constants';
 
 const alreadyInstalled = 'already-installed';
-
-export const deploymentsApiUrl = `${apiUrl.v1}/deployments`;
-export const deploymentsApiUrlV2 = `${apiUrl.v2}/deployments`;
 
 export const deploymentSubstates = {
   aborted: 'aborted',
@@ -172,4 +169,3 @@ export const pauseMap = {
     followUp: installationSubstatesMap.reboot.pauseConfigurationIndicator
   }
 };
-export const limitDefault = { min: 5, max: 100, default: 10 };

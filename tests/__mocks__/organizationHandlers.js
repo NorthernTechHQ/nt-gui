@@ -20,7 +20,7 @@ import {
   ssoIdpApiUrlv1,
   tenantadmApiUrlv1,
   tenantadmApiUrlv2
-} from '@northern.tech/store/constants';
+} from '@northern.tech/utils/constants';
 import { HttpResponse, http } from 'msw';
 
 import { defaultState, webhookEvents } from '../mockData';

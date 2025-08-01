@@ -16,6 +16,11 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./constants": {
+      "types": "./dist/constants/index.d.ts",
+      "import": "./dist/constants/index.js",
+      "require": "./dist/constants/index.cjs"
+    },
     "./*": {
       "types": "./dist/*.d.ts",
       "import": "./dist/*.js",
@@ -40,6 +45,7 @@
     "tsup": "8.5.0"
   },
   "dependencies": {
+    "@northern.tech/types": "*",
     "dayjs": "^1.x",
     "msgpack5": "^6.x",
     "pluralize": "^8.x",

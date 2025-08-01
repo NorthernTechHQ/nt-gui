@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { APPLICATION_JWT_CONTENT_TYPE, useradmApiUrl, useradmApiUrlv2 } from '@northern.tech/store/constants';
+import { APPLICATION_JWT_CONTENT_TYPE, useradmApiUrl, useradmApiUrlv2 } from '@northern.tech/utils/constants';
 import { HttpResponse, http } from 'msw';
 
 import { accessTokens, defaultPassword, defaultState, userId as defaultUserId, permissionSets, rbacRoles, testSsoId, token } from '../mockData';

@@ -11,10 +11,9 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { TIMEOUTS, maxSessionAge } from '@northern.tech/store/constants';
 import type { UserSession } from '@northern.tech/store/usersSlice';
 import Cookies from 'universal-cookie';
-
-import { TIMEOUTS } from './constants';
 
 const cookies = new Cookies();
 
@@ -61,8 +60,6 @@ export const cleanUp = () => {
   window.localStorage.removeItem('JWT');
   window.localStorage.removeItem('oauth');
 };
-
-export const maxSessionAge = 900;
 
 export const updateMaxAge = ({ expiresAt, token }) => {
   const oAuthExpiration = Number(window.localStorage.getItem('oauth'));

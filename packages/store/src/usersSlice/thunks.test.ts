@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { getSessionInfo } from '@northern.tech/store/auth';
-import { emptyRole } from '@northern.tech/store/commonConstants';
+import { emptyRole, getSamlStartUrl, uiPermissionsById } from '@northern.tech/store/constants';
 import { setOfflineThreshold } from '@northern.tech/store/thunks';
 import { act } from '@testing-library/react';
 import configureMockStore from 'redux-mock-store';
@@ -24,8 +24,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { actions } from '.';
 import { accessTokens, defaultPassword, defaultState, receivedPermissionSets, receivedRoles, testSsoId, userId } from '../../../../tests/mockData';
 import { actions as appActions } from '../appSlice';
-import { getSamlStartUrl } from '../organizationSlice/constants';
-import { USER_LOGOUT, uiPermissionsById } from './constants';
+import { USER_LOGOUT } from './constants';
 import {
   addUserToCurrentTenant,
   createRole,

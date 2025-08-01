@@ -11,6 +11,9 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { ALL_DEVICE_STATES, DeviceIssueOptionKey, FilterOperator, SortOptions } from '@northern.tech/store/constants';
+import { DEVICE_LIST_DEFAULTS, DEVICE_STATES, SORTING_OPTIONS } from '@northern.tech/store/constants';
+import type { DeviceDeployment } from '@northern.tech/store/deploymentsSlice';
 import type {
   DeviceDeviceauth as BackendDeviceAuth,
   DeviceStateDeviceconnect as BackendDeviceState,
@@ -18,16 +21,13 @@ import type {
   DeviceState,
   MonitorConfiguration,
   SortCriteria
-} from '@northern.tech/store/api/types/MenderTypes';
-import type { DeviceIssueOptionKey, FilterOperator, SortOptions } from '@northern.tech/store/commonConstants';
-import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS } from '@northern.tech/store/commonConstants';
-import type { DeviceDeployment } from '@northern.tech/store/deploymentsSlice';
+} from '@northern.tech/types/MenderTypes';
+// @ts-nocheck
 import { deepCompare, duplicateFilter } from '@northern.tech/utils/helpers';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
-import type { ALL_DEVICE_STATES, DeviceAuthState } from './constants';
-import { DEVICE_STATES } from './constants';
+import type { DeviceAuthState } from './constants';
 
 export const sliceName = 'devices';
 export type DeviceSelectedAttribute = { attribute: string; scope: string };

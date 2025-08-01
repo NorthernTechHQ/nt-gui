@@ -14,25 +14,44 @@
 import storeActions from '@northern.tech/store/actions';
 import GeneralApi from '@northern.tech/store/api/general-api';
 import UsersApi from '@northern.tech/store/api/users-api';
-import { cleanUp, getSessionInfo, maxSessionAge, setSessionInfo } from '@northern.tech/store/auth';
+import { cleanUp, getSessionInfo, setSessionInfo } from '@northern.tech/store/auth';
 import type {
+  AnyPermission,
+  AuditLogPermission,
+  DeploymentPermission,
+  GroupsPermission,
   PermissionObject,
+  PermissionSet,
   PermissionSetId,
   ReadState,
+  ReleasesPermission,
+  Role,
   ScopedPermissionsByAreaKey,
   UiPermissionsByAreaKey,
-  UiPermissionsByIdKey
+  UiPermissionsByIdKey,
+  UiPermissionsDefinition,
+  UserManagementPermission
 } from '@northern.tech/store/constants';
 import {
   ALL_RELEASES,
   APPLICATION_JSON_CONTENT_TYPE,
   APPLICATION_JWT_CONTENT_TYPE,
+  PermissionTypes,
   SSO_TYPES,
   TIMEOUTS,
   apiRoot,
+  defaultPermissionSets,
+  rolesById as defaultRolesById,
   emptyRole,
   emptyUiPermissions,
-  tenantadmApiUrlv2
+  maxSessionAge,
+  scopedPermissionAreas,
+  tenantadmApiUrlv2,
+  twoFAStates,
+  uiPermissionsByArea,
+  uiPermissionsById,
+  useradmApiUrl,
+  useradmApiUrlv2
 } from '@northern.tech/store/constants';
 import { getOnboardingState, getOrganization, getTooltipsState, getUserSettings as getUserSettingsSelector } from '@northern.tech/store/selectors';
 import type { AppDispatch } from '@northern.tech/store/store';
@@ -47,33 +66,7 @@ import Cookies from 'universal-cookie';
 
 import type { CustomColumn, GlobalSettings, User, UserSettings } from '.';
 import { actions, sliceName } from '.';
-import type {
-  AnyPermission,
-  AuditLogPermission,
-  DeploymentPermission,
-  GroupsPermission,
-  PermissionSet,
-  ReleasesPermission,
-  Role,
-  UiPermissions,
-  UserManagementPermission
-} from './constants';
-import {
-  OWN_USER_ID,
-  PermissionTypes,
-  READ_STATES,
-  USER_LOGOUT,
-  defaultPermissionSets,
-  rolesById as defaultRolesById,
-  itemUiPermissionsReducer,
-  scopedPermissionAreas,
-  settingsKeys,
-  twoFAStates,
-  uiPermissionsByArea,
-  uiPermissionsById,
-  useradmApiUrl,
-  useradmApiUrlv2
-} from './constants';
+import { OWN_USER_ID, READ_STATES, USER_LOGOUT, itemUiPermissionsReducer, settingsKeys } from './constants';
 import { getCurrentUser, getRolesById, getUsersById } from './selectors';
 
 const cookies = new Cookies();
@@ -462,7 +455,7 @@ const mapPermissionSet = (
   return Object.entries(scopedPermissions).reduce((accu, [key, permissions]) => ({ ...accu, [key]: deriveImpliedAreaPermissions(scope, permissions) }), {});
 };
 
-const isEmptyPermissionSet = (permissionSet: Partial<UiPermissions>) =>
+const isEmptyPermissionSet = (permissionSet: Partial<UiPermissionsDefinition>) =>
   !Object.values(permissionSet).reduce((accu, permissions) => {
     if (Array.isArray(permissions)) {
       return accu || !!permissions.length;
@@ -503,7 +496,7 @@ const parseRolePermissions = ({ permission_sets_with_scope = [], permissions = [
 export const normalizeRbacRoles = (roles: Role[], rolesById: Record<string, Role>, permissionSets: ThunkPermissionSet) =>
   roles.reduce(
     (accu, role) => {
-      let normalizedPermissions: UiPermissions;
+      let normalizedPermissions: UiPermissionsDefinition;
       let isCustom = false;
       if (rolesById[role.name]) {
         normalizedPermissions = {
@@ -539,7 +532,7 @@ export const getPermissionSets = createAppAsyncThunk(`${sliceName}/getPermission
         (accu, permissionSet) => {
           const permissionSetState = accu[permissionSet.name] ?? {};
           let permissionSetObject = { ...permissionSetState, ...permissionSet };
-          permissionSetObject.result = Object.values(uiPermissionsById).reduce(
+          permissionSetObject.result = Object.values<PermissionObject>(uiPermissionsById).reduce(
             (accu, item) =>
               Object.entries(item.permissionSets).reduce((collector, [area, permissionSet]) => {
                 if (scopedPermissionAreas[area]) {
@@ -559,10 +552,10 @@ export const getPermissionSets = createAppAsyncThunk(`${sliceName}/getPermission
             return accu;
           }, []);
           permissionSetObject = scopes.reduce<PermissionSet>((accu, scope) => {
-            accu.result[scope] = mapPermissionSet(permissionSetObject.name, [scopedPermissionAreas[scope].excessiveAccessSelector], scope) as Record<
-              string,
-              any[]
-            >;
+            accu.result = {
+              ...accu.result,
+              [scope]: mapPermissionSet(permissionSetObject.name, [scopedPermissionAreas[scope].excessiveAccessSelector], scope) as Record<string, any[]>
+            };
             return accu;
           }, permissionSetObject);
           accu[permissionSet.name] = permissionSetObject;

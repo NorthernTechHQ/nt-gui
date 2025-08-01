@@ -24,6 +24,11 @@
       ],
       "cache": false
     },
+    "@northern.tech/utils#build": {
+      "dependsOn": [
+        "@northern.tech/types#build"
+      ]
+    },
     "lint": {
       "dependsOn": [
         "@northern.tech/common-ui#build"

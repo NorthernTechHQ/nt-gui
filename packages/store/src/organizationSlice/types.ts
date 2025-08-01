@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { AvailableAddon, SORTING_OPTIONS } from '@northern.tech/store/constants';
+import type { AvailableAddon, SortOptions } from '@northern.tech/store/constants';
 import type {
   AuditLog as AuditLogEvent,
   Tenant as BackendTenant,
@@ -31,11 +31,6 @@ export interface Card {
     year?: number;
   };
   last4?: string;
-}
-
-export interface SortOptions {
-  direction: keyof typeof SORTING_OPTIONS;
-  key?: string;
 }
 
 export interface AuditLogSelectionState {

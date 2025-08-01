@@ -14,6 +14,7 @@
 /*eslint import/namespace: ['error', { allowComputed: true }]*/
 import { Link } from 'react-router-dom';
 
+import { EXTERNAL_PROVIDER, TIMEOUTS, UNGROUPED_GROUP } from '@northern.tech/store/constants';
 import { getSingleDeployment } from '@northern.tech/store/thunks';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
@@ -26,7 +27,6 @@ import { act, mockAbortController } from '../../../../tests/setupTests';
 import { Integration } from '../api/types/Integration';
 import type { StatusDeviceauth } from '../api/types/MenderTypes';
 import { actions as appActions } from '../appSlice';
-import { EXTERNAL_PROVIDER, TIMEOUTS, UNGROUPED_GROUP } from '../constants';
 import { actions as deploymentActions } from '../deploymentsSlice';
 import { DEVICE_STATES } from './constants';
 import {

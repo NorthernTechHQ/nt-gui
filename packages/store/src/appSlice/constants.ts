@@ -23,18 +23,6 @@ const startingDeviceCount = {
   professional: 'for first 250 devices'
 } as const;
 
-export const apiRoot = '/api/management';
-export const apiUrl = {
-  v1: `${apiRoot}/v1`,
-  v2: `${apiRoot}/v2`
-} as const;
-
-export const headerNames = {
-  link: 'link',
-  location: 'location',
-  total: 'x-total-count'
-} as const;
-
 export const chartTypes = {
   bar: { key: 'bar', Icon: BarChartIcon },
   pie: { key: 'pie', Icon: PieChartIcon }
@@ -198,6 +186,3 @@ export const canAccess = yes;
 
 export const DARK_MODE = 'dark';
 export const LIGHT_MODE = 'light';
-
-export const APPLICATION_JSON_CONTENT_TYPE = 'application/json';
-export const APPLICATION_JWT_CONTENT_TYPE = 'application/jwt';

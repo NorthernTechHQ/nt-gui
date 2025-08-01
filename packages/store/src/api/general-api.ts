@@ -12,10 +12,10 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 // @ts-nocheck
+import { TIMEOUTS } from '@northern.tech/store/constants';
 import axios, { isCancel } from 'axios';
 
 import { cleanUp, getToken } from '../auth';
-import { TIMEOUTS } from '../constants';
 
 const unauthorizedRedirect = error => {
   if (!isCancel(error) && error.response?.status === 401 && getToken()) {
