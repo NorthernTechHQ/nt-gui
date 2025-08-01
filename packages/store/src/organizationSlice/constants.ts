@@ -11,8 +11,9 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { EXTERNAL_PROVIDER, useradmApiUrl } from '@northern.tech/store/constants';
 import { Integration } from '@northern.tech/types/MenderTypes';
+
+import { EXTERNAL_PROVIDER, useradmApiUrl } from '../constants';
 
 export const XML_METADATA_FORMAT = 'xml';
 export const JSON_METADATA_FORMAT = 'json';

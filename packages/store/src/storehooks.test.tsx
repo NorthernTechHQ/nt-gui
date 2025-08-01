@@ -15,19 +15,6 @@
 import { Provider } from 'react-redux';
 
 import { defaultState } from '@/testUtils';
-import {
-  getDeploymentsByStatus,
-  getDeviceAttributes,
-  getDeviceLimit,
-  getDevicesByStatus,
-  getDevicesWithAuth,
-  getDynamicGroups,
-  getGroups,
-  getIntegrations,
-  getReleases,
-  getUserOrganization,
-  tenantDataDivergedMessage
-} from '@northern.tech/store/thunks';
 import { receivedPermissionSets, receivedRoles, userId } from '@northern.tech/testing/mockData';
 import { inventoryDevice } from '@northern.tech/testing/requestHandlers/deviceHandlers';
 import { renderHook, waitFor } from '@testing-library/react';
@@ -47,6 +34,19 @@ import { defaultOnboardingState, expectedOnboardingActions } from './onboardingS
 import { actions as organizationActions } from './organizationSlice';
 import { actions as releasesActions } from './releasesSlice';
 import { useAppInit } from './storehooks';
+import {
+  getDeploymentsByStatus,
+  getDeviceAttributes,
+  getDeviceLimit,
+  getDevicesByStatus,
+  getDevicesWithAuth,
+  getDynamicGroups,
+  getGroups,
+  getIntegrations,
+  getReleases,
+  getUserOrganization,
+  tenantDataDivergedMessage
+} from './thunks';
 import { actions as userActions } from './usersSlice';
 import { getGlobalSettings, getPermissionSets, getRoles, getUserSettings, saveUserSettings } from './usersSlice/thunks';
 

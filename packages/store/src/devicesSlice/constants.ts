@@ -11,8 +11,8 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { DEVICE_STATES } from '@northern.tech/store/constants';
-import { DEVICE_FILTERING_OPTIONS } from '@northern.tech/store/constants';
+import type { DEVICE_STATES } from '../constants';
+import { DEVICE_FILTERING_OPTIONS } from '../constants';
 
 export const emptyFilter = { key: null, value: '', operator: DEVICE_FILTERING_OPTIONS.$eq.key, scope: 'inventory' };
 

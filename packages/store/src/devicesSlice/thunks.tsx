@@ -14,57 +14,6 @@
 /*eslint import/namespace: ['error', { allowComputed: true }]*/
 import { Link } from 'react-router-dom';
 
-import storeActions from '@northern.tech/store/actions';
-import GeneralApi from '@northern.tech/store/api/general-api';
-import type { SearchState } from '@northern.tech/store/appSlice';
-import type { DeviceIssueOptionKey } from '@northern.tech/store/constants';
-import {
-  ALL_DEVICE_STATES,
-  DEVICE_FILTERING_OPTIONS,
-  DEVICE_LIST_DEFAULTS,
-  DEVICE_STATES,
-  EXTERNAL_PROVIDER,
-  MAX_PAGE_SIZE,
-  SORTING_OPTIONS,
-  TIMEOUTS,
-  UNGROUPED_GROUP,
-  auditLogsApiUrl,
-  defaultReports,
-  deviceAuthV2,
-  deviceConfig,
-  deviceConnect,
-  headerNames,
-  inventoryApiUrl,
-  inventoryApiUrlV2,
-  iotManagerBaseURL,
-  reportingApiUrl,
-  rootfsImageVersion
-} from '@northern.tech/store/constants';
-import {
-  getAttrsEndpoint,
-  getCurrentUser,
-  getDeviceTwinIntegrations,
-  getGlobalSettings,
-  getIdAttribute,
-  getSearchEndpoint,
-  getSelectedDeviceAttribute,
-  getTenantCapabilities,
-  getUserCapabilities,
-  getUserSettings
-} from '@northern.tech/store/selectors';
-import type { AppDispatch, RootState } from '@northern.tech/store/store';
-import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
-import { getDeviceMonitorConfig, getLatestDeviceAlerts, getSingleDeployment, saveGlobalSettings } from '@northern.tech/store/thunks';
-import {
-  convertDeviceListStateToFilters,
-  ensureVersionString,
-  extractErrorMessage,
-  filtersFilter,
-  mapDeviceAttributes,
-  mapFiltersToTerms,
-  mapTermsToFilters,
-  progress
-} from '@northern.tech/store/utils';
 import type {
   AttributeInventory,
   Device as BackendDevice,
@@ -86,6 +35,57 @@ import { v4 as uuid } from 'uuid';
 
 import type { Device, DeviceFilter, DeviceGroup, DeviceGroups, DeviceListState, DeviceSelectedAttribute, DeviceStatus } from '.';
 import { actions, sliceName } from '.';
+import storeActions from '../actions';
+import GeneralApi from '../api/general-api';
+import type { SearchState } from '../appSlice';
+import {
+  ALL_DEVICE_STATES,
+  DEVICE_FILTERING_OPTIONS,
+  DEVICE_LIST_DEFAULTS,
+  DEVICE_STATES,
+  EXTERNAL_PROVIDER,
+  MAX_PAGE_SIZE,
+  SORTING_OPTIONS,
+  TIMEOUTS,
+  UNGROUPED_GROUP,
+  auditLogsApiUrl,
+  defaultReports,
+  deviceAuthV2,
+  deviceConfig,
+  deviceConnect,
+  headerNames,
+  inventoryApiUrl,
+  inventoryApiUrlV2,
+  iotManagerBaseURL,
+  reportingApiUrl,
+  rootfsImageVersion
+} from '../constants';
+import type { DeviceIssueOptionKey } from '../constants';
+import {
+  getAttrsEndpoint,
+  getCurrentUser,
+  getDeviceTwinIntegrations,
+  getGlobalSettings,
+  getIdAttribute,
+  getSearchEndpoint,
+  getSelectedDeviceAttribute,
+  getTenantCapabilities,
+  getUserCapabilities,
+  getUserSettings
+} from '../selectors';
+import type { AppDispatch, RootState } from '../store';
+import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
+import { getDeviceMonitorConfig, getLatestDeviceAlerts, getSingleDeployment, saveGlobalSettings } from '../thunks';
+import {
+  convertDeviceListStateToFilters,
+  ensureVersionString,
+  extractErrorMessage,
+  filtersFilter,
+  mapDeviceAttributes,
+  mapFiltersToTerms,
+  mapTermsToFilters,
+  progress
+} from '../utils';
 import { REPORT_CHART_SIZE_LIMIT, emptyFilter } from './constants';
 import {
   getDeviceById as getDeviceByIdSelector,

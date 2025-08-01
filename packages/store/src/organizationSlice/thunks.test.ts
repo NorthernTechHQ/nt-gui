@@ -12,8 +12,6 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { defaultState } from '@/testUtils';
-import { EXTERNAL_PROVIDER, TIMEOUTS, locations } from '@northern.tech/store/constants';
-import { setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
 import { tenants, webhookEvents } from '@northern.tech/testing/mockData';
 import { Credentials, Integration } from '@northern.tech/types/MenderTypes';
 import configureMockStore from 'redux-mock-store';
@@ -23,7 +21,9 @@ import { describe, expect, it, vi } from 'vitest';
 import { actions } from '.';
 import { actions as appActions } from '../appSlice';
 import { getSessionInfo } from '../auth';
+import { EXTERNAL_PROVIDER, TIMEOUTS, locations } from '../constants';
 import { actions as deviceActions } from '../devicesSlice';
+import { setFirstLoginAfterSignup } from '../thunks';
 import { SSO_TYPES } from './constants';
 import {
   addTenant,
@@ -247,7 +247,7 @@ describe('organization actions', () => {
   });
 
   it('should handle account upgrade completion', async () => {
-    const { getDeviceLimit } = await import('@northern.tech/store/devicesSlice/thunks');
+    const { getDeviceLimit } = await import('../thunks');
     const store = mockStore({ ...defaultState, users: { ...defaultState.users, currentSession: getSessionInfo() } });
     expect(store.getActions()).toHaveLength(0);
     const expectedActions = [

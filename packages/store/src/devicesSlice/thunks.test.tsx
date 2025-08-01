@@ -15,8 +15,6 @@
 import { Link } from 'react-router-dom';
 
 import { act, defaultState } from '@/testUtils';
-import { DEVICE_STATES, EXTERNAL_PROVIDER, TIMEOUTS, UNGROUPED_GROUP } from '@northern.tech/store/constants';
-import { getSingleDeployment } from '@northern.tech/store/thunks';
 import { inventoryDevice } from '@northern.tech/testing/requestHandlers/deviceHandlers';
 import { mockAbortController } from '@northern.tech/testing/setupTests';
 import type { StatusDeviceauth } from '@northern.tech/types/MenderTypes';
@@ -27,7 +25,9 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { actions } from '.';
 import { actions as appActions } from '../appSlice';
+import { DEVICE_STATES, EXTERNAL_PROVIDER, TIMEOUTS, UNGROUPED_GROUP } from '../constants';
 import { actions as deploymentActions } from '../deploymentsSlice';
+import { getSingleDeployment } from '../thunks';
 import {
   addDevicesToGroup,
   addDynamicGroup,

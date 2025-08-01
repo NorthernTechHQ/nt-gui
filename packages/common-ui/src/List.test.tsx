@@ -12,13 +12,13 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { defaultState, render } from '@/testUtils';
-import { CommonList } from '@northern.tech/common-ui/List';
 import { tenants, undefineds } from '@northern.tech/testing/mockData';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import DetailsIndicator from './DetailsIndicator';
+import { CommonList } from './List';
 
 const ListItemComponentMock = ({ onClick }) => (
   <div onClick={onClick}>

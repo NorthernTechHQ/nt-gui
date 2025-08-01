@@ -12,13 +12,13 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { defaultState } from '@/testUtils';
-import { DEVICE_ISSUE_OPTIONS } from '@northern.tech/store/constants';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { describe, expect, it } from 'vitest';
 
 import { actions } from '.';
 import { actions as appActions } from '../appSlice';
+import { DEVICE_ISSUE_OPTIONS } from '../constants';
 import { actions as deviceActions } from '../devicesSlice';
 import { changeNotificationSetting, getDeviceAlerts, getDeviceMonitorConfig, getIssueCountsByType, getLatestDeviceAlerts } from './thunks';
 

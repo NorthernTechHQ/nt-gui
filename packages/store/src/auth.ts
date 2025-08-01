@@ -11,13 +11,14 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { TIMEOUTS, maxSessionAge } from '@northern.tech/store/constants';
-import type { UserSession } from '@northern.tech/store/usersSlice';
 import Cookies from 'universal-cookie';
+
+import { TIMEOUTS, maxSessionAge } from './constants';
+import type { UserSession } from './usersSlice';
 
 const cookies = new Cookies();
 
-const emptySession = Object.freeze({ token: '', exiresAt: undefined }) as Readonly<UserSession>;
+const emptySession = Object.freeze({ token: '', expiresAt: undefined }) as Readonly<UserSession>;
 
 let tokenCache = '';
 

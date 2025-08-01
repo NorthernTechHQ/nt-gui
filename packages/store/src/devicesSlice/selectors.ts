@@ -11,12 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { DEVICE_STATES, UNGROUPED_GROUP } from '@northern.tech/store/constants';
-import type { RootState } from '@northern.tech/store/store';
 import { duplicateFilter } from '@northern.tech/utils/helpers';
 import { createSelector } from '@reduxjs/toolkit';
 
 import type { DeviceFilter, DeviceGroup } from '.';
+import { DEVICE_STATES, UNGROUPED_GROUP } from '../constants';
+import type { RootState } from '../store';
 
 export const getAcceptedDevices = (state: RootState) => state.devices.byStatus.accepted;
 export const getDevicesByStatus = (state: RootState) => state.devices.byStatus;

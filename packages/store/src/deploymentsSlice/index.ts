@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { DEVICE_LIST_DEFAULTS, limitDefault } from '@northern.tech/store/constants';
 import type {
   DeploymentDeployments as BackendDeployment,
   DeviceDeployments as BackendDeviceDeployment,
@@ -23,6 +22,7 @@ import type {
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
+import { DEVICE_LIST_DEFAULTS, limitDefault } from '../constants';
 import { DEFAULT_PENDING_INPROGRESS_COUNT, DEPLOYMENT_ROUTES, DEPLOYMENT_STATES, deploymentPrototype } from './constants';
 
 export const sliceName = 'deployments';

@@ -11,9 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { EXTERNAL_PROVIDER } from '@northern.tech/store/constants';
-import type { RootState } from '@northern.tech/store/store';
 import { createSelector } from '@reduxjs/toolkit';
+
+import { EXTERNAL_PROVIDER } from '../constants';
+import type { RootState } from '../store';
 
 export const getOrganization = (state: RootState) => state.organization.organization;
 export const getExternalIntegrations = (state: RootState) => state.organization.externalDeviceIntegrations;

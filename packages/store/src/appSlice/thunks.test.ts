@@ -12,14 +12,14 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { defaultState } from '@/testUtils';
-import { commonErrorHandler } from '@northern.tech/store/store';
-import { searchDevices } from '@northern.tech/store/thunks';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { describe, expect, it } from 'vitest';
 
 import { actions } from '.';
 import { actions as deviceActions } from '../devicesSlice';
+import { commonErrorHandler } from '../store';
+import { searchDevices } from '../thunks';
 import { getLatestReleaseInfo, setFirstLoginAfterSignup, setOfflineThreshold, setSearchState } from './thunks';
 
 export const latestSaasReleaseTag = 'saas-v2023.05.02';

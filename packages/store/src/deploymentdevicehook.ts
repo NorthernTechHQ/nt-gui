@@ -14,11 +14,11 @@
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
-import { getDevicesById } from '@northern.tech/store/selectors';
-import { getDeviceById } from '@northern.tech/store/thunks';
 import { isUUID } from 'validator';
 
+import { getDevicesById } from './selectors';
 import { useAppDispatch } from './store';
+import { getDeviceById } from './thunks';
 
 export const useDeploymentDevice = deploymentName => {
   const isLoading = useRef(false);
