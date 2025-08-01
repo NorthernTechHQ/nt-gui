@@ -11,17 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { DEVICE_FILTERING_OPTIONS, apiUrl } from '@northern.tech/store/constants';
+import type { DEVICE_STATES } from '@northern.tech/store/constants';
+import { DEVICE_FILTERING_OPTIONS } from '@northern.tech/store/constants';
 
 export const emptyFilter = { key: null, value: '', operator: DEVICE_FILTERING_OPTIONS.$eq.key, scope: 'inventory' };
-
-export const deviceAuthV2 = `${apiUrl.v2}/devauth`;
-export const deviceConnect = `${apiUrl.v1}/deviceconnect`;
-export const inventoryApiUrl = `${apiUrl.v1}/inventory`;
-export const inventoryApiUrlV2 = `${apiUrl.v2}/inventory`;
-export const deviceConfig = `${apiUrl.v1}/deviceconfig/configurations/device`;
-export const reportingApiUrl = `${apiUrl.v1}/reporting`;
-export const iotManagerBaseURL = `${apiUrl.v1}/iot-manager`;
 
 // see https://github.com/mendersoftware/go-lib-micro/tree/master/ws
 //     for the description of proto_header and the consts
@@ -41,13 +34,6 @@ export const DEVICE_MESSAGE_TYPES = {
 
 // we can't include the dismiss state with the rest since this would include dismissed devices in several queries
 export const DEVICE_DISMISSAL_STATE = 'dismiss';
-export const ALL_DEVICE_STATES = 'any';
-export const DEVICE_STATES = {
-  accepted: 'accepted',
-  pending: 'pending',
-  preauth: 'preauthorized',
-  rejected: 'rejected'
-} as const;
 
 export type DeviceAuthState = (typeof DEVICE_STATES)[keyof typeof DEVICE_STATES];
 

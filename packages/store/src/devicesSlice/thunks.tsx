@@ -19,8 +19,10 @@ import GeneralApi from '@northern.tech/store/api/general-api';
 import type { SearchState } from '@northern.tech/store/appSlice';
 import type { DeviceIssueOptionKey } from '@northern.tech/store/constants';
 import {
+  ALL_DEVICE_STATES,
   DEVICE_FILTERING_OPTIONS,
   DEVICE_LIST_DEFAULTS,
+  DEVICE_STATES,
   EXTERNAL_PROVIDER,
   MAX_PAGE_SIZE,
   SORTING_OPTIONS,
@@ -28,7 +30,14 @@ import {
   UNGROUPED_GROUP,
   auditLogsApiUrl,
   defaultReports,
+  deviceAuthV2,
+  deviceConfig,
+  deviceConnect,
   headerNames,
+  inventoryApiUrl,
+  inventoryApiUrlV2,
+  iotManagerBaseURL,
+  reportingApiUrl,
   rootfsImageVersion
 } from '@northern.tech/store/constants';
 import {
@@ -77,19 +86,7 @@ import { v4 as uuid } from 'uuid';
 
 import type { Device, DeviceFilter, DeviceGroup, DeviceGroups, DeviceListState, DeviceSelectedAttribute, DeviceStatus } from '.';
 import { actions, sliceName } from '.';
-import {
-  ALL_DEVICE_STATES,
-  DEVICE_STATES,
-  REPORT_CHART_SIZE_LIMIT,
-  deviceAuthV2,
-  deviceConfig,
-  deviceConnect,
-  emptyFilter,
-  inventoryApiUrl,
-  inventoryApiUrlV2,
-  iotManagerBaseURL,
-  reportingApiUrl
-} from './constants';
+import { REPORT_CHART_SIZE_LIMIT, emptyFilter } from './constants';
 import {
   getDeviceById as getDeviceByIdSelector,
   getDeviceFilters,

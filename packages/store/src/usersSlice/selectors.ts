@@ -16,7 +16,8 @@ import { DEVICE_ONLINE_CUTOFF, defaultIdAttribute } from '@northern.tech/store/c
 import { isDarkMode } from '@northern.tech/store/utils';
 import { createSelector } from '@reduxjs/toolkit';
 
-import { READ_STATES, twoFAStates } from './constants';
+import { twoFAStates } from '../constants';
+import { READ_STATES } from './constants';
 
 export const getRolesById = state => state.users.rolesById;
 export const getTooltipsById = state => state.users.tooltips.byId;

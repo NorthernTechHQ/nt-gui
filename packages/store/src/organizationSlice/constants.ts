@@ -11,14 +11,8 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { EXTERNAL_PROVIDER, apiUrl, useradmApiUrl } from '@northern.tech/store/constants';
-
+import { EXTERNAL_PROVIDER, useradmApiUrl } from '@northern.tech/store/constants';
 import { Integration } from '@northern.tech/types/MenderTypes';
-
-export const auditLogsApiUrl = `${apiUrl.v1}/auditlogs`;
-export const tenantadmApiUrlv1 = `${apiUrl.v1}/tenantadm`;
-export const tenantadmApiUrlv2 = `${apiUrl.v2}/tenantadm`;
-export const ssoIdpApiUrlv1 = `${apiUrl.v1}/useradm/sso/idp/metadata`;
 
 export const XML_METADATA_FORMAT = 'xml';
 export const JSON_METADATA_FORMAT = 'json';

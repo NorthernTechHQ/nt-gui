@@ -11,14 +11,13 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { DeviceIssueOptionKey } from '@northern.tech/store/commonConstants';
-import { DEVICE_ISSUE_OPTIONS, DEVICE_LIST_DEFAULTS } from '@northern.tech/store/commonConstants';
+import type { DeviceIssueOptionKey } from '@northern.tech/store/constants';
+import { DEVICE_ISSUE_OPTIONS, DEVICE_LIST_DEFAULTS, alertChannels } from '@northern.tech/store/constants';
 import type { Alert } from '@northern.tech/types/MenderTypes';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 import type { AlertChannelKey } from './constants';
-import { alertChannels } from './constants';
 
 export const sliceName = 'monitor';
 type IssueCounts = Record<DeviceIssueOptionKey, { filtered: number; total: number }>;
@@ -47,7 +46,7 @@ export const initialState: MonitorSliceType = {
     byDeviceId: {}
   },
   issueCounts: {
-    byType: Object.values(DEVICE_ISSUE_OPTIONS).reduce<IssueCounts>((accu, { key }) => ({ ...accu, [key]: { filtered: 0, total: 0 } }), {} as IssueCounts)
+    byType: Object.keys(DEVICE_ISSUE_OPTIONS).reduce<IssueCounts>((accu, key) => ({ ...accu, [key]: { filtered: 0, total: 0 } }), {} as IssueCounts)
   },
   settings: {
     global: {

@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { EXTERNAL_PROVIDER, TIMEOUTS } from '@northern.tech/store/constants';
+import { EXTERNAL_PROVIDER, TIMEOUTS, locations } from '@northern.tech/store/constants';
 import { setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
 import { Credentials, Integration } from '@northern.tech/types/MenderTypes';
 import configureMockStore from 'redux-mock-store';
@@ -21,7 +21,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { actions } from '.';
 import { defaultState, tenants, webhookEvents } from '../../../../tests/mockData';
 import { actions as appActions } from '../appSlice';
-import { locations } from '../appSlice/constants';
 import { getSessionInfo } from '../auth';
 import { actions as deviceActions } from '../devicesSlice';
 import { SSO_TYPES } from './constants';

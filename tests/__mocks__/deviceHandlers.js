@@ -22,7 +22,7 @@ import {
   inventoryApiUrlV2,
   iotManagerBaseURL,
   reportingApiUrl
-} from '@northern.tech/store/constants';
+} from '@northern.tech/utils/constants';
 import { HttpResponse, http } from 'msw';
 
 import { defaultCreationDate, defaultMacAddress, defaultState } from '../mockData';

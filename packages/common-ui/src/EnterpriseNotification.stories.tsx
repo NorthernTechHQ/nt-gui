@@ -13,7 +13,7 @@
 //    limitations under the License.
 import { Provider } from 'react-redux';
 
-import { BENEFITS } from '@northern.tech/store/appSlice/constants';
+import { BENEFITS } from '@northern.tech/store/constants';
 import { getConfiguredStore } from '@northern.tech/store/store';
 import type { Meta, StoryObj } from '@storybook/react';
 
