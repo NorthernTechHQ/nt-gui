@@ -12,15 +12,15 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { defaultState } from '@/testUtils';
-import { limitDefault } from '@northern.tech/store/constants';
-import { getGlobalSettings, saveGlobalSettings, setOfflineThreshold } from '@northern.tech/store/thunks';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { describe, expect, it } from 'vitest';
 
 import { actions } from '.';
 import { actions as appActions } from '../appSlice';
+import { limitDefault } from '../constants';
 import { actions as deviceActions } from '../devicesSlice';
+import { getGlobalSettings, saveGlobalSettings, setOfflineThreshold } from '../thunks';
 import { actions as userActions } from '../usersSlice';
 import * as DeploymentConstants from './constants';
 import {

@@ -11,10 +11,18 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import storeActions from '@northern.tech/store/actions';
-import GeneralApi from '@northern.tech/store/api/general-api';
-import UsersApi from '@northern.tech/store/api/users-api';
-import { cleanUp, getSessionInfo, setSessionInfo } from '@northern.tech/store/auth';
+import type { PermissionSetWithScope, PersonalAccessToken, RolePermission, RolePermissionObject } from '@northern.tech/types/MenderTypes';
+import { duplicateFilter, extractErrorMessage, isEmpty } from '@northern.tech/utils/helpers';
+import { clearAllRetryTimers } from '@northern.tech/utils/retrytimer';
+import hashString from 'md5';
+import Cookies from 'universal-cookie';
+
+import type { CustomColumn, GlobalSettings, User, UserSettings } from '.';
+import { actions, sliceName } from '.';
+import storeActions from '../actions';
+import GeneralApi from '../api/general-api';
+import UsersApi from '../api/users-api';
+import { cleanUp, getSessionInfo, setSessionInfo } from '../auth';
 import type {
   AnyPermission,
   AuditLogPermission,
@@ -31,7 +39,7 @@ import type {
   UiPermissionsByIdKey,
   UiPermissionsDefinition,
   UserManagementPermission
-} from '@northern.tech/store/constants';
+} from '../constants';
 import {
   ALL_RELEASES,
   APPLICATION_JSON_CONTENT_TYPE,
@@ -52,20 +60,12 @@ import {
   uiPermissionsById,
   useradmApiUrl,
   useradmApiUrlv2
-} from '@northern.tech/store/constants';
-import { getOnboardingState, getOrganization, getTooltipsState, getUserSettings as getUserSettingsSelector } from '@northern.tech/store/selectors';
-import type { AppDispatch } from '@northern.tech/store/store';
-import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
-import { setOfflineThreshold } from '@northern.tech/store/thunks';
-import { mergePermissions } from '@northern.tech/store/utils';
-import type { PermissionSetWithScope, PersonalAccessToken, RolePermission, RolePermissionObject } from '@northern.tech/types/MenderTypes';
-import { duplicateFilter, extractErrorMessage, isEmpty } from '@northern.tech/utils/helpers';
-import { clearAllRetryTimers } from '@northern.tech/utils/retrytimer';
-import hashString from 'md5';
-import Cookies from 'universal-cookie';
-
-import type { CustomColumn, GlobalSettings, User, UserSettings } from '.';
-import { actions, sliceName } from '.';
+} from '../constants';
+import { getOnboardingState, getOrganization, getTooltipsState, getUserSettings as getUserSettingsSelector } from '../selectors';
+import type { AppDispatch } from '../store';
+import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
+import { setOfflineThreshold } from '../thunks';
+import { mergePermissions } from '../utils';
 import { OWN_USER_ID, READ_STATES, USER_LOGOUT, itemUiPermissionsReducer, settingsKeys } from './constants';
 import { getCurrentUser, getRolesById, getUsersById } from './selectors';
 

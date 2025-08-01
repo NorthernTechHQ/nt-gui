@@ -11,12 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { FilterOperator, PermissionSet, Role } from '@northern.tech/store/constants';
-import { defaultPermissionSets, rolesById } from '@northern.tech/store/constants';
 import type { User as BackendUser, DeploymentPhase, TenantInfo, TenantsIdName } from '@northern.tech/types/MenderTypes';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
+import type { FilterOperator, PermissionSet, Role } from '../constants';
+import { defaultPermissionSets, rolesById } from '../constants';
 import type { ReadState } from './constants';
 import { READ_STATES } from './constants';
 

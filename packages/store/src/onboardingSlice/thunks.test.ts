@@ -12,12 +12,12 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { defaultState } from '@/testUtils';
-import { getUserSettings, saveUserSettings } from '@northern.tech/store/thunks';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { describe, expect, it } from 'vitest';
 
 import { actions } from '.';
+import { getUserSettings, saveUserSettings } from '../thunks';
 import { actions as userActions } from '../usersSlice';
 import { onboardingSteps } from './constants';
 import { advanceOnboarding, getOnboardingState, setOnboardingApproach, setOnboardingCanceled, setOnboardingComplete, setOnboardingDeviceType } from './thunks';

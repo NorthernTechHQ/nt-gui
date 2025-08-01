@@ -11,12 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { DeviceIssueOptionKey } from '@northern.tech/store/constants';
-import { DEVICE_ISSUE_OPTIONS, DEVICE_LIST_DEFAULTS, alertChannels } from '@northern.tech/store/constants';
 import type { Alert } from '@northern.tech/types/MenderTypes';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
+import type { DeviceIssueOptionKey } from '../constants';
+import { DEVICE_ISSUE_OPTIONS, DEVICE_LIST_DEFAULTS, alertChannels } from '../constants';
 import type { AlertChannelKey } from './constants';
 
 export const sliceName = 'monitor';

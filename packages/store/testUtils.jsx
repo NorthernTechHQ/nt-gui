@@ -11,17 +11,18 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { mockState as appMockState } from '@northern.tech/store/appSlice/mocks';
-import { mockState as deploymentsMockState } from '@northern.tech/store/deploymentsSlice/mocks';
-import { mockState as devicesMockState } from '@northern.tech/store/devicesSlice/mocks';
-import { mockState as monitorMockState } from '@northern.tech/store/monitorSlice/mocks';
-import { mockState as onboardingMockState } from '@northern.tech/store/onboardingSlice/mocks';
-import { mockState as organizationMockState } from '@northern.tech/store/organizationSlice/mocks';
-import { mockState as releasesMockState } from '@northern.tech/store/releasesSlice/mocks';
-import { getConfiguredStore } from '@northern.tech/store/store';
-import { mockState as usersMockState } from '@northern.tech/store/usersSlice/mocks';
 import { token as mockToken } from '@northern.tech/testing/mockData';
 import { render } from '@northern.tech/testing/setupTests';
+
+import { mockState as appMockState } from './src/appSlice/mocks';
+import { mockState as deploymentsMockState } from './src/deploymentsSlice/mocks';
+import { mockState as devicesMockState } from './src/devicesSlice/mocks';
+import { mockState as monitorMockState } from './src/monitorSlice/mocks';
+import { mockState as onboardingMockState } from './src/onboardingSlice/mocks';
+import { mockState as organizationMockState } from './src/organizationSlice/mocks';
+import { mockState as releasesMockState } from './src/releasesSlice/mocks';
+import { getConfiguredStore } from './src/store';
+import { mockState as usersMockState } from './src/usersSlice/mocks';
 
 export const defaultState = {
   app: { ...appMockState },

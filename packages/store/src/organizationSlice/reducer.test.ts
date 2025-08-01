@@ -12,10 +12,10 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { defaultState } from '@/testUtils';
-import { SORTING_OPTIONS } from '@northern.tech/store/constants';
 import { describe, expect, it } from 'vitest';
 
 import reducer, { actions, initialState } from '.';
+import { SORTING_OPTIONS } from '../constants';
 
 describe('organization reducer', () => {
   it('should return the initial state', async () => {
