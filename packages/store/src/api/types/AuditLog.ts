@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Actor } from "./Actor";
-import type { Object } from "./Object";
+import type { AuditLogObject } from "./AuditLogObject";
 /**
  * Audit log entry
  */
@@ -11,7 +11,7 @@ export type AuditLog = {
   actor: Actor;
   time: string;
   action: AuditLog.action;
-  object: Object;
+  object: AuditLogObject;
   change?: string;
 };
 export namespace AuditLog {
