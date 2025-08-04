@@ -13,7 +13,7 @@
 //    limitations under the License.
 // @ts-nocheck
 import { mdiAws as AWS, mdiMicrosoftAzure as Azure } from '@mdi/js';
-import { Credentials } from '@northern.tech/types/MenderTypes';
+import { Credentials, Integration } from '@northern.tech/types/MenderTypes';
 
 import { ATTRIBUTE_SCOPES } from './constants';
 
@@ -46,7 +46,7 @@ export const DEVICE_ONLINE_CUTOFF = { interval: 1, intervalName: timeUnits.days 
 
 export const defaultIdAttribute = Object.freeze({ attribute: 'id', scope: ATTRIBUTE_SCOPES.identity });
 
-const credentialTypes = {
+export const credentialTypes = {
   aws: Credentials.type.AWS,
   http: Credentials.type.HTTP,
   sas: Credentials.type.SAS,
@@ -54,7 +54,7 @@ const credentialTypes = {
 };
 export const EXTERNAL_PROVIDER = {
   'iot-core': {
-    credentialsType: credentialTypes.aws,
+    credentialsType: credentialTypes.aws as Credentials.type.AWS,
     icon: AWS,
     title: 'AWS IoT Core',
     twinTitle: 'Device Shadow',
@@ -64,7 +64,7 @@ export const EXTERNAL_PROVIDER = {
     configHint: <>For help finding your AWS IoT Core connection string, check the AWS IoT documentation.</>
   },
   'iot-hub': {
-    credentialsType: credentialTypes.sas,
+    credentialsType: credentialTypes.sas as Credentials.type.SAS,
     icon: Azure,
     title: 'Azure IoT Hub',
     twinTitle: 'Device Twin',
@@ -96,4 +96,21 @@ export const EXTERNAL_PROVIDER = {
     provider: 'webhook'
   }
 } as const;
+
+export interface Webhook extends Integration {
+  provider: Integration.provider.WEBHOOK;
+}
+
+export const emptyWebhook: Webhook = {
+  description: '',
+  provider: Integration.provider.WEBHOOK,
+  credentials: {
+    type: EXTERNAL_PROVIDER.webhook.credentialsType,
+    [EXTERNAL_PROVIDER.webhook.credentialsType]: {
+      secret: '',
+      url: ''
+    }
+  }
+};
+
 export const MAX_PAGE_SIZE = 500;
