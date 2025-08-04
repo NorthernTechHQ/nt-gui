@@ -32,10 +32,10 @@ export interface SortOptions {
   key?: string;
 }
 
-export const DEVICE_LIST_DEFAULTS = {
+export const DEVICE_LIST_DEFAULTS: { page: number; perPage: number } = {
   page: 1,
   perPage: 20
-} as const;
+};
 
 export const twoFAStates = {
   enabled: 'enabled',

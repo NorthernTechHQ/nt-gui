@@ -96,14 +96,21 @@ export const ATTRIBUTE_SCOPES = {
 
 export const ALL_DEVICES = 'All devices';
 
+export type FilterRule = {
+  key: string;
+  operator: keyof typeof DEVICE_FILTERING_OPTIONS;
+  scope: typeof ATTRIBUTE_SCOPES;
+  value: () => string | string | boolean | number;
+};
+
 export type DeviceIssueOption = {
+  filterRule: FilterRule | object;
   isCategory?: boolean;
   key: string;
-  title: string;
-  filterRule: {};
   needsFullFiltering?: boolean;
   needsMonitor?: boolean;
   needsReporting?: boolean;
+  title: string;
 };
 
 export const DEVICE_ISSUE_OPTIONS = {
