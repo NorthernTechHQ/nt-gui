@@ -11,6 +11,8 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { Components, Theme } from '@mui/material';
+import { accordionClasses } from '@mui/material';
 import { blue, cyan, grey, purple } from '@mui/material/colors';
 
 // breakpoints, metadata, shape config, spacing are not adjusted in the theme
@@ -69,5 +71,89 @@ export const colors = {
     700: colorTokens?.variables['cyan (M)']['700'].values['Mode 1'] || cyan[700],
     800: colorTokens?.variables['cyan (M)']['800'].values['Mode 1'] || cyan[800],
     900: colorTokens?.variables['cyan (M)']['900'].values['Mode 1'] || cyan[900]
+  }
+};
+
+export const components: Components<Theme> = {
+  MuiAccordion: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        border: 'none',
+        boxShadow: 'none',
+        '&:before': {
+          display: 'none'
+        },
+        padding: theme.spacing(1, 2),
+        alignItems: 'flex-start',
+        alignSelf: 'stretch',
+        [`&.${accordionClasses.expanded}`]: {
+          margin: 'auto'
+        }
+      })
+    }
+  },
+  MuiAccordionDetails: {
+    styleOverrides: {
+      root: {
+        alignItems: 'flex-start',
+        alignSelf: 'stretch'
+      }
+    }
+  },
+  MuiButton: {
+    styleOverrides: {
+      text: {
+        textTransform: 'none'
+      }
+    }
+  },
+  MuiDrawer: {
+    styleOverrides: {
+      paper: ({ theme }) => ({
+        minWidth: 'min-content',
+        maxWidth: '80vw',
+        padding: theme.spacing(3, 8)
+      })
+    }
+  },
+  MuiFormControl: {
+    defaultProps: {
+      variant: 'outlined'
+    }
+  },
+  MuiInput: {
+    styleOverrides: {
+      root: {
+        minWidth: 220
+      }
+    }
+  },
+  MuiTextField: {
+    defaultProps: {
+      variant: 'outlined'
+    },
+    styleOverrides: {
+      root: {
+        minWidth: 220
+      }
+    }
+  },
+  MuiSelect: {
+    defaultProps: {
+      autoWidth: true,
+      variant: 'outlined'
+    },
+    styleOverrides: {
+      root: {
+        minWidth: 220
+      }
+    }
+  },
+  MuiTab: {
+    styleOverrides: {
+      root: {
+        textTransform: 'none'
+      }
+    }
   }
 };
