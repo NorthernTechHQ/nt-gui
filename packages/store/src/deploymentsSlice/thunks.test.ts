@@ -11,15 +11,16 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { getGlobalSettings, saveGlobalSettings, setOfflineThreshold } from '@northern.tech/store/thunks';
+import { defaultState } from '@/testUtils';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { describe, expect, it } from 'vitest';
 
 import { actions } from '.';
-import { defaultState } from '../../../../tests/mockData';
 import { actions as appActions } from '../appSlice';
+import { limitDefault } from '../constants';
 import { actions as deviceActions } from '../devicesSlice';
+import { getGlobalSettings, saveGlobalSettings, setOfflineThreshold } from '../thunks';
 import { actions as userActions } from '../usersSlice';
 import * as DeploymentConstants from './constants';
 import {
@@ -56,10 +57,10 @@ const deploymentsConfig = {
     timeout: 0
   },
   binaryDeltaLimits: {
-    duplicatesWindow: DeploymentConstants.limitDefault,
-    inputWindow: DeploymentConstants.limitDefault,
-    instructionBuffer: DeploymentConstants.limitDefault,
-    sourceWindow: DeploymentConstants.limitDefault,
+    duplicatesWindow: limitDefault,
+    inputWindow: limitDefault,
+    instructionBuffer: limitDefault,
+    sourceWindow: limitDefault,
     timeout: { default: 60, max: 3600, min: 60 }
   },
   hasDelta: true

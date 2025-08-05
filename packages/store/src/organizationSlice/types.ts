@@ -19,9 +19,9 @@ import type {
   Event,
   Integration,
   SAMLMetadata
-} from '@northern.tech/store/api/types/MenderTypes';
-import type { AvailableAddon, SORTING_OPTIONS } from '@northern.tech/store/constants';
+} from '@northern.tech/types/MenderTypes';
 
+import type { AvailableAddon, SortOptions } from '../constants';
 import type { SSO_TYPES } from './constants';
 
 export interface Card {
@@ -31,11 +31,6 @@ export interface Card {
     year?: number;
   };
   last4?: string;
-}
-
-export interface SortOptions {
-  direction: keyof typeof SORTING_OPTIONS;
-  key?: string;
 }
 
 export interface AuditLogSelectionState {

@@ -11,10 +11,11 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { Release } from '@northern.tech/store/api/types/Release';
-import type { RootState } from '@northern.tech/store/store';
-import { listItemMapper } from '@northern.tech/store/utils';
+import type { Release } from '@northern.tech/types/MenderTypes';
 import { createSelector } from '@reduxjs/toolkit';
+
+import type { RootState } from '../store';
+import { listItemMapper } from '../utils';
 
 const getSelectedReleaseId = (state: RootState) => state.releases.selectedRelease;
 export const getReleasesById = (state: RootState) => state.releases.byId;

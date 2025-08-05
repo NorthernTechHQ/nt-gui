@@ -11,11 +11,11 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { SORTING_OPTIONS } from '@northern.tech/store/commonConstants';
+import { defaultState } from '@/testUtils';
 import { describe, expect, it } from 'vitest';
 
 import reducer, { actions, initialState } from '.';
-import { defaultState } from '../../../../tests/mockData';
+import { SORTING_OPTIONS } from '../constants';
 
 describe('organization reducer', () => {
   it('should return the initial state', async () => {

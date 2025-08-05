@@ -10,10 +10,7 @@
 //    distributed under the License is distributed on an "AS IS" BASIS,
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
-import { apiUrl } from '@northern.tech/store/constants';
-
 //    limitations under the License.
-export const alertChannels = { email: 'email' } as const;
-export type AlertChannelKey = keyof typeof alertChannels;
+import type { alertChannels } from '../constants';
 
-export const monitorApiUrlv1 = `${apiUrl.v1}/devicemonitor`;
+export type AlertChannelKey = keyof typeof alertChannels;

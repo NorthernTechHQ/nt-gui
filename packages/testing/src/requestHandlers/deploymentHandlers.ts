@@ -11,14 +11,43 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { deploymentsApiUrl, deploymentsApiUrlV2, headerNames, limitDefault } from '@northern.tech/store/constants';
+//@ts-nocheck
+import { deploymentsApiUrl, deploymentsApiUrlV2, headerNames, limitDefault } from '@northern.tech/utils/constants';
 import { HttpResponse, http } from 'msw';
 
-import { defaultState } from '../mockData';
+import { mockApiResponses } from '../mockData';
 
 const createdDeployment = {
-  ...defaultState.deployments.byId.d1,
-  id: 'created-123'
+  id: 'created-123',
+  name: 'test deployment',
+  artifact_name: 'r1',
+  artifacts: ['123'],
+  created: '2019-01-01T12:30:00.000Z',
+  device_count: 1,
+  devices: {
+    a1: {
+      attributes: {},
+      id: 'a1',
+      image: { size: 123 },
+      status: 'installing'
+    }
+  },
+  filter: undefined,
+  group: undefined,
+  statistics: {
+    status: {
+      downloading: 0,
+      decommissioned: 0,
+      failure: 0,
+      installing: 1,
+      noartifact: 0,
+      pending: 0,
+      rebooting: 0,
+      success: 0,
+      'already-installed': 0
+    },
+    total_size: 1234
+  }
 };
 
 const defaultDeploymentConfig = {
@@ -54,20 +83,20 @@ export const deploymentHandlers = [
   http.get(
     `${deploymentsApiUrl}/deployments`,
     () =>
-      new HttpResponse(JSON.stringify(Object.values(defaultState.deployments.byId).reverse()), {
-        headers: { [headerNames.total]: Object.keys(defaultState.deployments.byId).length }
+      new HttpResponse(JSON.stringify(Object.values(mockApiResponses.deployments.byId).reverse()), {
+        headers: { [headerNames.total]: Object.keys(mockApiResponses.deployments.byId).length }
       })
   ),
   http.get(`${deploymentsApiUrl}/deployments/releases`, ({ request }) => {
     const { searchParams } = new URL(request.url);
     const releaseName = searchParams.get('name');
-    const release = defaultState.releases.byId[releaseName] || {};
+    const release = mockApiResponses.releases.byId[releaseName] || {};
     if (releaseName) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { device_types_compatible, ...remainder } = release;
       return Object.keys(remainder).length || releaseName === 'createdRelease' ? HttpResponse.json([remainder]) : new HttpResponse(null, { status: 520 });
     }
-    const releases = Object.values(defaultState.releases.byId).map(stateRelease => {
+    const releases = Object.values(mockApiResponses.releases.byId).map(stateRelease => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { device_types_compatible, ...remainder } = stateRelease;
       return remainder;
@@ -86,13 +115,13 @@ export const deploymentHandlers = [
         status: 'finished'
       });
     }
-    return HttpResponse.json(defaultState.deployments.byId[deploymentId]);
+    return HttpResponse.json(mockApiResponses.deployments.byId[deploymentId]);
   }),
   http.get(`${deploymentsApiUrl}/deployments/:deploymentId/devices`, ({ params: { deploymentId } }) => {
     if (deploymentId === createdDeployment.id) {
       return HttpResponse.json(Object.values(createdDeployment.devices));
-    } else if (defaultState.deployments.byId[deploymentId]) {
-      return HttpResponse.json(Object.values(defaultState.deployments.byId[deploymentId].devices));
+    } else if (mockApiResponses.deployments.byId[deploymentId]) {
+      return HttpResponse.json(Object.values(mockApiResponses.deployments.byId[deploymentId].devices));
     }
     return new HttpResponse(null, { status: 521 });
   }),
@@ -100,14 +129,14 @@ export const deploymentHandlers = [
     const { deployment_ids = [] } = await request.json();
     if (deployment_ids.includes(createdDeployment.id)) {
       return HttpResponse.json([]);
-    } else if (deployment_ids.every(id => defaultState.deployments.byId[id])) {
-      const stats = deployment_ids.map(id => ({ id, stats: defaultState.deployments.byId[id].statistics.status }));
+    } else if (deployment_ids.every(id => mockApiResponses.deployments.byId[id])) {
+      const stats = deployment_ids.map(id => ({ id, stats: mockApiResponses.deployments.byId[id].statistics.status }));
       return HttpResponse.json(stats);
     }
     return new HttpResponse(null, { status: 522 });
   }),
   http.get(`${deploymentsApiUrl}/deployments/:deploymentId/devices/:deviceId/log`, ({ params: { deploymentId, deviceId } }) => {
-    if (defaultState.deployments.byId[deploymentId] && defaultState.deployments.byId[deploymentId].devices[deviceId]) {
+    if (mockApiResponses.deployments.byId[deploymentId] && mockApiResponses.deployments.byId[deploymentId].devices[deviceId]) {
       return HttpResponse.text('test');
     }
     return new HttpResponse(null, { status: 523 });
@@ -128,7 +157,7 @@ export const deploymentHandlers = [
   }),
   http.post(`${deploymentsApiUrl}/deployments/group/:deploymentGroup`, async ({ params: { deploymentGroup }, request }) => {
     const { filter_id, devices = [] } = await request.json();
-    if (filter_id || !!devices.length || deploymentGroup !== Object.keys(defaultState.devices.groups.byId)[0]) {
+    if (filter_id || !!devices.length || deploymentGroup !== Object.keys(mockApiResponses.devices.groups.byId)[0]) {
       return new HttpResponse(JSON.stringify({}), { status: 526 });
     }
     return new HttpResponse(JSON.stringify({}), { headers: { location: `find/me/here/${createdDeployment.id}` } });
@@ -145,7 +174,9 @@ export const deploymentHandlers = [
     return new HttpResponse(JSON.stringify({}), {
       status:
         status === 'aborted' &&
-        [...defaultState.deployments.byStatus.pending.deploymentIds, ...defaultState.deployments.byStatus.inprogress.deploymentIds].includes(deploymentId)
+        [...mockApiResponses.deployments.byStatus.pending.deploymentIds, ...mockApiResponses.deployments.byStatus.inprogress.deploymentIds].includes(
+          deploymentId
+        )
           ? 200
           : 528
     });
@@ -155,9 +186,9 @@ export const deploymentHandlers = [
       return new HttpResponse(JSON.stringify(Object.values(createdDeployment.devices)), {
         headers: { [headerNames.total]: Object.keys(createdDeployment.devices).length }
       });
-    } else if (defaultState.deployments.byId[deploymentId]) {
-      return new HttpResponse(JSON.stringify(Object.values(defaultState.deployments.byId[deploymentId].devices)), {
-        headers: { [headerNames.total]: Object.keys(defaultState.deployments.byId[deploymentId].devices).length }
+    } else if (mockApiResponses.deployments.byId[deploymentId]) {
+      return new HttpResponse(JSON.stringify(Object.values(mockApiResponses.deployments.byId[deploymentId].devices)), {
+        headers: { [headerNames.total]: Object.keys(mockApiResponses.deployments.byId[deploymentId].devices).length }
       });
     }
     return new HttpResponse(null, { status: 529 });
@@ -165,18 +196,18 @@ export const deploymentHandlers = [
   http.get(`${deploymentsApiUrl}/config`, () => HttpResponse.json(defaultDeploymentConfig)),
   http.put(`${deploymentsApiUrl}/config/binary_delta`, () => new HttpResponse(null, { status: 200 })),
   http.get(`${deploymentsApiUrl}/deployments/devices/:deviceId`, ({ params: { deviceId } }) => {
-    if (deviceId === defaultState.devices.byId.a1.id) {
+    if (deviceId === mockApiResponses.devices.byId.a1.id) {
       return new HttpResponse(
         JSON.stringify([
           {
             id: createdDeployment.id + 'something',
-            deployment: { ...createdDeployment, id: defaultState.deployments.byId.d1.id, status: 'inprogress' },
+            deployment: { ...createdDeployment, id: mockApiResponses.deployments.byId.d1.id, status: 'inprogress' },
             device: {
               created: '2019-01-01T12:35:00.000Z',
               finished: '2019-01-01T12:40:00.000Z',
               status: 'noartifact',
               id: 'something',
-              image: { ...defaultState.releases.byId.r1 }
+              image: { ...mockApiResponses.releases.byId.r1 }
             },
             log: true,
             attempts: 1,

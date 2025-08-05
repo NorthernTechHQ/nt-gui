@@ -15,11 +15,12 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ConfigurationObject, DocsLink, HelpTooltip, LogDialog } from '@northern.tech/common-ui';
 import storeActions from '@northern.tech/store/actions';
 import { READ_STATES, yes } from '@northern.tech/store/constants';
 import { getDeviceById, getFeatures, getTooltipsState } from '@northern.tech/store/selectors';
 import { setAllTooltipsReadState, setTooltipReadState } from '@northern.tech/store/thunks';
+
+import { ConfigurationObject, DocsLink, HelpTooltip, LogDialog } from '../';
 
 const { setSnackbar } = storeActions;
 

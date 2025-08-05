@@ -11,42 +11,28 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+//@ts-nocheck
 import React from 'react';
-import { createMocks } from 'react-idle-timer';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 
 import { createSerializer } from '@emotion/jest';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-import '@testing-library/jest-dom/vitest';
-import { act, cleanup, queryByRole, render, waitFor, within } from '@testing-library/react';
-import { setupServer } from 'msw/node';
-import { afterAll, afterEach, beforeAll, vi } from 'vitest';
+import { yes } from '@northern.tech/utils/helpers';
+import { configureStore } from '@reduxjs/toolkit';
+import { cleanup, render } from '@testing-library/react';
+import { expect, vi } from 'vitest';
 import { MessageChannel } from 'worker_threads';
 
-import { yes } from '../packages//utils/src/index';
-import { getSessionInfo } from '../packages/store/src/auth';
-import { getConfiguredStore } from '../packages/store/src/store';
-import handlers from './__mocks__/requestHandlers';
-import { defaultState, menderEnvironment, mockDate, token as mockToken } from './mockData';
+import { menderEnvironment, mockDate, token as mockToken } from './mockData';
 import { light } from './theme/light';
-
-process.on('unhandledRejection', err => {
-  throw err;
-});
 
 expect.addSnapshotSerializer(createSerializer({ includeStyles: true }));
 
-afterEach(() => {
-  cleanup();
-});
 export const TEST_LOCATION = 'localhost';
 
 export const mockAbortController = { signal: { addEventListener: () => {}, removeEventListener: () => {} } };
-
-// Setup requests interception
-const server = setupServer(...handlers);
 
 const oldWindowLocalStorage = window.localStorage;
 const oldWindowLocation = window.location;
@@ -60,7 +46,7 @@ vi.setSystemTime(mockDate);
 const storage = {};
 global.HTMLCanvasElement.prototype.getContext = vi.fn();
 
-beforeAll(async () => {
+export const beforeAll = async () => {
   // Temporarily workaround for bug in @testing-library/react when use user-event with `vi.useFakeTimers()`
 
   // Enable the mocking in tests.
@@ -107,8 +93,6 @@ beforeAll(async () => {
     createDataChannel: () => {}
   });
 
-  createMocks();
-  await server.listen({ onUnhandledRequest: 'error' });
   Object.defineProperty(navigator, 'appVersion', { value: 'Test', writable: true });
   const intersectionObserverMock = () => ({
     observe: vi.fn(),
@@ -126,46 +110,23 @@ beforeAll(async () => {
     advanceTimersByTime: vi.advanceTimersByTime.bind(vi)
   };
   return () => void (globalThis.jest = _jest);
-});
+};
 
-afterEach(async () => {
-  // Reset any runtime handlers tests may use.
-  await server.resetHandlers();
-});
+export const afterEach = async () => cleanup();
 
-afterAll(async () => {
-  // Clean up once the tests are done.
-  await server.close();
+export const afterAll = async () => {
   // restore `window.location` etc. to the original `jsdom` `Location` object
   window.localStorage = oldWindowLocalStorage;
   window.location = oldWindowLocation;
   window.sessionStorage = oldWindowSessionStorage;
   React.useEffect.mockRestore();
-  cleanup();
-});
-const theme = createTheme(light);
-
-export const selectMaterialUiSelectOption = async (element, optionText, user) => {
-  // The button that opens the dropdown, which is a sibling of the input
-  const selectButton = element.parentNode.querySelector('[role=combobox]');
-  // Open the select dropdown
-  await act(async () => await user.click(selectButton));
-  // Get the dropdown element. We don't use getByRole() because it includes <select>s too.
-  const listbox = queryByRole(document.documentElement, 'listbox');
-  // Click the list item
-  const listItem = within(listbox).getByText(optionText);
-  await user.click(listItem);
-  // Wait for the listbox to be removed, so it isn't visible in subsequent calls
-  await waitFor(() => expect(queryByRole(document.documentElement, 'listbox')).not.toBeInTheDocument());
-  return Promise.resolve();
 };
 
+const theme = createTheme(light);
+
 const customRender = (ui, options = {}) => {
-  const {
-    preloadedState = { ...defaultState, users: { ...defaultState.users, currentSession: getSessionInfo() } },
-    store = getConfiguredStore({ preloadedState }),
-    ...remainder
-  } = options;
+  const { preloadedState = { users: { currentSession: { token: mockToken, expiresAt: undefined } } }, ...remainder } = options;
+  const store = options.store ?? configureStore({ preloadedState });
   const AllTheProviders = ({ children }) => (
     <ThemeProvider theme={theme}>
       <MemoryRouter>
@@ -178,5 +139,5 @@ const customRender = (ui, options = {}) => {
 
 export * from '@testing-library/react';
 // override render method
-// eslint-disable-next-line import/export
+
 export { customRender as render };

@@ -11,8 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import storeActions from '@northern.tech/store/actions';
-import Api from '@northern.tech/store/api/general-api';
 import type {
   AuditLog,
   TenantTenantadm as BackendTenant,
@@ -22,23 +20,7 @@ import type {
   Integration,
   NewTenant,
   SupportRequest
-} from '@northern.tech/store/api/types/MenderTypes';
-import type { AvailablePlans, ContentType } from '@northern.tech/store/constants';
-import {
-  DEVICE_LIST_DEFAULTS,
-  SORTING_OPTIONS,
-  TENANT_LIST_DEFAULT,
-  TIMEOUTS,
-  deviceAuthV2,
-  headerNames,
-  iotManagerBaseURL,
-  locations
-} from '@northern.tech/store/constants';
-import type { AuditLogSelectionState, SSOConfig, SortOptions, Tenant, TenantList } from '@northern.tech/store/organizationSlice/types';
-import { getCurrentSession, getTenantCapabilities, getTenantsList } from '@northern.tech/store/selectors';
-import type { AppDispatch } from '@northern.tech/store/store';
-import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
-import { getDeviceLimit, setFirstLoginAfterSignup } from '@northern.tech/store/thunks';
+} from '@northern.tech/types/MenderTypes';
 import { dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -47,7 +29,29 @@ import hashString from 'md5';
 import Cookies from 'universal-cookie';
 
 import { actions, sliceName } from '.';
-import { SSO_TYPES, auditLogsApiUrl, ssoIdpApiUrlv1, tenantadmApiUrlv1, tenantadmApiUrlv2 } from './constants';
+import storeActions from '../actions';
+import Api from '../api/general-api';
+import type { AvailablePlans, ContentType, SortOptions } from '../constants';
+import {
+  DEVICE_LIST_DEFAULTS,
+  SORTING_OPTIONS,
+  TENANT_LIST_DEFAULT,
+  TIMEOUTS,
+  auditLogsApiUrl,
+  deviceAuthV2,
+  headerNames,
+  iotManagerBaseURL,
+  locations,
+  ssoIdpApiUrlv1,
+  tenantadmApiUrlv1,
+  tenantadmApiUrlv2
+} from '../constants';
+import type { AuditLogSelectionState, SSOConfig, Tenant, TenantList } from '../organizationSlice/types';
+import { getCurrentSession, getTenantCapabilities, getTenantsList } from '../selectors';
+import type { AppDispatch } from '../store';
+import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
+import { getDeviceLimit, setFirstLoginAfterSignup } from '../thunks';
+import { SSO_TYPES } from './constants';
 import { getAuditlogState, getOrganization } from './selectors';
 
 const cookies = new Cookies();

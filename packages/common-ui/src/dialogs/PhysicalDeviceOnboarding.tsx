@@ -20,7 +20,6 @@ import { InfoOutlined as InfoIcon } from '@mui/icons-material';
 import { Autocomplete, TextField } from '@mui/material';
 import { createFilterOptions } from '@mui/material/useAutocomplete';
 
-import { HELPTOOLTIPS, MenderHelpTooltip } from '@northern.tech/common-ui/helptips';
 import { EXTERNAL_PROVIDER, onboardingSteps } from '@northern.tech/store/constants';
 import {
   getCurrentSession,
@@ -38,6 +37,7 @@ import { getDebConfigurationCode, versionCompare } from '@northern.tech/utils/he
 import CopyCode from '../CopyCode';
 import DocsLink from '../DocsLink';
 import { MenderTooltipClickable } from '../MenderTooltip';
+import { HELPTOOLTIPS, MenderHelpTooltip } from '../helptips';
 
 const filter = createFilterOptions();
 

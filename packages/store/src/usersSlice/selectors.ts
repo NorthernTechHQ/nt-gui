@@ -12,11 +12,12 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 // @ts-nocheck
-import { DEVICE_ONLINE_CUTOFF, defaultIdAttribute } from '@northern.tech/store/constants';
-import { isDarkMode } from '@northern.tech/store/utils';
 import { createSelector } from '@reduxjs/toolkit';
 
-import { READ_STATES, twoFAStates } from './constants';
+import { DEVICE_ONLINE_CUTOFF, defaultIdAttribute } from '../constants';
+import { twoFAStates } from '../constants';
+import { isDarkMode } from '../utils';
+import { READ_STATES } from './constants';
 
 export const getRolesById = state => state.users.rolesById;
 export const getTooltipsById = state => state.users.tooltips.byId;

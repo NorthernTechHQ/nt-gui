@@ -13,13 +13,9 @@
 //    limitations under the License.
 // @ts-nocheck
 import { mdiAws as AWS, mdiMicrosoftAzure as Azure } from '@mdi/js';
+import { Credentials, Integration } from '@northern.tech/types/MenderTypes';
 
-import { Credentials } from './api/types/Credentials';
-
-export const DEVICE_LIST_DEFAULTS = {
-  page: 1,
-  perPage: 20
-};
+import { ATTRIBUTE_SCOPES } from './constants';
 
 export const timeUnits = {
   days: 'days',
@@ -27,135 +23,11 @@ export const timeUnits = {
   hours: 'hours'
 };
 
-export const ALL_DEVICES = 'All devices';
 export const UNGROUPED_GROUP = { id: '*|=ungrouped=|*', name: 'Unassigned' };
 
 export const DEVICE_LIST_MAXIMUM_LENGTH = 50;
 
-export const DEVICE_FILTERING_OPTIONS = {
-  $eq: { key: '$eq', title: 'equals', shortform: '=' },
-  $ne: { key: '$ne', title: 'not equal', shortform: '!=' },
-  $gt: {
-    key: '$gt',
-    title: '>',
-    shortform: '>',
-    help: 'The "greater than" operator can work both on numbers and strings. In the latter case, the operator applies the lexicographical order to the value strings.'
-  },
-  $gte: {
-    title: '>=',
-    shortform: '>=',
-    help: 'The "greater than or equal" operator can work both on numbers and strings. In the latter case, the operator applies the lexicographical order to the value strings.'
-  },
-  $lt: {
-    key: '$lt',
-    title: '<',
-    shortform: '<',
-    help: 'The "lesser than" operator can work both on numbers and strings. In the latter case, the operator applies the lexicographical order to the value strings.'
-  },
-  $lte: {
-    title: '<=',
-    shortform: '<=',
-    help: 'The "lesser than or equal" operator can work both on numbers and strings. In the latter case, the operator applies the lexicographical order to the value strings.'
-  },
-  $ltne: {
-    key: '$ltne',
-    title: '$ltne',
-    shortform: 'ltne',
-    help: 'The "lesser than or does not exist" operator can work both on numbers and strings. In the latter case, the operator applies the lexicographical order to the value strings.'
-  },
-  $in: {
-    key: '$in',
-    title: 'in',
-    shortform: 'in',
-    help: 'The "in" operator accepts a list of comma-separated values. It matches if the selected field is equal to one of the specified values.'
-  },
-  $nin: {
-    key: '$nin',
-    title: 'not in',
-    shortform: 'not in',
-    help: `The "not in" operator accepts a list of comma-separated values. It matches if the selected field's value is not equal to any of the specified options.`
-  },
-  $exists: {
-    key: '$exists',
-    title: 'exists',
-    shortform: 'exists',
-    value: true,
-    help: `The "exists" operator matches if the selected field's value has a value. No value needs to be provided for this operator.`
-  },
-  $nexists: {
-    key: '$nexists',
-    title: `doesn't exist`,
-    shortform: `doesn't exist`,
-    value: true,
-    help: `The "doesn't exist" operator matches if the selected field's value has no value. No value needs to be provided for this operator.`
-  },
-  $regex: {
-    key: '$regex',
-    title: `matches regular expression`,
-    shortform: `matches`,
-    help: `The "regular expression" operator matches the selected field's value with a Perl compatible regular expression (PCRE), automatically anchored by ^. If the regular expression is not valid, the filter will produce no results. If you need to specify options and flags, you can provide the full regex in the format of /regex/flags, for example.`
-  }
-} as const;
-
 export type FilterOperator = keyof typeof DEVICE_FILTERING_OPTIONS;
-
-export const DEVICE_ISSUE_OPTIONS = {
-  issues: {
-    isCategory: true,
-    key: 'issues',
-    title: 'Devices with issues',
-    filterRule: {}
-  },
-  offline: {
-    issueCategory: 'issues',
-    key: 'offline',
-    needsFullFiltering: true,
-    needsMonitor: false,
-    needsReporting: false,
-    filterRule: {
-      scope: 'system',
-      key: 'check_in_time',
-      operator: DEVICE_FILTERING_OPTIONS.$ltne.key,
-      value: ({ offlineThreshold }) => offlineThreshold
-    },
-    title: 'Offline devices'
-  },
-  failedLastUpdate: {
-    issueCategory: 'issues',
-    key: 'failedLastUpdate',
-    needsFullFiltering: false,
-    needsMonitor: false,
-    needsReporting: true,
-    filterRule: { scope: 'monitor', key: 'failed_last_update', operator: DEVICE_FILTERING_OPTIONS.$eq.key, value: true },
-    title: 'Deployment failed'
-  },
-  monitoring: {
-    issueCategory: 'issues',
-    key: 'monitoring',
-    needsFullFiltering: false,
-    needsMonitor: true,
-    needsReporting: false,
-    filterRule: { scope: 'monitor', key: 'alerts', operator: DEVICE_FILTERING_OPTIONS.$eq.key, value: true },
-    title: 'Monitoring alert'
-  },
-  authRequests: {
-    key: 'authRequests',
-    needsFullFiltering: false,
-    needsMonitor: false,
-    needsReporting: true,
-    filterRule: { scope: 'monitor', key: 'auth_requests', operator: DEVICE_FILTERING_OPTIONS.$gt.key, value: 1 },
-    title: 'Devices with new authentication requests'
-  },
-  gatewayDevices: {
-    key: 'gatewayDevices',
-    needsFullFiltering: false,
-    needsMonitor: false,
-    needsReporting: true,
-    filterRule: { scope: 'inventory', key: 'mender_is_gateway', operator: DEVICE_FILTERING_OPTIONS.$eq.key, value: 'true' },
-    title: 'Gateway devices'
-  }
-} as const;
-export type DeviceIssueOptionKey = keyof typeof DEVICE_ISSUE_OPTIONS;
 
 const oneSecond = 1000;
 export const TIMEOUTS = {
@@ -170,24 +42,11 @@ export const TIMEOUTS = {
   refreshLong: 60 * oneSecond
 };
 
-export const SORTING_OPTIONS = {
-  asc: 'asc',
-  desc: 'desc'
-} as const;
-
 export const DEVICE_ONLINE_CUTOFF = { interval: 1, intervalName: timeUnits.days };
-
-export const ATTRIBUTE_SCOPES = {
-  inventory: 'inventory',
-  identity: 'identity',
-  monitor: 'monitor',
-  system: 'system',
-  tags: 'tags'
-};
 
 export const defaultIdAttribute = Object.freeze({ attribute: 'id', scope: ATTRIBUTE_SCOPES.identity });
 
-const credentialTypes = {
+export const credentialTypes = {
   aws: Credentials.type.AWS,
   http: Credentials.type.HTTP,
   sas: Credentials.type.SAS,
@@ -195,7 +54,7 @@ const credentialTypes = {
 };
 export const EXTERNAL_PROVIDER = {
   'iot-core': {
-    credentialsType: credentialTypes.aws,
+    credentialsType: credentialTypes.aws as Credentials.type.AWS,
     icon: AWS,
     title: 'AWS IoT Core',
     twinTitle: 'Device Shadow',
@@ -205,7 +64,7 @@ export const EXTERNAL_PROVIDER = {
     configHint: <>For help finding your AWS IoT Core connection string, check the AWS IoT documentation.</>
   },
   'iot-hub': {
-    credentialsType: credentialTypes.sas,
+    credentialsType: credentialTypes.sas as Credentials.type.SAS,
     icon: Azure,
     title: 'Azure IoT Hub',
     twinTitle: 'Device Twin',
@@ -237,27 +96,21 @@ export const EXTERNAL_PROVIDER = {
     provider: 'webhook'
   }
 } as const;
-export const MAX_PAGE_SIZE = 500;
 
-export const ALL_RELEASES = 'All releases';
-
-export const emptyUiPermissions = Object.freeze({
-  auditlog: [],
-  deployments: [],
-  groups: Object.freeze({}),
-  releases: Object.freeze({}),
-  tenantManagement: [],
-  userManagement: []
-});
-
-export const emptyRole = Object.freeze({
-  name: undefined,
-  description: '',
-  permissions: [],
-  uiPermissions: Object.freeze({ ...emptyUiPermissions })
-});
-
-export interface SortOptions {
-  direction: keyof typeof SORTING_OPTIONS;
-  key?: string;
+export interface Webhook extends Integration {
+  provider: Integration.provider.WEBHOOK;
 }
+
+export const emptyWebhook: Webhook = {
+  description: '',
+  provider: Integration.provider.WEBHOOK,
+  credentials: {
+    type: EXTERNAL_PROVIDER.webhook.credentialsType,
+    [EXTERNAL_PROVIDER.webhook.credentialsType]: {
+      secret: '',
+      url: ''
+    }
+  }
+};
+
+export const MAX_PAGE_SIZE = 500;

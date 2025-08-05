@@ -11,19 +11,17 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import {
-  EXTERNAL_PROVIDER,
-  PLANS,
-  auditLogsApiUrl,
-  headerNames,
-  iotManagerBaseURL,
-  ssoIdpApiUrlv1,
-  tenantadmApiUrlv1,
-  tenantadmApiUrlv2
-} from '@northern.tech/store/constants';
+//@ts-nocheck
+import { auditLogsApiUrl, headerNames, iotManagerBaseURL, ssoIdpApiUrlv1, tenantadmApiUrlv1, tenantadmApiUrlv2 } from '@northern.tech/utils/constants';
 import { HttpResponse, http } from 'msw';
 
-import { defaultState, webhookEvents } from '../mockData';
+import { mockApiResponses, webhookEvents } from '../mockData';
+
+const PLANS = {
+  os: { id: 'os', name: 'Basic' },
+  professional: { id: 'professional', name: 'Professional' },
+  enterprise: { id: 'enterprise', name: 'Enterprise' }
+};
 
 const releasesSample = {
   lts: ['3.3'],
@@ -93,7 +91,7 @@ const signupHandler = async ({ request }) => {
 export const organizationHandlers = [
   http.get('/tags.json', () => HttpResponse.json(tagsSample)),
   http.get('/versions.json', () => HttpResponse.json(releasesSample)),
-  http.get(`${tenantadmApiUrlv1}/user/tenant`, () => HttpResponse.json(defaultState.organization.organization)),
+  http.get(`${tenantadmApiUrlv1}/user/tenant`, () => HttpResponse.json(mockApiResponses.organization.organization)),
   http.put(`${tenantadmApiUrlv2}/tenants/:tenantId/child`, () => new HttpResponse(null, { status: 200 })),
   http.post(`${tenantadmApiUrlv2}/tenants/:tenantId/cancel`, () => new HttpResponse(null, { status: 200 })),
   http.post(`${tenantadmApiUrlv2}/tenants/trial`, signupHandler),
@@ -101,13 +99,13 @@ export const organizationHandlers = [
   http.post(`https://hosted.mender.io${tenantadmApiUrlv2}/tenants/trial`, signupHandler),
   http.get(`${tenantadmApiUrlv2}/tenants`, () => new HttpResponse([])),
   http.get(`${tenantadmApiUrlv2}/billing`, () => HttpResponse.json({ card: { last4: '7890', exp_month: 1, exp_year: 2024, brand: 'testCorp' } })),
-  http.post(`${tenantadmApiUrlv2}/billing/card`, () => HttpResponse.json({ intent_id: defaultState.organization.intentId, secret: 'testSecret' })),
+  http.post(`${tenantadmApiUrlv2}/billing/card`, () => HttpResponse.json({ intent_id: mockApiResponses.organization.intentId, secret: 'testSecret' })),
   http.post(
     `${tenantadmApiUrlv2}/billing/card/:intentId/confirm`,
-    ({ params: { intentId } }) => new HttpResponse(null, { status: intentId == defaultState.organization.intentId ? 200 : 540 })
+    ({ params: { intentId } }) => new HttpResponse(null, { status: intentId == mockApiResponses.organization.intentId ? 200 : 540 })
   ),
   http.post(`${tenantadmApiUrlv2}/tenants/:tenantId/upgrade/:status`, async ({ params: { status, tenantId }, request }) => {
-    if (tenantId != defaultState.organization.organization.id || !['cancel', 'complete', 'start'].includes(status)) {
+    if (tenantId != mockApiResponses.organization.organization.id || !['cancel', 'complete', 'start'].includes(status)) {
       return new HttpResponse(null, { status: 541 });
     }
     if (status === 'start') {
@@ -128,7 +126,7 @@ export const organizationHandlers = [
   http.post(`${tenantadmApiUrlv2}/tenants/:tenantId/plan`, async ({ params: { tenantId }, request }) => {
     const body = await request.json();
     const expectedKeys = ['current_plan', 'requested_plan', 'current_addons', 'requested_addons', 'user_message'];
-    if (tenantId != defaultState.organization.organization.id || !Object.keys(body).every(key => expectedKeys.includes(key))) {
+    if (tenantId != mockApiResponses.organization.organization.id || !Object.keys(body).every(key => expectedKeys.includes(key))) {
       return new HttpResponse(null, { status: 544 });
     }
     if (body.requested_plan && !Object.values(PLANS).some(item => item.name === body.requested_plan)) {
@@ -148,11 +146,11 @@ export const organizationHandlers = [
     const perPage = Number(searchParams.get('per_page'));
     if (perPage === 500) {
       return HttpResponse.json([
-        { meta: defaultState.organization.auditlog.events[2].meta, time: defaultState.organization.auditlog.events[1].time, action: 'close_terminal' }
+        { meta: mockApiResponses.organization.auditlog.events[2].meta, time: mockApiResponses.organization.auditlog.events[1].time, action: 'close_terminal' }
       ]);
     }
-    return new HttpResponse(JSON.stringify(defaultState.organization.auditlog.events), {
-      headers: { [headerNames.total]: defaultState.organization.auditlog.events.length }
+    return new HttpResponse(JSON.stringify(mockApiResponses.organization.auditlog.events), {
+      headers: { [headerNames.total]: mockApiResponses.organization.auditlog.events.length }
     });
   }),
   http.get(`${auditLogsApiUrl}/logs/export`, () =>
@@ -170,13 +168,11 @@ export const organizationHandlers = [
   ),
   http.get(`${iotManagerBaseURL}/integrations`, () =>
     HttpResponse.json([
-      { connection_string: 'something_else', id: 1, provider: EXTERNAL_PROVIDER['iot-hub'].provider },
-      { id: 2, provider: EXTERNAL_PROVIDER['iot-core'].provider, something: 'new' }
+      { connection_string: 'something_else', id: 1, provider: 'iot-hub' },
+      { id: 2, provider: 'iot-core', something: 'new' }
     ])
   ),
-  http.post(`${iotManagerBaseURL}/integrations`, () =>
-    HttpResponse.json([{ connection_string: 'something_else', provider: EXTERNAL_PROVIDER['iot-hub'].provider }])
-  ),
+  http.post(`${iotManagerBaseURL}/integrations`, () => HttpResponse.json([{ connection_string: 'something_else', provider: 'iot-hub' }])),
   http.put(`${iotManagerBaseURL}/integrations/:integrationId`, ({ params: { integrationId } }) => {
     if (!integrationId) {
       return new HttpResponse(null, { status: 547 });

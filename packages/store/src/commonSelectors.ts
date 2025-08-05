@@ -17,16 +17,25 @@ import { createSelector } from '@reduxjs/toolkit';
 
 import { ADDONS, PLANS, defaultReports } from './appSlice/constants';
 import { getFeatures, getSearchedDevices } from './appSlice/selectors';
-import { ALL_DEVICES, ATTRIBUTE_SCOPES, DEVICE_ISSUE_OPTIONS, DEVICE_LIST_MAXIMUM_LENGTH, UNGROUPED_GROUP } from './commonConstants';
+import { DEVICE_LIST_MAXIMUM_LENGTH, UNGROUPED_GROUP } from './commonConstants';
+import {
+  ALL_DEVICES,
+  ATTRIBUTE_SCOPES,
+  DEVICE_ISSUE_OPTIONS,
+  inventoryApiUrlV2,
+  reportingApiUrl,
+  rolesById,
+  rolesByName,
+  serviceProviderRolesById,
+  uiPermissionsById
+} from './constants';
 import { getDeploymentsById, getDeploymentsSelectionState, getSelectedDeploymentDeviceIds } from './deploymentsSlice/selectors';
-import { inventoryApiUrlV2, reportingApiUrl } from './devicesSlice/constants';
 import { getDeviceById, getDevicesById, getFilteringAttributes, getGroupsById, getListedDevices } from './devicesSlice/selectors';
 import { getIssueCountsByType } from './monitorSlice/selectors';
 import { onboardingSteps } from './onboardingSlice/constants';
 import { getOnboarding } from './onboardingSlice/selectors';
 import { getAuditLogEntry, getIsServiceProvider, getOrganization } from './organizationSlice/selectors';
 import { getReleasesById } from './releasesSlice/selectors';
-import { rolesById, rolesByName, serviceProviderRolesById, uiPermissionsById } from './usersSlice/constants';
 import { getCurrentUser, getGlobalSettings, getRolesById, getRolesList, getUserSettings } from './usersSlice/selectors';
 import { listItemMapper, mapUserRolesToUiPermissions } from './utils';
 

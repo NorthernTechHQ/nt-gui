@@ -14,9 +14,9 @@
 import { Provider } from 'react-redux';
 
 import { getConfiguredStore } from '@northern.tech/store/store';
+import { mockApiResponses as defaultState } from '@northern.tech/testing/mockData';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { defaultState } from '../../../tests/mockData';
 import { DocsLink } from './DocsLink';
 
 const meta: Meta<typeof DocsLink> = {

@@ -11,30 +11,22 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import storeActions from '@northern.tech/store/actions';
-import GeneralApi from '@northern.tech/store/api/general-api';
-import type { ArtifactUpdate, ReleaseUpdate, Tags } from '@northern.tech/store/api/types/MenderTypes';
-import {
-  DEVICE_LIST_DEFAULTS,
-  SORTING_OPTIONS,
-  TIMEOUTS,
-  deploymentsApiUrl,
-  deploymentsApiUrlV2,
-  emptyFilter,
-  headerNames
-} from '@northern.tech/store/constants';
-import { formatReleases } from '@northern.tech/store/locationutils';
-import type { SortOptions } from '@northern.tech/store/organizationSlice/types';
-import { getSearchEndpoint } from '@northern.tech/store/selectors';
-import type { AppDispatch } from '@northern.tech/store/store';
-import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '@northern.tech/store/store';
-import { convertDeviceListStateToFilters, progress } from '@northern.tech/store/utils';
+import type { ArtifactUpdate, ReleaseUpdate, Tags } from '@northern.tech/types/MenderTypes';
 import { customSort, deepCompare, duplicateFilter, extractSoftwareItem } from '@northern.tech/utils/helpers';
 import { isCancel } from 'axios';
 import { v4 as uuid } from 'uuid';
 
 import type { Artifact, Release, ReleaseSliceType, ReleasesList } from '.';
 import { actions, sliceName } from '.';
+import storeActions from '../actions';
+import GeneralApi from '../api/general-api';
+import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TIMEOUTS, deploymentsApiUrl, deploymentsApiUrlV2, emptyFilter, headerNames } from '../constants';
+import type { SortOptions } from '../constants';
+import { formatReleases } from '../locationutils';
+import { getSearchEndpoint } from '../selectors';
+import type { AppDispatch } from '../store';
+import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
+import { convertDeviceListStateToFilters, progress } from '../utils';
 import { ARTIFACT_GENERATION_TYPE } from './constants';
 import { getReleasesById } from './selectors';
 
@@ -90,10 +82,10 @@ export const getArtifactInstallCount = createAppAsyncThunk(`${sliceName}/getArti
   const artifact = releaseArtifacts[index];
   const { key, name, version } = extractSoftwareItem(artifact.artifact_provides) ?? {};
   const attribute = `${key}${name ? `.${name}` : ''}.version`;
+  //TODO: remove once utils types added
+  //@ts-ignore
   const { filterTerms } = convertDeviceListStateToFilters({
-    //TODO: remove once utils types added
-    //@ts-ignore
-    filters: [{ ...emptyFilter, key: attribute, value: version, scope: 'inventory' }]
+    filters: [{ ...emptyFilter, key: attribute, value: version!, scope: 'inventory' }]
   });
   return GeneralApi.post(getSearchEndpoint(getState()), {
     page: 1,

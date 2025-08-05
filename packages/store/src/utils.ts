@@ -12,21 +12,25 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 // @ts-nocheck
-import type { DeviceAttribute } from '@northern.tech/store/api/types/DeviceAttribute';
-import type { DeviceFilter, DeviceGroup, InventoryAttributes } from '@northern.tech/store/devicesSlice';
+import type { DeviceAttribute } from '@northern.tech/types/DeviceAttribute';
 import { duplicateFilter, yes } from '@northern.tech/utils/helpers';
 
-import type { DeviceIssueOptionKey } from './commonConstants';
-import { ATTRIBUTE_SCOPES, DEVICE_FILTERING_OPTIONS, DEVICE_ISSUE_OPTIONS, DEVICE_LIST_MAXIMUM_LENGTH, emptyUiPermissions } from './commonConstants';
+import type { DeviceIssueOptionKey } from './constants';
 import {
+  ATTRIBUTE_SCOPES,
   DARK_MODE,
   DEPLOYMENT_STATES,
+  DEVICE_FILTERING_OPTIONS,
+  DEVICE_ISSUE_OPTIONS,
+  DEVICE_LIST_MAXIMUM_LENGTH,
   defaultStats,
   deploymentDisplayStates,
   deploymentStatesToSubstates,
   deploymentStatesToSubstatesWithSkipped,
-  emptyFilter
+  emptyFilter,
+  emptyUiPermissions
 } from './constants';
+import type { DeviceFilter, DeviceGroup, InventoryAttributes } from './devicesSlice';
 
 // for some reason these functions can not be stored in the deviceConstants...
 const filterProcessors = {

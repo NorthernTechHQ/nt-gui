@@ -12,10 +12,10 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 /*eslint import/namespace: ['error', { allowComputed: true }]*/
+import { defaultState } from '@/testUtils';
 import { describe, expect, it } from 'vitest';
 
 import reducer, { actions, initialState } from '.';
-import { defaultState } from '../../../../tests/mockData';
 
 describe('device reducer', () => {
   it('should handle ADD_TO_GROUP', async () => {

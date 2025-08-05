@@ -11,14 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { EXTERNAL_PROVIDER, apiUrl, useradmApiUrl } from '@northern.tech/store/constants';
-
-import { Integration } from '../api/types/Integration';
-
-export const auditLogsApiUrl = `${apiUrl.v1}/auditlogs`;
-export const tenantadmApiUrlv1 = `${apiUrl.v1}/tenantadm`;
-export const tenantadmApiUrlv2 = `${apiUrl.v2}/tenantadm`;
-export const ssoIdpApiUrlv1 = `${apiUrl.v1}/useradm/sso/idp/metadata`;
+import { useradmApiUrl } from '../constants';
 
 export const XML_METADATA_FORMAT = 'xml';
 export const JSON_METADATA_FORMAT = 'json';
@@ -67,21 +60,6 @@ export const auditlogTypes = {
 export const AUDIT_LOGS_TYPES = [auditlogTypes.artifact, auditlogTypes.deployment, auditlogTypes.device, auditlogTypes.user_access_token, auditlogTypes.user];
 export const SP_AUDIT_LOGS_TYPES = [auditlogTypes.user, auditlogTypes.tenant];
 
-export interface Webhook extends Integration {
-  provider: Integration.provider.WEBHOOK;
-}
-
-export const emptyWebhook: Webhook = {
-  description: '',
-  provider: Integration.provider.WEBHOOK,
-  credentials: {
-    type: EXTERNAL_PROVIDER.webhook.credentialsType,
-    [EXTERNAL_PROVIDER.webhook.credentialsType]: {
-      secret: '',
-      url: ''
-    }
-  }
-};
 export const TENANT_LIST_DEFAULT = {
   page: 1,
   perPage: 20

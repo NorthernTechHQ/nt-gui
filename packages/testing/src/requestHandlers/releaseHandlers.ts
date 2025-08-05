@@ -11,21 +11,22 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { SORTING_OPTIONS, deploymentsApiUrl, deploymentsApiUrlV2, headerNames } from '@northern.tech/store/constants';
+//@ts-nocheck
+import { SORTING_OPTIONS, deploymentsApiUrl, deploymentsApiUrlV2, headerNames } from '@northern.tech/utils/constants';
 import { customSort } from '@northern.tech/utils/helpers';
 import { HttpResponse, http } from 'msw';
 
-import { defaultState, releasesList } from '../mockData';
+import { mockApiResponses, releasesList } from '../mockData';
 
 export const releaseHandlers = [
   http.get(`${deploymentsApiUrl}/artifacts/:id/download`, () => HttpResponse.json({ uri: 'https://testlocation.com/artifact.mender' })),
   http.delete(
     `${deploymentsApiUrl}/artifacts/:id`,
-    ({ params: { id } }) => new HttpResponse(null, { status: id === defaultState.releases.byId.r1.artifacts[0].id ? 200 : 591 })
+    ({ params: { id } }) => new HttpResponse(null, { status: id === mockApiResponses.releases.byId.r1.artifacts[0].id ? 200 : 591 })
   ),
   http.put(`${deploymentsApiUrl}/artifacts/:id`, async ({ params: { id }, request }) => {
     const { description } = await request.json();
-    return new HttpResponse(null, { status: id === defaultState.releases.byId.r1.artifacts[0].id && description ? 200 : 592 });
+    return new HttpResponse(null, { status: id === mockApiResponses.releases.byId.r1.artifacts[0].id && description ? 200 : 592 });
   }),
   http.post(`${deploymentsApiUrl}/artifacts/generate`, () => new HttpResponse(null, { status: 200 })),
   http.post(`${deploymentsApiUrl}/artifacts`, () => new HttpResponse(null, { status: 200 })),
@@ -40,19 +41,19 @@ export const releaseHandlers = [
       return HttpResponse.json([]);
     }
     if (page == 42) {
-      return new HttpResponse(JSON.stringify([defaultState.releases.byId.r1]), { headers: { [headerNames.total]: 1 } });
+      return new HttpResponse(JSON.stringify([mockApiResponses.releases.byId.r1]), { headers: { [headerNames.total]: 1 } });
     }
     const sort = searchParams.get('sort');
     const releaseListSection = releasesList.sort(customSort(sort.includes(SORTING_OPTIONS.desc), 'name')).slice((page - 1) * perPage, page * perPage);
     if (page === 1 && perPage === 1 && searchParams.get('name')) {
-      return HttpResponse.json([defaultState.releases.byId.r1]);
+      return HttpResponse.json([mockApiResponses.releases.byId.r1]);
     }
     if (searchParams.get('name')) {
       return new HttpResponse(JSON.stringify(releaseListSection), { headers: { [headerNames.total]: 1234 } });
     }
     return new HttpResponse(JSON.stringify(releaseListSection), { headers: { [headerNames.total]: releasesList.length } });
   }),
-  http.get(`${deploymentsApiUrlV2}/deployments/releases/:name`, () => HttpResponse.json(defaultState.releases.byId.r1)),
+  http.get(`${deploymentsApiUrlV2}/deployments/releases/:name`, () => HttpResponse.json(mockApiResponses.releases.byId.r1)),
   http.get(`${deploymentsApiUrlV2}/releases/all/tags`, () => HttpResponse.json(['foo', 'bar'])),
   http.get(`${deploymentsApiUrlV2}/releases/all/types`, () => HttpResponse.json(['single-file', 'not-this'])),
   http.put(`${deploymentsApiUrlV2}/deployments/releases/:name/tags`, async ({ params: { name }, request }) => {

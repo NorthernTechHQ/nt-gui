@@ -11,31 +11,17 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { initialState as initialAppState } from '../packages/store/src/appSlice';
-import { maxSessionAge } from '../packages/store/src/auth';
 import {
   ALL_DEVICES,
   ALL_RELEASES,
-  DEVICE_ISSUE_OPTIONS,
-  DEVICE_LIST_DEFAULTS,
-  DEVICE_STATES,
-  SORTING_OPTIONS,
   defaultPermissionSets,
   emptyRole,
   emptyUiPermissions,
+  maxSessionAge,
   rolesById,
-  rolesByName,
   scopedPermissionAreas,
-  twoFAStates,
   uiPermissionsById
-} from '../packages/store/src/constants';
-import { initialState as initialDeploymentsState } from '../packages/store/src/deploymentsSlice';
-import { initialState as initialDevicesState } from '../packages/store/src/devicesSlice';
-import { initialState as initialMonitorState } from '../packages/store/src/monitorSlice';
-import { initialState as initialOnboardingState } from '../packages/store/src/onboardingSlice';
-import { initialState as initialOrganizationState } from '../packages/store/src/organizationSlice';
-import { initialState as initialReleasesState } from '../packages/store/src/releasesSlice';
-import { initialState as initialUsersState } from '../packages/store/src/usersSlice';
+} from '@northern.tech/utils/constants';
 
 export const undefineds = /undefined|\[object Object\]/;
 export const menderEnvironment = {
@@ -61,7 +47,6 @@ export const defaultMacAddress = 'dc:a6:32:12:ad:bf';
 
 export const testSsoId = 'sso_id';
 
-const deviceTypes = { qemu: 'qemux86-64' };
 const permissionSetObjectTypes = {
   any: 'Any',
   artifacts: 'Artifacts',
@@ -143,54 +128,48 @@ export const adminUserCapabilities = {
   canWriteDevices: true
 };
 
-let checkInTimeRounded = '2019-01-01T00:00:00.000Z';
-let checkInTimeExact = '2019-01-01T10:25:00.000Z';
-
 export const userId = 'a30a780b-b843-5344-80e3-0fd95a4f6fc3';
-export const defaultState = {
-  app: {
-    ...initialAppState,
-    searchState: {
-      deviceIds: [],
-      searchTerm: '',
-      searchTotal: 0,
-      sort: {}
-    },
-    snackbar: {},
-    uploadsById: {},
-    versionInformation: {}
-  },
+
+const defaultUser = {
+  created_ts: '2019-01-01T10:30:00.000Z',
+  email: 'a@b.com',
+  id: 'a1',
+  roles: ['RBAC_ROLE_PERMIT_ALL'],
+  tfa_status: 'enabled',
+  verified: true
+};
+
+const deviceTypes = { qemu: 'qemux86-64' };
+
+const checkInTimeRounded = '2019-01-01T00:00:00.000Z';
+const checkInTimeExact = '2019-01-01T10:25:00.000Z';
+
+export const mockApiResponses = {
   deployments: {
-    ...initialDeploymentsState,
     byId: {
       d1: {
         id: 'd1',
         name: 'test deployment',
-        artifact_name: 'r1',
-        artifacts: ['123'],
         created: '2019-01-01T12:30:00.000Z',
-        device_count: 1,
         devices: {
           a1: {
-            attributes: {},
             id: 'a1',
-            image: { size: 123 },
-            status: 'installing'
+            status: 'installing',
+            attributes: {},
+            image: { size: 123 }
           }
         },
-        filter: undefined,
-        group: undefined,
         statistics: {
           status: {
-            downloading: 0,
+            'already-installed': 0,
             decommissioned: 0,
+            downloading: 0,
             failure: 0,
             installing: 1,
             noartifact: 0,
             pending: 0,
             rebooting: 0,
-            success: 0,
-            'already-installed': 0
+            success: 0
           },
           total_size: 1234
         }
@@ -264,63 +243,24 @@ export const defaultState = {
       }
     },
     byStatus: {
-      finished: { deploymentIds: ['d1'], total: 1 },
-      inprogress: { deploymentIds: ['d3'], total: 1 },
-      pending: { deploymentIds: ['d2'], total: 1 },
-      scheduled: { deploymentIds: ['d2'], total: 1 }
-    },
-    deploymentDeviceLimit: 500,
-    selectedDeviceIds: [],
-    selectionState: {
-      finished: {
-        ...DEVICE_LIST_DEFAULTS,
-        selection: ['d1'],
-        endDate: undefined,
-        search: '',
-        total: 1,
-        type: ''
-      },
-      inprogress: { ...DEVICE_LIST_DEFAULTS, selection: ['d1'], total: 1 },
-      pending: { ...DEVICE_LIST_DEFAULTS, selection: ['d2'], total: 1 },
-      scheduled: { ...DEVICE_LIST_DEFAULTS, selection: ['d2'], total: 1 },
-      general: {
-        state: 'active',
-        showCreationDialog: false,
-        showReportDialog: false,
-        reportType: null
-      },
-      selectedId: 'd1'
+      pending: { deploymentIds: ['d2'] },
+      inprogress: { deploymentIds: ['d3'] }
     }
   },
   devices: {
-    ...initialDevicesState,
     byId: {
       a1: {
         id: 'a1',
-        attributes: {
-          device_type: ['raspberrypi4'],
-          ipv4_wlan0: '192.168.10.141/24'
-        },
-        system: {
-          check_in_time: checkInTimeRounded
-        },
-        check_in_time: checkInTimeExact,
-        check_in_time_exact: checkInTimeExact,
-        check_in_time_rounded: checkInTimeRounded,
-        identity_data: { mac: defaultMacAddress },
-        status: 'accepted',
-        decommissioning: false,
-        created_ts: defaultCreationDate,
-        updated_ts: '2019-01-01T09:25:00.000Z',
         auth_sets: [
           {
             id: 'auth1',
             identity_data: { mac: defaultMacAddress },
             pubkey: '-----BEGIN PUBLIC KEY-----\nMIIBojWELzgJ62hcXIhAfqfoNiaB1326XZByZwcnHr5BuSPAgMBAAE=\n-----END PUBLIC KEY-----\n',
-            ts: defaultCreationDate,
-            status: 'accepted'
+            status: 'accepted',
+            ts: defaultCreationDate
           }
-        ]
+        ],
+        updated_ts: '2019-01-01T09:25:00.000Z'
       },
       b1: {
         id: 'b1',
@@ -348,47 +288,8 @@ export const defaultState = {
             status: 'accepted'
           }
         ]
-      },
-      c1: {
-        id: 'c1',
-        auth_sets: [],
-        attributes: {
-          device_type: ['qemux86-128']
-        }
       }
     },
-    byStatus: {
-      accepted: { deviceIds: ['a1', 'b1'], total: 2 },
-      active: { deviceIds: [], total: 0 },
-      inactive: { deviceIds: [], total: 0 },
-      pending: { deviceIds: ['c1'], total: 1 },
-      preauthorized: { deviceIds: [], total: 0 },
-      rejected: { deviceIds: [], total: 0 }
-    },
-    deviceList: {
-      deviceIds: [],
-      isLoading: false,
-      page: 1,
-      perPage: 20,
-      selectedAttributes: [],
-      selectedIssues: [],
-      selection: [],
-      sort: {
-        direction: SORTING_OPTIONS.desc
-        // key: null,
-        // scope: null
-      },
-      state: DEVICE_STATES.accepted,
-      total: 0
-    },
-    filteringAttributes: {
-      identityAttributes: ['mac'],
-      inventoryAttributes: ['artifact_name'],
-      systemAttributes: [],
-      tagAttributes: []
-    },
-    filteringAttributesLimit: 10,
-    filters: [],
     groups: {
       byId: {
         testGroup: {
@@ -401,75 +302,27 @@ export const defaultState = {
           name: 'filter1',
           filters: [{ scope: 'system', key: 'group', operator: '$eq', value: 'things' }]
         }
-      },
-      selectedGroup: undefined
-    },
-    limit: 500
-  },
-  onboarding: {
-    ...initialOnboardingState,
-    progress: undefined,
-    complete: false,
-    demoArtifactPort: 85,
-    showConnectDeviceDialog: false,
-    showTipsDialog: false
-  },
-  monitor: {
-    ...initialMonitorState,
-    alerts: {
-      alertList: { ...DEVICE_LIST_DEFAULTS, total: 0 },
-      byDeviceId: {
-        a1: {
-          alerts: [
-            {
-              description: 'something',
-              id: '31346239-3839-6262-2d63-3365622d3437',
-              name: 'SSH Daemon is not running',
-              device_id: 'a1',
-              level: 'CRITICAL',
-              subject: {
-                name: 'sshd',
-                type: 'systemd',
-                status: 'not-running',
-                details: { description: 'Jul 22 10:40:56 raspberrypi sshd[32031]: pam_unix(sshd:session): session closed for user root' }
-              },
-              timestamp: '2021-07-23T12:22:36Z'
-            }
-          ],
-          latest: []
-        }
       }
     },
-    issueCounts: {
-      byType: Object.values(DEVICE_ISSUE_OPTIONS).reduce(
-        (accu, { isCategory, key }) => {
-          if (isCategory) {
-            return accu;
-          }
-          const current = accu[key] ?? {};
-          accu[key] = { filtered: 0, total: 0, ...current };
-          return accu;
-        },
-        {
-          [DEVICE_ISSUE_OPTIONS.authRequests.key]: { filtered: 0, total: 0 },
-          [DEVICE_ISSUE_OPTIONS.monitoring.key]: { filtered: 3, total: 0 },
-          [DEVICE_ISSUE_OPTIONS.offline.key]: { filtered: 0, total: 0 }
-        }
-      )
-    },
-    settings: {
-      global: {
-        channels: { email: { enabled: true } }
-      }
+    limit: 500,
+    byStatus: {
+      accepted: { deviceIds: ['a1', 'b1'], total: 2 },
+      active: { deviceIds: [], total: 0 },
+      inactive: { deviceIds: [], total: 0 },
+      pending: { deviceIds: ['c1'], total: 1 },
+      preauthorized: { deviceIds: [], total: 0 },
+      rejected: { deviceIds: [], total: 0 }
     }
   },
   organization: {
-    ...initialOrganizationState,
-    card: {
-      brand: 'testCorp',
-      last4: '7890',
-      expiration: { month: 1, year: 2024 }
+    organization: {
+      id: '1',
+      addons: [],
+      name: 'test',
+      plan: 'os',
+      trial: false
     },
+    intentId: 'testIntent',
     auditlog: {
       events: [
         {
@@ -525,26 +378,10 @@ export const defaultState = {
           },
           change: 'change3'
         }
-      ],
-      selectionState: {
-        ...initialOrganizationState.auditlog.selectionState,
-        ...DEVICE_LIST_DEFAULTS,
-        sort: {},
-        total: 3
-      }
-    },
-    intentId: 'testIntent',
-    organization: {
-      ...initialOrganizationState.organization,
-      addons: [],
-      id: '1',
-      name: 'test',
-      plan: 'os',
-      trial: false
+      ]
     }
   },
   releases: {
-    ...initialReleasesState,
     byId: {
       r1: {
         name: 'r1',
@@ -570,51 +407,57 @@ export const defaultState = {
         modified: '2020-09-10T12:16:22.667Z',
         metaData: {}
       }
-    },
-    releasesList: {
-      ...DEVICE_LIST_DEFAULTS,
-      searchedIds: [],
-      isLoading: false,
-      releaseIds: ['r1'],
-      selection: [],
-      sort: {
-        direction: SORTING_OPTIONS.desc,
-        key: 'name'
-      },
-      searchTerm: '',
-      searchTotal: 0,
-      total: 1
     }
   },
   users: {
-    ...initialUsersState,
     byId: {
-      a1: { email: 'a@b.com', id: 'a1', created_ts: '2019-01-01T10:30:00.000Z', roles: [rolesByName.admin], verified: true },
-      [userId]: { email: 'a2@b.com', id: userId, created_ts: '2019-01-01T12:30:00.000Z', roles: [rolesByName.admin], tfa_status: twoFAStates.enabled }
+      a1: defaultUser,
+      [userId]: { ...defaultUser, id: userId, email: 'a2@b.com', created_ts: '2019-01-01T12:30:00.000Z' }
     },
-    currentUser: 'a1',
-    globalSettings: { '2fa': 'enabled', id_attribute: undefined, previousFilters: [] },
     rolesById: {
-      ...rolesById,
-      test: {
-        ...emptyRole,
-        name: 'test',
-        description: 'test description',
-        editable: true,
-        uiPermissions: {
-          ...emptyUiPermissions,
-          groups: { testGroup: [uiPermissionsById.read.value] },
-          releases: { bar: [uiPermissionsById.read.value] }
-        }
-      }
+      admin: {
+        name: 'admin',
+        description: 'Administrator role',
+        permissions: []
+      },
+      test: { name: 'test', description: 'test description', permissions: [] }
     },
-    settingsInitialized: true,
-    userSettings: { columnSelection: [], onboarding: { something: 'here' }, tooltips: {} }
+    globalSettings: {
+      '2fa': 'enabled',
+      id_attribute: undefined,
+      previousFilters: []
+    },
+    userSettings: {
+      '2fa': 'disabled',
+      columnSelection: [],
+      onboarding: { something: 'here' },
+      tooltips: {},
+      previousFilters: []
+    }
   }
 };
 
 export const releasesList = Array.from({ length: 5000 }, (x, i) => ({
-  ...defaultState.releases.byId.r1,
+  artifacts: [
+    {
+      id: 'art1',
+      description: 'test description',
+      device_types_compatible: [deviceTypes.qemu],
+      modified: '2020-09-10T12:16:22.667Z',
+      updates: [{ type_info: 'testtype' }],
+      artifact_depends: {
+        device_type: [deviceTypes.qemu]
+      },
+      artifact_provides: {
+        artifact_name: 'myapp',
+        'data-partition.myapp.version': 'v2020.10',
+        list_of_fancy: [deviceTypes.qemu, 'x172']
+      },
+      clears_artifact_provides: ['data-partition.myapp.*']
+    }
+  ],
+  device_types_compatible: [deviceTypes.qemu],
+  metaData: {},
   name: `release-${i + 1}`,
   modified: i
 }));
@@ -949,16 +792,31 @@ const expectedParsedRoles = {
   }
 };
 
+const defaultRolesById = {
+  ...rolesById,
+  test: {
+    ...emptyRole,
+    name: 'test',
+    description: 'test description',
+    editable: true,
+    uiPermissions: {
+      ...emptyUiPermissions,
+      groups: { testGroup: [uiPermissionsById.read.value] },
+      releases: { bar: [uiPermissionsById.read.value] }
+    }
+  }
+};
+
 export const receivedRoles = rbacRoles.reduce(
   (accu, role) => {
     const { name, description, ...roleRemainder } = role;
     if (name.startsWith('RBAC')) {
       accu[name] = {
-        ...defaultState.users.rolesById[name],
+        ...defaultRolesById[name],
         ...roleRemainder,
         editable: false,
         isCustom: false,
-        description: defaultState.users.rolesById[name].description ? defaultState.users.rolesById[name].description : description
+        description: defaultRolesById[name].description ? defaultRolesById[name].description : description
       };
     } else {
       const result = expectedParsedRoles[name] ?? {};
@@ -971,7 +829,7 @@ export const receivedRoles = rbacRoles.reduce(
     }
     return accu;
   },
-  { ...defaultState.users.rolesById }
+  { ...defaultRolesById }
 );
 
 export const receivedPermissionSets = permissionSets.reduce((accu, set) => {
