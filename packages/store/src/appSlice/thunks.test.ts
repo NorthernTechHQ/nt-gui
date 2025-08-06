@@ -43,7 +43,7 @@ describe('app actions', () => {
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
   it('should not get the latest release info when not hosted', async () => {
-    const store = mockStore({ ...defaultState });
+    const store = mockStore({ ...defaultState, app: { ...defaultState.app, features: { ...defaultState.app.features, isHosted: false } } });
     const expectedActions = [{ type: getLatestReleaseInfo.pending.type }, { type: getLatestReleaseInfo.fulfilled.type }];
     await store.dispatch(getLatestReleaseInfo());
     const storeActions = store.getActions();
@@ -64,7 +64,7 @@ describe('app actions', () => {
       { type: getLatestReleaseInfo.pending.type },
       {
         type: actions.setVersionInformation.type,
-        payload: { backend: latestSaasReleaseTag, GUI: latestSaasReleaseTag, Integration: '1.2.3', 'Mender-Client': '3.2.1', 'Mender-Artifact': '1.3.7' }
+        payload: { Server: latestSaasReleaseTag, Integration: '1.2.3', 'Mender-Client': '3.2.1', 'Mender-Artifact': '1.3.7' }
       },
       { type: getLatestReleaseInfo.fulfilled.type }
     ];

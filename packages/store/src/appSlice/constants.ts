@@ -40,9 +40,11 @@ export const locations = {
 export type AvailablePlans = 'os' | 'professional' | 'enterprise';
 
 export type Plan = {
+  description: string;
   deviceCount: string;
   features: string[];
   id: AvailablePlans;
+  minimalDeviceCount: number;
   name: string;
   offer?: boolean;
   offerprice?: string;
@@ -56,31 +58,35 @@ export const PLANS: { [key in AvailablePlans]: Plan } = {
   os: {
     id: 'os',
     name: 'Basic',
+    minimalDeviceCount: 50,
     offer: true,
-    price: '$32 / month',
+    price: '$34 / month',
     deviceCount: startingDeviceCount.os,
-    offerprice: '$23 / month for first 50 devices',
-    price2: 'for first 6 months;\n$29/month thereafter',
+    description:
+      'The core features of Mender. To continue using Enterprise Trial features—like Delta updates, scheduled deployments, phased rollouts, device filtering, dynamic groups, RBAC, audit logs, and more—please upgrade to a higher plan.',
     features: ['Access to core features of Mender', 'Basic support']
   },
   professional: {
     id: 'professional',
     name: 'Professional',
+    minimalDeviceCount: 250,
     offer: true,
-    price: '$269 / month',
+    price: '$291 / month',
     deviceCount: startingDeviceCount.professional,
-    offerprice: '$200 / month for first 50 devices',
-    price2: 'for first 6 months;\n$249/month thereafter',
+    description: 'Everything in Basic, plus enhanced update management and automation features.',
     features: ['Advanced OTA features', 'Higher priority support']
   },
   enterprise: {
     id: 'enterprise',
     name: 'Enterprise',
+    minimalDeviceCount: 1000,
     price: 'Custom pricing',
     deviceCount: 'Unlimited devices',
+    description:
+      'Every advanced feature of Mender, tailored for complex and large-scale deployments. Not available as a monthly subscription — ask us for a quote.',
     features: ['All Mender features', 'Advanced security features', 'SLA-backed support']
   }
-};
+} as const;
 export type Addon = {
   description: string;
   eligible: AvailablePlans[];
@@ -113,21 +119,6 @@ export const ADDONS: { [key in AvailableAddon]: Addon } = {
     },
     eligible: ['os', 'professional', 'enterprise']
   },
-  troubleshoot: {
-    id: 'troubleshoot',
-    title: 'Troubleshoot',
-    description: 'Expand your plan with device troubleshooting features',
-    needs: ['hasDeviceConnect'],
-    os: {
-      price: '$27/month',
-      deviceCount: startingDeviceCount.os
-    },
-    professional: {
-      price: '$72/month',
-      deviceCount: startingDeviceCount.professional
-    },
-    eligible: ['os', 'professional', 'enterprise']
-  },
   monitor: {
     id: 'monitor',
     title: 'Monitor',
@@ -142,6 +133,21 @@ export const ADDONS: { [key in AvailableAddon]: Addon } = {
       deviceCount: startingDeviceCount.professional
     },
     eligible: ['professional', 'enterprise']
+  },
+  troubleshoot: {
+    id: 'troubleshoot',
+    title: 'Troubleshoot',
+    description: 'Expand your plan with device troubleshooting features',
+    needs: ['hasDeviceConnect'],
+    os: {
+      price: '$27/month',
+      deviceCount: startingDeviceCount.os
+    },
+    professional: {
+      price: '$72/month',
+      deviceCount: startingDeviceCount.professional
+    },
+    eligible: ['os', 'professional', 'enterprise']
   }
 };
 

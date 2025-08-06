@@ -73,7 +73,6 @@ export interface Upload {
   name?: string;
   progress: number;
   size?: number;
-  uploading?: boolean;
 }
 
 type UILatestRelease = {
@@ -88,8 +87,16 @@ type VersionInformation = {
   latestRelease?: UILatestRelease;
 };
 
+export type SentryConfig = {
+  isReduxEnabled?: string; // no parsing done here as this has to be accessed outside of the store
+  location: string;
+  replaysSessionSampleRate?: number;
+  tracesSampleRate?: number;
+};
+
 type AppSliceType = {
   cancelSource: any;
+  commit: string;
   demoArtifactLink: string;
   docsVersion: string;
   features: Record<string, boolean>;
@@ -101,6 +108,7 @@ type AppSliceType = {
   offlineThreshold: string;
   recaptchaSiteKey: string;
   searchState: SearchState;
+  sentry: SentryConfig;
   snackbar: SnackbarContent;
   stripeAPIKey: string;
   trackerCode: string;
@@ -111,6 +119,7 @@ type AppSliceType = {
 
 export const initialState: AppSliceType = {
   cancelSource: undefined,
+  commit: '',
   demoArtifactLink: 'https://dgsbl4vditpls.cloudfront.net/mender-demo-artifact.mender',
   hostAddress: null,
   snackbar: {
@@ -131,7 +140,7 @@ export const initialState: AppSliceType = {
     hasMonitor: false,
     hasReporting: false,
     isDemoMode: false,
-    isHosted: false,
+    isHosted: true,
     isEnterprise: false
   },
   feedbackProbability: 0.3,
@@ -150,10 +159,15 @@ export const initialState: AppSliceType = {
       // scope: null
     }
   },
+  sentry: {
+    location: '',
+    replaysSessionSampleRate: 0.1,
+    tracesSampleRate: 1.0
+  },
   stripeAPIKey: '',
   trackerCode: '',
   uploadsById: {
-    // id: { uploading: false, progress: 0, cancelSource: undefined }
+    // id: { progress: 0, cancelSource: undefined }
   },
   newThreshold: getYesterday(),
   offlineThreshold: getYesterday(),
