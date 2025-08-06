@@ -15,7 +15,7 @@ import { Provider } from 'react-redux';
 
 import { getConfiguredStore } from '@northern.tech/store/store';
 import { mockApiResponses as defaultState } from '@northern.tech/testing/mockData';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { DeviceNameInput } from './DeviceNameInput';
 
