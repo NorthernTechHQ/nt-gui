@@ -398,6 +398,7 @@ describe('user actions', () => {
       { type: actions.receivedPermissionSets.type, payload: receivedPermissionSets },
       { type: getPermissionSets.fulfilled.type },
       { type: actions.receivedRoles.type, payload: receivedRoles },
+      { type: actions.finishedRoleInitialization.type, payload: true },
       { type: getRoles.fulfilled.type }
     ];
     const store = mockStore({ ...defaultState });
@@ -421,6 +422,7 @@ describe('user actions', () => {
       { type: actions.receivedPermissionSets.type, payload: receivedPermissionSets },
       { type: getPermissionSets.fulfilled.type },
       { type: actions.receivedRoles.type, payload: receivedRoles },
+      { type: actions.finishedRoleInitialization.type, payload: true },
       { type: getRoles.fulfilled.type },
       { type: createRole.fulfilled.type }
     ];
@@ -451,6 +453,7 @@ describe('user actions', () => {
       { type: actions.receivedPermissionSets.type, payload: receivedPermissionSets },
       { type: getPermissionSets.fulfilled.type },
       { type: actions.receivedRoles.type, payload: receivedRoles },
+      { type: actions.finishedRoleInitialization.type, payload: true },
       { type: getRoles.fulfilled.type },
       { type: editRole.fulfilled.type }
     ];
@@ -473,6 +476,7 @@ describe('user actions', () => {
       { type: actions.receivedPermissionSets.type, payload: receivedPermissionSets },
       { type: getPermissionSets.fulfilled.type },
       { type: actions.receivedRoles.type, payload: receivedRoles },
+      { type: actions.finishedRoleInitialization.type, payload: true },
       { type: getRoles.fulfilled.type },
       { type: removeRole.fulfilled.type }
     ];
@@ -484,11 +488,17 @@ describe('user actions', () => {
   });
   it('should allow password reset - pt. 1', async () => {
     const store = mockStore({ ...defaultState });
-    await store.dispatch(passwordResetStart(defaultState.users.byId.a1.email)).then(() => expect(true).toEqual(true));
+    await store
+      .dispatch(passwordResetStart(defaultState.users.byId.a1.email))
+      .unwrap()
+      .then(() => expect(true).toEqual(true));
   });
   it('should allow password reset - pt. 2', async () => {
     const store = mockStore({ ...defaultState });
-    await store.dispatch(passwordResetComplete({ secretHash: 'secretHash', newPassword: 'newPassword' })).then(() => expect(true).toEqual(true));
+    await store
+      .dispatch(passwordResetComplete({ secretHash: 'secretHash', newPassword: 'newPassword' }))
+      .unwrap()
+      .then(() => expect(true).toEqual(true));
   });
   it('should allow storing global settings without deletion', async () => {
     vi.clearAllMocks();
@@ -531,6 +541,7 @@ describe('user actions', () => {
   });
   it('should allow storing user scoped settings', async () => {
     vi.clearAllMocks();
+
     const { ...settings } = defaultState.users.userSettings;
     const expectedActions = [
       { type: saveUserSettings.pending.type },
@@ -613,6 +624,7 @@ describe('user actions', () => {
   });
   it('should allow token removal', async () => {
     vi.clearAllMocks();
+
     const expectedActions = [
       { type: revokeToken.pending.type },
       { type: getTokens.pending.type },

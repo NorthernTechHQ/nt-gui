@@ -22,6 +22,7 @@ import { READ_STATES } from './constants';
 export const getRolesById = state => state.users.rolesById;
 export const getTooltipsById = state => state.users.tooltips.byId;
 export const getGlobalSettings = state => state.users.globalSettings;
+export const getUserSettingsInitialized = state => state.users.settingsInitialized;
 
 const getCurrentUserId = state => state.users.currentUser;
 export const getUsersById = state => state.users.byId;
@@ -33,8 +34,8 @@ export const getSelectedDeviceAttribute = createSelector([getUserSettings], ({ c
 );
 export const getIsDarkMode = createSelector([getUserSettings], ({ mode }) => isDarkMode(mode));
 
-export const getShowHelptips = createSelector([getTooltipsById], tooltips =>
-  Object.values(tooltips).reduce((accu, { readState }) => accu || readState === READ_STATES.unread, false)
+export const getReadAllHelptips = createSelector([getTooltipsById], tooltips =>
+  Object.values(tooltips).every(({ readState }) => readState === READ_STATES.read)
 );
 
 export const getTooltipsState = createSelector([getTooltipsById, getUserSettings], (byId, { tooltips = {} }) =>
@@ -62,3 +63,4 @@ export const getOfflineThresholdSettings = createSelector([getGlobalSettings], (
 export const getRolesList = createSelector([getRolesById], rolesById => Object.entries(rolesById).map(([value, role]) => ({ value, ...role })));
 
 export const getCurrentSession = state => state.users.currentSession;
+export const getRolesInitialized = state => state.users.rolesInitialized;
