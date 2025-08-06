@@ -285,9 +285,6 @@ export const devicesSlice = createSlice({
       const { count, status } = action.payload;
       state.byStatus[status].total = count;
     },
-    setTotalDevices: (state, action: PayloadAction<number>) => {
-      state.total = action.payload;
-    },
     setDeviceLimit: (state, action: PayloadAction<number>) => {
       state.limit = action.payload;
     },

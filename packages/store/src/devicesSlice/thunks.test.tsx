@@ -35,8 +35,6 @@ import {
   applyDeviceConfig,
   decommissionDevice,
   deleteAuthset,
-  deriveInactiveDevices,
-  deriveReportsData,
   deviceFileUpload,
   getAllDeviceCounts,
   getAllDevicesByStatus,
@@ -58,9 +56,7 @@ import {
   getGatewayDevices,
   getGroupDevices,
   getGroups,
-  getReportingLimits,
-  getReportsData,
-  getReportsDataWithoutBackendSupport,
+  getReportDataWithoutBackendSupport,
   getSessionDetails,
   getSystemDevices,
   preauthDevice,
@@ -75,7 +71,8 @@ import {
   triggerDeviceUpdate,
   updateDeviceAuth,
   updateDevicesAuth,
-  updateDynamicGroup
+  updateDynamicGroup,
+  updateReportData
 } from './thunks';
 
 const middlewares = [thunk];
@@ -256,7 +253,6 @@ describe('selecting things', () => {
     await store.dispatch(
       selectGroup({
         group: 'testGroupDynamic',
-        //@ts-ignore
         filters: [...defaultState.devices.groups.byId.testGroupDynamic.filters, { scope: 'system', key: 'group2', operator: '$eq', value: 'things2' }]
       })
     );
@@ -351,76 +347,8 @@ describe('overall device information retrieval', () => {
       expect(value).toBeTruthy();
     });
   });
-  it('should allow attribute config + limit retrieval and group results', async () => {
-    const store = mockStore({ ...defaultState });
-    const expectedActions = [
-      { type: getReportingLimits.pending.type },
-      {
-        type: actions.setFilterablesConfig.type,
-        payload: {
-          attributes: {
-            identity: ['status', 'mac'],
-            inventory: [
-              'artifact_name',
-              'cpu_model',
-              'device_type',
-              'hostname',
-              'ipv4_wlan0',
-              'ipv6_wlan0',
-              'kernel',
-              'mac_eth0',
-              'mac_wlan0',
-              'mem_total_kB',
-              'mender_bootloader_integration',
-              'mender_client_version',
-              'network_interfaces',
-              'os',
-              'rootfs_type'
-            ],
-            system: ['created_ts', 'updated_ts', 'group']
-          },
-          count: 20,
-          limit: 100
-        }
-      },
-      { type: getReportingLimits.fulfilled.type }
-    ];
-    await store.dispatch(getReportingLimits());
-    const storeActions = store.getActions();
-    expect(storeActions.length).toEqual(expectedActions.length);
-    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
-  });
-
-  it('should allow getting device aggregation data for use in the dashboard/ reports', async () => {
-    const store = mockStore({
-      ...defaultState,
-      devices: { ...defaultState.devices, byStatus: { ...defaultState.devices.byStatus, accepted: { ...defaultState.devices.byStatus.accepted, total: 50 } } }
-    });
-    const expectedActions = [
-      { type: getReportsData.pending.type },
-      {
-        type: actions.setDeviceReports.type,
-        payload: [
-          {
-            items: [
-              { count: 6, key: 'test' },
-              { count: 1, key: 'original' }
-            ],
-            otherCount: 43,
-            total: 50
-          }
-        ]
-      },
-      { type: getReportsData.fulfilled.type }
-    ];
-    await store.dispatch(getReportsData());
-    const storeActions = store.getActions();
-    expect(storeActions.length).toEqual(expectedActions.length);
-    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
-  });
   it('should allow getting device aggregation data for use in the dashboard/ reports even if the reporting service is not ready', async () => {
     const groupName = 'testGroup';
-    const groupNameDynamic = 'testGroupDynamic';
     const store = mockStore({
       ...defaultState,
       users: {
@@ -432,47 +360,13 @@ describe('overall device information retrieval', () => {
       }
     });
     const expectedActions = [
-      { type: getReportsDataWithoutBackendSupport.pending.type },
-      { type: getAllDevicesByStatus.pending.type },
-      { type: getGroups.pending.type },
-      { type: getDynamicGroups.pending.type },
-      { type: actions.receivedGroups.type, payload: { testGroup: defaultState.devices.groups.byId.testGroup } },
-      { type: getDevicesByStatus.pending.type },
-      defaultResults.receivedDynamicGroups,
-      { type: getDynamicGroups.fulfilled.type },
-      defaultResults.receivedExpectedDevice,
-      defaultResults.acceptedDevices,
-      { type: deriveInactiveDevices.pending.type },
-      { type: actions.setInactiveDevices.type, payload: { activeDeviceTotal: 0, inactiveDeviceTotal: 2 } },
-      { type: deriveReportsData.pending.type },
+      { type: getReportDataWithoutBackendSupport.pending.type },
+      { type: updateReportData.pending.type },
       { type: actions.setDeviceReports.type, payload: [{ items: [{ count: 2, key: '192.168.10.141/24' }], otherCount: 0, total: 2 }] },
-      { type: deriveInactiveDevices.fulfilled.type },
-      { type: deriveReportsData.fulfilled.type },
-      { type: getAllDevicesByStatus.fulfilled.type },
-      defaultResults.receiveDefaultDevice,
-      { type: getDevicesWithAuth.pending.type },
-      defaultResults.receivedExpectedDevice,
-      { type: getDevicesWithAuth.fulfilled.type },
-      { type: getDevicesByStatus.fulfilled.type },
-      defaultResults.addedUngroupedGroup,
-      { type: getGroups.fulfilled.type },
-      { type: getAllGroupDevices.pending.type },
-      { type: getAllDynamicGroupDevices.pending.type },
-      defaultResults.receivedExpectedDevice,
-      {
-        type: actions.addGroup.type,
-        payload: { group: { deviceIds: [defaultState.devices.byId.a1.id, defaultState.devices.byId.b1.id], total: 2 }, groupName }
-      },
-      { type: actions.receivedDevices.type, payload: {} },
-      { type: actions.addGroup.type, payload: { group: { deviceIds: [], total: 0 }, groupName: groupNameDynamic } },
-      { type: getAllGroupDevices.fulfilled.type },
-      { type: getAllDynamicGroupDevices.fulfilled.type },
-      { type: deriveReportsData.pending.type },
-      { type: actions.setDeviceReports.type, payload: [{ items: [{ count: 2, key: '192.168.10.141/24' }], otherCount: 0, total: 2 }] },
-      { type: deriveReportsData.fulfilled.type },
-      { type: getReportsDataWithoutBackendSupport.fulfilled.type }
+      { type: updateReportData.fulfilled.type },
+      { type: getReportDataWithoutBackendSupport.fulfilled.type }
     ];
-    await store.dispatch(getReportsDataWithoutBackendSupport());
+    await store.dispatch(getReportDataWithoutBackendSupport(0));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -776,7 +670,6 @@ describe('static grouping related actions', () => {
       { type: getGroups.fulfilled.type },
       { type: addStaticGroup.fulfilled.type }
     ];
-    //@ts-ignore
     await store.dispatch(addStaticGroup({ group: groupName, devices: [defaultState.devices.byId.a1] }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
@@ -855,7 +748,6 @@ describe('static grouping related actions', () => {
       { type: getDevicesByStatus.fulfilled.type },
       { type: getGroupDevices.fulfilled.type }
     ];
-    //@ts-ignore
     await store.dispatch(getGroupDevices(groupName));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
@@ -876,7 +768,7 @@ describe('static grouping related actions', () => {
       },
       { type: getAllGroupDevices.fulfilled.type }
     ];
-    await store.dispatch(getAllGroupDevices(groupName));
+    await store.dispatch(getAllGroupDevices({ group: groupName, attribute: 'artifact_name' }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -923,7 +815,7 @@ describe('dynamic grouping related actions', () => {
       { type: actions.addGroup.type, payload: { group: { deviceIds: [], total: 0 }, groupName } },
       { type: getAllDynamicGroupDevices.fulfilled.type }
     ];
-    await store.dispatch(getAllDynamicGroupDevices(groupName));
+    await store.dispatch(getAllDynamicGroupDevices({ group: groupName, attribute: 'artifact_name' }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -1000,8 +892,8 @@ describe('device retrieval ', () => {
       { type: getDeviceInfo.pending.type },
       { type: getDeviceAuth.pending.type },
       { type: getDevicesWithAuth.pending.type },
-      { type: getDeviceTwin.pending.type },
       { type: getDeviceById.pending.type },
+      { type: getDeviceTwin.pending.type },
       { type: getDeviceConnect.pending.type },
       { type: actions.receivedDevices.type, payload: { [id]: { ...expectedDevice, id } } },
       { type: actions.receivedDevice.type, payload: { attributes, id } },
@@ -1080,16 +972,9 @@ describe('device retrieval ', () => {
     const expectedActions = [
       { type: getAllDevicesByStatus.pending.type },
       defaultResults.receivedExpectedDevice,
-      defaultResults.acceptedDevices,
-      { type: deriveInactiveDevices.pending.type },
-      { type: actions.setInactiveDevices.type, payload: { activeDeviceTotal: 0, inactiveDeviceTotal: 2 } },
-      { type: deriveReportsData.pending.type },
-      { type: actions.setDeviceReports.type, payload: [{ items: [{ count: 2, key: 'undefined' }], otherCount: 0, total: 2 }] },
-      { type: deriveInactiveDevices.fulfilled.type },
-      { type: deriveReportsData.fulfilled.type },
       { type: getAllDevicesByStatus.fulfilled.type }
     ];
-    await store.dispatch(getAllDevicesByStatus(DEVICE_STATES.accepted as StatusDeviceauth.status));
+    await store.dispatch(getAllDevicesByStatus({ status: DEVICE_STATES.accepted as StatusDeviceauth.status, attribute: 'artifact_name' }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
