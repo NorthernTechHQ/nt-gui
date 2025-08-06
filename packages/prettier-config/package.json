@@ -16,7 +16,7 @@
     "react.js"
   ],
   "dependencies": {
-    "@trivago/prettier-plugin-sort-imports": "5.2.2"
+    "@trivago/prettier-plugin-sort-imports": "5.x"
   },
   "devDependencies": {
     "tsup": "8.5.0"
