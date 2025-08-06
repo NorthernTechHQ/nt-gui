@@ -13,7 +13,7 @@
 //    limitations under the License.
 import { FormProvider, useForm } from 'react-hook-form';
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { ChipSelect } from './ChipSelect';
 
