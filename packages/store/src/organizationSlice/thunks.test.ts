@@ -510,7 +510,7 @@ describe('organization actions', () => {
         webhooks: {
           ...defaultState.organization.webhooks,
           events: existingEvents,
-          eventTotal: 2
+          eventsTotal: 2
         }
       }
     });
@@ -554,7 +554,10 @@ describe('organization actions', () => {
       { type: storeSsoConfig.fulfilled.type }
     ];
     const request = store.dispatch(
-      storeSsoConfig({ config: { connection_string: 'testString', provider: 'iot-hub' }, contentType: SSO_TYPES.oidc.contentType })
+      storeSsoConfig({
+        config: 'string',
+        contentType: SSO_TYPES.oidc.contentType
+      })
     );
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {
@@ -588,7 +591,10 @@ describe('organization actions', () => {
       { type: changeSsoConfig.fulfilled.type }
     ];
     const request = store.dispatch(
-      changeSsoConfig({ config: { connection_string: 'testString2', id: 1, provider: 'iot-hub' }, contentType: SSO_TYPES.oidc.contentType })
+      changeSsoConfig({
+        config: { id: '1', issuer: 'me', type: ['saml'] as ['saml'], config: 'string', valid_until: 'today' },
+        contentType: SSO_TYPES.oidc.contentType
+      })
     );
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {
@@ -635,7 +641,7 @@ describe('organization actions', () => {
       { type: actions.receiveSsoConfigs.type, payload: [expectedSsoConfigs[1]] },
       { type: deleteSsoConfig.fulfilled.type }
     ];
-    const request = store.dispatch(deleteSsoConfig({ id: '1' }));
+    const request = store.dispatch(deleteSsoConfig({ id: '1', issuer: 'me', type: ['saml'] as ['saml'], config: 'string', valid_until: 'today' }));
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
@@ -654,16 +660,8 @@ describe('organization actions', () => {
       { type: getTenants.fulfilled.type },
       { type: addTenant.fulfilled.type }
     ];
-    const request = store.dispatch(
-      addTenant({
-        name: 'Mikita',
-        users: [{ email: 'test@example.com', role: 'RBAC_ROLE_PERMIT_ALL' }],
-        sso: false,
-        device_limit: 2,
-        binary_delta: true
-      })
-    );
-    await vi.advanceTimersByTime(1000);
+    const request = store.dispatch(addTenant({ name: 'Mikita', users: [{ email: 'some@example.com' }], device_limit: 2, binary_delta: true }));
+    await vi.advanceTimersByTime(TIMEOUTS.oneSecond);
     await vi.runOnlyPendingTimersAsync();
     await expect(request).resolves.toBeTruthy();
     const storeActions = store.getActions();

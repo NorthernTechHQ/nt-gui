@@ -32,6 +32,7 @@ import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import Api from '../api/general-api';
 import type { AvailablePlans, ContentType, SortOptions } from '../constants';
+import { PLANS } from '../constants';
 import {
   DEVICE_LIST_DEFAULTS,
   SORTING_OPTIONS,
@@ -51,6 +52,8 @@ import { getCurrentSession, getTenantCapabilities, getTenantsList } from '../sel
 import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { getDeviceLimit, setFirstLoginAfterSignup } from '../thunks';
+import type { UserSession } from '../usersSlice';
+import { parseSubscriptionPreview } from '../utils';
 import { SSO_TYPES } from './constants';
 import { getAuditlogState, getOrganization } from './selectors';
 
@@ -314,6 +317,14 @@ export const editBillingProfile = createAppAsyncThunk(
       .catch(err => commonErrorHandler(err, `Failed to change billing profile`, dispatch))
       .then(() => Promise.all([dispatch(setSnackbar('Billing Profile was changed successfully')), dispatch(getUserBilling())]))
 );
+export const createBillingProfile = createAppAsyncThunk(
+  `${sliceName}/createBillingProfileEmail`,
+  ({ billingProfile }: { billingProfile: BillingProfile }, { dispatch }) =>
+    Api.post(`${tenantadmApiUrlv2}/billing/profile`, billingProfile)
+      .catch(err => commonErrorHandler(err, `Failed to create billing profile`, dispatch))
+      .then(() => Promise.all([dispatch(setSnackbar('Billing Profile was created successfully')), dispatch(getUserBilling())]))
+);
+
 export const removeTenant = createAppAsyncThunk(`${sliceName}/editDeviceLimit`, ({ id }: { id: string }, { dispatch }) =>
   Api.post(`${tenantadmApiUrlv2}/tenants/${id}/remove/start`)
     .catch(err => commonErrorHandler(err, `There was an error removing the tenant`, dispatch))
@@ -345,6 +356,37 @@ export const getUserOrganization = createAppAsyncThunk(`${sliceName}/getUserOrga
 );
 export const getUserBilling = createAppAsyncThunk(`${sliceName}/getUserBilling`, (_, { dispatch }) =>
   Api.get(`${tenantadmApiUrlv2}/billing/profile`).then(res => dispatch(actions.setBillingProfile(res.data)))
+);
+
+export const getUserSubscription = createAppAsyncThunk(`${sliceName}/getUserSubscription`, (_, { dispatch }) => {
+  const tasks = [dispatch(getBillingPreview({ preview_mode: 'next' })).unwrap(), dispatch(getCurrentSubscription()).unwrap()];
+  Promise.all(tasks).then(([currentPreview, currentSubscription]) => dispatch(actions.setSubscription({ ...currentPreview, ...currentSubscription })));
+});
+
+//Can also be used to get current subscription when no products supplied
+export const getBillingPreview = createAppAsyncThunk(`${sliceName}/getBillingPreview`, order =>
+  Api.post(`${tenantadmApiUrlv2}/billing/subscription/invoices/preview`, order).then(({ data }) =>
+    order.preview_mode === 'recurring' ? { ...parseSubscriptionPreview(data.lines), total: data.total } : data
+  )
+);
+
+export const getCurrentSubscription = createAppAsyncThunk(`${sliceName}/getCurrentSubscription`, () =>
+  Api.get(`${tenantadmApiUrlv2}/billing/subscription`).then(res => res.data)
+);
+
+const successMessage = (planId: string) =>
+  `Thank you! You have successfully subscribed to the ${PLANS[planId].name} plan.  You can view and edit your billing details on the Organization and billing page.`;
+
+export const requestPlanUpgrade = createAppAsyncThunk(`${sliceName}/requestPlanUpgrade`, (order, { dispatch }) =>
+  Api.post(`${tenantadmApiUrlv2}/billing/subscription`, order)
+    .catch(err => commonErrorHandler(err, 'There was an error sending your request', dispatch, commonErrorFallback))
+    .then(() =>
+      Promise.all([
+        dispatch(setSnackbar(successMessage(order.plan))),
+        setTimeout(() => dispatch(getDeviceLimit()), TIMEOUTS.threeSeconds),
+        dispatch(getUserOrganization())
+      ])
+    )
 );
 
 export const sendSupportMessage = createAppAsyncThunk(`${sliceName}/sendSupportMessage`, (content: SupportRequest, { dispatch }) =>

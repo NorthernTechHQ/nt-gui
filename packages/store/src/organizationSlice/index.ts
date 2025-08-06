@@ -91,6 +91,9 @@ export const organizationSlice = createSlice({
     setOrganization: (state, action: PayloadAction<Partial<Organization>>) => {
       state.organization = { ...state.organization, ...action.payload };
     },
+    setSubscription: (state, action) => {
+      state.organization.subscription = { ...state.organization.subscription, ...action.payload };
+    },
     setBillingProfile: (state, action: PayloadAction<BillingProfile>) => {
       state.organization.billing_profile = action.payload;
     },
