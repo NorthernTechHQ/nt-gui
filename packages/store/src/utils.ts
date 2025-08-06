@@ -28,7 +28,8 @@ import {
   deploymentStatesToSubstates,
   deploymentStatesToSubstatesWithSkipped,
   emptyFilter,
-  emptyUiPermissions
+  emptyUiPermissions,
+  softwareIndicator
 } from './constants';
 import type { DeviceFilter, DeviceGroup, InventoryAttributes } from './devicesSlice';
 
@@ -177,7 +178,7 @@ export const preformatWithRequestID = (res, failMsg) => {
 };
 
 export const ensureVersionString = (software, fallback) =>
-  software.length && software !== 'artifact_name' ? (software.endsWith('.version') ? software : `${software}.version`) : fallback;
+  software.length && software !== 'artifact_name' ? (software.endsWith(softwareIndicator) ? software : `${software}${softwareIndicator}`) : fallback;
 
 export const getComparisonCompatibleVersion = version => (isNaN(version.charAt(0)) && version !== 'next' ? 'master' : version);
 
@@ -283,3 +284,18 @@ export const mapDeviceAttributes = (
   );
 
 export const isDarkMode = mode => mode === DARK_MODE;
+type Line = { addon?: string; amount: number; currency: string; description: string; quantity: number };
+
+export const parseSubscriptionPreview = (lines: Line[]) =>
+  lines.reduce(
+    (acc, { addon, amount }) => {
+      const key = addon || 'plan';
+      if (key === 'plan') {
+        acc.plan += amount;
+      } else {
+        acc.addons[key] = (acc.addons[key] ?? 0) + amount;
+      }
+      return acc;
+    },
+    { plan: 0, addons: {} }
+  );

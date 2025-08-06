@@ -73,7 +73,7 @@ const featureFlags = [
   'isEnterprise'
 ];
 
-const environmentDatas = ['feedbackProbability', 'hostAddress', 'hostedAnnouncement', 'recaptchaSiteKey', 'stripeAPIKey', 'trackerCode'];
+const environmentDatas = ['commit', 'feedbackProbability', 'hostAddress', 'hostedAnnouncement', 'recaptchaSiteKey', 'sentry', 'stripeAPIKey', 'trackerCode'];
 
 export const parseEnvironmentInfo = () => (dispatch, getState) => {
   const state = getState();
@@ -91,28 +91,23 @@ export const parseEnvironmentInfo = () => (dispatch, getState) => {
       isDemoMode,
       menderVersion,
       menderArtifactVersion,
-      metaMenderVersion,
-      services = {}
+      metaMenderVersion
     } = mender_environment;
     demoArtifactPort = port || demoArtifactPort;
     environmentData = environmentDatas.reduce((accu, flag) => ({ ...accu, [flag]: mender_environment[flag] || state.app[flag] }), {});
     environmentFeatures = {
       ...featureFlags.reduce((accu, flag) => ({ ...accu, [flag]: stringToBoolean(features[flag]) }), {}),
-      isHosted: features.isHosted || window.location.hostname.includes('hosted.mender.io'),
+      isHosted: stringToBoolean(features.isHosted) || window.location.hostname.includes('hosted.mender.io'),
       isDemoMode: stringToBoolean(isDemoMode || features.isDemoMode)
     };
-    onboardingComplete = !stringToBoolean(features.isHosted) || stringToBoolean(disableOnboarding) || onboardingComplete;
+    onboardingComplete = !stringToBoolean(environmentFeatures.isHosted) || stringToBoolean(disableOnboarding) || onboardingComplete;
     versionInfo = {
       docs: isNaN(integrationVersion.charAt(0)) ? '' : integrationVersion.split('.').slice(0, 2).join('.'),
       remainder: {
         Integration: getComparisonCompatibleVersion(integrationVersion),
         'Mender-Client': getComparisonCompatibleVersion(menderVersion),
         'Mender-Artifact': menderArtifactVersion,
-        'Meta-Mender': metaMenderVersion,
-        Deployments: services.deploymentsVersion,
-        Deviceauth: services.deviceauthVersion,
-        Inventory: services.inventoryVersion,
-        GUI: services.guiVersion
+        'Meta-Mender': metaMenderVersion
       }
     };
   }
