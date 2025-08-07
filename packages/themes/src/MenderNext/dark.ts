@@ -14,7 +14,7 @@
 import { PaletteOptions, ThemeOptions, outlinedInputClasses } from '@mui/material';
 import { common, red } from '@mui/material/colors';
 
-import { colors, typography } from './common';
+import { components as baseComponents, colors, typography } from './common';
 
 const info = {
   main: colors.grey[700],
@@ -50,6 +50,7 @@ export const dark: ThemeOptions = {
   palette,
   typography,
   components: {
+    ...baseComponents,
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
