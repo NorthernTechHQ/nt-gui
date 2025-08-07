@@ -132,6 +132,7 @@ export const components: Components<Theme> = {
   },
   MuiTextField: {
     defaultProps: {
+      size: 'small',
       variant: 'outlined'
     },
     styleOverrides: {
@@ -143,6 +144,7 @@ export const components: Components<Theme> = {
   MuiSelect: {
     defaultProps: {
       autoWidth: true,
+      size: 'small',
       variant: 'outlined'
     },
     styleOverrides: {
