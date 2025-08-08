@@ -1,4 +1,28 @@
 ---
+## @northern.tech/common-ui-0.5.2 - 2025-08-08
+
+
+### Bug fixes
+
+#### Common
+
+
+- *(common)* Added missing date picker dependency
+
+ ([5211d3c](https://github.com/NorthernTechHQ/nt-gui/commit/5211d3c39947e5374858eb92358fdaa7ac3a1a91))  by @mzedel
+
+- *(common)* Fixed an issue that prevent seeing sessiondetails for portforwarding auditlog entries
+
+ ([367d7f6](https://github.com/NorthernTechHQ/nt-gui/commit/367d7f669b208706f0a45816c5198567e7914d8d))  by @mzedel
+
+
+
+
+
+### Security
+
+
+
 ## @northern.tech/common-ui-0.5.1 - 2025-05-27
 
 
@@ -16,14 +40,14 @@
 ## @northern.tech/common-ui-0.2.4 - 2025-02-14
 
 
-### Bug Fixes
+### Bug fixes
 
 
 
 ## @northern.tech/common-0.2.3 - 2025-02-05
 
 
-### Bug Fixes
+### Bug fixes
 
 #### Common,store
 
@@ -63,7 +87,7 @@
 ## @northern.tech/common-0.2.2 - 2024-12-10
 
 
-### Bug Fixes
+### Bug fixes
 
 #### Common
 
@@ -86,7 +110,7 @@
 ## @northern.tech/common-ui-0.3.0 - 2024-12-10
 
 
-### Bug Fixes
+### Bug fixes
 
 #### Common/auditlogs
 
@@ -106,7 +130,7 @@
 ## @northern.tech/common-ui-0.2.1 - 2024-12-10
 
 
-### Bug Fixes
+### Bug fixes
 
 #### Common
 
@@ -123,7 +147,7 @@
 ## @northern.tech/common-0.2.0 - 2024-12-04
 
 
-### Bug Fixes
+### Bug fixes
 
 
 ### Features
