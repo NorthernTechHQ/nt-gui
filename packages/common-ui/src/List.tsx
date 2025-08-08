@@ -19,15 +19,15 @@ import { Settings as SettingsIcon, Sort as SortIcon } from '@mui/icons-material'
 import { Checkbox } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
-import type { SortOptions } from '@northern.tech/store/constants';
+import type { IdAttribute, SortOptions } from '@northern.tech/store/constants';
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TIMEOUTS } from '@northern.tech/store/constants';
 import { isDarkMode } from '@northern.tech/store/utils';
 import { toggle } from '@northern.tech/utils/helpers';
-import useWindowSize from '@northern.tech/utils/resizehook';
+import { useWindowSize } from '@northern.tech/utils/resizehook';
 
 import Loader from './Loader';
-import MenderTooltip from './MenderTooltip';
 import Pagination from './Pagination';
+import MenderTooltip from './helptips/MenderTooltip';
 
 const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
 
@@ -70,10 +70,6 @@ interface ListState {
   // isLoading: boolean;
 }
 
-interface IdAttribute {
-  attribute: string;
-  scope: string;
-}
 type wID = { id: string };
 
 interface CommonListProps<T extends wID> {

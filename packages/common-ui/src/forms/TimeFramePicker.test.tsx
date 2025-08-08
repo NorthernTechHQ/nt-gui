@@ -21,8 +21,8 @@ import { undefineds } from '@northern.tech/testing/mockData';
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { formRenderWrapper } from './Form.test';
 import TimeframePicker from './TimeframePicker';
+import { formRenderWrapper } from './helpers';
 
 const testRender = ui => {
   const Wrapper = ({ children }) => {
@@ -51,6 +51,6 @@ describe('TimeframePicker Component', () => {
     );
     const endDatePicker = screen.getByLabelText(/to/i, { selector: 'input' });
     expect(endDatePicker).toBeInTheDocument();
-    expect(endDatePicker).toHaveValue('January 13th');
+    expect(endDatePicker).toHaveValue('2019-01-13');
   });
 });

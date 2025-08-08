@@ -52,7 +52,7 @@ export const TextInput = ({
     } else {
       setError(errorKey, { type: 'validate', message: errortext });
     }
-    return isValid;
+    return isValid || errortext;
   };
 
   return (
@@ -79,7 +79,7 @@ export const TextInput = ({
             }}
             value={value ?? passedValue}
             onChange={({ target: { value } }) => onChange(value)}
-            onBlur={() => (validations.includes('trim') ? onChange((value ?? passedValue).trim()) : onBlur)}
+            onBlur={onBlur}
             placeholder={hint}
             type={type}
             {...InputProps}

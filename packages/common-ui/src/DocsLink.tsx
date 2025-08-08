@@ -131,7 +131,7 @@ interface DocsLinkProps {
 export const DocsLink = forwardRef<HTMLAnchorElement, DocsLinkProps>(({ children, className = '', path, title = '', ...remainder }, ref) => {
   const docsVersion = useSelector(getDocsVersion);
   const { isHosted } = useSelector(getFeatures);
-  const target = `https://docs.mender.io/${docsVersion}${path}`;
+  const target = `https://docs.mender.io/${path}`;
 
   const onClickHandler = () => {
     const docsParams = { headers: { 'x-mender-docs': docsVersion } };

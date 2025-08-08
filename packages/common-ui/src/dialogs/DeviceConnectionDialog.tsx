@@ -16,7 +16,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Button, DialogActions, DialogContent } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
 import { DEVICE_STATES, TIMEOUTS, onboardingSteps } from '@northern.tech/store/constants';
@@ -30,6 +30,7 @@ import DocsLink from '../DocsLink';
 import InfoText from '../InfoText';
 import Loader from '../Loader';
 import { HELPTOOLTIPS, MenderHelpTooltip } from '../helptips';
+import { BaseDialog } from './BaseDialog';
 import PhysicalDeviceOnboarding from './PhysicalDeviceOnboarding';
 import VirtualDeviceOnboarding from './VirtualDeviceOnboarding';
 
@@ -189,8 +190,7 @@ export const DeviceConnectionDialog = ({ onCancel }) => {
   }
 
   return (
-    <Dialog open={true} maxWidth="sm">
-      <DialogTitle>Connecting a device</DialogTitle>
+    <BaseDialog open title="Connecting a device" maxWidth="sm" onClose={onCancel}>
       <DialogContent className="onboard-dialog padding-bottom-none margin-left margin-right">{content}</DialogContent>
       <DialogActions>
         <Button onClick={onCancel}>Cancel</Button>
@@ -215,7 +215,7 @@ export const DeviceConnectionDialog = ({ onCancel }) => {
           </div>
         )}
       </DialogActions>
-    </Dialog>
+    </BaseDialog>
   );
 };
 

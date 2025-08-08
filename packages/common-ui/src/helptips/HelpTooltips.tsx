@@ -12,21 +12,22 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import { useCallback } from 'react';
+import type { ComponentType, FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import storeActions from '@northern.tech/store/actions';
-import { READ_STATES, yes } from '@northern.tech/store/constants';
-import { getDeviceById, getFeatures, getTooltipsState } from '@northern.tech/store/selectors';
-import { setAllTooltipsReadState, setTooltipReadState } from '@northern.tech/store/thunks';
+import type { READ_STATES } from '@northern.tech/store/constants';
+import { getFeatures } from '@northern.tech/store/selectors';
+import type { Device } from '@northern.tech/types/MenderTypes';
 
-import { ConfigurationObject, DocsLink, HelpTooltip, LogDialog } from '../';
+import ConfigurationObject from '../ConfigurationObject';
+import DocsLink from '../DocsLink';
+import { SupportLink } from '../SupportLink';
 
 const { setSnackbar } = storeActions;
 
 const AuthExplainButton = () => (
   <>
-    <LogDialog />
     <h3>Device authorization status</h3>
     <p>
       Each device sends an authentication request containing its identity attributes and its current public key. You can accept, reject or dismiss these
@@ -156,7 +157,7 @@ const DeviceTypeTip = () => (
   </>
 );
 
-const TwoFactorNote = ({ className }) => (
+const TwoFactorNote = ({ className }: { className?: string }) => (
   <div className={className}>
     Two Factor Authentication is enabled for your account. If you haven&apos;t set up a 3rd party authentication app with a verification code, please contact an
     administrator.
@@ -209,8 +210,6 @@ const MenderArtifactUpload = () => (
 
 const SingleFileUpload = () => <>This will generate a single file application update Artifact, which requires some additional metadata to be entered.</>;
 
-const GlobalSettings = () => <>These settings apply to all users, so changes made here may affect other users&apos; experience.</>;
-
 const Webhooks = () => (
   <>Use webhooks to send data about device lifecycle events to third-party systems. Currently you can only have one integration set up at a time.</>
 );
@@ -226,13 +225,6 @@ const WebhookSecret = () => (
   <>
     The secret is used for signing the requests sent to your webhook, to verify their authenticity. It is optional, but highly recommended for security. The
     secret must be a hexidecimal string (including only characters from A-F and 0-9).
-  </>
-);
-
-const TenantToken = () => (
-  <>
-    <h3>Organization token</h3>
-    This token is unique for your organization and ensures that only devices that you own are able to connect to your account.
   </>
 );
 
@@ -272,11 +264,7 @@ const AttributeLimit = () => {
   const { isHosted } = useSelector(getFeatures);
   return isHosted ? (
     <>
-      Expand to see the list of attributes currently in use. Please{' '}
-      <a href="mailto:support@mender.io" target="_blank" rel="noopener noreferrer">
-        contact our team
-      </a>{' '}
-      if your use case requires a different set of attributes.
+      Expand to see the list of attributes currently in use. Please <SupportLink variant="ourTeam" /> if your use case requires a different set of attributes.
     </>
   ) : (
     <>Expand to see the list of attributes currently in use.</>
@@ -296,7 +284,15 @@ const PlanUpgradeEmail = () => (
   </>
 );
 
-export const HELPTOOLTIPS = {
+export type HelpTooltipComponent = {
+  Component?: FC;
+  id: string;
+  isRelevant?: (props: { device?: Device }) => boolean;
+  readState?: keyof typeof READ_STATES;
+  SpecialComponent?: ComponentType<{ className?: string; device?: Device }>;
+};
+
+export const HELPTOOLTIPS: Record<string, HelpTooltipComponent> = {
   addGroup: { id: 'addGroup', Component: AddGroup },
   artifactUpload: { id: 'artifactUpload', Component: ArtifactUpload },
   attributeLimit: { id: 'attributeLimit', Component: AttributeLimit },
@@ -309,7 +305,8 @@ export const HELPTOOLTIPS = {
     Component: ConfigureRaspberryLedTip,
     isRelevant: ({ device = {} }) => {
       const { attributes = {} } = device;
-      return ['raspberry', 'rpi'].some(type => attributes.device_type?.some(deviceType => deviceType.startsWith(type)));
+      const { device_type = [] } = attributes;
+      return ['raspberry', 'rpi'].some(type => device_type.some(deviceType => deviceType.startsWith(type)));
     }
   },
   configureTimezoneTip: {
@@ -317,7 +314,8 @@ export const HELPTOOLTIPS = {
     Component: ConfigureTimezoneTip,
     isRelevant: ({ device = {} }) => {
       const { attributes = {} } = device;
-      return ['raspberry', 'rpi', 'qemux86-64'].some(type => attributes.device_type?.some(deviceType => deviceType.startsWith(type)));
+      const { device_type = [] } = attributes;
+      return ['generic-x86_64', 'raspberry', 'rpi', 'qemux86-64'].some(type => device_type.some(deviceType => deviceType.startsWith(type)));
     }
   },
   dashboardWidget: { id: 'dashboardWidget', Component: DashboardWidget },
@@ -325,7 +323,6 @@ export const HELPTOOLTIPS = {
   deviceTypeTip: { id: 'deviceTypeTip', Component: DeviceTypeTip },
   expandArtifact: { id: 'expandArtifact', Component: ExpandArtifact },
   forceDeployment: { id: 'forceDeployment', Component: ForceDeployment },
-  globalSettings: { id: 'globalSettings', Component: GlobalSettings },
   groupDeployment: { id: 'groupDeployment', Component: GroupDeployment },
   menderArtifactUpload: { id: 'menderArtifactUpload', Component: MenderArtifactUpload },
   nameFilterTip: { id: 'nameFilterTip', Component: NameFilterTip },
@@ -342,32 +339,8 @@ export const HELPTOOLTIPS = {
   subTenantSSO: { id: 'subTenantSSO', Component: SubTenantSSO },
   tenantAdmin: { id: 'tenantAdmin', Component: TenantAdmin },
   tenantInitialAdmin: { id: 'tenantInitialAdmin', Component: TenantInitialAdmin },
-  tenantToken: { id: 'tenantToken', Component: TenantToken },
   twoFactorNote: { id: 'twoFactorNote', SpecialComponent: TwoFactorNote },
   webhookEvents: { id: 'webhookEvents', Component: WebhookEvents },
   webhooks: { id: 'webhooks', Component: Webhooks },
   webhookSecret: { id: 'webhookSecret', Component: WebhookSecret }
-};
-
-export const MenderHelpTooltip = props => {
-  const { id, contentProps = {} } = props;
-  const tooltipsById = useSelector(getTooltipsState);
-  const dispatch = useDispatch();
-  const device = useSelector(state => getDeviceById(state, contentProps.deviceId));
-  const { readState = READ_STATES.unread } = tooltipsById[id] || {};
-  const { Component, SpecialComponent, isRelevant = yes } = HELPTOOLTIPS[id];
-
-  const onSetTooltipReadState = useCallback((...args) => dispatch(setTooltipReadState(...args)), [dispatch]);
-  const onSetAllTooltipsReadState = state => dispatch(setAllTooltipsReadState(state));
-
-  return (
-    <HelpTooltip
-      setAllTooltipsReadState={onSetAllTooltipsReadState}
-      setTooltipReadState={onSetTooltipReadState}
-      device={device}
-      tooltip={{ Component, SpecialComponent, isRelevant, readState }}
-      allTooltips={HELPTOOLTIPS}
-      {...props}
-    />
-  );
 };

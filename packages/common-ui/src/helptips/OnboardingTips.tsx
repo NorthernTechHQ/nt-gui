@@ -90,11 +90,10 @@ export const DevicesAcceptedOnboarding = props => {
   );
 };
 
-export const DevicesDeployReleaseOnboarding = () => (
-  <div>
-    From the Device actions, choose &apos;Create a deployment for this device&apos;. You&apos;ll deploy an update to the device, using some demo software we
-    have provided.
-  </div>
+export const DevicesDeployReleaseOnboarding = () => <div>Select &apos;Device actions&apos; to view the list of actions for your device.</div>;
+
+export const DevicesDeployReleaseOnboardingStep2 = () => (
+  <div>Choose &apos;Create deployment for this device&apos; to deploy an update using the demo software provided.</div>
 );
 
 export const SchedulingArtifactSelection = ({ selectedRelease }) => <div>{`Select the ${selectedRelease.name} release we included.`}</div>;
@@ -115,7 +114,7 @@ export const SchedulingReleaseToDevices = ({ selectedDevice, selectedGroup, sele
 
 export const DeploymentsInprogress = () => <div>Your deployment is in progress. Click to view a report</div>;
 
-export const DeploymentUploadFinished = () => <div>Artifact upload is finished. Click to close the panel</div>;
+export const DeploymentUploadFinished = () => <div>Your deployment has finished. Click to close the panel</div>;
 
 export const DeploymentsPast = () => <div>Your deployment has finished, click here to view it</div>;
 

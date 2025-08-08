@@ -15,17 +15,16 @@ exports[`Helptooltips Components > renders ArtifactUpload correctly 1`] = `Uploa
 
 exports[`Helptooltips Components > renders AttributeLimit correctly 1`] = `
 NodeList [
-  Expand to see the list of attributes currently in use. Please,
-   ,
+  Expand to see the list of attributes currently in use. Please ,
   <a
+    class=""
     href="mailto:support@mender.io"
     rel="noopener noreferrer"
     target="_blank"
   >
     contact our team
   </a>,
-   ,
-  if your use case requires a different set of attributes.,
+   if your use case requires a different set of attributes.,
 ]
 `;
 
@@ -366,8 +365,6 @@ NodeList [
 ]
 `;
 
-exports[`Helptooltips Components > renders GlobalSettings correctly 1`] = `These settings apply to all users, so changes made here may affect other users' experience.`;
-
 exports[`Helptooltips Components > renders GroupDeployment correctly 1`] = `The deployment will skip any devices in the group that are already on the target Release version, or that have an incompatible device type.`;
 
 exports[`Helptooltips Components > renders MenderArtifactUpload correctly 1`] = `
@@ -426,15 +423,6 @@ exports[`Helptooltips Components > renders SubTenantSSO correctly 1`] = `The cre
 exports[`Helptooltips Components > renders TenantAdmin correctly 1`] = `Set the user who will have the admin role when this tenant is created. This can be a user who already has a Mender account, or a brand new user. The tenant admin will be able to change which user(s) have this role once they begin using the tenant.`;
 
 exports[`Helptooltips Components > renders TenantInitialAdmin correctly 1`] = `The user that was assigned as admin for this tenant when it was created. There is a chance the admin user will have changed or this user no longer exists in this tenant.`;
-
-exports[`Helptooltips Components > renders TenantToken correctly 1`] = `
-NodeList [
-  <h3>
-    Organization token
-  </h3>,
-  This token is unique for your organization and ensures that only devices that you own are able to connect to your account.,
-]
-`;
 
 exports[`Helptooltips Components > renders TwoFactorNote correctly 1`] = `
 <div>

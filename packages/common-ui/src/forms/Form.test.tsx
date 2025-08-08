@@ -11,8 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { FormProvider, useForm } from 'react-hook-form';
-
 import { render } from '@/testUtils';
 import { undefineds } from '@northern.tech/testing/mockData';
 import { screen, waitFor } from '@testing-library/react';
@@ -23,14 +21,6 @@ import Form from './Form';
 import FormCheckbox from './FormCheckbox';
 import PasswordInput from './PasswordInput';
 import TextInput from './TextInput';
-
-export const formRenderWrapper = ui => {
-  const Wrapper = ({ children }) => {
-    const methods = useForm();
-    return <FormProvider {...methods}>{children}</FormProvider>;
-  };
-  return render(<Wrapper>{ui}</Wrapper>);
-};
 
 describe('Form Component', () => {
   it('renders correctly', async () => {
@@ -46,6 +36,7 @@ describe('Form Component', () => {
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });
+  window.prompt = vi.fn();
   it('works correctly with generated passwords', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
 
@@ -58,5 +49,6 @@ describe('Form Component', () => {
     await user.click(screen.getByRole('button', { name: /generate/i }));
     await waitFor(() => rerender(ui));
     await waitFor(() => expect(screen.getByRole('button', { name: /submit/i })).not.toBeDisabled());
+    window.prompt.mockClear();
   });
 });

@@ -15,7 +15,7 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider } from '@mui/material';
+import { Button, DialogActions, DialogContent, Divider } from '@mui/material';
 
 import storeActions from '@northern.tech/store/actions';
 import { DEVICE_ONLINE_CUTOFF, TIMEOUTS } from '@northern.tech/store/constants';
@@ -25,6 +25,8 @@ import { useDebounce } from '@northern.tech/utils/debouncehook';
 
 import logo from '../../../../assets/img/headerlogo.png';
 import whiteLogo from '../../../../assets/img/whiteheaderlogo.png';
+import { SupportLink } from '../SupportLink';
+import { BaseDialog } from './BaseDialog';
 
 const { setShowStartupNotification } = storeActions;
 
@@ -51,11 +53,7 @@ const OfflineThresholdContent = () => (
     We appreciate your understanding and cooperation as we implement these improvements. Our commitment to providing you with a reliable and high-performing
     platform remains our top priority.
     <Divider className="margin-top-small margin-bottom-small" />
-    If you have any questions or concerns regarding this change, please do not hesitate to{' '}
-    <a href="mailto:support@mender.io" target="_blank" rel="noopener noreferrer">
-      contact our team
-    </a>
-    .
+    If you have any questions or concerns regarding this change, please do not hesitate to <SupportLink variant="ourTeam" />.
   </>
 );
 
@@ -81,11 +79,22 @@ export const StartupNotificationDialog = () => {
   };
   const headerLogo = isDarkMode ? whiteLogo : logo;
   return (
-    <Dialog open PaperProps={{ className: 'padding-small', sx: { maxWidth: 720 } }}>
-      <DialogTitle className="flexbox center-aligned">
-        <img src={headerLogo} style={{ maxHeight: 75 }} />
-        <div className="margin-left-small">Welcome back!</div>
-      </DialogTitle>
+    <BaseDialog
+      open
+      slotProps={{
+        paper: {
+          className: 'padding-small',
+          sx: { maxWidth: 720 }
+        }
+      }}
+      title={
+        <div className="flexbox center-aligned">
+          <img src={headerLogo} style={{ maxHeight: 75 }} />
+          <div className="margin-left-small">Welcome back!</div>
+        </div>
+      }
+      onClose={onClose}
+    >
       <DialogContent className="margin-left-small margin-right-small">
         <Content />
       </DialogContent>
@@ -94,7 +103,7 @@ export const StartupNotificationDialog = () => {
           Close
         </Button>
       </DialogActions>
-    </Dialog>
+    </BaseDialog>
   );
 };
 

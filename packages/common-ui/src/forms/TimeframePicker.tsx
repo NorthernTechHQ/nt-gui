@@ -15,7 +15,7 @@
 import { useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { DatePicker } from '@mui/x-date-pickers';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import dayjs from 'dayjs';
 
@@ -29,7 +29,14 @@ const ensureEndOfDay = date => {
   return `${momentDate.format().split('T')[0]}T23:59:59.999`;
 };
 
-export const TimeframePicker = ({ tonight: propsTonight, format = 'MMMM Do', fromLabel = 'From', toLabel = 'To', slotProps = {}, fallbackValue = dayjs() }) => {
+export const TimeframePicker = ({
+  tonight: propsTonight,
+  format = 'YYYY-MM-DD',
+  fromLabel = 'From',
+  toLabel = 'To',
+  slotProps = {},
+  fallbackValue = dayjs()
+}) => {
   const [tonight] = useState(dayjs(propsTonight));
   const [maxStartDate, setMaxStartDate] = useState(tonight);
   const [minEndDate, setMinEndDate] = useState(tonight);
@@ -71,11 +78,22 @@ export const TimeframePicker = ({ tonight: propsTonight, format = 'MMMM Do', fro
           <DatePicker
             disableFuture
             format={format}
+            slotProps={{
+              ...slotProps,
+              textField: props => ({
+                ...slotProps.textField,
+                inputProps: {
+                  ...props.inputProps,
+                  ...slotProps.textField?.inputProps,
+                  'aria-label': 'From'
+                }
+              })
+            }}
+            yearsOrder="desc"
             label={fromLabel}
             maxDate={maxStartDate}
             onChange={e => onChange(handleChangeStartDate(e))}
             value={value ? dayjs(value) : fallbackValue}
-            slotProps={slotProps}
           />
         )}
       />
@@ -86,11 +104,22 @@ export const TimeframePicker = ({ tonight: propsTonight, format = 'MMMM Do', fro
           <DatePicker
             disableFuture
             format={format}
+            slotProps={{
+              ...slotProps,
+              textField: props => ({
+                ...slotProps.textField,
+                inputProps: {
+                  ...props.inputProps,
+                  ...slotProps.textField?.inputProps,
+                  'aria-label': 'To'
+                }
+              })
+            }}
+            yearsOrder="desc"
             label={toLabel}
             minDate={minEndDate}
             onChange={e => onChange(handleChangeEndDate(e))}
             value={value ? dayjs(value) : fallbackValue}
-            slotProps={slotProps}
           />
         )}
       />
