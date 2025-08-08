@@ -1,4 +1,53 @@
 ---
+## @northern.tech/common-ui-0.6.0 - 2025-08-08
+
+
+### Bug fixes
+
+#### Common
+
+
+- *(common)* Added missing date picker dependency
+
+ ([5211d3c](https://github.com/NorthernTechHQ/nt-gui/commit/5211d3c39947e5374858eb92358fdaa7ac3a1a91))  by @mzedel
+
+
+
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Made use of types package instead
+
+ ([2474698](https://github.com/NorthernTechHQ/nt-gui/commit/2474698b27b9c61a0201e4ee2671a39b5305339e))  by @mzedel
+
+
+
+
+
+### Refactor
+
+#### Store,common-ui
+
+
+- *(store,common-ui)* Switched package internal imports to relative locations - to remove path mapping differences in vitest vs. tsup
+
+ ([38f6fd8](https://github.com/NorthernTechHQ/nt-gui/commit/38f6fd8fc6b72caaf03f87bf2e7e9a9167aca6f0))  by @mzedel
+
+
+
+
+
+### Security
+
+
+### Refac
+
+
+
 ## @northern.tech/common-ui-0.5.1 - 2025-05-27
 
 
@@ -9,7 +58,7 @@
 ## @northern.tech/common-ui-0.5.0 - 2025-03-11
 
 
-### Bug Fixes
+### Bug fixes
 
 #### Common-ui
 
@@ -74,14 +123,14 @@
 ## @northern.tech/common-ui-0.1.2 - 2024-11-15
 
 
-### Bug Fixes
+### Bug fixes
 
 
 
 ## @northern.tech/common-ui-0.1.1 - 2024-11-14
 
 
-### Bug Fixes
+### Bug fixes
 
 
 
