@@ -15,7 +15,7 @@ import { render } from '@/testUtils';
 import { undefineds } from '@northern.tech/testing/mockData';
 import { describe, expect, it } from 'vitest';
 
-import Tooltip from '../MenderTooltip';
+import Tooltip from './MenderTooltip';
 
 describe('Loader Component', () => {
   it('renders correctly', async () => {
