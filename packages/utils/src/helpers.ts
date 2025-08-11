@@ -11,6 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { NewDeploymentPhase } from '@northern.tech/types/MenderTypes';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 import pluralize from 'pluralize';
@@ -298,19 +299,13 @@ interface StandardizedPhase {
   batch_size: number;
   delay?: number;
   delayUnit?: TimeUnit;
+  device_count?: number;
   start_ts?: number;
 }
 
-// should use this from generated MenderTypes instead, likely from a separate types package
-interface DeploymentPhase {
-  batch_size?: number;
-  device_count?: number;
-  start_ts?: string;
-}
+type UiDeploymentPhase = NewDeploymentPhase & StandardizedPhase;
 
-type UiDeploymentPhase = DeploymentPhase & StandardizedPhase;
-
-export const standardizePhases = (phases: UiDeploymentPhase[]) =>
+export const standardizePhases = (phases: NewDeploymentPhase[] | UiDeploymentPhase[]) =>
   phases.map((phase, index) => {
     const standardizedPhase = { batch_size: phase.batch_size, start_ts: index } as StandardizedPhase;
     if (phase.delay) {
