@@ -16,6 +16,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { InfoText } from './InfoText';
 
 const meta: Meta<typeof InfoText> = {
+  title: 'common-ui/InfoText',
   component: InfoText
 };
 

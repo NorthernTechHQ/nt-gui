@@ -17,7 +17,8 @@ import { DrawerTitle } from './DrawerTitle';
 
 const meta: Meta<typeof DrawerTitle> = {
   component: DrawerTitle,
-  includeStories: ['Primary', 'Secondary']
+  includeStories: ['Primary', 'Secondary'],
+  title: 'common-ui/DrawerTitle'
 };
 
 export default meta;

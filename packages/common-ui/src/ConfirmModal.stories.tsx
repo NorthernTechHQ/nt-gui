@@ -16,6 +16,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ConfirmModal } from './ConfirmModal';
 
 const meta: Meta<typeof ConfirmModal> = {
+  title: 'common-ui/ConfirmModal',
   component: ConfirmModal,
   argTypes: {
     maxWidth: {

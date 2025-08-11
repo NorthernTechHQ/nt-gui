@@ -20,6 +20,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DeviceNameInput } from './DeviceNameInput';
 
 const meta: Meta<typeof DeviceNameInput> = {
+  title: 'common-ui/DeviceNameInput',
   component: DeviceNameInput
 };
 

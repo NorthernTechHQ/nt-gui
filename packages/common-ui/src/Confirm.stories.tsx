@@ -16,6 +16,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Confirm, confirmationType } from './Confirm';
 
 const meta: Meta<typeof Confirm> = {
+  title: 'common-ui/Confirm',
   component: Confirm,
   argTypes: {
     type: {

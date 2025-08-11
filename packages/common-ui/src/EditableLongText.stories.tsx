@@ -16,6 +16,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { EditableLongText } from './EditableLongText';
 
 const meta: Meta<typeof EditableLongText> = {
+  title: 'common-ui/EditableLongText',
   component: EditableLongText
 };
 

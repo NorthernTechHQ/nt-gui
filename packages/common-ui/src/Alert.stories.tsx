@@ -17,18 +17,20 @@ import { Alert } from './Alert';
 
 const meta: Meta<typeof Alert> = {
   component: Alert,
+  title: 'common-ui/Alert',
   argTypes: {
     children: {
-      options: ['Text', 'Bold', 'Empty'],
+      options: [
+        'Text',
+        'Bold',
+        'Empty',
+        'This is a very long alert message that demonstrates how the alert component handles extended text content and wraps appropriately within the container boundaries.'
+      ],
       mapping: {
         Text: <p>Italic</p>,
         Bold: <b>Bold</b>,
         Empty: <div />
       }
-    },
-    severity: {
-      control: { type: 'radio' },
-      options: ['', 'error']
     }
   }
 };
@@ -42,7 +44,6 @@ export const Primary: Story = {
   name: 'Alert',
   args: {
     children: 'Text',
-    severity: 'error',
     style: {
       border: '1px solid gray'
     }

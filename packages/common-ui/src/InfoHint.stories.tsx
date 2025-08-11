@@ -23,8 +23,18 @@ import EnterpriseNotification from './EnterpriseNotification';
 import { InfoHint, InfoHintContainer } from './InfoHint';
 
 const meta: Meta<typeof InfoHint> = {
+  title: 'common-ui/InfoHint',
   component: InfoHint,
-  includeStories: ['Primary', 'Secondary']
+  includeStories: ['Primary', 'Secondary'],
+  argTypes: {
+    content: {
+      control: { type: 'radio' },
+      options: [
+        'something very helpful getting hinted at here',
+        'Something very helpful getting hinted at here, it may wrap around the component or the world - you never know! It might even escape the story and begin a new chapter for all components.'
+      ]
+    }
+  }
 };
 
 export default meta;

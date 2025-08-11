@@ -16,7 +16,14 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import FileSize from './FileSize';
 
 const meta: Meta<typeof FileSize> = {
-  component: FileSize
+  title: 'common-ui/FileSize',
+  component: FileSize,
+  argTypes: {
+    fileSize: {
+      control: { type: 'radio' },
+      options: [0, 512, 1024, 1048576, 1000000, 2147483648, 1099511627776]
+    }
+  }
 };
 
 export default meta;

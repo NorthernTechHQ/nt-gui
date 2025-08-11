@@ -16,6 +16,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ConfigurationObject, TwoColumnData, TwoColumnDataMultiple, TwoColumns } from './ConfigurationObject';
 
 const meta: Meta<typeof ConfigurationObject> = {
+  title: 'common-ui/ConfigurationObject',
   component: ConfigurationObject,
   includeStories: ['Primary', 'Secondary', 'Tertiary', 'TheForth']
 };

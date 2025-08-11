@@ -16,6 +16,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DetailsIndicator } from './DetailsIndicator';
 
 const meta: Meta<typeof DetailsIndicator> = {
+  title: 'common-ui/DetailsIndicator',
   component: DetailsIndicator
 };
 

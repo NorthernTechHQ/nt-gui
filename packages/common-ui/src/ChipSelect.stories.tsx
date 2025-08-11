@@ -18,6 +18,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ChipSelect } from './ChipSelect';
 
 const meta: Meta<typeof ChipSelect> = {
+  title: 'common-ui/ChipSelect',
   component: ChipSelect,
   argTypes: {
     disabled: {

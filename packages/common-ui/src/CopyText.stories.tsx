@@ -13,19 +13,19 @@
 //    limitations under the License.
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { CopyTextToClipboard } from './CopyText';
+import { CopyTextToClipboard as CopyText } from './CopyText';
 
-const meta: Meta<typeof CopyTextToClipboard> = {
-  component: CopyTextToClipboard
+const meta: Meta<typeof CopyText> = {
+  title: 'common-ui/CopyText',
+  component: CopyText
 };
 
 export default meta;
 
-type Story = StoryObj<typeof CopyTextToClipboard>;
+type Story = StoryObj<typeof CopyText>;
 
 export const Primary: Story = {
-  render: props => <CopyTextToClipboard {...props} />,
-  name: 'CopyTextToClipboard',
+  name: 'CopyText',
   args: {
     token: 'something',
     onCopy: () => alert('copied this')
