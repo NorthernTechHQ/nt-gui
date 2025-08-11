@@ -403,59 +403,65 @@ export const getGroupDevices = createAppAsyncThunk(`${sliceName}/getGroupDevices
   );
 });
 
-export const getAllGroupDevices = createAppAsyncThunk(`${sliceName}/getAllGroupDevices`, ({ group, attribute }, { dispatch, getState }) => {
-  if (!group || (!!group && (!getGroupsById(getState())[group] || getGroupsById(getState())[group].filters!.length))) {
-    return Promise.resolve();
-  }
-  const { attributes, filterTerms } = prepareSearchArguments({
-    filters: [],
-    group,
-    state: getState(),
-    status: DEVICE_STATES.accepted
-  });
-  const getAllDevices = (perPage = MAX_PAGE_SIZE, page = defaultPage, devices: string[] = []) =>
-    GeneralApi.post(getSearchEndpoint(getState()), {
-      page,
-      per_page: perPage,
-      filters: filterTerms,
-      attributes: [...attributes, { scope: 'inventory', attribute }]
-    }).then(res => {
-      const state = getState();
-      const deviceAccu = reduceReceivedDevices(res.data, devices, state);
-      dispatch(actions.receivedDevices(deviceAccu.devicesById));
-      const total = Number(res.headers[headerNames.total]);
-      if (total > perPage * page) {
-        return getAllDevices(perPage, page + 1, deviceAccu.ids);
-      }
-      return Promise.resolve(dispatch(actions.addGroup({ group: { deviceIds: deviceAccu.ids, total: deviceAccu.ids.length }, groupName: group })));
+export const getAllGroupDevices = createAppAsyncThunk(
+  `${sliceName}/getAllGroupDevices`,
+  ({ group, attribute }: { attribute: string; group: string }, { dispatch, getState }) => {
+    if (!group || (!!group && (!getGroupsById(getState())[group] || getGroupsById(getState())[group].filters!.length))) {
+      return Promise.resolve();
+    }
+    const { attributes, filterTerms } = prepareSearchArguments({
+      filters: [],
+      group,
+      state: getState(),
+      status: DEVICE_STATES.accepted
     });
-  return getAllDevices();
-});
-
-export const getAllDynamicGroupDevices = createAppAsyncThunk(`${sliceName}/getAllDynamicGroupDevices`, ({ group, attribute }, { dispatch, getState }) => {
-  if (!!group && (!getGroupsById(getState())[group] || !getGroupsById(getState())[group].filters!.length)) {
-    return Promise.resolve();
-  }
-  const { attributes, filterTerms: filters } = prepareSearchArguments({
-    filters: getState().devices.groups.byId[group].filters,
-    state: getState(),
-    status: DEVICE_STATES.accepted
-  });
-  const getAllDevices = (perPage = MAX_PAGE_SIZE, page = defaultPage, devices: string[] = []) =>
-    GeneralApi.post(getSearchEndpoint(getState()), { page, per_page: perPage, filters, attributes: [...attributes, { scope: 'inventory', attribute }] }).then(
-      res => {
+    const getAllDevices = (perPage = MAX_PAGE_SIZE, page = defaultPage, devices: string[] = []) =>
+      GeneralApi.post(getSearchEndpoint(getState()), {
+        page,
+        per_page: perPage,
+        filters: filterTerms,
+        attributes: [...attributes, { scope: 'inventory', attribute }]
+      }).then(res => {
         const state = getState();
         const deviceAccu = reduceReceivedDevices(res.data, devices, state);
         dispatch(actions.receivedDevices(deviceAccu.devicesById));
         const total = Number(res.headers[headerNames.total]);
-        if (total > deviceAccu.ids.length) {
+        if (total > perPage * page) {
           return getAllDevices(perPage, page + 1, deviceAccu.ids);
         }
-        return Promise.resolve(dispatch(actions.addGroup({ group: { deviceIds: deviceAccu.ids, total }, groupName: group })));
-      }
-    );
-  return getAllDevices();
-});
+        return Promise.resolve(dispatch(actions.addGroup({ group: { deviceIds: deviceAccu.ids, total: deviceAccu.ids.length }, groupName: group })));
+      });
+    return getAllDevices();
+  }
+);
+
+export const getAllDynamicGroupDevices = createAppAsyncThunk(
+  `${sliceName}/getAllDynamicGroupDevices`,
+  ({ group, attribute }: { attribute: string; group: string }, { dispatch, getState }) => {
+    if (!!group && (!getGroupsById(getState())[group] || !getGroupsById(getState())[group].filters!.length)) {
+      return Promise.resolve();
+    }
+    const { attributes, filterTerms: filters } = prepareSearchArguments({
+      filters: getState().devices.groups.byId[group].filters,
+      state: getState(),
+      status: DEVICE_STATES.accepted
+    });
+    const getAllDevices = (perPage = MAX_PAGE_SIZE, page = defaultPage, devices: string[] = []) =>
+      GeneralApi.post(getSearchEndpoint(getState()), { page, per_page: perPage, filters, attributes: [...attributes, { scope: 'inventory', attribute }] }).then(
+        res => {
+          const state = getState();
+          const deviceAccu = reduceReceivedDevices(res.data, devices, state);
+          dispatch(actions.receivedDevices(deviceAccu.devicesById));
+          const total = Number(res.headers[headerNames.total]);
+          if (total > deviceAccu.ids.length) {
+            return getAllDevices(perPage, page + 1, deviceAccu.ids);
+          }
+          return Promise.resolve(dispatch(actions.addGroup({ group: { deviceIds: deviceAccu.ids, total }, groupName: group })));
+        }
+      );
+    return getAllDevices();
+  }
+);
 
 export const getDeviceById = createAppAsyncThunk(`${sliceName}/getDeviceById`, (id: string, { dispatch, getState }) =>
   GeneralApi.get(`${inventoryApiUrl}/devices/${id}`)
@@ -489,7 +495,7 @@ export const getDeviceById = createAppAsyncThunk(`${sliceName}/getDeviceById`, (
 );
 
 export const getDeviceInfo = createAppAsyncThunk(`${sliceName}/getDeviceInfo`, (deviceId: string, { dispatch, getState }) => {
-  const device = getDeviceByIdSelector(getState(), deviceId);
+  const device = getDeviceByIdSelector(getState(), deviceId) as Device;
   const { hasDeviceConfig, hasDeviceConnect, hasMonitor } = getTenantCapabilities(getState());
   const { canConfigure } = getUserCapabilities(getState());
   const integrations = getDeviceTwinIntegrations(getState());
@@ -499,7 +505,7 @@ export const getDeviceInfo = createAppAsyncThunk(`${sliceName}/getDeviceInfo`, (
     dispatch(getDeviceById(deviceId)),
     ...integrations.map(integration => dispatch(getDeviceTwin({ deviceId, integration })))
   ];
-  if (hasDeviceConfig && canConfigure && [DEVICE_STATES.accepted, DEVICE_STATES.preauth].includes(device.status)) {
+  if (hasDeviceConfig && canConfigure && (device.status === DEVICE_STATES.accepted || device.status === DEVICE_STATES.preauth)) {
     tasks.push(dispatch(getDeviceConfig(deviceId)));
   }
   if (device.status === DEVICE_STATES.accepted) {
@@ -647,29 +653,32 @@ export const getDevicesByStatus = createAppAsyncThunk(
   }
 );
 
-export const getAllDevicesByStatus = createAppAsyncThunk(`${sliceName}/getAllDevicesByStatus`, ({ status, attribute }, { dispatch, getState }) => {
-  const attributes = [...defaultAttributes, getIdAttribute(getState())];
-  const getAllDevices = (perPage = MAX_PAGE_SIZE, page = 1, devices: string[] = []) =>
-    GeneralApi.post(getSearchEndpoint(getState()), {
-      page,
-      per_page: perPage,
-      filters: mapFiltersToTerms([{ key: 'status', value: status, operator: DEVICE_FILTERING_OPTIONS.$eq.key, scope: 'identity' }]),
-      attributes: [...attributes, { scope: 'inventory', attribute }]
-    }).then(res => {
-      const state = getState();
-      const deviceAccu = reduceReceivedDevices(res.data, devices, state, status);
-      dispatch(actions.receivedDevices(deviceAccu.devicesById));
-      const total = Number(res.headers[headerNames.total]);
-      if (total > state.deployments.deploymentDeviceLimit) {
+export const getAllDevicesByStatus = createAppAsyncThunk(
+  `${sliceName}/getAllDevicesByStatus`,
+  ({ status, attribute }: { attribute: string; status: DeviceStatus }, { dispatch, getState }) => {
+    const attributes = [...defaultAttributes, getIdAttribute(getState())];
+    const getAllDevices = (perPage = MAX_PAGE_SIZE, page = 1, devices: string[] = []) =>
+      GeneralApi.post(getSearchEndpoint(getState()), {
+        page,
+        per_page: perPage,
+        filters: mapFiltersToTerms([{ key: 'status', value: status, operator: DEVICE_FILTERING_OPTIONS.$eq.key, scope: 'identity' }]),
+        attributes: [...attributes, { scope: 'inventory', attribute }]
+      }).then(res => {
+        const state = getState();
+        const deviceAccu = reduceReceivedDevices(res.data, devices, state, status);
+        dispatch(actions.receivedDevices(deviceAccu.devicesById));
+        const total = Number(res.headers[headerNames.total]);
+        if (total > state.deployments.deploymentDeviceLimit) {
+          return Promise.resolve();
+        }
+        if (total > perPage * page) {
+          return getAllDevices(perPage, page + 1, deviceAccu.ids);
+        }
         return Promise.resolve();
-      }
-      if (total > perPage * page) {
-        return getAllDevices(perPage, page + 1, deviceAccu.ids);
-      }
-      return Promise.resolve();
-    });
-  return getAllDevices();
-});
+      });
+    return getAllDevices();
+  }
+);
 
 type SearchDevicesPayload = SearchState & { sortOptions: SortCriteria[] };
 export const searchDevices = createAppAsyncThunk(`${sliceName}/searchDevices`, (passedOptions: Partial<SearchDevicesPayload> = {}, { dispatch, getState }) => {
@@ -740,14 +749,14 @@ const initializeDistributionData = (report, groups: Record<string, DeviceGroup>,
   return { items, otherCount, total: otherCount + dataCount };
 };
 
-export const updateReportData = createAppAsyncThunk(`${sliceName}/updateReportData`, (reportIndex, { dispatch, getState }) => {
+export const updateReportData = createAppAsyncThunk(`${sliceName}/updateReportData`, (reportIndex: number, { dispatch, getState }) => {
   const reports = getDeviceReportsForUser(getState());
   const report = reports[reportIndex];
   const { group = '' } = report;
   const devicesById = getDevicesById(getState());
   const groups = getGroupsById(getState());
   const acceptedDevices = getAcceptedDevices(getState());
-  const totalDeviceCount = groups[group] ? groups[group].total : acceptedDevices.total;
+  const totalDeviceCount = groups[group] ? (groups[group].total as number) : acceptedDevices.total;
 
   const reportsData = getDeviceReports(getState());
   const newReports = [...reportsData];
@@ -757,7 +766,7 @@ export const updateReportData = createAppAsyncThunk(`${sliceName}/updateReportDa
 
 export const getReportDataWithoutBackendSupport = createAppAsyncThunk(
   `${sliceName}/getReportDataWithoutBackendSupport`,
-  (reportIndex, { dispatch, getState }) => {
+  (reportIndex: number, { dispatch, getState }) => {
     const reports = getDeviceReportsForUser(getState());
     const report = reports[reportIndex];
     if (!report) {

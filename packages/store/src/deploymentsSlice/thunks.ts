@@ -194,6 +194,7 @@ export const createDeployment = createAppAsyncThunk(
             //TODO: fix backend and helper package types incompatibility
             //@ts-ignore
             const standardPhases = standardizePhases(phases);
+            //@ts-ignore
             const prevPhases = previousPhases.map(standardizePhases);
             //@ts-ignore
             if (!prevPhases.find(previousPhaseList => previousPhaseList.every(oldPhase => standardPhases.find(phase => deepCompare(phase, oldPhase))))) {

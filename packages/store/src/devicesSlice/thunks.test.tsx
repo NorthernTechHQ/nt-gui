@@ -748,7 +748,7 @@ describe('static grouping related actions', () => {
       { type: getDevicesByStatus.fulfilled.type },
       { type: getGroupDevices.fulfilled.type }
     ];
-    await store.dispatch(getGroupDevices(groupName));
+    await store.dispatch(getGroupDevices({ group: groupName, shouldIncludeAllStates: false }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));

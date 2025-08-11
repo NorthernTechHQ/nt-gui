@@ -18,6 +18,7 @@ import type {
   BillingProfile,
   Event,
   Integration,
+  Product,
   SAMLMetadata
 } from '@northern.tech/types/MenderTypes';
 
@@ -91,12 +92,6 @@ export interface OrganizationState {
 export interface Addon {
   enabled: boolean;
   name: AvailableAddon;
-}
-
-interface Product {
-  addons: { name: string }[];
-  name: string;
-  quantity: number;
 }
 
 interface SubscriptionLine {

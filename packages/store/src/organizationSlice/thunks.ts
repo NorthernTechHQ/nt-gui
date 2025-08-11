@@ -19,8 +19,11 @@ import type {
   Event,
   Integration,
   NewTenant,
+  PreviewRequest,
+  Product,
   SupportRequest
 } from '@northern.tech/types/MenderTypes';
+import { PreviewRequest as PreviewRequestEnum } from '@northern.tech/types/MenderTypes';
 import { dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -342,7 +345,7 @@ export const getUserOrganization = createAppAsyncThunk(`${sliceName}/getUserOrga
     //@ts-ignore
     const tasks: ReturnType<AppDispatch>[] = [dispatch(actions.setOrganization(res.data))];
     const { addons, plan, trial } = res.data;
-    const { token } = getCurrentSession(getState());
+    const { token } = getCurrentSession(getState()) as UserSession;
     const jwt = jwtDecode(token);
     const jwtData = { addons: jwt['mender.addons'], plan: jwt['mender.plan'], trial: jwt['mender.trial'] };
     //@ts-ignore
@@ -359,12 +362,12 @@ export const getUserBilling = createAppAsyncThunk(`${sliceName}/getUserBilling`,
 );
 
 export const getUserSubscription = createAppAsyncThunk(`${sliceName}/getUserSubscription`, (_, { dispatch }) => {
-  const tasks = [dispatch(getBillingPreview({ preview_mode: 'next' })).unwrap(), dispatch(getCurrentSubscription()).unwrap()];
+  const tasks = [dispatch(getBillingPreview({ preview_mode: PreviewRequestEnum.preview_mode.NEXT })).unwrap(), dispatch(getCurrentSubscription()).unwrap()];
   Promise.all(tasks).then(([currentPreview, currentSubscription]) => dispatch(actions.setSubscription({ ...currentPreview, ...currentSubscription })));
 });
 
 //Can also be used to get current subscription when no products supplied
-export const getBillingPreview = createAppAsyncThunk(`${sliceName}/getBillingPreview`, order =>
+export const getBillingPreview = createAppAsyncThunk(`${sliceName}/getBillingPreview`, (order: PreviewRequest) =>
   Api.post(`${tenantadmApiUrlv2}/billing/subscription/invoices/preview`, order).then(({ data }) =>
     order.preview_mode === 'recurring' ? { ...parseSubscriptionPreview(data.lines), total: data.total } : data
   )
@@ -377,7 +380,7 @@ export const getCurrentSubscription = createAppAsyncThunk(`${sliceName}/getCurre
 const successMessage = (planId: string) =>
   `Thank you! You have successfully subscribed to the ${PLANS[planId].name} plan.  You can view and edit your billing details on the Organization and billing page.`;
 
-export const requestPlanUpgrade = createAppAsyncThunk(`${sliceName}/requestPlanUpgrade`, (order, { dispatch }) =>
+export const requestPlanUpgrade = createAppAsyncThunk(`${sliceName}/requestPlanUpgrade`, (order: { plan: string; products: Product[] }, { dispatch }) =>
   Api.post(`${tenantadmApiUrlv2}/billing/subscription`, order)
     .catch(err => commonErrorHandler(err, 'There was an error sending your request', dispatch, commonErrorFallback))
     .then(() =>

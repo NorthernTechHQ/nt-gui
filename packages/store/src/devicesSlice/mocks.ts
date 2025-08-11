@@ -27,7 +27,8 @@ export const mockState = {
       id: 'a1',
       attributes: {
         device_type: ['raspberrypi4'],
-        ipv4_wlan0: '192.168.10.141/24'
+        ipv4_wlan0: '192.168.10.141/24',
+        artifact_name: ''
       },
       system: {
         check_in_time: checkInTimeRounded
@@ -128,7 +129,7 @@ export const mockState = {
         id: 'filter1',
         name: 'filter1',
         filters: [{ scope: 'system', key: 'group', operator: '$eq', value: 'things' }]
-      }
+      } as const
     },
     selectedGroup: undefined
   },
