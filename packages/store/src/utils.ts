@@ -83,8 +83,8 @@ export const convertDeviceListStateToFilters = ({
   filters?: DeviceFilter[];
   group?: string;
   groups?: { byId: Record<string, DeviceGroup> };
-  offlineThreshold: string;
-  selectedIssues: DeviceIssueOptionKey[];
+  offlineThreshold?: string;
+  selectedIssues?: DeviceIssueOptionKey[];
   status?: string;
 }) => {
   let applicableFilters = [...filters];

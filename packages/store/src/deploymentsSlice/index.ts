@@ -184,8 +184,6 @@ export const deploymentsSlice = createSlice({
         ...deploymentPrototype,
         ...state.byId[id]
       };
-      //TODO: deploymentPrototype requires changes to fix this
-      //@ts-ignore
       state.byId[id] = {
         ...deployment,
         devices: {

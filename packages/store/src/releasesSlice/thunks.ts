@@ -82,8 +82,6 @@ export const getArtifactInstallCount = createAppAsyncThunk(`${sliceName}/getArti
   const artifact = releaseArtifacts[index];
   const { key, name, version } = extractSoftwareItem(artifact.artifact_provides) ?? {};
   const attribute = `${key}${name ? `.${name}` : ''}.version`;
-  //TODO: remove once utils types added
-  //@ts-ignore
   const { filterTerms } = convertDeviceListStateToFilters({
     filters: [{ ...emptyFilter, key: attribute, value: version!, scope: 'inventory' }]
   });
@@ -226,8 +224,6 @@ export const uploadArtifact = createAppAsyncThunk(`${sliceName}/uploadArtifact`,
 });
 
 export const cancelFileUpload = createAppAsyncThunk(`${sliceName}/cancelFileUpload`, (id: string, { dispatch, getState }) => {
-  //TODO: remove when app Slice types merged
-  //@ts-ignore
   const { [id]: current } = getState().app.uploadsById;
   current.cancelSource.abort();
   return Promise.resolve(dispatch(cleanUpUpload(id)));
@@ -323,8 +319,6 @@ export const setReleasesListState = createAppAsyncThunk(
     const { isLoading: currentLoading, ...currentRequestState } = currentState;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { isLoading: selectionLoading, ...selectionRequestState } = nextState;
-    //TODO: remove once utils are properly typed
-    //@ts-ignore
     if (!deepCompare(currentRequestState, selectionRequestState)) {
       nextState.isLoading = true;
       tasks.push(dispatch(getReleases(nextState)).finally(() => dispatch(setReleasesListState({ isLoading: false }))));
@@ -339,8 +333,6 @@ export const setReleasesListState = createAppAsyncThunk(
 const releaseListRetrieval = (config: Partial<ReleasesList>) => {
   const { searchTerm = '', page = defaultPage, perPage = defaultPerPage, sort = sortingDefaults, selectedTags = [], type = '' } = config;
   const { key: attribute, direction } = sort;
-  //TODO: remove once utils typed
-  //@ts-ignore
   const filterQuery = formatReleases({ pageState: { searchTerm, selectedTags } });
   const updateType = type ? `update_type=${type}` : '';
   const sorting = attribute ? `sort=${attribute}:${direction}`.toLowerCase() : '';

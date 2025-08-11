@@ -112,12 +112,12 @@ export const createOrganizationTrial = createAppAsyncThunk(`${sliceName}/createO
         }
       })
       //TODO: resolve the case with no response more gracefully
+      //UPD: soon to be removed due to change to the subscription flow
       // @ts-ignore
       .then(({ headers }) => {
         cookies.remove('oauth');
         cookies.remove('externalID');
         cookies.remove('email');
-        //@ts-ignore
         dispatch(setFirstLoginAfterSignup(true));
         return new Promise<void>(resolve =>
           setTimeout(() => {
@@ -241,7 +241,6 @@ export const setAuditlogsState = createAppAsyncThunk(
     const { isLoading: currentLoading, selectedIssue: currentIssue, ...currentRequestState } = currentState;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { isLoading: selectionLoading, selectedIssue: selectionIssue, ...selectionRequestState } = nextState;
-    //@ts-ignore
     if (!deepCompare(currentRequestState, selectionRequestState)) {
       nextState.isLoading = true;
       tasks.push(dispatch(getAuditLogs(nextState)).finally(() => dispatch(actions.setAuditLogState({ isLoading: false }))));
@@ -288,7 +287,6 @@ export const setTenantsListState = createAppAsyncThunk(
       ...currentState,
       ...selectionState
     };
-    //@ts-ignore
     if (!deepCompare(currentState, selectionState)) {
       const [tenants, pageCount] = await tenantListRetrieval(nextState);
       return dispatch(actions.setTenantListState({ ...nextState, tenants, total: pageCount }));
@@ -341,14 +339,11 @@ export const removeTenant = createAppAsyncThunk(`${sliceName}/editDeviceLimit`, 
 );
 export const getUserOrganization = createAppAsyncThunk(`${sliceName}/getUserOrganization`, (_, { dispatch, getState }) =>
   Api.get<Tenant>(`${tenantadmApiUrlv1}/user/tenant`).then(res => {
-    //TODO: Addon should be a string literal union (e.g type AvailableAddon) not just a string
-    //@ts-ignore
     const tasks: ReturnType<AppDispatch>[] = [dispatch(actions.setOrganization(res.data))];
     const { addons, plan, trial } = res.data;
     const { token } = getCurrentSession(getState()) as UserSession;
     const jwt = jwtDecode(token);
     const jwtData = { addons: jwt['mender.addons'], plan: jwt['mender.plan'], trial: jwt['mender.trial'] };
-    //@ts-ignore
     if (!deepCompare({ addons, plan, trial }, jwtData)) {
       const hash = hashString(tenantDataDivergedMessage);
       cookies.remove(`${jwt.sub}${hash}`);

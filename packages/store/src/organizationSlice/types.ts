@@ -62,7 +62,10 @@ export interface Webhook {
   events: Event[];
   eventsTotal: number;
 }
-export type Tenant = BackendTenant & BackendTenantAdminTenant;
+export type Tenant = BackendTenant &
+  BackendTenantAdminTenant & {
+    addons: Addon[];
+  };
 
 export interface TenantList {
   page: number;

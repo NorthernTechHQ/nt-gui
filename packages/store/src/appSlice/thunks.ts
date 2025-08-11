@@ -131,13 +131,9 @@ export const setSearchState = createAppAsyncThunk(`${sliceName}/setSearchState`,
   const { isSearching: currentSearching, deviceIds: currentDevices, searchTotal: currentTotal, ...currentRequestState } = currentState;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { isSearching: nextSearching, deviceIds: nextDevices, searchTotal: nextTotal, ...nextRequestState } = nextState;
-  //TODO: remove once deepCompare is typed
-  // @ts-ignore
   if (nextRequestState.searchTerm && !deepCompare(currentRequestState, nextRequestState)) {
     nextState.isSearching = true;
     tasks.push(
-      //TODO: remove once deviceSlice is typed
-      // @ts-ignore
       dispatch(searchDevices(nextState))
         .unwrap()
         .then(results => {

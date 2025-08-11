@@ -11,6 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { DeviceFilter } from '@/src/devicesSlice';
 import type { Alert } from '@northern.tech/types/MenderTypes';
 
 import { actions, sliceName } from '.';
@@ -67,8 +68,7 @@ export const getLatestDeviceAlerts = createAppAsyncThunk(
 );
 
 interface GetIssueCountsByTypePayload {
-  //TODO: specify type after rest of the store is typed.
-  options?: any;
+  options?: Partial<{ filters: DeviceFilter[]; group: string; status: string; type: string }>;
   type: DeviceIssueOptionKey;
 }
 export const getIssueCountsByType = createAppAsyncThunk(

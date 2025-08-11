@@ -47,7 +47,7 @@ export type GlobalSettings = {
     scope: string;
   };
   previousFilters: FilterOption[];
-  previousPhases: DeploymentPhase[];
+  previousPhases: DeploymentPhase[][];
   retries: number;
 };
 type Column = {
@@ -67,7 +67,7 @@ export type UserSettings = {
     approach: 'physical' | 'virtual';
     complete: boolean;
     demoArtifactPort: number;
-    deviceType: string[];
+    deviceType: string[] | string;
     progress: string;
     showTips: null | boolean;
     showTipsDialog: boolean;

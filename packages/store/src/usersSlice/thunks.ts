@@ -377,7 +377,6 @@ const mapHttpPermission = (permission: RolePermissionObject) =>
   Object.entries(uiPermissionsByArea).reduce(
     (accu, [area, definition]) => {
       const endpointMatches = definition.endpoints.filter(
-        //@ts-ignore TODO: need to improve permissions related types
         endpoint => endpoint.path.test(permission.value) && (endpoint.types.includes(permission.type) || permission.type === PermissionTypes.Any)
       );
       if (permission.value === PermissionTypes.Any || (permission.value.includes(apiRoot) && endpointMatches.length)) {

@@ -401,8 +401,16 @@ export const generateDeploymentsPath = ({ pageState }) => {
   return `/deployments/${selectedState}`;
 };
 
+export interface FormatReleasesParams {
+  pageState: {
+    searchTerm?: string;
+    selectedTags?: string[];
+    tab?: string;
+    type?: string;
+  };
+}
 const releasesRoot = '/releases';
-export const formatReleases = ({ pageState: { searchTerm, selectedTags = [], tab, type } }) =>
+export const formatReleases = ({ pageState: { searchTerm, selectedTags = [], tab, type } }: FormatReleasesParams) =>
   Object.entries({ name: searchTerm, tab, type })
     .reduce(
       (accu, [key, value]) => (value ? [...accu, `${key}=${value}`] : accu),

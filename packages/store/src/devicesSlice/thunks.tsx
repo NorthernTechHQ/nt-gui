@@ -363,44 +363,39 @@ type getGroupDevicesPayload = {
 export const getGroupDevices = createAppAsyncThunk(`${sliceName}/getGroupDevices`, (options: getGroupDevicesPayload, { dispatch, getState }) => {
   const { group, shouldIncludeAllStates, ...remainder } = options;
   const { cleanedFilters: filterSelection } = getGroupFilters(group, getState().devices.groups);
-  return (
-    Promise.resolve(
-      dispatch(
-        getDevicesByStatus({
-          ...remainder,
-          filterSelection,
-          group,
-          status: shouldIncludeAllStates ? undefined : DEVICE_STATES.accepted
-        })
-      )
-    )
-      //@ts-ignore Not sure why it's here
-      .unwrap()
-      .then(results => {
-        if (!group) {
-          return Promise.resolve() as ReturnType<AppDispatch>;
-        }
-        const { deviceAccu, total } = results[results.length - 1];
-        const stateGroup = getState().devices.groups.byId[group];
-        if (!stateGroup && !total && !deviceAccu.ids.length) {
-          return Promise.resolve();
-        }
-        return Promise.resolve(
-          dispatch(
-            actions.addGroup({
-              group: {
-                deviceIds:
-                  deviceAccu.ids.length === total || (stateGroup && stateGroup.deviceIds && deviceAccu.ids.length > stateGroup.deviceIds)
-                    ? deviceAccu.ids
-                    : stateGroup.deviceIds,
-                total
-              },
-              groupName: group
-            })
-          )
-        );
-      })
-  );
+  return dispatch(
+    getDevicesByStatus({
+      ...remainder,
+      filterSelection,
+      group,
+      status: shouldIncludeAllStates ? undefined : DEVICE_STATES.accepted
+    })
+  )
+    .unwrap()
+    .then(results => {
+      if (!group) {
+        return Promise.resolve() as ReturnType<AppDispatch>;
+      }
+      const { deviceAccu, total } = results[results.length - 1];
+      const stateGroup = getState().devices.groups.byId[group];
+      if (!stateGroup && !total && !deviceAccu.ids.length) {
+        return Promise.resolve();
+      }
+      return Promise.resolve(
+        dispatch(
+          actions.addGroup({
+            group: {
+              deviceIds:
+                deviceAccu.ids.length === total || (stateGroup && stateGroup.deviceIds && deviceAccu.ids.length > stateGroup.deviceIds)
+                  ? deviceAccu.ids
+                  : stateGroup.deviceIds,
+              total
+            },
+            groupName: group
+          })
+        )
+      );
+    });
 });
 
 export const getAllGroupDevices = createAppAsyncThunk(
