@@ -27,8 +27,7 @@ export const mockState = {
       id: 'a1',
       attributes: {
         device_type: ['raspberrypi4'],
-        ipv4_wlan0: '192.168.10.141/24',
-        artifact_name: ''
+        ipv4_wlan0: '192.168.10.141/24'
       },
       system: {
         check_in_time: checkInTimeRounded

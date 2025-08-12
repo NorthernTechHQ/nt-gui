@@ -70,7 +70,7 @@ export const receivedInventoryDevice = {
   ...defaultState.devices.byId.a1,
   attributes: inventoryDevice.attributes.reduce(attributeReducer, {}),
   identity_data: { ...defaultState.devices.byId.a1.identity_data, status: DEVICE_STATES.accepted },
-  isNew: false,
+  isNew: true,
   isOffline: true,
   monitor: {},
   tags: {},
@@ -260,14 +260,14 @@ const appInitActions = [
   {
     type: deviceActions.receivedDevices.type,
     payload: {
-      [expectedDevice.id]: { ...defaultState.devices.byId.a1, group: undefined, isNew: false, isOffline: true, monitor: {}, tags: {} },
-      [defaultState.devices.byId.b1.id]: { ...defaultState.devices.byId.b1, group: undefined, isNew: false, isOffline: true, monitor: {}, tags: {} }
+      [expectedDevice.id]: { ...defaultState.devices.byId.a1, group: undefined, isNew: true, isOffline: true, monitor: {}, tags: {} },
+      [defaultState.devices.byId.b1.id]: { ...defaultState.devices.byId.b1, group: undefined, isNew: true, isOffline: true, monitor: {}, tags: {} }
     }
   },
   {
     type: deviceActions.receivedDevices.type,
     payload: {
-      [expectedDevice.id]: { ...defaultState.devices.byId.a1, group: undefined, isNew: false, isOffline: true, monitor: {}, tags: {} }
+      [expectedDevice.id]: { ...defaultState.devices.byId.a1, group: undefined, isNew: true, isOffline: true, monitor: {}, tags: {} }
     }
   },
   { type: getDevicesWithAuth.fulfilled.type },
@@ -280,28 +280,29 @@ const appInitActions = [
     }
   },
   { type: getDevicesWithAuth.pending.type },
-  { type: getDevicesByStatus.fulfilled.type },
-  { type: getDevicesByStatus.fulfilled.type },
   { type: releasesActions.receiveReleases.type, payload: defaultState.releases.byId },
   {
     type: releasesActions.setReleaseListState.type,
     payload: { ...defaultState.releases.releasesList, releaseIds: [defaultState.releases.byId.r1.name], page: 42 }
   },
+  { type: getDevicesByStatus.fulfilled.type },
+  { type: getDevicesByStatus.fulfilled.type },
   { type: getReleases.fulfilled.type },
 
   { type: userActions.receivedPermissionSets.type, payload: receivedPermissionSets },
   { type: getPermissionSets.fulfilled.type },
+
+  { type: userActions.receivedRoles.type, payload: receivedRoles },
+  { type: userActions.finishedRoleInitialization.type, payload: true },
   {
     type: deviceActions.receivedDevices.type,
     payload: {
-      [defaultState.devices.byId.a1.id]: { ...defaultState.devices.byId.a1, group: undefined, isNew: false, isOffline: true, monitor: {}, tags: {} },
-      [defaultState.devices.byId.b1.id]: { ...defaultState.devices.byId.b1, group: undefined, isNew: false, isOffline: true, monitor: {}, tags: {} }
+      [defaultState.devices.byId.a1.id]: { ...defaultState.devices.byId.a1, group: undefined, isNew: true, isOffline: true, monitor: {}, tags: {} },
+      [defaultState.devices.byId.b1.id]: { ...defaultState.devices.byId.b1, group: undefined, isNew: true, isOffline: true, monitor: {}, tags: {} }
     }
   },
-  { type: userActions.receivedRoles.type, payload: receivedRoles },
-  { type: userActions.finishedRoleInitialization.type, payload: true },
-  { type: getDevicesWithAuth.fulfilled.type },
   { type: getRoles.fulfilled.type },
+  { type: getDevicesWithAuth.fulfilled.type },
   { type: getDevicesByStatus.fulfilled.type },
   {
     type: deviceActions.addGroup.type,

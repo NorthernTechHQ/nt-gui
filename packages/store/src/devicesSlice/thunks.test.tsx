@@ -746,6 +746,10 @@ describe('static grouping related actions', () => {
       { type: actions.receivedDevices.type, payload: { [expectedDevice.id]: { ...expectedDevice, updated_ts } } },
       { type: getDevicesWithAuth.fulfilled.type },
       { type: getDevicesByStatus.fulfilled.type },
+      {
+        type: actions.addGroup.type,
+        payload: { group: { deviceIds: [defaultState.devices.byId.a1.id, defaultState.devices.byId.b1.id], total: 2 }, groupName }
+      },
       { type: getGroupDevices.fulfilled.type }
     ];
     await store.dispatch(getGroupDevices({ group: groupName, shouldIncludeAllStates: false }));
