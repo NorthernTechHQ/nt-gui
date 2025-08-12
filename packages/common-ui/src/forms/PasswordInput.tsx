@@ -96,9 +96,8 @@ export const PasswordInput = ({
     }
   }, [confirmationId, message, trigger]);
 
-  // eslint-disable-next-line arrow-body-style
-  useEffect(() => {
-    return () => clearTimeout(timer.current);
+  useEffect(() => () => {
+    clearTimeout(timer.current);
   });
 
   const clearPassClick = () => {
@@ -141,10 +140,10 @@ export const PasswordInput = ({
     const score = strength.score;
     setScore(score);
     if (!create || (!required && !value)) {
-      return isValid;
+      return isValid || errortext;
     }
     setFeedback(strength.feedback.suggestions || []);
-    return score > SCORE_THRESHOLD && isValid;
+    return (score > SCORE_THRESHOLD && isValid) || errortext;
   };
 
   const showAsNotched = label && typeof label !== 'string' ? { notched: true } : {};

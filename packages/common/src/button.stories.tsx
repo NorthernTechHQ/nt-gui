@@ -9,7 +9,8 @@ const meta: Meta<typeof Button> = {
       control: { type: 'radio' },
       options: ['button', 'submit', 'reset']
     }
-  }
+  },
+  title: 'common/Button'
 };
 
 export default meta;

@@ -25,19 +25,17 @@ const useStyles = makeStyles()(() => ({
 }));
 
 interface CopyTextProps {
+  notify?: boolean;
   onCopy?: () => void;
   token: string;
 }
 
-export const CopyTextToClipboard = ({ onCopy = yes, token }: CopyTextProps) => {
+export const CopyTextToClipboard = ({ notify = true, onCopy = yes, token }: CopyTextProps) => {
   const [copied, setCopied] = useState(false);
   const { classes } = useStyles();
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  // eslint-disable-next-line arrow-body-style
-  useEffect(() => {
-    return () => clearTimeout(timer.current);
-  }, []);
+  useEffect(() => () => clearTimeout(timer.current), []);
 
   const onCopied = () => {
     setCopied(true);
@@ -50,7 +48,7 @@ export const CopyTextToClipboard = ({ onCopy = yes, token }: CopyTextProps) => {
       <CopyToClipboard text={token} onCopy={onCopied}>
         <Button startIcon={<CopyPasteIcon />}>Copy to clipboard</Button>
       </CopyToClipboard>
-      <p className={classes.copyNotification}>{copied && <span className="green fadeIn">Copied to clipboard.</span>}</p>
+      {notify && <p className={classes.copyNotification}>{copied && <span className="green fadeIn">Copied to clipboard.</span>}</p>}
     </div>
   );
 };

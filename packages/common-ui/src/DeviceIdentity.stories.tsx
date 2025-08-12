@@ -17,19 +17,20 @@ import { getConfiguredStore } from '@northern.tech/store/store';
 import { mockApiResponses as defaultState } from '@northern.tech/testing/mockData';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { DeviceIdentityDisplay } from './DeviceIdentity';
+import { DeviceIdentityDisplay as DeviceIdentity } from './DeviceIdentity';
 
-const meta: Meta<typeof DeviceIdentityDisplay> = {
-  component: DeviceIdentityDisplay
+const meta: Meta<typeof DeviceIdentity> = {
+  title: 'common-ui/DeviceIdentity',
+  component: DeviceIdentity
 };
 
 export default meta;
 
-type Story = StoryObj<typeof DeviceIdentityDisplay>;
+type Story = StoryObj<typeof DeviceIdentity>;
 
 export const Primary: Story = {
-  render: props => <DeviceIdentityDisplay {...props} />,
-  name: 'DeviceIdentityDisplay',
+  render: props => <DeviceIdentity {...props} />,
+  name: 'DeviceIdentity',
   decorators: [
     Story => {
       const store = getConfiguredStore({ preloadedState: defaultState });

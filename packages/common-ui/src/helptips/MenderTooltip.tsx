@@ -12,39 +12,14 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 
-import { Help as HelpIcon } from '@mui/icons-material';
+import type { TooltipProps } from '@mui/material';
 import { ClickAwayListener, Tooltip } from '@mui/material';
-import { makeStyles, withStyles } from 'tss-react/mui';
+import { withStyles } from 'tss-react/mui';
 
-import { READ_STATES, TIMEOUTS } from '@northern.tech/store/constants';
-import { getDeviceById, getTooltipsState } from '@northern.tech/store/selectors';
-import { setAllTooltipsReadState, setTooltipReadState } from '@northern.tech/store/thunks';
-import { toggle, useDebounce, yes } from '@northern.tech/utils';
-
-import { HELPTOOLTIPS } from '.';
-
-const useStyles = makeStyles()(theme => ({
-  icon: {
-    '&.read': {
-      color: theme.palette.text.disabled
-    }
-  },
-  iconAura: {
-    position: 'absolute',
-    top: -5,
-    bottom: 0,
-    left: -5,
-    right: -5,
-    border: `1px dashed ${theme.palette.primary.main}`,
-    borderRadius: '50%',
-    '&.read': {
-      borderColor: theme.palette.text.disabled
-    }
-  }
-}));
+import { toggle } from '@northern.tech/utils/helpers';
+import type { PositioningStrategy } from '@popperjs/core';
 
 export const MenderTooltip = withStyles(Tooltip, ({ palette, shadows, spacing }) => ({
   arrow: {
@@ -65,6 +40,14 @@ export const MenderTooltip = withStyles(Tooltip, ({ palette, shadows, spacing })
   }
 }));
 
+interface MenderTooltipClickableProps extends TooltipProps {
+  onboarding?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  startOpen?: boolean;
+  tooltipComponent?: typeof MenderTooltip;
+  visibility?: boolean;
+}
+
 export const MenderTooltipClickable = ({
   children,
   onboarding,
@@ -73,7 +56,7 @@ export const MenderTooltipClickable = ({
   onOpenChange,
   tooltipComponent = MenderTooltip,
   ...remainingProps
-}) => {
+}): MenderTooltipClickableProps => {
   const [open, setOpen] = useState(startOpen || false);
 
   useEffect(() => {
@@ -91,13 +74,13 @@ export const MenderTooltipClickable = ({
 
   const hide = () => setOpen(false);
 
-  const Component = onboarding ? OnboardingTooltip : tooltipComponent;
+  const Component = tooltipComponent as typeof Tooltip;
   const extraProps = onboarding
     ? {
         PopperProps: {
           disablePortal: true,
           popperOptions: {
-            strategy: 'fixed',
+            strategy: 'fixed' as PositioningStrategy,
             modifiers: [
               { name: 'flip', enabled: false },
               { name: 'preventOverflow', enabled: true, options: { boundary: window, altBoundary: false } }
@@ -124,106 +107,4 @@ export const MenderTooltipClickable = ({
   );
 };
 
-const iconWidth = 30;
-
-export const OnboardingTooltip = withStyles(Tooltip, theme => ({
-  arrow: {
-    color: theme.palette.primary.main
-  },
-  tooltip: {
-    backgroundColor: theme.palette.primary.main,
-    boxShadow: theme.shadows[1],
-    color: theme.palette.grey[500],
-    fontSize: 14,
-    maxWidth: 350,
-    padding: '12px 18px',
-    width: 350,
-    '& a': {
-      color: theme.palette.grey[500]
-    },
-    '&.MuiTooltip-tooltipPlacementTop': { marginLeft: iconWidth, marginBottom: 0, marginTop: `calc(${iconWidth} + ${theme.spacing(1.5)})` },
-    '&.MuiTooltip-tooltipPlacementRight': { marginTop: iconWidth / 2 },
-    '&.MuiTooltip-tooltipPlacementBottom': { marginLeft: iconWidth },
-    '&.MuiTooltip-tooltipPlacementLeft': { marginTop: iconWidth / 2 }
-  },
-  popper: {
-    opacity: 0.9
-  }
-}));
-
-const tooltipStateStyleMap = {
-  [READ_STATES.read]: 'read muted',
-  default: ''
-};
-
-const TooltipWrapper = ({ content, onClose, onReadAll }) => (
-  <div>
-    {content}
-    <div className="flexbox space-between margin-top-small">
-      <span className="link" onClick={onReadAll}>
-        Mark all help tips as read
-      </span>
-      <span className="link" onClick={onClose}>
-        Close
-      </span>
-    </div>
-  </div>
-);
-
-export const HelpTooltip = ({ icon = undefined, id, contentProps = {}, tooltip, device, setAllTooltipsReadState, setTooltipReadState, ...props }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const debouncedIsOpen = useDebounce(isOpen, TIMEOUTS.threeSeconds);
-  const { classes } = useStyles();
-  const { Component, SpecialComponent, isRelevant, readState } = tooltip;
-
-  useEffect(() => {
-    if (!debouncedIsOpen) {
-      return;
-    }
-    setTooltipReadState({ id, persist: true, readState: READ_STATES.read });
-  }, [debouncedIsOpen, id, setTooltipReadState]);
-
-  const onReadAllClick = () => setAllTooltipsReadState({ readState: READ_STATES.read, tooltipIds: Object.keys(HELPTOOLTIPS) });
-
-  const title = SpecialComponent ? (
-    <SpecialComponent device={device} {...contentProps} />
-  ) : (
-    <TooltipWrapper content={<Component device={device} {...contentProps} />} onClose={() => setIsOpen(false)} onReadAll={onReadAllClick} />
-  );
-
-  if (!isRelevant({ device, ...contentProps })) {
-    return null;
-  }
-
-  const className = tooltipStateStyleMap[readState] ?? tooltipStateStyleMap.default;
-  return (
-    <MenderTooltipClickable className={isOpen ? 'muted' : ''} title={title} visibility={isOpen} onOpenChange={setIsOpen} {...props}>
-      <div className="relative">
-        {icon || <HelpIcon className={`${classes.icon} ${className}`} color="primary" />}
-        <div className={`${classes.iconAura} ${className}`} />
-      </div>
-    </MenderTooltipClickable>
-  );
-};
-
-export const MenderHelpTooltip = props => {
-  const { id, contentProps = {} } = props;
-  const tooltipsById = useSelector(getTooltipsState);
-  const dispatch = useDispatch();
-  const device = useSelector(state => getDeviceById(state, contentProps.deviceId));
-  const { readState = READ_STATES.unread } = tooltipsById[id] || {};
-  const { Component, SpecialComponent, isRelevant = yes } = HELPTOOLTIPS[id];
-
-  const onSetTooltipReadState = useCallback((...args) => dispatch(setTooltipReadState(...args)), [dispatch]);
-  const onSetAllTooltipsReadState = state => dispatch(setAllTooltipsReadState(state));
-
-  return (
-    <HelpTooltip
-      setAllTooltipsReadState={onSetAllTooltipsReadState}
-      setTooltipReadState={onSetTooltipReadState}
-      device={device}
-      tooltip={{ Component, SpecialComponent, isRelevant, readState }}
-      {...props}
-    />
-  );
-};
+export default MenderTooltip;

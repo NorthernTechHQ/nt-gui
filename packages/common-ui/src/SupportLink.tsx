@@ -11,23 +11,16 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { DetailsIndicator } from './DetailsIndicator';
-
-const meta: Meta<typeof DetailsIndicator> = {
-  title: 'common-ui/DetailsIndicator',
-  component: DetailsIndicator
+const variants = {
+  email: 'support@mender.io',
+  ourTeam: 'contact our team',
+  support: 'contact support',
+  salesTeam: 'contact our sales team'
 };
 
-export default meta;
-
-type Story = StoryObj<typeof DetailsIndicator>;
-
-export const Primary: Story = {
-  render: props => <DetailsIndicator {...props} />,
-  name: 'DetailsIndicator',
-  args: {
-    classes: { icon: '', wrapper: '' }
-  }
-};
+export const SupportLink = ({ className = '', variant }: { className?: string; variant: keyof typeof variants | string }) => (
+  <a className={className} href="mailto:support@mender.io" target="_blank" rel="noopener noreferrer">
+    {variants[variant] ?? variant}
+  </a>
+);

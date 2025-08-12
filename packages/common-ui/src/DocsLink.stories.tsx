@@ -20,7 +20,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DocsLink } from './DocsLink';
 
 const meta: Meta<typeof DocsLink> = {
-  component: DocsLink
+  component: DocsLink,
+  title: 'common-ui/DocsLink'
 };
 
 export default meta;

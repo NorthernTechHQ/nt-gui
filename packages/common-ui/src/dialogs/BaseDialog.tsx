@@ -11,23 +11,21 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { ReactNode } from 'react';
 
-import { DetailsIndicator } from './DetailsIndicator';
+import type { DialogProps, ModalProps } from '@mui/material';
+import { Dialog, DialogTitle } from '@mui/material';
 
-const meta: Meta<typeof DetailsIndicator> = {
-  title: 'common-ui/DetailsIndicator',
-  component: DetailsIndicator
-};
-
-export default meta;
-
-type Story = StoryObj<typeof DetailsIndicator>;
-
-export const Primary: Story = {
-  render: props => <DetailsIndicator {...props} />,
-  name: 'DetailsIndicator',
-  args: {
-    classes: { icon: '', wrapper: '' }
-  }
+interface BaseDialogProps extends Omit<DialogProps, 'title'> {
+  onClose: ModalProps['onClose'];
+  title: string | ReactNode;
+}
+export const BaseDialog = (props: BaseDialogProps) => {
+  const { children, onClose, title, ...dialogProps } = props;
+  return (
+    <Dialog {...dialogProps} onClose={onClose}>
+      <DialogTitle>{title}</DialogTitle>
+      {children}
+    </Dialog>
+  );
 };

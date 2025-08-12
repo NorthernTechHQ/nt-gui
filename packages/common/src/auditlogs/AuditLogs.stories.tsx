@@ -38,7 +38,8 @@ const meta: Meta<typeof AuditLogs> = {
         </MemoryRouter>
       </LocalizationProvider>
     );
-  }
+  },
+  title: 'common/AuditLogs'
 };
 
 export default meta;

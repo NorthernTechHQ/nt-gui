@@ -11,23 +11,14 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import { FormProvider, useForm } from 'react-hook-form';
 
-import { DetailsIndicator } from './DetailsIndicator';
+import { render } from '@/testUtils';
 
-const meta: Meta<typeof DetailsIndicator> = {
-  title: 'common-ui/DetailsIndicator',
-  component: DetailsIndicator
-};
-
-export default meta;
-
-type Story = StoryObj<typeof DetailsIndicator>;
-
-export const Primary: Story = {
-  render: props => <DetailsIndicator {...props} />,
-  name: 'DetailsIndicator',
-  args: {
-    classes: { icon: '', wrapper: '' }
-  }
+export const formRenderWrapper = ui => {
+  const Wrapper = ({ children }) => {
+    const methods = useForm();
+    return <FormProvider {...methods}>{children}</FormProvider>;
+  };
+  return render(<Wrapper>{ui}</Wrapper>);
 };

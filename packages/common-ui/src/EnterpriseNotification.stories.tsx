@@ -21,6 +21,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { EnterpriseNotification } from './EnterpriseNotification';
 
 const meta: Meta<typeof EnterpriseNotification> = {
+  title: 'common-ui/EnterpriseNotification',
   component: EnterpriseNotification,
   argTypes: {
     id: {

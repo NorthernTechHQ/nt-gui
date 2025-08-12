@@ -21,22 +21,23 @@ import { withStyles } from 'tss-react/mui';
 
 import { ADDONS, BENEFITS, PLANS } from '@northern.tech/store/constants';
 import { getTenantCapabilities } from '@northern.tech/store/selectors';
+import { yes } from '@northern.tech/utils/helpers';
 
-import MenderTooltip, { MenderTooltipClickable } from './MenderTooltip';
+import MenderTooltip, { MenderTooltipClickable } from './helptips/MenderTooltip';
 
 const PlansTooltip = withStyles(MenderTooltip, ({ palette }) => ({
   arrow: {
-    color: palette.tooltip.tierTipBackground
+    color: palette.tooltip?.tierTipBackground ?? palette.grey[100]
   },
   tooltip: {
-    backgroundColor: palette.tooltip.tierTipBackground,
+    backgroundColor: palette.tooltip?.tierTipBackground ?? palette.grey[100],
     maxWidth: 300
   }
 }));
 
 const PlanChip = withStyles(Chip, ({ palette }) => ({
   root: {
-    backgroundColor: palette.tooltip.tierTipBackground,
+    backgroundColor: palette.tooltip?.tierTipBackground ?? palette.grey[100],
     color: palette.text.disabled,
     textTransform: 'uppercase',
     '&:hover': {
@@ -47,7 +48,7 @@ const PlanChip = withStyles(Chip, ({ palette }) => ({
 
 export const DefaultUpgradeNotification = props => (
   <div {...props}>
-    This feature is not available on your plan. <Link to="/settings/upgrade">Upgrade</Link> to enable it
+    This feature is not available on your plan. <Link to="/subscription">Upgrade</Link> to enable it
   </div>
 );
 
@@ -87,7 +88,7 @@ export const EnterpriseNotification = ({ className = '', id = BENEFITS.default.i
         <div>
           {content}
           <div className="flexbox space-between margin-top-small">
-            <Link to="/settings/upgrade">Upgrade now</Link>
+            <Link to="/subscription">Upgrade now</Link>
             <span className="link" onClick={() => setIsOpen(false)}>
               Close
             </span>
@@ -97,7 +98,7 @@ export const EnterpriseNotification = ({ className = '', id = BENEFITS.default.i
       tooltipComponent={PlansTooltip}
       visibility={isOpen}
     >
-      <PlanChip className={className} label={PLANS[requiredPlan].name} />
+      <PlanChip className={className} onClick={yes} label={PLANS[requiredPlan].name} />
     </MenderTooltipClickable>
   );
 };

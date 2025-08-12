@@ -16,6 +16,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ExpandableAttribute } from './ExpandableAttribute';
 
 const meta: Meta<typeof ExpandableAttribute> = {
+  title: 'common-ui/ExpandableAttribute',
   component: ExpandableAttribute
 };
 

@@ -16,8 +16,14 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Code, CopyCode } from './CopyCode';
 
 const meta: Meta<typeof CopyCode> = {
+  title: 'common-ui/CopyCode',
   component: CopyCode,
-  includeStories: ['Primary', 'Secondary']
+  includeStories: ['Primary', 'Secondary'],
+  argTypes: {
+    withDescription: {
+      type: 'boolean'
+    }
+  }
 };
 
 export default meta;

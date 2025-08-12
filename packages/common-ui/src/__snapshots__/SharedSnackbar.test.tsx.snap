@@ -89,7 +89,7 @@ exports[`SharedSnackbar Component > renders correctly 1`] = `
 <div
   class="MuiSnackbar-root MuiSnackbar-anchorOriginBottomCenter emotion-0"
   role="presentation"
-  style="max-width: 200px; height: auto; line-height: 28px; padding: 24px; white-space: pre-line;"
+  style="max-width: 900px; height: auto; line-height: 28px; padding: 24px; white-space: pre-line;"
 >
   <div
     class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation6 MuiSnackbarContent-root emotion-1"

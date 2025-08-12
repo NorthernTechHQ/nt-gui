@@ -72,7 +72,7 @@ const tryApplyValidationEntry = (value, validations = [], validationResults = []
   try {
     // So the next line of code is actually:
     // validator.isLength('valueFromInput', 5)
-    if (!validator[validateMethod](args)) {
+    if (!validator[validateMethod](...args)) {
       return tryApplyValidationEntry(value, validations, [...validationResults, { errortext: getErrorMsg(validateMethod, tmpArgs), isValid: false }]);
     }
   } catch {
@@ -95,8 +95,8 @@ const runPasswordValidations = ({ required, value, validations, isValid, errorte
   if (required && !value) {
     return { isValid: false, errortext: 'Password is required' };
   } else if (required || value) {
-    isValid = tryApplyValidations(value, validations, { isValid, errortext }).isValid;
-    return { isValid, errortext: !isValid ? 'Password too weak' : errortext };
+    const { isValid: validatedIsValid, errortext: validatedErrortext } = tryApplyValidations(value, validations, { isValid, errortext });
+    return { isValid: validatedIsValid, errortext: !validatedIsValid ? (validatedErrortext ? validatedErrortext : 'Password too weak') : errortext };
   }
   return { isValid, errortext };
 };

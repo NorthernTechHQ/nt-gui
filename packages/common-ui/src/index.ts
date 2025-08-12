@@ -29,7 +29,6 @@ export * from './LinedHeader';
 export * from './List';
 export * from './Loader';
 export { default as MaterialDesignIcon } from './MaterialDesignIcon';
-export * from './MenderTooltip';
 export { default as Pagination } from './Pagination';
 export * from './Pagination';
 export { default as Search } from './Search';

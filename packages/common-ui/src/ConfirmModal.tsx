@@ -15,7 +15,9 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 
 import type { DialogProps } from '@mui/material';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
+import { Button, DialogActions, DialogContent, DialogContentText, TextField } from '@mui/material';
+
+import { BaseDialog } from './dialogs/BaseDialog';
 
 interface ConfirmModalProps {
   className?: string;
@@ -31,7 +33,8 @@ export const ConfirmModal = (props: ConfirmModalProps) => {
   const { close, onConfirm, className = '', toType, header, description, open, maxWidth = 'xs' } = props;
   const [inputValue, setInputValue] = useState<string>('');
   return (
-    <Dialog
+    <BaseDialog
+      title={header}
       className={className}
       open={open}
       onClose={close}
@@ -47,7 +50,6 @@ export const ConfirmModal = (props: ConfirmModalProps) => {
         }
       }}
     >
-      <DialogTitle>{header}</DialogTitle>
       <DialogContent>
         <DialogContentText className="margin-bottom-small">{description}</DialogContentText>
         <DialogContentText className="margin-bottom-small">Type &#39;{toType}&#39; below to continue</DialogContentText>
@@ -70,6 +72,6 @@ export const ConfirmModal = (props: ConfirmModalProps) => {
           Confirm
         </Button>
       </DialogActions>
-    </Dialog>
+    </BaseDialog>
   );
 };

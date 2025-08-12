@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import { IconButton, TablePagination } from '@mui/material';
@@ -20,7 +20,7 @@ import { IconButton, TablePagination } from '@mui/material';
 import { DEVICE_LIST_DEFAULTS, DEVICE_LIST_MAXIMUM_LENGTH, TIMEOUTS } from '@northern.tech/store/constants';
 import { useDebounce } from '@northern.tech/utils/debouncehook';
 
-import MenderTooltip from './MenderTooltip';
+import MenderTooltip from './helptips/MenderTooltip';
 
 const defaultRowsPerPageOptions = [10, 20, DEVICE_LIST_MAXIMUM_LENGTH];
 const { perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
@@ -58,11 +58,11 @@ export const TablePaginationActions = ({ count, page = 0, onPageChange, rowsPerP
   return (
     <div className="flexbox center-aligned">
       {showCountInfo && <div>{`${(pageNo - paginationIndex) * rowsPerPage + 1}-${Math.min(pageNo * rowsPerPage, count)} of ${count}`}</div>}
-      <IconButton onClick={() => setPageNo(pageNo - 1)} disabled={pageNo === paginationIndex} size="large">
+      <IconButton onClick={() => setPageNo(pageNo - 1)} disabled={pageNo === paginationIndex} size="large" aria-label="prev">
         <KeyboardArrowLeft />
       </IconButton>
       <MaybeWrapper disabled={isAtPaginationLimit}>
-        <IconButton onClick={() => setPageNo(pageNo + 1)} disabled={pageNo >= pages || isAtPaginationLimit} size="large">
+        <IconButton onClick={() => setPageNo(pageNo + 1)} disabled={pageNo >= pages || isAtPaginationLimit} size="large" aria-label="next">
           <KeyboardArrowRight />
         </IconButton>
       </MaybeWrapper>
@@ -71,26 +71,18 @@ export const TablePaginationActions = ({ count, page = 0, onPageChange, rowsPerP
 };
 
 const Pagination = props => {
-  const {
-    className = '',
-    onChangeRowsPerPage,
-    onChangePage,
-    page = 0,
-    rowsPerPageOptions = defaultRowsPerPageOptions,
-    showCountInfo,
-    ...remainingProps
-  } = props;
+  const { className, onChangeRowsPerPage, onChangePage, page = 0, rowsPerPageOptions = defaultRowsPerPageOptions, showCountInfo, ...remainingProps } = props;
   // this is required due to the MUI tablepagination being 0-indexed, whereas we work with 1-indexed apis
   // running it without adjustment will lead to warnings from MUI
   const propsPage = Math.max(page - paginationIndex, 0);
   return (
     <TablePagination
-      className={`flexbox margin-top ${className}`}
+      className={`flexbox margin-top ${className || ''}`}
       classes={{ spacer: 'flexbox no-basis' }}
       component="div"
       labelDisplayedRows={() => ''}
       labelRowsPerPage="Rows"
-      SelectProps={{ name: 'pagination' }}
+      slotProps={{ select: { name: 'pagination' } }}
       rowsPerPageOptions={rowsPerPageOptions}
       onRowsPerPageChange={e => onChangeRowsPerPage(e.target.value)}
       page={propsPage}
@@ -101,4 +93,10 @@ const Pagination = props => {
   );
 };
 
-export default Pagination;
+const areEqual = (prevProps, nextProps) =>
+  Math.floor(prevProps.count / prevProps.rowsPerPage) === Math.floor(nextProps.count / nextProps.rowsPerPage) &&
+  prevProps.page === nextProps.page &&
+  prevProps.rowsPerPage === nextProps.rowsPerPage &&
+  prevProps.disabled === nextProps.disabled;
+
+export default memo(Pagination, areEqual);

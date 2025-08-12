@@ -18,7 +18,8 @@ import { DetailsTable } from './DetailsTable';
 
 const meta: Meta<typeof DetailsTable> = {
   component: DetailsTable,
-  includeStories: ['Primary', 'Secondary', 'Tertiary']
+  includeStories: ['Primary', 'Secondary', 'Tertiary'],
+  title: 'common-ui/DetailsTable'
 };
 
 export default meta;
