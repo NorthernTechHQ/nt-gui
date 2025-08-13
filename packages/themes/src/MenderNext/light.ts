@@ -14,7 +14,7 @@
 import { PaletteOptions, ThemeOptions, outlinedInputClasses } from '@mui/material';
 import { common } from '@mui/material/colors';
 
-import { colors, typography } from './common';
+import { components as baseComponents, colors, typography } from './common';
 
 const info = {
   main: common.white,
@@ -49,6 +49,7 @@ export const light: ThemeOptions = {
   palette,
   typography,
   components: {
+    ...baseComponents,
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
