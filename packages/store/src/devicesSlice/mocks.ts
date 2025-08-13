@@ -128,7 +128,7 @@ export const mockState = {
         id: 'filter1',
         name: 'filter1',
         filters: [{ scope: 'system', key: 'group', operator: '$eq', value: 'things' }]
-      }
+      } as const
     },
     selectedGroup: undefined
   },

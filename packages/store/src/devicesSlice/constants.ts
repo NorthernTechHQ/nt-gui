@@ -11,10 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { DEVICE_STATES } from '../constants';
+import type { DEVICE_STATES, FilterOperator } from '../constants';
 import { DEVICE_FILTERING_OPTIONS } from '../constants';
 
-export const emptyFilter = { key: null, value: '', operator: DEVICE_FILTERING_OPTIONS.$eq.key, scope: 'inventory' };
+export const emptyFilter = { key: null, value: '', operator: DEVICE_FILTERING_OPTIONS.$eq.key as FilterOperator, scope: 'inventory' };
 
 // see https://github.com/mendersoftware/go-lib-micro/tree/master/ws
 //     for the description of proto_header and the consts

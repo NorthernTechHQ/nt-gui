@@ -58,8 +58,6 @@ const transformDeployments = (deployments: BackendDeployment[], deploymentsById:
   deployments.sort(customSort(true, 'created')).reduce<{ deploymentIds: string[]; deployments: Record<string, Deployment> }>(
     (accu, item: BackendDeployment) => {
       const filter = item.filter;
-      //TODO: deploymentPrototype might need adjustments to fix this
-      //@ts-ignore
       let deployment: Deployment = {
         ...deploymentPrototype,
         ...deploymentsById[item.id],
@@ -191,18 +189,13 @@ export const createDeployment = createAppAsyncThunk(
           const { previousPhases = [], retries: previousRetries = 0 } = getGlobalSettings(getState());
           const newSettings: any = { retries: hasNewRetryDefault ? retries : previousRetries, hasDeployments: true };
           if (phases) {
-            //TODO: fix backend and helper package types incompatibility
-            //@ts-ignore
             const standardPhases = standardizePhases(phases);
             const prevPhases = previousPhases.map(standardizePhases);
-            //@ts-ignore
             if (!prevPhases.find(previousPhaseList => previousPhaseList.every(oldPhase => standardPhases.find(phase => deepCompare(phase, oldPhase))))) {
               prevPhases.push(standardPhases);
             }
             newSettings.previousPhases = prevPhases.slice(-1 * MAX_PREVIOUS_PHASES_COUNT);
           }
-          //TODO: remove once app slice is typed
-          //@ts-ignore
           tasks.push(dispatch(saveGlobalSettings(newSettings)));
         }
         return Promise.all(tasks);
@@ -245,8 +238,6 @@ export const getDeploymentDevices = createAppAsyncThunk(
         return accu;
       }, []);
       // get device artifact, inventory and identity details not listed in schedule data
-      //TODO: remove once device slice is typed
-      //@ts-ignore
       tasks = lackingData.reduce((accu, deviceId) => [...accu, dispatch(getDeviceById(deviceId)), dispatch(getDeviceAuth(deviceId))], tasks);
       return Promise.all(tasks);
     });
@@ -414,19 +405,17 @@ export const getDeploymentsConfig = createAppAsyncThunk(`${sliceName}/getDeploym
     const oldConfig = getState().deployments.config;
     const { delta = {} } = data;
     const { binary_delta = {}, binary_delta_limits = {} } = delta;
-    const { xdelta_args = {}, timeout: timeoutConfig = oldConfig.binaryDelta.timeout } = binary_delta;
-    const { xdelta_args_limits = {}, timeout: timeoutLimit = oldConfig.binaryDeltaLimits.timeout } = binary_delta_limits;
+    const { xdelta_args = {} } = binary_delta;
+    const { xdelta_args_limits = {} } = binary_delta_limits;
     const config = {
       ...oldConfig,
       hasDelta: Boolean(delta.enabled),
       binaryDelta: {
         ...oldConfig.binaryDelta,
-        timeout: timeoutConfig,
         ...mapExternalDeltaConfig(xdelta_args)
       },
       binaryDeltaLimits: {
         ...oldConfig.binaryDeltaLimits,
-        timeout: timeoutLimit,
         ...mapExternalDeltaConfig(xdelta_args_limits)
       }
     };
@@ -451,7 +440,6 @@ export const saveDeltaDeploymentsConfig = createAppAsyncThunk(
   `${sliceName}/saveDeltaDeploymentsConfig`,
   (config: DeploymentConfig['binaryDelta'], { dispatch, getState }) => {
     const configChange = {
-      timeout: config.timeout,
       xdelta_args: deltaAttributeMappings.reduce((accu, { here, there }) => {
         if (config[here] !== undefined) {
           accu[there] = config[here];

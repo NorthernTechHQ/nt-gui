@@ -18,6 +18,7 @@ import type {
   BillingProfile,
   Event,
   Integration,
+  Product,
   SAMLMetadata
 } from '@northern.tech/types/MenderTypes';
 
@@ -61,7 +62,10 @@ export interface Webhook {
   events: Event[];
   eventsTotal: number;
 }
-export type Tenant = BackendTenant & BackendTenantAdminTenant;
+export type Tenant = BackendTenant &
+  BackendTenantAdminTenant & {
+    addons: Addon[];
+  };
 
 export interface TenantList {
   page: number;
@@ -93,7 +97,27 @@ export interface Addon {
   name: AvailableAddon;
 }
 
+interface SubscriptionLine {
+  amount: number;
+  currency: string;
+  description: string;
+  price_id: string;
+  quantity: number;
+}
+export interface Subscription {
+  currency: string;
+  id: string;
+  lines: SubscriptionLine[];
+  period_end: string;
+  period_start: string;
+  plan: string;
+  products: Product[];
+  status: string;
+  total: number;
+}
+
 export interface Organization extends Tenant {
   addons: Addon[];
   billing_profile: BillingProfile;
+  subscription: Subscription;
 }

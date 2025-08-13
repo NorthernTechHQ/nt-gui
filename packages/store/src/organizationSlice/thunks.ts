@@ -19,8 +19,11 @@ import type {
   Event,
   Integration,
   NewTenant,
+  PreviewRequest,
+  Product,
   SupportRequest
 } from '@northern.tech/types/MenderTypes';
+import { PreviewRequest as PreviewRequestEnum } from '@northern.tech/types/MenderTypes';
 import { dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -32,6 +35,7 @@ import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import Api from '../api/general-api';
 import type { AvailablePlans, ContentType, SortOptions } from '../constants';
+import { PLANS } from '../constants';
 import {
   DEVICE_LIST_DEFAULTS,
   SORTING_OPTIONS,
@@ -51,6 +55,8 @@ import { getCurrentSession, getTenantCapabilities, getTenantsList } from '../sel
 import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { getDeviceLimit, setFirstLoginAfterSignup } from '../thunks';
+import type { UserSession } from '../usersSlice';
+import { parseSubscriptionPreview } from '../utils';
 import { SSO_TYPES } from './constants';
 import { getAuditlogState, getOrganization } from './selectors';
 
@@ -106,12 +112,12 @@ export const createOrganizationTrial = createAppAsyncThunk(`${sliceName}/createO
         }
       })
       //TODO: resolve the case with no response more gracefully
+      //UPD: soon to be removed due to change to the subscription flow
       // @ts-ignore
       .then(({ headers }) => {
         cookies.remove('oauth');
         cookies.remove('externalID');
         cookies.remove('email');
-        //@ts-ignore
         dispatch(setFirstLoginAfterSignup(true));
         return new Promise<void>(resolve =>
           setTimeout(() => {
@@ -235,7 +241,6 @@ export const setAuditlogsState = createAppAsyncThunk(
     const { isLoading: currentLoading, selectedIssue: currentIssue, ...currentRequestState } = currentState;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { isLoading: selectionLoading, selectedIssue: selectionIssue, ...selectionRequestState } = nextState;
-    //@ts-ignore
     if (!deepCompare(currentRequestState, selectionRequestState)) {
       nextState.isLoading = true;
       tasks.push(dispatch(getAuditLogs(nextState)).finally(() => dispatch(actions.setAuditLogState({ isLoading: false }))));
@@ -282,7 +287,6 @@ export const setTenantsListState = createAppAsyncThunk(
       ...currentState,
       ...selectionState
     };
-    //@ts-ignore
     if (!deepCompare(currentState, selectionState)) {
       const [tenants, pageCount] = await tenantListRetrieval(nextState);
       return dispatch(actions.setTenantListState({ ...nextState, tenants, total: pageCount }));
@@ -314,6 +318,14 @@ export const editBillingProfile = createAppAsyncThunk(
       .catch(err => commonErrorHandler(err, `Failed to change billing profile`, dispatch))
       .then(() => Promise.all([dispatch(setSnackbar('Billing Profile was changed successfully')), dispatch(getUserBilling())]))
 );
+export const createBillingProfile = createAppAsyncThunk(
+  `${sliceName}/createBillingProfileEmail`,
+  ({ billingProfile }: { billingProfile: BillingProfile }, { dispatch }) =>
+    Api.post(`${tenantadmApiUrlv2}/billing/profile`, billingProfile)
+      .catch(err => commonErrorHandler(err, `Failed to create billing profile`, dispatch))
+      .then(() => Promise.all([dispatch(setSnackbar('Billing Profile was created successfully')), dispatch(getUserBilling())]))
+);
+
 export const removeTenant = createAppAsyncThunk(`${sliceName}/editDeviceLimit`, ({ id }: { id: string }, { dispatch }) =>
   Api.post(`${tenantadmApiUrlv2}/tenants/${id}/remove/start`)
     .catch(err => commonErrorHandler(err, `There was an error removing the tenant`, dispatch))
@@ -327,14 +339,11 @@ export const removeTenant = createAppAsyncThunk(`${sliceName}/editDeviceLimit`, 
 );
 export const getUserOrganization = createAppAsyncThunk(`${sliceName}/getUserOrganization`, (_, { dispatch, getState }) =>
   Api.get<Tenant>(`${tenantadmApiUrlv1}/user/tenant`).then(res => {
-    //TODO: Addon should be a string literal union (e.g type AvailableAddon) not just a string
-    //@ts-ignore
     const tasks: ReturnType<AppDispatch>[] = [dispatch(actions.setOrganization(res.data))];
     const { addons, plan, trial } = res.data;
-    const { token } = getCurrentSession(getState());
+    const { token } = getCurrentSession(getState()) as UserSession;
     const jwt = jwtDecode(token);
     const jwtData = { addons: jwt['mender.addons'], plan: jwt['mender.plan'], trial: jwt['mender.trial'] };
-    //@ts-ignore
     if (!deepCompare({ addons, plan, trial }, jwtData)) {
       const hash = hashString(tenantDataDivergedMessage);
       cookies.remove(`${jwt.sub}${hash}`);
@@ -345,6 +354,37 @@ export const getUserOrganization = createAppAsyncThunk(`${sliceName}/getUserOrga
 );
 export const getUserBilling = createAppAsyncThunk(`${sliceName}/getUserBilling`, (_, { dispatch }) =>
   Api.get(`${tenantadmApiUrlv2}/billing/profile`).then(res => dispatch(actions.setBillingProfile(res.data)))
+);
+
+export const getUserSubscription = createAppAsyncThunk(`${sliceName}/getUserSubscription`, (_, { dispatch }) => {
+  const tasks = [dispatch(getBillingPreview({ preview_mode: PreviewRequestEnum.preview_mode.NEXT })).unwrap(), dispatch(getCurrentSubscription()).unwrap()];
+  Promise.all(tasks).then(([currentPreview, currentSubscription]) => dispatch(actions.setSubscription({ ...currentPreview, ...currentSubscription })));
+});
+
+//Can also be used to get current subscription when no products supplied
+export const getBillingPreview = createAppAsyncThunk(`${sliceName}/getBillingPreview`, (order: PreviewRequest) =>
+  Api.post(`${tenantadmApiUrlv2}/billing/subscription/invoices/preview`, order).then(({ data }) =>
+    order.preview_mode === 'recurring' ? { ...parseSubscriptionPreview(data.lines), total: data.total } : data
+  )
+);
+
+export const getCurrentSubscription = createAppAsyncThunk(`${sliceName}/getCurrentSubscription`, () =>
+  Api.get(`${tenantadmApiUrlv2}/billing/subscription`).then(res => res.data)
+);
+
+const successMessage = (planId: string) =>
+  `Thank you! You have successfully subscribed to the ${PLANS[planId].name} plan.  You can view and edit your billing details on the Organization and billing page.`;
+
+export const requestPlanUpgrade = createAppAsyncThunk(`${sliceName}/requestPlanUpgrade`, (order: { plan: string; products: Product[] }, { dispatch }) =>
+  Api.post(`${tenantadmApiUrlv2}/billing/subscription`, order)
+    .catch(err => commonErrorHandler(err, 'There was an error sending your request', dispatch, commonErrorFallback))
+    .then(() =>
+      Promise.all([
+        dispatch(setSnackbar(successMessage(order.plan))),
+        setTimeout(() => dispatch(getDeviceLimit()), TIMEOUTS.threeSeconds),
+        dispatch(getUserOrganization())
+      ])
+    )
 );
 
 export const sendSupportMessage = createAppAsyncThunk(`${sliceName}/sendSupportMessage`, (content: SupportRequest, { dispatch }) =>

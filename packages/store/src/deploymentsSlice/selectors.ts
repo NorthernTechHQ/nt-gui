@@ -11,15 +11,16 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import { createSelector } from '@reduxjs/toolkit';
 
+import type { Deployment } from '.';
+import type { RootState } from '../store';
 import { DEPLOYMENT_STATES } from './constants';
 
-export const getDeploymentsById = state => state.deployments.byId;
-export const getDeploymentsByStatus = state => state.deployments.byStatus;
-export const getSelectedDeploymentDeviceIds = state => state.deployments.selectedDeviceIds;
-export const getDeploymentsSelectionState = state => state.deployments.selectionState;
+export const getDeploymentsById = (state: RootState) => state.deployments.byId;
+export const getDeploymentsByStatus = (state: RootState) => state.deployments.byStatus;
+export const getSelectedDeploymentDeviceIds = (state: RootState) => state.deployments.selectedDeviceIds;
+export const getDeploymentsSelectionState = (state: RootState) => state.deployments.selectionState;
 
 export const getMappedDeploymentSelection = createSelector(
   [getDeploymentsSelectionState, (_, deploymentsState) => deploymentsState, getDeploymentsById],
@@ -34,16 +35,16 @@ export const getMappedDeploymentSelection = createSelector(
   }
 );
 
-const relevantDeploymentStates = [DEPLOYMENT_STATES.pending, DEPLOYMENT_STATES.inprogress, DEPLOYMENT_STATES.finished];
+const relevantDeploymentStates = [DEPLOYMENT_STATES.pending, DEPLOYMENT_STATES.inprogress, DEPLOYMENT_STATES.finished] as const;
 export const DEPLOYMENT_CUTOFF = 3;
 export const getRecentDeployments = createSelector([getDeploymentsById, getDeploymentsByStatus], (deploymentsById, deploymentsByStatus) =>
   Object.entries(deploymentsByStatus).reduce(
     (accu, [state, byStatus]) => {
-      if (!relevantDeploymentStates.includes(state) || !byStatus.deploymentIds.length) {
+      if (!relevantDeploymentStates.includes(state as (typeof relevantDeploymentStates)[number]) || !byStatus.deploymentIds.length) {
         return accu;
       }
       accu[state] = byStatus.deploymentIds
-        .reduce((accu, id) => {
+        .reduce<Deployment[]>((accu, id) => {
           if (deploymentsById[id]) {
             accu.push(deploymentsById[id]);
           }

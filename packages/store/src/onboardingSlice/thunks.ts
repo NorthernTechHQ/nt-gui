@@ -97,21 +97,15 @@ export const getOnboardingState = createAppAsyncThunk(`${sliceName}/getOnboardin
   return Promise.all([
     dispatch(actions.setOnboardingComplete(onboardingState.complete)),
     dispatch(actions.setOnboardingState(onboardingState)),
-    //TODO: remove once userSlice typed
-    //@ts-ignore
     dispatch(saveUserSettings({ onboarding: onboardingState }))
   ]);
 });
 
 export const setOnboardingDeviceType = createAppAsyncThunk(`${sliceName}/setOnboardingDeviceType`, (value: string[] | string, { dispatch }) =>
-  //TODO: remove once userSlice typed
-  //@ts-ignore
   Promise.all([dispatch(actions.setOnboardingDeviceType(value)), dispatch(saveUserSettings({ onboarding: { deviceType: value } }))])
 );
 
 export const setOnboardingApproach = createAppAsyncThunk(`${sliceName}/setOnboardingApproach`, (value: OnboardingApproach, { dispatch }) =>
-  //TODO: remove once userSlice typed
-  //@ts-ignore
   Promise.all([dispatch(actions.setOnboardingApproach(value)), dispatch(saveUserSettings({ onboarding: { approach: value } }))])
 );
 
@@ -150,7 +144,5 @@ export const advanceOnboarding = createAppAsyncThunk(`${sliceName}/advanceOnboar
   const state = { ...getCurrentOnboardingState(getState()), progress: madeProgress };
   state.complete = stepIndex + 1 >= onboardingSteps.findIndex(step => step === onboardingStepNames.DEPLOYMENTS_PAST_COMPLETED_FAILURE) ? true : state.complete;
   Tracking.event({ category: 'onboarding', action: stepId });
-  //TODO: remove once userSlice typed
-  //@ts-ignore
   return Promise.all([dispatch(actions.setOnboardingProgress(madeProgress)), dispatch(saveUserSettings({ onboarding: state }))]);
 });

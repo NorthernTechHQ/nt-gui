@@ -30,6 +30,7 @@ export const getTrackerCode = (state: RootState) => state.app.trackerCode;
 export const getIsFirstLogin = (state: RootState) => state.app.firstLoginAfterSignup;
 export const getFeedbackProbability = (state: RootState) => state.app.feedbackProbability;
 
+export const getIsUploading = createSelector([getUploads], uploadsById => !!Object.keys(uploadsById).length);
 export const getSearchedDevices = createSelector([getSearchState], ({ deviceIds }) => deviceIds);
 export const getVersionInformation = createSelector([getFullVersionInformation, getFeatures], ({ Integration, ...remainder }, { isHosted }) =>
   isHosted && Integration !== 'next' ? remainder : { ...remainder, Integration }

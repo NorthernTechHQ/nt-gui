@@ -12,6 +12,8 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { createSelector } from '@reduxjs/toolkit';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 import { EXTERNAL_PROVIDER } from '../constants';
 import type { RootState } from '../store';
@@ -22,6 +24,7 @@ export const getAuditlogState = (state: RootState) => state.organization.auditlo
 export const getAuditLog = (state: RootState) => state.organization.auditlog.events;
 export const getAuditLogSelectionState = (state: RootState) => state.organization.auditlog.selectionState;
 export const getBillingProfile = (state: RootState) => state.organization.organization.billing_profile;
+export const getSubscription = (state: RootState) => state.organization.organization.subscription;
 export const getCard = (state: RootState) => state.organization.card;
 export const getSsoConfig = ({ organization: { ssoConfigs = [] } }: RootState) => ssoConfigs[0];
 export const getTenantsList = (state: RootState) => state.organization.tenantList;
@@ -47,3 +50,11 @@ export const getAuditLogEntry = createSelector([getAuditLog, getAuditLogSelectio
   const [eventAction, eventTime] = atob(selectedId).split('|');
   return events.find(item => item.action === eventAction && item.time === eventTime);
 });
+
+dayjs.extend(relativeTime);
+const newPricingIntroduction = dayjs('2025-06-03T00:00');
+
+export const getHasCurrentPricing = createSelector(
+  [getOrganization],
+  ({ id }) => !!id && dayjs(parseInt(id.substring(0, 8), 16) * 1000) >= newPricingIntroduction
+);

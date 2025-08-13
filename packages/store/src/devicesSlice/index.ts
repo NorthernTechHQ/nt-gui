@@ -63,10 +63,10 @@ export type InventoryAttributes = {
 // based on the api docs the Record values might be even: "Supported types: number, string, array of numbers, array of strings" - but I guess "string" or "string | sting[]" should be good enough
 type UiDeviceAttributes = {
   attributes: InventoryAttributes;
-  identity: Record<string, string>;
-  monitor: Record<string, string>;
+  identity?: Record<string, string>;
+  monitor?: Record<string, string>;
   system: Record<string, string>;
-  tags: Record<string, string>;
+  tags?: Record<string, string>;
 };
 
 export type Device = BackendDeviceAuth &
@@ -284,9 +284,6 @@ export const devicesSlice = createSlice({
     setDevicesCountByStatus: (state, action: PayloadAction<{ count: number; status: DeviceStatus }>) => {
       const { count, status } = action.payload;
       state.byStatus[status].total = count;
-    },
-    setTotalDevices: (state, action: PayloadAction<number>) => {
-      state.total = action.payload;
     },
     setDeviceLimit: (state, action: PayloadAction<number>) => {
       state.limit = action.payload;

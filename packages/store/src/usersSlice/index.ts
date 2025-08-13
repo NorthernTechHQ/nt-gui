@@ -47,7 +47,7 @@ export type GlobalSettings = {
     scope: string;
   };
   previousFilters: FilterOption[];
-  previousPhases: DeploymentPhase[];
+  previousPhases: DeploymentPhase[][];
   retries: number;
 };
 type Column = {
@@ -67,7 +67,7 @@ export type UserSettings = {
     approach: 'physical' | 'virtual';
     complete: boolean;
     demoArtifactPort: number;
-    deviceType: string[];
+    deviceType: string[] | string;
     progress: string;
     showTips: null | boolean;
     showTipsDialog: boolean;
@@ -172,6 +172,9 @@ export const usersSlice = createSlice({
     receivedRoles: (state, action: PayloadAction<Record<string, Role>>) => {
       state.rolesById = action.payload;
       state.rolesInitialized = true;
+    },
+    finishedRoleInitialization: (state, action) => {
+      state.rolesInitialized = action.payload;
     },
     createdRole: (state, action: PayloadAction<Role>) => {
       state.rolesById[action.payload.name] = {

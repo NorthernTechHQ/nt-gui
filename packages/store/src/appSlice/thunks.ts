@@ -14,7 +14,7 @@
 import { deepCompare, extractErrorMessage } from '@northern.tech/utils/helpers';
 import Cookies from 'universal-cookie';
 
-import type { ReleaseData, SaasVersion, SearchState, TagData, VersionRelease } from '.';
+import type { ReleaseData, SearchState, TagData, VersionRelease } from '.';
 import { actions, sliceName } from '.';
 import GeneralApi from '../api/general-api';
 import { getOfflineThresholdSettings } from '../selectors';
@@ -70,10 +70,9 @@ const repoKeyMap = {
   'mender-artifact': 'Mender-Artifact'
 } as const;
 
-const deductSaasState = (latestRelease: VersionRelease, guiTags: TagData, saasReleases: SaasVersion[]): string | undefined => {
+const deductSaasState = (latestRelease: VersionRelease, guiTags: TagData): string | undefined => {
   const latestGuiTag = guiTags.length ? guiTags[0].name : '';
-  const latestSaasRelease = latestGuiTag.startsWith('saas-v') ? { date: latestGuiTag.split('-v')[1].replaceAll('.', '-'), tag: latestGuiTag } : saasReleases[0];
-  return latestSaasRelease.date > latestRelease.release_date! ? latestSaasRelease.tag : latestRelease.release;
+  return latestGuiTag ? latestGuiTag : latestRelease.release;
 };
 
 export const getLatestReleaseInfo = createAppAsyncThunk(`${sliceName}/getLatestReleaseInfo`, (_, { dispatch, getState }) => {
@@ -89,7 +88,7 @@ export const getLatestReleaseInfo = createAppAsyncThunk(`${sliceName}/getLatestR
       if (!guiTags.length) {
         return Promise.resolve();
       }
-      const { releases, saas } = data;
+      const { releases } = data;
       const latestRelease = getLatestRelease(getLatestRelease(releases));
       const { latestRepos, latestVersions } = latestRelease.repos!.reduce(
         (accu, item) => {
@@ -101,13 +100,12 @@ export const getLatestReleaseInfo = createAppAsyncThunk(`${sliceName}/getLatestR
         },
         { latestVersions: { ...getState().app.versionInformation }, latestRepos: {} }
       );
-      const info = deductSaasState(latestRelease, guiTags, saas);
+      const info = deductSaasState(latestRelease, guiTags);
       return Promise.resolve(
         dispatch(
           actions.setVersionInformation({
             ...latestVersions,
-            backend: info,
-            GUI: info,
+            Server: info,
             latestRelease: {
               releaseDate: latestRelease.release_date!,
               repos: latestRepos
@@ -133,13 +131,9 @@ export const setSearchState = createAppAsyncThunk(`${sliceName}/setSearchState`,
   const { isSearching: currentSearching, deviceIds: currentDevices, searchTotal: currentTotal, ...currentRequestState } = currentState;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { isSearching: nextSearching, deviceIds: nextDevices, searchTotal: nextTotal, ...nextRequestState } = nextState;
-  //TODO: remove once deepCompare is typed
-  // @ts-ignore
   if (nextRequestState.searchTerm && !deepCompare(currentRequestState, nextRequestState)) {
     nextState.isSearching = true;
     tasks.push(
-      //TODO: remove once deviceSlice is typed
-      // @ts-ignore
       dispatch(searchDevices(nextState))
         .unwrap()
         .then(results => {

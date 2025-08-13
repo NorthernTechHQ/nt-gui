@@ -13,6 +13,7 @@
 //    limitations under the License.
 // @ts-nocheck
 import { defaultState } from '@/testUtils';
+import { describe, expect, it } from 'vitest';
 
 import { DARK_MODE, LIGHT_MODE } from './constants';
 import { generateDeploymentGroupDetails, groupDeploymentDevicesStats, groupDeploymentStats, isDarkMode, mapDeviceAttributes } from './utils';

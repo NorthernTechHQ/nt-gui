@@ -11,11 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
+//@ts-nocheck
 import { useDispatch } from 'react-redux';
 
 import { extractErrorMessage, preformatWithRequestID } from '@northern.tech/utils/helpers';
 import { combineReducers, configureStore, createAsyncThunk } from '@reduxjs/toolkit';
+import { createReduxEnhancer } from '@sentry/react';
 
 import actions from './actions';
 import appSlice from './appSlice';
@@ -27,7 +28,7 @@ import monitorSlice from './monitorSlice';
 import onboardingSlice from './onboardingSlice';
 import organizationSlice, { actions as organizationActions } from './organizationSlice';
 import releaseSlice from './releasesSlice';
-import userSlice from './usersSlice';
+import userSlice, { actions as userActions } from './usersSlice';
 
 const { setSnackbar, uploadProgress } = actions;
 
@@ -73,11 +74,44 @@ const rejectionLoggerMiddleware = () => next => action => {
   return next(action);
 };
 
+const tracingActionIgnoreList = [userActions.successfullyLoggedIn.type, 'users/loginUser/pending', 'users/loginUser/fulfilled', 'users/loginUser/rejected'];
+
+const sentryReduxEnhancer = createReduxEnhancer({
+  actionTransformer: action => {
+    if (tracingActionIgnoreList.includes(action.type)) {
+      return null;
+    }
+    return action;
+  },
+  // Transform the state to remove sensitive information
+  stateTransformer: (state: RootState) => {
+    const transformedState = {
+      ...state,
+      users: { ...state.users, currentSession: null },
+      organization: {
+        ...state.organization,
+        organization: {
+          ...state.organization.organization,
+          tenant_token: null
+        }
+      }
+    };
+    return transformedState;
+  }
+});
+
 export const getConfiguredStore = (options = {}) => {
   const { preloadedState = {}, ...config } = options;
   return configureStore({
     ...config,
     preloadedState,
+    enhancers: getDefaultEnhancers => {
+      // rely on the plain injected env object, as we're initializing the store only here
+      if (window.mender_environment?.sentry?.isReduxEnabled) {
+        return getDefaultEnhancers().concat(sentryReduxEnhancer);
+      }
+      return getDefaultEnhancers();
+    },
     reducer: sessionReducer,
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
@@ -85,9 +119,9 @@ export const getConfiguredStore = (options = {}) => {
           ignoredPaths: ['app.uploadsById']
         },
         serializableCheck: {
-          ignoredActions: [organizationActions.receiveExternalDeviceIntegrations.name, setSnackbar.name, uploadProgress.name],
-          ignoredActionPaths: ['uploads', 'snackbar', /payload\..*$/],
-          ignoredPaths: ['app.uploadsById', 'app.snackbar', 'organization.externalDeviceIntegrations']
+          ignoredActions: [organizationActions.receiveExternalDeviceIntegrations.name, uploadProgress.name],
+          ignoredActionPaths: ['uploads', /payload\..*$/, 'meta.arg.file', 'meta.arg.integration.configHint'],
+          ignoredPaths: ['app.uploadsById', 'organization.externalDeviceIntegrations']
         }
       }).concat(rejectionLoggerMiddleware)
   });

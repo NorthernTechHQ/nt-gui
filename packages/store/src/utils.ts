@@ -28,7 +28,8 @@ import {
   deploymentStatesToSubstates,
   deploymentStatesToSubstatesWithSkipped,
   emptyFilter,
-  emptyUiPermissions
+  emptyUiPermissions,
+  softwareIndicator
 } from './constants';
 import type { DeviceFilter, DeviceGroup, InventoryAttributes } from './devicesSlice';
 
@@ -82,8 +83,8 @@ export const convertDeviceListStateToFilters = ({
   filters?: DeviceFilter[];
   group?: string;
   groups?: { byId: Record<string, DeviceGroup> };
-  offlineThreshold: string;
-  selectedIssues: DeviceIssueOptionKey[];
+  offlineThreshold?: string;
+  selectedIssues?: DeviceIssueOptionKey[];
   status?: string;
 }) => {
   let applicableFilters = [...filters];
@@ -161,23 +162,8 @@ export const progress = ({ loaded, total }) => {
 export const extractErrorMessage = (err, fallback = '') =>
   err.response?.data?.error?.message || err.response?.data?.error || err.error || err.message || fallback;
 
-export const preformatWithRequestID = (res, failMsg) => {
-  // ellipsis line
-  if (failMsg.length > 100) failMsg = `${failMsg.substring(0, 220)}...`;
-
-  try {
-    if (res?.data && Object.keys(res.data).includes('request_id')) {
-      const shortRequestUUID = res.data['request_id'].substring(0, 8);
-      return `${failMsg} [Request ID: ${shortRequestUUID}]`;
-    }
-  } catch (e) {
-    console.log('failed to extract request id:', e);
-  }
-  return failMsg;
-};
-
 export const ensureVersionString = (software, fallback) =>
-  software.length && software !== 'artifact_name' ? (software.endsWith('.version') ? software : `${software}.version`) : fallback;
+  software.length && software !== 'artifact_name' ? (software.endsWith(softwareIndicator) ? software : `${software}${softwareIndicator}`) : fallback;
 
 export const getComparisonCompatibleVersion = version => (isNaN(version.charAt(0)) && version !== 'next' ? 'master' : version);
 
@@ -283,3 +269,18 @@ export const mapDeviceAttributes = (
   );
 
 export const isDarkMode = mode => mode === DARK_MODE;
+type Line = { addon?: string; amount: number; currency: string; description: string; quantity: number };
+
+export const parseSubscriptionPreview = (lines: Line[]) =>
+  lines.reduce(
+    (acc, { addon, amount }) => {
+      const key = addon || 'plan';
+      if (key === 'plan') {
+        acc.plan += amount;
+      } else {
+        acc.addons[key] = (acc.addons[key] ?? 0) + amount;
+      }
+      return acc;
+    },
+    { plan: 0, addons: {} }
+  );

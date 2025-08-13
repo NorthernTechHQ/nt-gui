@@ -343,12 +343,14 @@ interface EditUserPayload {
 }
 
 export const editUser = createAppAsyncThunk(`${sliceName}/editUser`, ({ id, ...userData }: EditUserPayload, { dispatch, getState }) =>
-  GeneralApi.put(`${useradmApiUrl}/users/${id}`, userData).then(() =>
-    Promise.all([
-      dispatch(actions.updatedUser({ ...userData, id: id === OWN_USER_ID ? getCurrentUser(getState()).id : id })),
-      dispatch(setSnackbar(userActions.edit.successMessage))
-    ])
-  )
+  GeneralApi.put(`${useradmApiUrl}/users/${id}`, userData)
+    .then(() =>
+      Promise.all([
+        dispatch(actions.updatedUser({ ...userData, id: id === OWN_USER_ID ? getCurrentUser(getState()).id : id })),
+        dispatch(setSnackbar(userActions.edit.successMessage))
+      ])
+    )
+    .catch(err => userActionErrorHandler(err, 'edit', dispatch))
 );
 
 export const addUserToCurrentTenant = createAppAsyncThunk(`${sliceName}/addUserToTenant`, (userId: string, { dispatch, getState }) => {
@@ -375,7 +377,6 @@ const mapHttpPermission = (permission: RolePermissionObject) =>
   Object.entries(uiPermissionsByArea).reduce(
     (accu, [area, definition]) => {
       const endpointMatches = definition.endpoints.filter(
-        //@ts-ignore TODO: need to improve permissions related types
         endpoint => endpoint.path.test(permission.value) && (endpoint.types.includes(permission.type) || permission.type === PermissionTypes.Any)
       );
       if (permission.value === PermissionTypes.Any || (permission.value.includes(apiRoot) && endpointMatches.length)) {
@@ -580,6 +581,7 @@ export const getRoles = createAppAsyncThunk(`${sliceName}/getRoles`, (_, { dispa
       return Promise.resolve(dispatch(actions.receivedRoles(rolesById)));
     })
     .catch(() => console.log('Role retrieval failed - likely accessing a non-RBAC backend'))
+    .finally(() => Promise.resolve(dispatch(actions.finishedRoleInitialization(true))))
 );
 
 const deriveImpliedAreaPermissions = (

@@ -20,6 +20,7 @@ import { inventoryDevice } from '@northern.tech/testing/requestHandlers/deviceHa
 import { renderHook, waitFor } from '@testing-library/react';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { expect, it, vi } from 'vitest';
 
 import { actions as appActions } from './appSlice';
 import { getLatestReleaseInfo, setOfflineThreshold } from './appSlice/thunks';
@@ -65,7 +66,7 @@ const attributeReducer = (accu, item) => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { attributes, ...expectedDevice } = defaultState.devices.byId.a1;
-const receivedInventoryDevice = {
+export const receivedInventoryDevice = {
   ...defaultState.devices.byId.a1,
   attributes: inventoryDevice.attributes.reduce(attributeReducer, {}),
   identity_data: { ...defaultState.devices.byId.a1.identity_data, status: DEVICE_STATES.accepted },
@@ -80,16 +81,12 @@ const appInitActions = [
   { type: userActions.successfullyLoggedIn.type }, //, payload: { token }
   { type: onboardingActions.setOnboardingComplete.type, payload: true },
   { type: onboardingActions.setDemoArtifactPort.type, payload: 85 },
-  { type: appActions.setFeatures.type, payload: { ...defaultState.app.features, hasMultitenancy: true } },
+  { type: appActions.setFeatures.type, payload: { ...defaultState.app.features, hasMultitenancy: true, isHosted: false } },
   {
     type: appActions.setVersionInformation.type,
     payload: {
       docsVersion: '',
-      Deployments: '1.2.3',
-      Deviceauth: null,
-      GUI: undefined,
       Integration: 'master',
-      Inventory: null,
       'Mender-Artifact': undefined,
       'Mender-Client': 'next',
       'Meta-Mender': 'saas-123.34'
@@ -97,7 +94,16 @@ const appInitActions = [
   },
   {
     type: appActions.setEnvironmentData.type,
-    payload: { feedbackProbability: 0.3, hostAddress: null, hostedAnnouncement: '', recaptchaSiteKey: '', stripeAPIKey: '', trackerCode: '' }
+    payload: {
+      commit: '',
+      feedbackProbability: 0.3,
+      hostAddress: null,
+      hostedAnnouncement: '',
+      recaptchaSiteKey: '',
+      sentry: { location: '', replaysSessionSampleRate: 0.1, tracesSampleRate: 1 },
+      stripeAPIKey: '',
+      trackerCode: ''
+    }
   },
   { type: getLatestReleaseInfo.pending.type },
   { type: getUserSettings.pending.type },
@@ -107,11 +113,10 @@ const appInitActions = [
   {
     type: appActions.setVersionInformation.type,
     payload: {
-      GUI: latestSaasReleaseTag,
       Integration: '1.2.3',
       'Mender-Artifact': '1.3.7',
       'Mender-Client': '3.2.1',
-      backend: latestSaasReleaseTag,
+      Server: latestSaasReleaseTag,
       latestRelease: {
         releaseDate: '2022-02-02',
         repos: {
@@ -283,9 +288,12 @@ const appInitActions = [
   { type: getDevicesByStatus.fulfilled.type },
   { type: getDevicesByStatus.fulfilled.type },
   { type: getReleases.fulfilled.type },
+
   { type: userActions.receivedPermissionSets.type, payload: receivedPermissionSets },
   { type: getPermissionSets.fulfilled.type },
+
   { type: userActions.receivedRoles.type, payload: receivedRoles },
+  { type: userActions.finishedRoleInitialization.type, payload: true },
   {
     type: deviceActions.receivedDevices.type,
     payload: {

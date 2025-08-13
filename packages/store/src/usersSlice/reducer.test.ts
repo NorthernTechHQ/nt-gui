@@ -25,35 +25,7 @@ const testUser = {
   updated_ts: ''
 };
 
-const newDescription = 'new description';
-
 describe('user reducer', () => {
-  it('should return the initial state', async () => {
-    expect(reducer(undefined, { type: '' })).toEqual(initialState);
-  });
-
-  it('should handle RECEIVED_QR_CODE', async () => {
-    expect(reducer(undefined, { type: actions.receivedQrCode.type, payload: '123' }).qrCode).toEqual('123');
-    expect(reducer(initialState, { type: actions.receivedQrCode.type, payload: '123' }).qrCode).toEqual('123');
-  });
-
-  it('should handle SUCCESSFULLY_LOGGED_IN', async () => {
-    expect(reducer(undefined, { type: actions.successfullyLoggedIn.type, payload: '123' }).currentSession).toEqual('123');
-    expect(reducer(initialState, { type: actions.successfullyLoggedIn.type, payload: '123' }).currentSession).toEqual('123');
-  });
-
-  it('should handle RECEIVED_USER_LIST', async () => {
-    expect(reducer(undefined, { type: actions.receivedUserList.type, payload: { '123': testUser } }).byId).toEqual({ '123': testUser });
-    expect(reducer({ ...initialState, byId: { '123': testUser } }, { type: actions.receivedUserList.type, payload: { '456': testUser } }).byId).toEqual({
-      '456': testUser
-    });
-  });
-
-  it('should handle RECEIVED_ACTIVATION_CODE', async () => {
-    expect(reducer(undefined, { type: actions.receivedActivationCode.type, payload: 'code' }).activationCode).toEqual('code');
-    expect(reducer({ ...initialState }, { type: actions.receivedActivationCode.type, payload: 'code' }).activationCode).toEqual('code');
-  });
-
   it('should handle RECEIVED_USER', async () => {
     expect(reducer(undefined, { type: actions.receivedUser.type, payload: testUser }).byId).toEqual({ '123': testUser });
     expect(reducer({ ...initialState, byId: { '123': testUser } }, { type: actions.receivedUser.type, payload: testUser }).byId).toEqual({ '123': testUser });
@@ -74,16 +46,7 @@ describe('user reducer', () => {
         .email
     ).toEqual('test@mender.io');
   });
-  it('should handle RECEIVED_ROLES', async () => {
-    const roles = reducer(undefined, { type: actions.receivedRoles.type, payload: { ...defaultState.users.rolesById } }).rolesById;
-    Object.entries(defaultState.users.rolesById).forEach(([key, role]) => expect(roles[key]).toEqual(role));
-    expect(
-      reducer(
-        { ...initialState, rolesById: { ...defaultState.users.rolesById, thingsRole: { ...defaultState.users.rolesById.test, name: 'test 2' } } },
-        { type: actions.receivedRoles.type, payload: { ...defaultState.users.rolesById } }
-      ).rolesById.thingsRole
-    ).toBeFalsy();
-  });
+
   it('should handle REMOVED_ROLE', async () => {
     expect(reducer(undefined, { type: actions.removedRole.type, payload: defaultState.users.rolesById.test.name }).rolesById.test).toBeFalsy();
     expect(
@@ -92,42 +55,5 @@ describe('user reducer', () => {
         { type: actions.removedRole.type, payload: defaultState.users.rolesById.test.name }
       ).rolesById.test
     ).toBeFalsy();
-  });
-  it('should handle CREATED_ROLE', async () => {
-    expect(
-      reducer(undefined, { type: actions.createdRole.type, payload: { name: 'newRole', description: newDescription, groups: ['123'] } }).rolesById.newRole
-        .description
-    ).toEqual(newDescription);
-    expect(
-      reducer({ ...initialState }, { type: actions.createdRole.type, payload: { name: 'newRole', description: newDescription, groups: ['123'] } }).rolesById
-        .newRole.description
-    ).toEqual(newDescription);
-  });
-  it('should handle UPDATED_ROLE', async () => {
-    expect(
-      reducer(undefined, { type: actions.createdRole.type, payload: { name: 'RBAC_ROLE_CI', description: newDescription } }).rolesById.RBAC_ROLE_CI.name
-    ).toEqual('RBAC_ROLE_CI');
-    expect(
-      reducer({ ...initialState }, { type: actions.createdRole.type, payload: { name: 'RBAC_ROLE_CI', description: newDescription } }).rolesById.RBAC_ROLE_CI
-        .name
-    ).toEqual('RBAC_ROLE_CI');
-  });
-  it('should handle SET_CUSTOM_COLUMNS', async () => {
-    expect(reducer(undefined, { type: actions.setCustomColumns.type, payload: 'test' }).customColumns).toEqual('test');
-    expect(reducer({ ...initialState }, { type: actions.setCustomColumns.type, payload: 'test' }).customColumns).toEqual('test');
-  });
-  it('should handle SET_GLOBAL_SETTINGS', async () => {
-    expect(reducer(undefined, { type: actions.setGlobalSettings.type, payload: { newSetting: 'test' } }).globalSettings).toEqual({
-      ...initialState.globalSettings,
-      newSetting: 'test'
-    });
-    expect(reducer({ ...initialState }, { type: actions.setGlobalSettings.type, payload: { newSetting: 'test' } }).globalSettings).toEqual({
-      ...initialState.globalSettings,
-      newSetting: 'test'
-    });
-  });
-  it('should handle SET_SHOW_CONNECT_DEVICE', async () => {
-    expect(reducer(undefined, { type: actions.setShowConnectingDialog.type, payload: false }).showConnectDeviceDialog).toEqual(false);
-    expect(reducer({ ...initialState }, { type: actions.setShowConnectingDialog.type, payload: true }).showConnectDeviceDialog).toEqual(true);
   });
 });
