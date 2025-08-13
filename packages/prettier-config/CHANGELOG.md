@@ -1,11 +1,14 @@
 ---
-## @northern.tech/prettier-config-0.2.0 - 2024-12-04
+## @northern.tech/prettier-config-0.6.0 - 2025-08-14
 
 
-### Bug Fixes
+### Bug fixes
 
 
 ### Features
+
+
+### Security
 
 
 
