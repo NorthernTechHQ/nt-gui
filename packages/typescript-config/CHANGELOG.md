@@ -1,8 +1,31 @@
 ---
-## @northern.tech/typescript-config-0.1.1 - 2025-02-14
+## @northern.tech/typescript-config-0.2.0 - 2025-08-13
 
 
-### Bug Fixes
+### Bug fixes
+
+
+### Features
+
+#### Typescript-config
+
+
+- *(typescript-config)* Default to esnext modules for library usage
+
+ ([dbbf1fc](https://github.com/NorthernTechHQ/nt-gui/commit/dbbf1fc299b643c63f25339fff2ea3c21b86f3f4))  by @mzedel
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/typescript-config-0.1.3 - 2025-02-14
+
+
+### Bug fixes
 
 #### Typescript-config
 
@@ -13,6 +36,9 @@
 
 
 
+
+
+### Security
 
 
 
