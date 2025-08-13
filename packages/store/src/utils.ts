@@ -162,21 +162,6 @@ export const progress = ({ loaded, total }) => {
 export const extractErrorMessage = (err, fallback = '') =>
   err.response?.data?.error?.message || err.response?.data?.error || err.error || err.message || fallback;
 
-export const preformatWithRequestID = (res, failMsg) => {
-  // ellipsis line
-  if (failMsg.length > 100) failMsg = `${failMsg.substring(0, 220)}...`;
-
-  try {
-    if (res?.data && Object.keys(res.data).includes('request_id')) {
-      const shortRequestUUID = res.data['request_id'].substring(0, 8);
-      return `${failMsg} [Request ID: ${shortRequestUUID}]`;
-    }
-  } catch (e) {
-    console.log('failed to extract request id:', e);
-  }
-  return failMsg;
-};
-
 export const ensureVersionString = (software, fallback) =>
   software.length && software !== 'artifact_name' ? (software.endsWith(softwareIndicator) ? software : `${software}${softwareIndicator}`) : fallback;
 
