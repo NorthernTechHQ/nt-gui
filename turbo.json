@@ -48,7 +48,7 @@
       "dependsOn": [
         "build",
         "lint",
-        "test"
+        "test-ci"
       ]
     },
     "test-ci": {
@@ -73,7 +73,7 @@
       "dependsOn": [
         "build",
         "lint",
-        "test"
+        "test-ci"
       ]
     },
     "clean": {
