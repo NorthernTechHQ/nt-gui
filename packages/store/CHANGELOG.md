@@ -1,8 +1,58 @@
 ---
-## @northern.tech/store-0.4.0 - 2025-02-14
+## @northern.tech/store-0.4.0 - 2025-08-14
 
 
-### Bug Fixes
+### Features
+
+#### Store
+
+
+- *(store)* Made use of types package instead
+
+ ([2474698](https://github.com/NorthernTechHQ/nt-gui/commit/2474698b27b9c61a0201e4ee2671a39b5305339e))  by @mzedel
+
+- *(store)* Colocated mock data with slices they correspond to
+
+ ([5f452c4](https://github.com/NorthernTechHQ/nt-gui/commit/5f452c423bb7a6c6565ab89bdea68ef445c951f6))  by @mzedel
+
+
+
+
+#### Types
+
+
+- *(types)* Added base types package meant for nt-gui internal use
+
+ ([b8f8282](https://github.com/NorthernTechHQ/nt-gui/commit/b8f8282552de39dc291a9d03b0281d984a2d0067))  by @mzedel
+
+
+
+
+
+### Refactor
+
+#### Store,common-ui
+
+
+- *(store,common-ui)* Switched package internal imports to relative locations - to remove path mapping differences in vitest vs. tsup
+
+ ([38f6fd8](https://github.com/NorthernTechHQ/nt-gui/commit/38f6fd8fc6b72caaf03f87bf2e7e9a9167aca6f0))  by @mzedel
+
+
+
+
+
+### Security
+
+
+### Refac
+
+
+
+## @northern.tech/store-0.3.4 - 2025-02-14
+
+
+### Bug fixes
 
 #### Common,store
 
@@ -50,7 +100,7 @@
 ## @northern.tech/store-0.3.3 - 2025-01-31
 
 
-### Bug Fixes
+### Bug fixes
 
 #### Store
 
@@ -67,11 +117,14 @@
 
 
 
+### Security
+
+
 
 ## @northern.tech/store-0.3.2 - 2024-12-13
 
 
-### Bug Fixes
+### Bug fixes
 
 #### Store
 
@@ -88,14 +141,17 @@
 ## @northern.tech/store-0.3.1 - 2024-12-10
 
 
-### Bug Fixes
+### Bug fixes
+
+
+### Security
 
 
 
 ## @northern.tech/store-0.3.0 - 2024-12-10
 
 
-### Bug Fixes
+### Bug fixes
 
 #### Store
 
@@ -119,7 +175,7 @@
 ## @northern.tech/store-0.2.1 - 2024-11-15
 
 
-### Bug Fixes
+### Bug fixes
 
 
 
@@ -133,7 +189,7 @@
 ## @northern.tech/store-0.1.3 - 2024-11-15
 
 
-### Bug Fixes
+### Bug fixes
 
 #### Store
 
@@ -150,7 +206,7 @@
 ## @northern.tech/store-0.1.1 - 2024-11-06
 
 
-### Bug Fixes
+### Bug fixes
 
 
 
