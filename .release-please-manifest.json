@@ -2,7 +2,7 @@
   "packages/common-ui": "0.6.0",
   "packages/common": "0.2.4",
   "packages/eslint-config": "0.6.0",
-  "packages/prettier-config": "0.2.0",
+  "packages/prettier-config": "0.2.1",
   "packages/store": "0.3.4",
   "packages/testing": "0.1.0",
   "packages/types": "0.0.1",
