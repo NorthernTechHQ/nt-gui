@@ -89,23 +89,6 @@ changelog:
     - test $GIT_CLIFF == "false" && echo "INFO - Skipping git-cliff" && exit 0
     - git remote add github-${CI_JOB_ID} https://${GITHUB_USER_NAME}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL} || true # Ignore already existing remote
     - gh repo set-default https://${GITHUB_USER_NAME}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL}
-    # deal with the bundled changelog
-    # since the CHANGELOG is for the entire repo we pick the first release PR to update here for now, the components get their own log updated further down
-    - RELEASE_PLEASE_PR=$(gh pr list --author "${GITHUB_USER_NAME}" --head "release-please--branches--${CI_COMMIT_REF_NAME}" | grep -e 'release-please--branches--${CI_COMMIT_REF_NAME}\t' | head -n1 | awk '{print $1}' || echo "notfound")
-    - | # update the PR body for the global changelog if a PR exists
-      if [[ "${RELEASE_PLEASE_PR}" != "notfound" ]]; then
-        gh pr checkout --force $RELEASE_PLEASE_PR
-        wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml.scoped
-        git cliff --bump --output CHANGELOG.md --github-repo ${GITHUB_REPO_URL} --use-branch-tags
-        git add CHANGELOG.md
-        git commit --amend -s --no-edit
-        git push github-${CI_JOB_ID} --force
-        git cliff --unreleased --bump -o tmp_pr_body.md --github-repo ${GITHUB_REPO_URL} --use-branch-tags
-        gh pr edit $RELEASE_PLEASE_PR --body-file tmp_pr_body.md
-        rm tmp_pr_body.md
-      else
-        echo "the PR for the bundle component is already merged - skipping"
-      fi
     # deal with the component's changelogs
     - |
       for component in $(jq -r 'keys[] | select(. != ".")' .release-please-manifest.json); do
