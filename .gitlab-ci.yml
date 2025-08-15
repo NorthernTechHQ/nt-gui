@@ -93,7 +93,7 @@ changelog:
     - |
       for component in $(jq -r 'keys[] | select(. != ".")' .release-please-manifest.json); do
         component_name=$(echo "$component" | cut -d'/' -f2);
-        RELEASE_PLEASE_PR=$(gh pr list --author "${GITHUB_USER_NAME}" --head "release-please--branches--${CI_COMMIT_REF_NAME}" --search "${component_name}" --json number --jq '.[0].number');
+        RELEASE_PLEASE_PR=$(gh pr list --author "${GITHUB_USER_NAME}" --head "release-please--branches--${CI_COMMIT_REF_NAME}" --search "${component_name} in:title" --json number --jq '.[0].number');
         if [[ -z "$RELEASE_PLEASE_PR" ]]; then
           echo "INFO - no PR found for $component_name";
           continue;
