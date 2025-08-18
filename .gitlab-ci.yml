@@ -35,6 +35,7 @@ default:
 image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/${NODE_IMAGE}
 
 include:
+  - component: 'gitlab.com/Northern.tech/Mender/mendertesting/commit-lint@master'
   - project: 'Northern.tech/Mender/mendertesting'
     file:
       - '.gitlab-ci-github-status-updates.yml'
