@@ -1,6 +1,6 @@
 import js from '@eslint/js';
+import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import importPlugin from 'eslint-plugin-import';
-import eslintPluginPrettier from 'eslint-plugin-prettier';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import sonarjsPlugin from 'eslint-plugin-sonarjs';
@@ -18,6 +18,7 @@ export default defineConfig([
   reactPlugin.configs.flat.recommended,
   reactPlugin.configs.flat['jsx-runtime'],
   reactHooksPlugin.configs['recommended-latest'],
+  eslintConfigPrettier,
   {
     ignores: ['node_modules/', 'dist/', '.eslintrc.js', '**/*.css'],
     languageOptions: {
@@ -34,7 +35,6 @@ export default defineConfig([
     },
     plugins: {
       import: importPlugin,
-      prettier: eslintPluginPrettier,
       sonarjs: sonarjsPlugin
     },
     rules: {
@@ -42,10 +42,8 @@ export default defineConfig([
       'consistent-this': ['error', 'self'],
       'import/no-named-as-default': 'off',
       'no-console': 'off',
-      'no-multiple-empty-lines': 'error',
       'no-prototype-builtins': 'off',
       'no-unused-vars': 'off',
-      'prettier/prettier': 'error',
       quotes: ['error', 'single', { allowTemplateLiterals: true }],
       'react/forbid-dom-props': 'error',
       'react/jsx-no-target-blank': 'error',
