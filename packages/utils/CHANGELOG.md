@@ -1,8 +1,31 @@
 ---
+## @northern.tech/utils-0.6.3 - 2025-08-19
+
+
+### Bug fixes
+
+#### Utils
+
+
+- *(utils)* Unified api url access for multi api version services
+
+ ([457c23a](https://github.com/NorthernTechHQ/nt-gui/commit/457c23a08515be4e5a80c02153bd5465e90d8e17))  by @mzedel
+
+
+
+
+
+### Security
+
+
+### Refac
+
+
+
 ## @northern.tech/utils-0.6.2 - 2025-03-11
 
 
-### Bug Fixes
+### Bug fixes
 
 #### Utils
 
@@ -15,11 +38,14 @@
 
 
 
+### Security
+
+
 
 ## @northern.tech/utils-0.6.1 - 2025-02-24
 
 
-### Bug Fixes
+### Bug fixes
 
 #### Utils
 
@@ -36,7 +62,7 @@
 ## @northern.tech/utils-0.6.0 - 2025-02-14
 
 
-### Bug Fixes
+### Bug fixes
 
 #### Utils
 
@@ -79,11 +105,14 @@
 
 
 
+### Security
+
+
 
 ## @northern.tech/utils-0.4.1 - 2024-12-16
 
 
-### Bug Fixes
+### Bug fixes
 
 #### Utils
 
@@ -124,32 +153,35 @@
 ### Features
 
 
+### Security
+
+
 
 ## @northern.tech/utils-0.1.4 - 2024-11-15
 
 
-### Bug Fixes
+### Bug fixes
 
 
 
 ## @northern.tech/utils-0.1.3 - 2024-11-14
 
 
-### Bug Fixes
+### Bug fixes
 
 
 
 ## @northern.tech/utils-0.1.2 - 2024-11-06
 
 
-### Bug Fixes
+### Bug fixes
 
 
 
 ## @northern.tech/utils-0.1.1 - 2024-11-06
 
 
-### Bug Fixes
+### Bug fixes
 
 #### Utils
 
