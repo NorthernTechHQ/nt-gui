@@ -1,7 +1,7 @@
 import js from '@eslint/js';
+import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import importPlugin from 'eslint-plugin-import';
 import * as eslintPluginMdx from 'eslint-plugin-mdx';
-import eslintPluginPrettier from 'eslint-plugin-prettier';
 import eslintPluginStorybook from 'eslint-plugin-storybook';
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
@@ -16,6 +16,7 @@ export default defineConfig([
   ts.configs.recommended,
   eslintPluginMdx.flat,
   ...eslintPluginStorybook.configs['flat/recommended'],
+  eslintConfigPrettier,
   {
     ignores: ['node_modules/', 'dist/', '**/*.css'],
     languageOptions: {
@@ -30,8 +31,7 @@ export default defineConfig([
       }
     },
     plugins: {
-      import: importPlugin,
-      prettier: eslintPluginPrettier
+      import: importPlugin
     },
     rules: {
       'import/no-default-export': 'off'
