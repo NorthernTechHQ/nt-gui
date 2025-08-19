@@ -1,5 +1,5 @@
 ---
-## @northern.tech/typescript-config-0.2.0 - 2025-08-13
+## @northern.tech/typescript-config-0.2.0 - 2025-08-19
 
 
 ### Bug fixes
