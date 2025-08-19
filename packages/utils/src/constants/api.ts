@@ -20,11 +20,13 @@ export const apiUrl = {
 
 export const auditLogsApiUrl = `${apiUrl.v1}/auditlogs`;
 export const deploymentsApiUrl = `${apiUrl.v1}/deployments`;
+export const deploymentsApiUrlV1 = deploymentsApiUrl;
 export const deploymentsApiUrlV2 = `${apiUrl.v2}/deployments`;
 export const deviceAuthV2 = `${apiUrl.v2}/devauth`;
 export const deviceConfig = `${apiUrl.v1}/deviceconfig/configurations/device`;
 export const deviceConnect = `${apiUrl.v1}/deviceconnect`;
 export const inventoryApiUrl = `${apiUrl.v1}/inventory`;
+export const inventoryApiUrlV1 = inventoryApiUrl;
 export const inventoryApiUrlV2 = `${apiUrl.v2}/inventory`;
 export const iotManagerBaseURL = `${apiUrl.v1}/iot-manager`;
 export const monitorApiUrlv1 = `${apiUrl.v1}/devicemonitor`;
@@ -33,7 +35,7 @@ export const ssoIdpApiUrlv1 = `${apiUrl.v1}/useradm/sso/idp/metadata`;
 export const tenantadmApiUrlv1 = `${apiUrl.v1}/tenantadm`;
 export const tenantadmApiUrlv2 = `${apiUrl.v2}/tenantadm`;
 export const useradmApiUrl = `${apiUrl.v1}/useradm`;
-export const useradmApiUrlv1 = `${apiUrl.v1}/useradm`;
+export const useradmApiUrlv1 = useradmApiUrl;
 export const useradmApiUrlv2 = `${apiUrl.v2}/useradm`;
 
 export const maxSessionAge = 900;
