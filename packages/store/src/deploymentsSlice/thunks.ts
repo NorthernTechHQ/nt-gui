@@ -21,7 +21,7 @@ import type {
 } from '@northern.tech/types/MenderTypes';
 import { customSort, deepCompare, isEmpty, standardizePhases } from '@northern.tech/utils/helpers';
 import Tracking from '@northern.tech/utils/tracking';
-import isUUID from 'validator/lib/isUUID';
+import { isUUID } from 'validator';
 
 import type {
   Deployment,

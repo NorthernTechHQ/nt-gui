@@ -26,7 +26,7 @@ import type {
 import { PreviewRequest as PreviewRequestEnum } from '@northern.tech/types/MenderTypes';
 import { dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
+import utc from 'dayjs/plugin/utc.js';
 import { jwtDecode } from 'jwt-decode';
 import hashString from 'md5';
 import Cookies from 'universal-cookie';
