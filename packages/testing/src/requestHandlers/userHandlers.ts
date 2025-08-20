@@ -70,6 +70,14 @@ export const userHandlers = [
     }
     return HttpResponse.json(mockApiResponses.users.byId[defaultUserId]);
   }),
+  http.get(`${useradmApiUrl}/users/exists`, ({ request }) => {
+    const { searchParams } = new URL(request.url);
+    const email = searchParams.get('email');
+    if (email === 'bad@example.com') { 
+      return HttpResponse.json({ exists: false });
+    }
+    return HttpResponse.json({ exists: true });
+  }),
   http.get(`${useradmApiUrl}/users/:userId`, ({ params: { userId } }) => {
     if (userId === 'me' || mockApiResponses.users.byId[userId]) {
       const user = userId === 'me' ? defaultUserId : userId;
