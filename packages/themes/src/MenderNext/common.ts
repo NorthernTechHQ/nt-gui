@@ -103,6 +103,9 @@ export const components: Components<Theme> = {
     }
   },
   MuiButton: {
+    defaultProps: {
+      color: 'secondary',
+    },
     styleOverrides: {
       root: {
         textTransform: 'none'
@@ -113,6 +116,9 @@ export const components: Components<Theme> = {
     }
   },
   MuiButtonBase: {
+    defaultProps: {
+      color: 'secondary',
+    },
     styleOverrides: {
       root: {
         textTransform: 'none'
