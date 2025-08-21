@@ -10,7 +10,7 @@ export type FilterPredicateInventory = {
    * Attribute name.
    */
   attribute: string;
-  scope: string;
+  scope: FilterPredicateInventory.scope;
   /**
    * Type or operator of the filter predicate.
    *
@@ -45,6 +45,13 @@ export type FilterPredicateInventory = {
   value: string;
 };
 export namespace FilterPredicateInventory {
+  export enum scope {
+    SYSTEM = "system",
+    IDENTITY = "identity",
+    INVENTORY = "inventory",
+    MONITOR = "monitor",
+    TAGS = "tags",
+  }
   /**
    * Type or operator of the filter predicate.
    *
