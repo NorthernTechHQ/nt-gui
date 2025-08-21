@@ -104,7 +104,17 @@ export const components: Components<Theme> = {
   },
   MuiButton: {
     styleOverrides: {
+      root: {
+        textTransform: 'none'
+      },
       text: {
+        textTransform: 'none'
+      }
+    }
+  },
+  MuiButtonBase: {
+    styleOverrides: {
+      root: {
         textTransform: 'none'
       }
     }
