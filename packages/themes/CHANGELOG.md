@@ -1,4 +1,25 @@
 ---
+## @northern.tech/themes-0.3.1 - 2025-08-22
+
+
+### Bug fixes
+
+#### Themes
+
+
+- *(themes)* Expanded button capitalization reset to align w/ new theme
+
+ ([4dfbcc4](https://github.com/NorthernTechHQ/nt-gui/commit/4dfbcc49055b96483a2846fc4743b1f8453e25da))  by @mzedel
+
+- *(themes)* Introduced default button color to align w/ new theme
+
+ ([a862211](https://github.com/NorthernTechHQ/nt-gui/commit/a862211cf5ecf0f70ebd7fb9151ef30341b15092))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/themes-0.3.0 - 2025-08-14
 
 
