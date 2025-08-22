@@ -1,4 +1,45 @@
 ---
+## @northern.tech/store-0.5.0 - 2025-08-22
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Fixed imports of esm unfriendly packages
+
+ ([d52a3d7](https://github.com/NorthernTechHQ/nt-gui/commit/d52a3d7dae5199b83f0e73dd3a6c10cf30118bb3))  by @mzedel
+
+
+  - common + common-ui affected as well, not mentioned due to scope policy
+
+- *(store)* Removed country flags as their exported ref was not usable externally
+
+ ([4a12781](https://github.com/NorthernTechHQ/nt-gui/commit/4a12781e8e02efb1f465c5f7034789058c3ab927))  by @mzedel
+
+- *(store)* Synced app state selectors w/ mender
+
+ ([eff0a98](https://github.com/NorthernTechHQ/nt-gui/commit/eff0a98e1a72029cf8f7872682d6c9957d486f91))  by @mzedel
+
+
+
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added email existence checking thunk to centralize msw handling
+
+ ([a587361](https://github.com/NorthernTechHQ/nt-gui/commit/a5873617f28bf2f29c48dcc176f676d01d3e168f))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/store-0.4.0 - 2025-08-14
 
 
