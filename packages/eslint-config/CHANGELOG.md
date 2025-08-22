@@ -1,5 +1,22 @@
 ---
-## @northern.tech/eslint-config-0.4.0 - 2025-08-13
+## @northern.tech/eslint-config-0.6.1 - 2025-08-22
+
+
+### Bug fixes
+
+#### Eslint-config
+
+
+- *(eslint-config)* Simplified prettier + eslint config to align w/ recommended way
+
+ ([394f979](https://github.com/NorthernTechHQ/nt-gui/commit/394f979ba52cd71bf5c00135a481042f8a17b3cc))  by @mzedel
+
+
+
+
+
+
+## @northern.tech/eslint-config-0.6.0 - 2025-08-13
 
 
 ### Bug fixes
