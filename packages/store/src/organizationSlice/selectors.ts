@@ -13,7 +13,7 @@
 //    limitations under the License.
 import { createSelector } from '@reduxjs/toolkit';
 import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
+import relativeTime from 'dayjs/plugin/relativeTime.js';
 
 import { EXTERNAL_PROVIDER } from '../constants';
 import type { RootState } from '../store';

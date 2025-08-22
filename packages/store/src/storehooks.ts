@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { extractErrorMessage } from '@northern.tech/utils/helpers';
 import dayjs from 'dayjs';
-import durationDayJs from 'dayjs/plugin/duration';
+import durationDayJs from 'dayjs/plugin/duration.js';
 import Cookies from 'universal-cookie';
 
 import storeActions from './actions';

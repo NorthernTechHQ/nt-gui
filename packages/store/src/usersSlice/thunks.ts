@@ -353,6 +353,11 @@ export const editUser = createAppAsyncThunk(`${sliceName}/editUser`, ({ id, ...u
     .catch(err => userActionErrorHandler(err, 'edit', dispatch))
 );
 
+export const checkEmailExists = createAppAsyncThunk(`${sliceName}/checkEmailExists`, async (email: string) => {
+  const response = await GeneralApi.get(`${useradmApiUrl}/users/exists?email=${encodeURIComponent(email)}`);
+  return response.data.exists;
+});
+
 export const addUserToCurrentTenant = createAppAsyncThunk(`${sliceName}/addUserToTenant`, (userId: string, { dispatch, getState }) => {
   const { id } = getOrganization(getState());
   return GeneralApi.post(`${useradmApiUrl}/users/${userId}/assign`, { tenant_ids: [id] })

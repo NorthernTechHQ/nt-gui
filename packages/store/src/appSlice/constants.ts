@@ -13,11 +13,6 @@
 //    limitations under the License.
 import { BarChart as BarChartIcon, PieChartOutline as PieChartIcon } from '@mui/icons-material';
 
-// @ts-ignore
-import FlagEU from '../../../../assets/img/flag-eu.svg';
-// @ts-ignore
-import FlagUS from '../../../../assets/img/flag-us.svg';
-
 const startingDeviceCount = {
   os: 'for first 50 devices',
   professional: 'for first 250 devices'
@@ -34,8 +29,8 @@ export const defaultReports = [{ ...emptyChartSelection, group: null, attribute:
 export const BEGINNING_OF_TIME = '2016-01-01T00:00:00.000Z';
 
 export const locations = {
-  eu: { key: 'eu', title: 'EU', location: 'eu.hosted.mender.io', icon: FlagEU },
-  us: { key: 'us', title: 'US', location: 'hosted.mender.io', icon: FlagUS }
+  eu: { key: 'eu', title: 'EU', location: 'eu.hosted.mender.io' },
+  us: { key: 'us', title: 'US', location: 'hosted.mender.io' }
 } as const;
 export type AvailablePlans = 'os' | 'professional' | 'enterprise';
 
