@@ -1,5 +1,22 @@
 ---
-## 0.1.0 - 2025-08-13
+## @northern.tech/testing-0.2.0 - 2025-08-22
+
+
+### Features
+
+#### Testing
+
+
+- *(testing)* Also handle user existence checking
+
+ ([db1f75b](https://github.com/NorthernTechHQ/nt-gui/commit/db1f75b37dcba66a02432a6ef2e0b7e3f33f6c0c))  by @mzedel
+
+
+
+
+
+
+## @northern.tech/testing-0.1.0 - 2025-08-14
 
 
 ### Bug fixes
