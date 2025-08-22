@@ -1,4 +1,24 @@
 ---
+## @northern.tech/common-ui-0.6.1 - 2025-08-22
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Fixed imports of esm unfriendly packages
+
+ ([d52a3d7](https://github.com/NorthernTechHQ/nt-gui/commit/d52a3d7dae5199b83f0e73dd3a6c10cf30118bb3))  by @mzedel
+
+
+  - common + common-ui affected as well, not mentioned due to scope policy
+
+
+
+
+
+
 ## @northern.tech/common-ui-0.6.0 - 2025-08-14
 
 
