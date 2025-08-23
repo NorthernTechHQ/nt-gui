@@ -88,6 +88,41 @@ const signupHandler = async ({ request }) => {
   return new HttpResponse(null, { status: 400 });
 };
 
+const invoicePreviewBasic = {
+  id: 'upcoming_in_1RlAkbFlFfXikjZVOHK5VQx0',
+  period_start: '2025-07-15T15:25:22Z',
+  period_end: '2025-08-15T15:25:22Z',
+  total: 3200,
+  currency: 'usd',
+  lines: [
+    {
+      description: '50 device × Mender Basic (Tier 1 at $0.00 / month)',
+      amount: 0,
+      currency: 'usd',
+      quantity: 50,
+      price_id: 'price_1PYktlFlFfXikjZVh2aNHp7i'
+    },
+    {
+      description: 'Mender Basic (Tier 1 at $32.00 / month)',
+      amount: 3200,
+      currency: 'usd',
+      quantity: 0,
+      price_id: 'price_1PYktlFlFfXikjZVh2aNHp7i'
+    }
+  ]
+};
+const subscriptionBasic = {
+  id: 'sub_1RlAjOFlFfXikjZVj5BvpJE4',
+  status: 'active',
+  plan: 'os',
+  products: [
+    {
+      name: 'mender_standard',
+      quantity: 50
+    }
+  ]
+};
+
 export const organizationHandlers = [
   http.get('/tags.json', () => HttpResponse.json(tagsSample)),
   http.get('/versions.json', () => HttpResponse.json(releasesSample)),
@@ -95,10 +130,25 @@ export const organizationHandlers = [
   http.put(`${tenantadmApiUrlv2}/tenants/:tenantId/child`, () => new HttpResponse(null, { status: 200 })),
   http.post(`${tenantadmApiUrlv2}/tenants/:tenantId/cancel`, () => new HttpResponse(null, { status: 200 })),
   http.post(`${tenantadmApiUrlv2}/tenants/trial`, signupHandler),
-  http.post(`${tenantadmApiUrlv2}/tenants`, () => new HttpResponse(null, { status: 200 })),
+  http.post(`${tenantadmApiUrlv2}/tenants`, async ({ request }) => {
+    const { users } = await request.json();
+    const { email } = users[0];
+    if (email.includes('bad')) {
+      return new HttpResponse(null, { status: 553 });
+    }
+    return new HttpResponse(null, { status: 200 });
+  }),
   http.post(`https://hosted.mender.io${tenantadmApiUrlv2}/tenants/trial`, signupHandler),
   http.get(`${tenantadmApiUrlv2}/tenants`, () => new HttpResponse([])),
   http.get(`${tenantadmApiUrlv2}/billing`, () => HttpResponse.json({ card: { last4: '7890', exp_month: 1, exp_year: 2024, brand: 'testCorp' } })),
+  http.get(`${tenantadmApiUrlv2}/billing/profile`, () =>
+    HttpResponse.json({
+      name: 'company',
+      email: 'test@test.com',
+      address: { state: 'OSLO', line1: 'Blindern', country: 'NO', city: 'OSLO', postal_code: '0123' },
+      shipping: { address: { state: 'OSLO', line1: 'Blindern', country: 'NO', city: 'OSLO', postal_code: '0123' } }
+    })
+  ),
   http.post(`${tenantadmApiUrlv2}/billing/card`, () => HttpResponse.json({ intent_id: mockApiResponses.organization.intentId, secret: 'testSecret' })),
   http.post(
     `${tenantadmApiUrlv2}/billing/card/:intentId/confirm`,
@@ -141,6 +191,11 @@ export const organizationHandlers = [
     }
     return new HttpResponse(null, { status: 200 });
   }),
+  http.patch(`${tenantadmApiUrlv2}/billing/profile`, () => new HttpResponse(null, { status: 200 })),
+  http.post(`${tenantadmApiUrlv2}/billing/profile`, () => new HttpResponse(null, { status: 200 })),
+  http.post(`${tenantadmApiUrlv2}/billing/subscription`, () => new HttpResponse(null, { status: 202 })),
+  http.post(`${tenantadmApiUrlv2}/billing/subscription/invoices/preview`, () => HttpResponse.json(invoicePreviewBasic)),
+  http.get(`${tenantadmApiUrlv2}/billing/subscription`, () => HttpResponse.json(subscriptionBasic)),
   http.get(`${auditLogsApiUrl}/logs`, ({ request }) => {
     const { searchParams } = new URL(request.url);
     const perPage = Number(searchParams.get('per_page'));
