@@ -14,11 +14,13 @@
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
-import { isUUID } from 'validator';
+import validator from 'validator';
 
 import { getDevicesById } from './selectors';
 import { useAppDispatch } from './store';
 import { getDeviceById } from './thunks';
+
+const { isUUID } = validator
 
 export const useDeploymentDevice = deploymentName => {
   const isLoading = useRef(false);
