@@ -71,10 +71,10 @@ export const userHandlers = [
     return HttpResponse.json(mockApiResponses.users.byId[defaultUserId]);
   }),
   http.get(`${useradmApiUrl}/users/exists`, ({ request }) => {
-    const { searchParams } = new URL(request.url);
-    const email = searchParams.get('email');
-    if (email === 'bad@example.com') { 
-      return HttpResponse.json({ exists: false });
+    const url = new URL(request.url);
+    const email = url.searchParams.get('email');
+    if (!decodeURIComponent(email).includes('child+123')) {
+      return new HttpResponse(null, { status: 578 });
     }
     return HttpResponse.json({ exists: true });
   }),
