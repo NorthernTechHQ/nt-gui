@@ -1,4 +1,21 @@
 ---
+## @northern.tech/testing-0.2.1 - 2025-08-24
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Synced msw handlers with current mender
+
+ ([4dfe2d0](https://github.com/NorthernTechHQ/nt-gui/commit/4dfe2d02ad4c58329c0c99a2f1cf305e4cee8997))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/testing-0.2.0 - 2025-08-22
 
 
