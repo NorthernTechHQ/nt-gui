@@ -1,4 +1,25 @@
 ---
+## @northern.tech/store-0.5.1 - 2025-08-24
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Aligned license report location w/ mender
+
+ ([294b140](https://github.com/NorthernTechHQ/nt-gui/commit/294b14054fa97cdb80a4d7d15759f6223aa177f2))  by @mzedel
+
+- *(store)* Additional adjustment for esm compatibility
+
+ ([3808f01](https://github.com/NorthernTechHQ/nt-gui/commit/3808f01e4a8c379e63a599a74c92ffa08e56ead4))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/store-0.5.0 - 2025-08-22
 
 
