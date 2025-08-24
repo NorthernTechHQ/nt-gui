@@ -21,7 +21,7 @@ import type {
 } from '@northern.tech/types/MenderTypes';
 import { customSort, deepCompare, isEmpty, standardizePhases } from '@northern.tech/utils/helpers';
 import Tracking from '@northern.tech/utils/tracking';
-import { isUUID } from 'validator';
+import validator from 'validator';
 
 import type {
   Deployment,
@@ -46,6 +46,7 @@ import { mapTermsToFilters } from '../utils';
 import { DEPLOYMENT_ROUTES, DEPLOYMENT_STATES, DEPLOYMENT_TYPES, deploymentPrototype } from './constants';
 import { getDeploymentsById, getDeploymentsByStatus as getDeploymentsByStatusSelector } from './selectors';
 
+const { isUUID } = validator
 const { receivedDevice, setSnackbar } = storeActions;
 
 // default per page until pagination and counting integrated
