@@ -1,4 +1,28 @@
 ---
+## @northern.tech/store-0.5.2 - 2025-08-26
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Aligned store w/ mender to remove demo features
+
+ ([81512d2](https://github.com/NorthernTechHQ/nt-gui/commit/81512d2925cce055d1f8fc4fc66877824b1372a1))  by @mzedel
+
+
+  + align deployment stats
+
+- *(store)* Aligned snackbar open state automation w/ mender
+
+ ([a78beaa](https://github.com/NorthernTechHQ/nt-gui/commit/a78beaade61972a836c03b47b79510b14e4b5d77))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/store-0.5.1 - 2025-08-24
 
 
