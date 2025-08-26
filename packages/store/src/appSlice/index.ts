@@ -139,7 +139,6 @@ export const initialState: AppSliceType = {
     hasFeedbackEnabled: false,
     hasMonitor: false,
     hasReporting: false,
-    isDemoMode: false,
     isHosted: true,
     isEnterprise: false
   },
@@ -191,8 +190,12 @@ export const appSlice = createSlice({
       };
     },
     setSnackbar: (state, { payload }: PayloadAction<SnackbarContent | string>) => {
-      if (typeof payload === 'string') {
-        state.snackbar.message = payload;
+      if (typeof payload === 'string' || payload instanceof String) {
+        state.snackbar = {
+          ...initialState.snackbar,
+          message: payload,
+          open: !!payload
+        };
         return;
       }
       const { message, autoHideDuration, action, preventClickToCopy = false } = payload;
