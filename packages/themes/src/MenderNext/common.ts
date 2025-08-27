@@ -125,6 +125,11 @@ export const components: Components<Theme> = {
       }
     }
   },
+  MuiDialogContent: {
+    defaultProps: {
+      dividers: true
+    }
+  },
   MuiDrawer: {
     styleOverrides: {
       paper: ({ theme }) => ({
