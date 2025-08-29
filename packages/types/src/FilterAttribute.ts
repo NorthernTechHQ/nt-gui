@@ -13,9 +13,21 @@ export type FilterAttribute = {
   /**
    * Scope of the attribute.
    */
-  scope: string;
+  scope: FilterAttribute.scope;
   /**
    * Number of occurrences of the attribute in the database.
    */
   count: number;
 };
+export namespace FilterAttribute {
+  /**
+   * Scope of the attribute.
+   */
+  export enum scope {
+    SYSTEM = "system",
+    IDENTITY = "identity",
+    INVENTORY = "inventory",
+    MONITOR = "monitor",
+    TAGS = "tags",
+  }
+}
