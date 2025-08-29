@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import type { Components, Theme } from '@mui/material';
-import { accordionClasses } from '@mui/material';
+import { accordionClasses, alpha, buttonClasses } from '@mui/material';
 import { blue, cyan, grey, purple } from '@mui/material/colors';
 
 // breakpoints, metadata, shape config, spacing are not adjusted in the theme
@@ -123,6 +123,23 @@ export const components: Components<Theme> = {
       root: {
         textTransform: 'none'
       }
+    }
+  },
+  MuiDialogActions: {
+    styleOverrides: {
+      root: ({theme}) => ({
+        [`.${buttonClasses.text}`]: {
+          color: theme.palette.text.primary
+        },
+        [`.${buttonClasses.text}:hover`]: {
+          backgroundColor: alpha(theme.palette.text.primary, 0.08),
+        }
+      })
+    }
+  },
+  MuiDialogContent: {
+    defaultProps: {
+      dividers: true
     }
   },
   MuiDrawer: {
