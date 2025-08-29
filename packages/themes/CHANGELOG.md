@@ -1,4 +1,38 @@
 ---
+## @northern.tech/themes-0.4.0 - 2025-08-29
+
+
+### Bug fixes
+
+#### Themes
+
+
+- *(themes)* Ensured cancel buttons etc. in dialogs don't have product colors
+
+ ([b81b260](https://github.com/NorthernTechHQ/nt-gui/commit/b81b260e7c7a6ca85755be849102cb2820c28c8f))  by @mzedel
+
+
+
+
+
+### Features
+
+#### Themes
+
+
+- *(themes)* Aligned new theme spacing for utility classes w/ mui
+
+ ([7a231e3](https://github.com/NorthernTechHQ/nt-gui/commit/7a231e321c839cb6d9cd88bbac1ae4ddd64e6a66))  by @mzedel
+
+- *(themes)* Let dialog dividers always show
+
+ ([d3f1bba](https://github.com/NorthernTechHQ/nt-gui/commit/d3f1bbad8fe6bc5a1f52c446b992c5581515bda6))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/themes-0.3.1 - 2025-08-22
 
 
