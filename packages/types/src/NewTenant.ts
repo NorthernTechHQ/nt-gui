@@ -50,4 +50,8 @@ export type NewTenant = {
    * Enable SSO for the tenant.
    */
   sso?: boolean;
+  /**
+   * Restrict SSO for the children tenants to only that of the parent. No SSO changes allowed in children if set to true.
+   */
+  restrict_sso_to_parent?: boolean;
 };
