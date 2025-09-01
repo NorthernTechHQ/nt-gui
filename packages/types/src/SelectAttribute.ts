@@ -13,5 +13,17 @@ export type SelectAttribute = {
   /**
    * Attribute scope.
    */
-  scope: string;
+  scope: SelectAttribute.scope;
 };
+export namespace SelectAttribute {
+  /**
+   * Attribute scope.
+   */
+  export enum scope {
+    SYSTEM = "system",
+    IDENTITY = "identity",
+    INVENTORY = "inventory",
+    MONITOR = "monitor",
+    TAGS = "tags",
+  }
+}
