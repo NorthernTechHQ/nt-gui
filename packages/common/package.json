@@ -52,9 +52,11 @@
   },
   "dependencies": {
     "@mui/icons-material": "^7.x",
+    "@mui/x-tree-view": "^8.x",
     "@mui/material": "^7.x",
     "@northern.tech/common-ui": "*",
     "@northern.tech/store": "*",
+    "@northern.tech/themes": "*",
     "@northern.tech/utils": "*",
     "dayjs": "^1.x",
     "msgpack5": "^6.x",
