@@ -13,13 +13,23 @@ export type SortCriteria = {
   /**
    * Attribute scope.
    */
-  scope: string;
+  scope: SortCriteria.scope;
   /**
    * Order direction, ascending ("asc") or descending ("desc").
    */
   order: SortCriteria.order;
 };
 export namespace SortCriteria {
+  /**
+   * Attribute scope.
+   */
+  export enum scope {
+    SYSTEM = "system",
+    IDENTITY = "identity",
+    INVENTORY = "inventory",
+    MONITOR = "monitor",
+    TAGS = "tags",
+  }
   /**
    * Order direction, ascending ("asc") or descending ("desc").
    */
