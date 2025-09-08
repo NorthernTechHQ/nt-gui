@@ -562,7 +562,7 @@ export const setDeviceListState = createAppAsyncThunk(
     const { isLoading: nextLoading, deviceIds: nextDevices, selection: nextSelection, ...nextRequestState } = nextState;
     if (!nextState.setOnly && !deepCompare(currentRequestState, nextRequestState)) {
       const { direction: sortDown = SORTING_OPTIONS.desc, key: sortCol, scope: sortScope = '' } = nextState.sort ?? {};
-      const sortBy = sortCol ? [{ attribute: sortCol, order: sortDown as SortCriteria.order, scope: sortScope }] : undefined;
+      const sortBy = sortCol ? ([{ attribute: sortCol, order: sortDown as SortCriteria.order, scope: sortScope }] as SortCriteria[]) : undefined;
       const applicableSelectedState = nextState.state === ALL_DEVICE_STATES ? undefined : nextState.state;
       nextState.isLoading = true;
       tasks.push(
