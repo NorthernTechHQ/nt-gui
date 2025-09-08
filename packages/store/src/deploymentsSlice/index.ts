@@ -13,7 +13,7 @@
 //    limitations under the License.
 import type {
   DeploymentDeployments as BackendDeployment,
-  DeviceDeployments as BackendDeviceDeployment,
+  Device as BackendDeviceDeployment,
   Filter as BackendFilter,
   DeviceWithImage,
   FilterPredicate,
