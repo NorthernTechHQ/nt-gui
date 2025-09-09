@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { PaletteOptions, ThemeOptions, outlinedInputClasses } from '@mui/material';
+import { PaletteOptions, ThemeOptions, alertClasses, outlinedInputClasses } from '@mui/material';
 import { common, red } from '@mui/material/colors';
 
 import { components as baseComponents, colors, typography } from './common';
@@ -54,11 +54,32 @@ export const dark: ThemeOptions = {
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          '&:hover': {
-            borderColor: common.white
+          [`& .${outlinedInputClasses.notchedOutline}`]: {
+            borderColor: 'rgba(255, 255, 255, 0.42)'
           },
-          [`&.${outlinedInputClasses.disabled}`]: {
-            borderColor: common.white
+          [`&:hover .${outlinedInputClasses.notchedOutline}`]: {
+            borderColor: 'rgba(255, 255, 255, 0.65)'
+          },
+          [`&.${outlinedInputClasses.disabled} .${outlinedInputClasses.notchedOutline}`]: {
+            borderColor: 'rgba(255, 255, 255, 0.42)'
+          }
+        }
+      }
+    },
+    MuiAlert: {
+      styleOverrides: {
+        root: {
+          [`& .${alertClasses.colorError}`]: {
+            backgroundColor: 'rgba(244, 67, 54, 0.2)'
+          },
+          [`& .${alertClasses.colorWarning}`]: {
+            backgroundColor: 'rgba(255, 152, 0, 0.2)'
+          },
+          [`& .${alertClasses.colorInfo}`]: {
+            backgroundColor: 'rgba(33, 150, 243, 0.2)'
+          },
+          [`& .${alertClasses.colorSuccess}`]: {
+            backgroundColor: 'rgba(76, 175, 80, 0.2)'
           }
         }
       }

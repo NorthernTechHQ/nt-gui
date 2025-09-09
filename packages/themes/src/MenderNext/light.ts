@@ -53,11 +53,14 @@ export const light: ThemeOptions = {
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          '&:hover': {
-            borderColor: common.black
+          [`& .${outlinedInputClasses.notchedOutline}`]: {
+            borderColor: 'rgba(0, 0, 0, 0.42)'
           },
-          [`&.${outlinedInputClasses.disabled}`]: {
-            borderColor: common.black
+          [`&:hover .${outlinedInputClasses.notchedOutline}`]: {
+            borderColor: 'rgba(0, 0, 0, 0.65)'
+          },
+          [`&.${outlinedInputClasses.disabled} .${outlinedInputClasses.notchedOutline}`]: {
+            borderColor: 'rgba(0, 0, 0, 0.42)'
           }
         }
       }

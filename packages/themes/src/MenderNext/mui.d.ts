@@ -22,6 +22,27 @@ declare module '@mui/material' {
       main: string;
     };
   }
+  
+  interface Palette {
+    neutral: {
+      contrastText: string;
+      dark: string;
+      light: string;
+      main: string;
+    };
+  }
+}
+
+declare module '@mui/material/Button' {
+  interface ButtonPropsColorOverrides {
+    neutral: true;
+  }
+}
+
+declare module '@mui/material/Chip' {
+  interface ChipPropsColorOverrides {
+    neutral: true;
+  }
 }
 
 declare module '@mui/material/styles' {
