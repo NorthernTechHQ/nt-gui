@@ -12,7 +12,17 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import type { Components, Theme } from '@mui/material';
-import { accordionClasses, alpha, buttonClasses } from '@mui/material';
+import {
+  accordionClasses,
+  alpha,
+  badgeClasses,
+  buttonClasses,
+  inputBaseClasses,
+  inputLabelClasses,
+  menuItemClasses,
+  outlinedInputClasses,
+  selectClasses
+} from '@mui/material';
 import { blue, cyan, grey, purple } from '@mui/material/colors';
 
 // breakpoints, metadata, shape config, spacing are not adjusted in the theme
@@ -25,9 +35,27 @@ const colorTokens = colorDefinitions.collections.find(({ name }) => name === 'ma
 const themeMode = 'Mode 1';
 
 export const typography = {
-  fontFamily: typographyTokens?.variables.fontFamily.values[themeMode],
-  body1: {
-    fontFamily: typographyTokens?.variables['fontFamily (body)'].values[themeMode]
+  fontFamily: typographyTokens?.variables['fontFamily (body)'].values[themeMode],
+  h1: {
+    fontWeight: 500
+  },
+  h2: {
+    fontWeight: 500
+  },
+  h3: {
+    fontWeight: 500
+  },
+  h4: {
+    fontWeight: 500
+  },
+  h5: {
+    fontWeight: 500
+  },
+  h6: {
+    fontWeight: 500
+  },
+  subtitle1: {
+    fontWeight: 500
   },
   mono: {
     fontFamily: typographyTokens?.variables['fontFamily (mono)'].values[themeMode]
@@ -80,10 +108,14 @@ export const components: Components<Theme> = {
   MuiAccordion: {
     styleOverrides: {
       root: ({ theme }) => ({
-        border: 'none',
+        backgroundColor: 'transparent',
+        border: `1px solid ${theme.palette.divider}`,
         boxShadow: 'none',
         '&:before': {
           display: 'none'
+        },
+        '&:hover': {
+          borderColor: theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.42)' : 'rgba(255, 255, 255, 0.42)'
         },
         padding: theme.spacing(1, 2),
         alignItems: 'flex-start',
@@ -102,9 +134,30 @@ export const components: Components<Theme> = {
       }
     }
   },
+  MuiAutocomplete: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        [`& .${outlinedInputClasses.root}`]: {
+          '& fieldset': {
+            borderColor: theme.palette.secondary.main
+          }
+        }
+      })
+    }
+  },
+  MuiBadge: {
+    styleOverrides: {
+      badge: ({ theme }) => ({
+        [`& .${badgeClasses.colorInfo}`]: {
+          backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey?.[100] : theme.palette.grey?.[700],
+          color: theme.palette.text.primary
+        }
+      })
+    }
+  },
   MuiButton: {
     defaultProps: {
-      color: 'secondary',
+      color: 'secondary'
     },
     styleOverrides: {
       root: {
@@ -112,12 +165,17 @@ export const components: Components<Theme> = {
       },
       text: {
         textTransform: 'none'
-      }
+      },
+      contained: ({ ownerState }) => ({
+        ...(ownerState?.color !== 'neutral' && {
+          boxShadow: 'none'
+        })
+      })
     }
   },
   MuiButtonBase: {
     defaultProps: {
-      color: 'secondary',
+      color: 'secondary'
     },
     styleOverrides: {
       root: {
@@ -125,14 +183,38 @@ export const components: Components<Theme> = {
       }
     }
   },
+  MuiButtonGroup: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        [`& .${buttonClasses.contained}:not(.${buttonClasses.colorInfo})`]: {
+          boxShadow: 'none'
+        },
+        [`& .${buttonClasses.colorInfo}.${buttonClasses.contained}`]: {
+          boxShadow: theme.shadows[2] // Elevation/2 for neutral buttons
+        }
+      })
+    }
+  },
+  MuiCheckbox: {
+    defaultProps: {
+      color: 'secondary'
+    }
+  },
+  MuiChip: {
+    styleOverrides: {
+      root: {
+        boxShadow: 'none'
+      }
+    }
+  },
   MuiDialogActions: {
     styleOverrides: {
-      root: ({theme}) => ({
+      root: ({ theme }) => ({
         [`.${buttonClasses.text}`]: {
           color: theme.palette.text.primary
         },
         [`.${buttonClasses.text}:hover`]: {
-          backgroundColor: alpha(theme.palette.text.primary, 0.08),
+          backgroundColor: alpha(theme.palette.text.primary, 0.08)
         }
       })
     }
@@ -147,7 +229,8 @@ export const components: Components<Theme> = {
       paper: ({ theme }) => ({
         minWidth: 'min-content',
         maxWidth: '80vw',
-        padding: theme.spacing(3, 8)
+        padding: theme.spacing(3, 8),
+        borderRadius: 0
       })
     }
   },
@@ -163,15 +246,23 @@ export const components: Components<Theme> = {
       }
     }
   },
-  MuiTextField: {
+  MuiLink: {
     defaultProps: {
-      size: 'small',
-      variant: 'outlined'
-    },
+      color: 'secondary'
+    }
+  },
+  MuiMenu: {
     styleOverrides: {
-      root: {
-        minWidth: 220
-      }
+      list: ({ theme }) => ({
+        [`& .${menuItemClasses.root}.Mui-selected`]: {
+          backgroundColor: theme.palette.secondary.main + '12' // 12% opacity
+        }
+      })
+    }
+  },
+  MuiRadio: {
+    defaultProps: {
+      color: 'secondary'
     }
   },
   MuiSelect: {
@@ -182,14 +273,50 @@ export const components: Components<Theme> = {
     },
     styleOverrides: {
       root: {
-        minWidth: 220
+        minWidth: 220,
+        [`& .${selectClasses.select}`]: {
+          padding: 14
+        }
       }
+    }
+  },
+  MuiSpeedDial: {
+    defaultProps: {
+      color: 'secondary'
+    }
+  },
+  MuiSwitch: {
+    defaultProps: {
+      size: 'small'
     }
   },
   MuiTab: {
     styleOverrides: {
       root: {
         textTransform: 'none'
+      }
+    }
+  },
+  MuiTabs: {
+    defaultProps: {
+      indicatorColor: 'secondary',
+      textColor: 'secondary'
+    }
+  },
+  MuiTextField: {
+    defaultProps: {
+      size: 'small',
+      variant: 'outlined'
+    },
+    styleOverrides: {
+      root: {
+        minWidth: 220,
+        [`& .${inputBaseClasses.input}`]: {
+          padding: 14
+        },
+        [`& .${inputLabelClasses.root}`]: {
+          transform: 'translate(14px, 14px) scale(1)'
+        }
       }
     }
   }
