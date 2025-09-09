@@ -1,5 +1,5 @@
 ---
-## @northern.tech/themes-0.4.0 - 2025-08-29
+## @northern.tech/themes-0.4.0 - 2025-09-09
 
 
 ### Bug fixes
@@ -10,6 +10,10 @@
 - *(themes)* Ensured cancel buttons etc. in dialogs don't have product colors
 
  ([b81b260](https://github.com/NorthernTechHQ/nt-gui/commit/b81b260e7c7a6ca85755be849102cb2820c28c8f))  by @mzedel
+
+- *(themes)* Adjusted theme values using design system changelog
+
+ ([1e21e7a](https://github.com/NorthernTechHQ/nt-gui/commit/1e21e7a5376564a8112e875b4db79d0f6cf42e9c))  by @mzedel
 
 
 
