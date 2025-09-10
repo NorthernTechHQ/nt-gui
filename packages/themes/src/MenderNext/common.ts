@@ -12,17 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import type { Components, Theme } from '@mui/material';
-import {
-  accordionClasses,
-  alpha,
-  badgeClasses,
-  buttonClasses,
-  inputBaseClasses,
-  inputLabelClasses,
-  menuItemClasses,
-  outlinedInputClasses,
-  selectClasses
-} from '@mui/material';
+import { accordionClasses, alpha, badgeClasses, buttonClasses, menuItemClasses, outlinedInputClasses } from '@mui/material';
 import { blue, cyan, grey, purple } from '@mui/material/colors';
 
 // breakpoints, metadata, shape config, spacing are not adjusted in the theme
@@ -273,10 +263,7 @@ export const components: Components<Theme> = {
     },
     styleOverrides: {
       root: {
-        minWidth: 220,
-        [`& .${selectClasses.select}`]: {
-          padding: 14
-        }
+        minWidth: 220
       }
     }
   },
@@ -310,13 +297,7 @@ export const components: Components<Theme> = {
     },
     styleOverrides: {
       root: {
-        minWidth: 220,
-        [`& .${inputBaseClasses.input}`]: {
-          padding: 14
-        },
-        [`& .${inputLabelClasses.root}`]: {
-          transform: 'translate(14px, 14px) scale(1)'
-        }
+        minWidth: 220
       }
     }
   }
