@@ -12,7 +12,8 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { useEffect, useRef, useState } from 'react';
-import CopyToClipboard from 'react-copy-to-clipboard';
+
+import CopyToClipboard from './CopyToClipboard';
 
 import { FileCopy as CopyPasteIcon } from '@mui/icons-material';
 import { Button } from '@mui/material';
