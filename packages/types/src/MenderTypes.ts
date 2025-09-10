@@ -116,6 +116,8 @@ export type { ErrorUseradm } from "./ErrorUseradm";
 export { Event } from "./Event";
 export type { ExternalIdentity } from "./ExternalIdentity";
 export type { Features } from "./Features";
+export type { FeedbackAI } from "./FeedbackAI";
+export type { FeedbackProduct } from "./FeedbackProduct";
 export type { FileUpload } from "./FileUpload";
 export type { Filter } from "./Filter";
 export { FilterAttribute } from "./FilterAttribute";
