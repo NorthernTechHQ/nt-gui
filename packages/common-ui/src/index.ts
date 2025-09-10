@@ -10,6 +10,7 @@ export * from './ConfigurationObject';
 export * from './Confirm';
 export * from './CopyCode';
 export * from './CopyText';
+export * from './CopyToClipboard';
 export * from './DetailsIndicator';
 export * from './DetailsTable';
 export * from './DeviceIdentity';
