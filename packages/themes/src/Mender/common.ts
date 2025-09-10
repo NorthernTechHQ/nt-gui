@@ -11,6 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { lighten } from '@mui/material';
 import { accordionClasses } from '@mui/material/Accordion';
 import { accordionSummaryClasses } from '@mui/material/AccordionSummary';
 
@@ -116,6 +117,14 @@ const componentProps = {
 
 export const overrides = {
   ...componentProps,
+  MuiAlert: {
+    styleOverrides: {
+      colorError: ({ theme }) => ({
+        background: theme.palette.mode === 'light' ? lighten(theme.palette.error.main, 0.95) : '',
+        color: theme.palette.mode === 'light' ? theme.palette.text.primary : ''
+      })
+    }
+  },
   MuiSnackbarContent: {
     styleOverrides: {
       action: {
