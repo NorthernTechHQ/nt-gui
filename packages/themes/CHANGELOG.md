@@ -1,5 +1,5 @@
 ---
-## @northern.tech/themes-0.4.0 - 2025-09-09
+## @northern.tech/themes-0.4.0 - 2025-09-10
 
 
 ### Bug fixes
@@ -14,6 +14,14 @@
 - *(themes)* Adjusted theme values using design system changelog
 
  ([1e21e7a](https://github.com/NorthernTechHQ/nt-gui/commit/1e21e7a5376564a8112e875b4db79d0f6cf42e9c))  by @mzedel
+
+- *(themes)* Removed faulty interpreted textinput padding settings
+
+ ([078ca6d](https://github.com/NorthernTechHQ/nt-gui/commit/078ca6dd6b5960d1d9806a4d8627f1e98f7f44e8))  by @mzedel
+
+- *(themes)* Adjusted link appearance & color mapping to match new theme
+
+ ([8636345](https://github.com/NorthernTechHQ/nt-gui/commit/8636345925ba4314ba46442811cb33cf698b8dfc))  by @mzedel
 
 
 
