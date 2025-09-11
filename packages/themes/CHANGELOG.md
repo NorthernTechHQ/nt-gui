@@ -1,5 +1,22 @@
 ---
-## @northern.tech/themes-0.4.0 - 2025-09-10
+## @northern.tech/themes-0.6.1 - 2025-09-11
+
+
+### Bug fixes
+
+#### Themes
+
+
+- *(themes)* Fixed alert visibility issues on old Mender theme
+
+([MEN-8603](https://northerntech.atlassian.net/browse/MEN-8603)) ([901ed56](https://github.com/NorthernTechHQ/nt-gui/commit/901ed569855165c5067f577c6b6a5b8c790dac45))  by @mzedel
+
+
+
+
+
+
+## @northern.tech/themes-0.6.0 - 2025-09-10
 
 
 ### Bug fixes
