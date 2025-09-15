@@ -119,9 +119,12 @@ export const overrides = {
   ...componentProps,
   MuiAlert: {
     styleOverrides: {
-      colorError: ({ theme }) => ({
-        background: theme.palette.mode === 'light' ? lighten(theme.palette.error.main, 0.95) : '',
-        color: theme.palette.mode === 'light' ? theme.palette.text.primary : ''
+      root: ({ theme, ownerState }) => ({
+        ...(ownerState.severity === 'error' &&
+          theme.palette.mode === 'light' && {
+            backgroundColor: lighten(theme.palette.error.main, 0.95),
+            color: theme.palette.text.primary
+          })
       })
     }
   },
