@@ -13,7 +13,8 @@
 //    limitations under the License.
 //@ts-nocheck
 import { useState } from 'react';
-import CopyToClipboard from 'react-copy-to-clipboard';
+
+import CopyToClipboard from '../CopyToClipboard';
 
 import { Button, DialogActions, DialogContent } from '@mui/material';
 
@@ -50,8 +51,8 @@ export const LogDialog = ({ context = {}, logData = '', onClose, type = 'deviceL
         <div style={wrapperStyle}>
           <Button onClick={onClose}>Cancel</Button>
         </div>
-        <CopyToClipboard style={wrapperStyle} text={logData} onCopy={() => setCopied(true)}>
-          <Button>Copy to clipboard</Button>
+        <CopyToClipboard text={logData} onCopy={() => setCopied(true)}>
+          <Button style={wrapperStyle}>Copy to clipboard</Button>
         </CopyToClipboard>
         <Button variant="contained" color="primary" onClick={exportLog}>
           Export log
