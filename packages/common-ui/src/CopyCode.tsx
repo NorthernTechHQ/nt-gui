@@ -14,7 +14,8 @@
 //@ts-nocheck
 import type { CSSProperties, ReactNode } from 'react';
 import { useState } from 'react';
-import CopyToClipboard from 'react-copy-to-clipboard';
+
+import CopyToClipboard from './CopyToClipboard';
 
 import { FileCopy as CopyPasteIcon } from '@mui/icons-material';
 import { Button, IconButton } from '@mui/material';
