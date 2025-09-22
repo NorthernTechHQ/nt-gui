@@ -1,4 +1,21 @@
 ---
+## @northern.tech/themes-0.6.2 - 2025-09-22
+
+
+### Bug fixes
+
+#### Themes
+
+
+- *(themes)* Made use of more specific alert error override to ensure readable alerts
+
+ ([f13ca1a](https://github.com/NorthernTechHQ/nt-gui/commit/f13ca1a98bd4a394d8a2eb1ab0bd83af9a71315a))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/themes-0.6.1 - 2025-09-11
 
 
