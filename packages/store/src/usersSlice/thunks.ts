@@ -54,7 +54,6 @@ import {
   emptyUiPermissions,
   maxSessionAge,
   scopedPermissionAreas,
-  tenantadmApiUrlv2,
   twoFAStates,
   uiPermissionsByArea,
   uiPermissionsById,
@@ -898,17 +897,15 @@ export const setAllTooltipsReadState = createAppAsyncThunk(
 
 type SubmitFeedbackPayload = {
   feedback: string;
-  meta: any;
-  satisfaction: string;
+  formId: string;
 };
 
-export const submitFeedback = createAppAsyncThunk(`${sliceName}/submitFeedback`, ({ satisfaction, feedback, ...meta }: SubmitFeedbackPayload, { dispatch }) =>
-  GeneralApi.post(`${tenantadmApiUrlv2}/contact/support`, {
-    subject: 'feedback submission',
-    body: JSON.stringify({ feedback, satisfaction, meta })
-  }).then(() => {
-    const today = new Date();
-    dispatch(saveUserSettings({ feedbackCollectedAt: today.toISOString().split('T')[0] }));
-    setTimeout(() => dispatch(actions.setShowFeedbackDialog(false)), TIMEOUTS.threeSeconds);
+export const submitUserFeedback = createAppAsyncThunk(`${sliceName}/submitFeedback`, ({ formId, feedback }: SubmitFeedbackPayload, { dispatch }) =>
+  GeneralApi.post(`${useradmApiUrlv2}/support/feedback/${formId}`, feedback).then(() => {
+    if (formId === 'product') {
+      const today = new Date();
+      dispatch(saveUserSettings({ feedbackCollectedAt: today.toISOString().split('T')[0] }));
+      setTimeout(() => dispatch(actions.setShowFeedbackDialog(false)), TIMEOUTS.threeSeconds);
+    }
   })
 );
