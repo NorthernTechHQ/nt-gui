@@ -42,7 +42,7 @@ import { makeStyles } from 'tss-react/mui';
 import actions from '@northern.tech/store/actions';
 import { TIMEOUTS } from '@northern.tech/store/constants';
 import type { AppDispatch } from '@northern.tech/store/store';
-import { submitFeedback } from '@northern.tech/store/thunks';
+import { submitUserFeedback } from '@northern.tech/store/thunks';
 import { isDarkMode } from '@northern.tech/store/utils';
 
 const { setShowFeedbackDialog } = actions;
@@ -151,7 +151,8 @@ export const FeedbackDialog = () => {
 
   const onSubmit = () => {
     setProgress(progress + 1);
-    dispatch(submitFeedback({ satisfaction: satisfactionLevels[satisfaction].title, feedback }));
+    // score should be in range [1..5]
+    dispatch(submitUserFeedback({ formId: 'product', feedback: { score: satisfaction + 1, message: feedback } }));
   };
 
   const Component = progressionLevels[progress];
