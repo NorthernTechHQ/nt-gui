@@ -23,7 +23,7 @@
     "eslint-plugin-import": "2.x",
     "eslint-plugin-mdx": "^3.x",
     "eslint-plugin-react": "7.x",
-    "eslint-plugin-react-hooks": "5.x",
+    "eslint-plugin-react-hooks": "6.x",
     "eslint-plugin-sonarjs": "3.x",
     "eslint-plugin-storybook": "^9.x",
     "globals": "16.x",

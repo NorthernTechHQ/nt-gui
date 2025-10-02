@@ -152,11 +152,6 @@ release:npmjs:
 
 pages:
   stage: release
-  rules:
-    - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH
-    - if: $CI_COMMIT_BRANCH =~ "/^pr_/"
-      variables:
-        PAGES_PREFIX: $CI_COMMIT_BRANCH
   needs:
     - job: build
       artifacts: true
@@ -167,8 +162,17 @@ pages:
     - json="$(printf "$GITHUB_STATUS_API_JSON_F" "success" "${CI_PAGES_URL}" "Storybook deployed")"
     - curl -f -H "$GITHUB_AUTH" -d "$json" "$GITHUB_STATUS_API_URL"
   pages:
-    path_prefix: '$PAGES_PREFIX'
+    path_prefix: '$CI_COMMIT_BRANCH'
+    expire_in: 2 weeks
   publish: storybook-static
   artifacts:
     paths:
       - storybook-static
+
+pages:main:
+  extends: pages
+  rules:
+    - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH
+  pages:
+    path_prefix: ''
+    expire_in: never
