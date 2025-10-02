@@ -1,4 +1,41 @@
 ---
+## @northern.tech/common-ui-0.7.0 - 2025-10-02
+
+
+### Bug fixes
+
+#### Common-ui
+
+
+- *(common-ui)* Made use of custom copy to clipboard implementation
+
+ ([23d049a](https://github.com/NorthernTechHQ/nt-gui/commit/23d049af27f93d83fd29959ce0bd7c0c09cfe9f2))  by @mzedel
+
+- *(common-ui)* Aligned w/ current Mender codebase
+
+ ([898d330](https://github.com/NorthernTechHQ/nt-gui/commit/898d3309ae751e8af161759831e0000064a078d5))  by @mzedel
+
+
+
+
+
+### Features
+
+#### Common-ui
+
+
+- *(common-ui)* Added own variant of copy to clipboard to avoid dependency decay
+
+ ([7154002](https://github.com/NorthernTechHQ/nt-gui/commit/71540028f2d9c581a98453f4e514b2016ebef678))  by @mzedel
+
+
+
+
+
+### Security
+
+
+
 ## @northern.tech/common-ui-0.6.1 - 2025-08-22
 
 
