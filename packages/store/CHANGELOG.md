@@ -1,4 +1,24 @@
 ---
+## @northern.tech/store-0.5.3 - 2025-10-02
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Aligned store interactions w/ current Mender
+
+ ([3a27287](https://github.com/NorthernTechHQ/nt-gui/commit/3a27287df37b8935cefaf89a8f50a1a1c10d0e2f))  by @mzedel
+
+
+
+
+
+### Security
+
+
+
 ## @northern.tech/store-0.5.2 - 2025-08-26
 
 
