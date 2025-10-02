@@ -1,4 +1,21 @@
 ---
+## @northern.tech/testing-0.2.2 - 2025-10-02
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Aligned MSW handlers w/ store & current Mender
+
+ ([d200130](https://github.com/NorthernTechHQ/nt-gui/commit/d200130da18f871b572f9ed08e424a7c591576b3))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/testing-0.2.1 - 2025-08-24
 
 
