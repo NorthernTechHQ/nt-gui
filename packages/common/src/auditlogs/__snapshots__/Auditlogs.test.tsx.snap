@@ -284,7 +284,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                     <span
                       aria-disabled="false"
                       aria-label="Year"
-                      aria-labelledby="«rb»-year"
                       aria-readonly="false"
                       aria-valuemax="9999"
                       aria-valuemin="0"
@@ -293,7 +292,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                       autocorrect="off"
                       class="MuiPickersSectionList-sectionContent MuiPickersInputBase-sectionContent css-1jpopwz-MuiPickersSectionList-sectionContent-MuiPickersInputBase-sectionContent"
                       contenteditable="true"
-                      id="«rb»-year"
                       inputmode="numeric"
                       role="spinbutton"
                       spellcheck="false"
@@ -317,7 +315,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                     <span
                       aria-disabled="false"
                       aria-label="Month"
-                      aria-labelledby="«rb»-month"
                       aria-readonly="false"
                       aria-valuemax="12"
                       aria-valuemin="1"
@@ -327,7 +324,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                       autocorrect="off"
                       class="MuiPickersSectionList-sectionContent MuiPickersInputBase-sectionContent css-1jpopwz-MuiPickersSectionList-sectionContent-MuiPickersInputBase-sectionContent"
                       contenteditable="true"
-                      id="«rb»-month"
                       inputmode="numeric"
                       role="spinbutton"
                       spellcheck="false"
@@ -351,7 +347,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                     <span
                       aria-disabled="false"
                       aria-label="Day"
-                      aria-labelledby="«rb»-day"
                       aria-readonly="false"
                       aria-valuemax="31"
                       aria-valuemin="1"
@@ -361,7 +356,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                       autocorrect="off"
                       class="MuiPickersSectionList-sectionContent MuiPickersInputBase-sectionContent css-1jpopwz-MuiPickersSectionList-sectionContent-MuiPickersInputBase-sectionContent"
                       contenteditable="true"
-                      id="«rb»-day"
                       inputmode="numeric"
                       role="spinbutton"
                       spellcheck="false"
@@ -426,14 +420,14 @@ exports[`Auditlogs Component > renders correctly 1`] = `
               <label
                 class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeSmall MuiInputLabel-outlined css-hvjq6j-MuiFormLabel-root-MuiInputLabel-root"
                 data-shrink="true"
-                for="«re»"
-                id="«re»-label"
+                for="«rd»"
+                id="«rd»-label"
               >
                 To
               </label>
               <div
                 aria-invalid="false"
-                aria-labelledby="«re»-label"
+                aria-labelledby="«rd»-label"
                 class="MuiPickersInputBase-root MuiPickersOutlinedInput-root MuiPickersInputBase-colorPrimary MuiPickersInputBase-inputSizeSmall MuiPickersInputBase-adornedEnd css-vycme6-MuiPickersInputBase-root-MuiPickersOutlinedInput-root"
                 role="group"
               >
@@ -452,7 +446,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                     <span
                       aria-disabled="false"
                       aria-label="Year"
-                      aria-labelledby="«rf»-year"
                       aria-readonly="false"
                       aria-valuemax="9999"
                       aria-valuemin="0"
@@ -461,7 +454,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                       autocorrect="off"
                       class="MuiPickersSectionList-sectionContent MuiPickersInputBase-sectionContent css-1jpopwz-MuiPickersSectionList-sectionContent-MuiPickersInputBase-sectionContent"
                       contenteditable="true"
-                      id="«rf»-year"
                       inputmode="numeric"
                       role="spinbutton"
                       spellcheck="false"
@@ -485,7 +477,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                     <span
                       aria-disabled="false"
                       aria-label="Month"
-                      aria-labelledby="«rf»-month"
                       aria-readonly="false"
                       aria-valuemax="12"
                       aria-valuemin="1"
@@ -495,7 +486,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                       autocorrect="off"
                       class="MuiPickersSectionList-sectionContent MuiPickersInputBase-sectionContent css-1jpopwz-MuiPickersSectionList-sectionContent-MuiPickersInputBase-sectionContent"
                       contenteditable="true"
-                      id="«rf»-month"
                       inputmode="numeric"
                       role="spinbutton"
                       spellcheck="false"
@@ -519,7 +509,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                     <span
                       aria-disabled="false"
                       aria-label="Day"
-                      aria-labelledby="«rf»-day"
                       aria-readonly="false"
                       aria-valuemax="31"
                       aria-valuemin="1"
@@ -529,7 +518,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                       autocorrect="off"
                       class="MuiPickersSectionList-sectionContent MuiPickersInputBase-sectionContent css-1jpopwz-MuiPickersSectionList-sectionContent-MuiPickersInputBase-sectionContent"
                       contenteditable="true"
-                      id="«rf»-day"
                       inputmode="numeric"
                       role="spinbutton"
                       spellcheck="false"
@@ -582,7 +570,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                   aria-hidden="true"
                   aria-label="To"
                   class="MuiPickersInputBase-input MuiPickersOutlinedInput-input css-31lcvl-MuiPickersInputBase-input"
-                  id="«re»"
+                  id="«rd»"
                   tabindex="-1"
                   value="2019-01-13"
                 />
@@ -839,7 +827,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
             />
             <p
               class="MuiTablePagination-selectLabel css-s09cke-MuiTablePagination-selectLabel"
-              id="«rk»"
+              id="«ri»"
             >
               Rows
             </p>
@@ -849,9 +837,9 @@ exports[`Auditlogs Component > renders correctly 1`] = `
               <div
                 aria-expanded="false"
                 aria-haspopup="listbox"
-                aria-labelledby="«rk» «rj»"
+                aria-labelledby="«ri» «rh»"
                 class="MuiSelect-select MuiTablePagination-select MuiSelect-standard MuiInputBase-input css-18zjd9i-MuiNativeSelect-root-MuiSelect-select-MuiInputBase-input"
-                id="«rj»"
+                id="«rh»"
                 role="combobox"
                 tabindex="0"
               >
