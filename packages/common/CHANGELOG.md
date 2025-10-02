@@ -1,4 +1,24 @@
 ---
+## @northern.tech/common-0.4.0 - 2025-10-02
+
+
+### Features
+
+#### Common
+
+
+- *(common)* Added mui component overview to ease seeing theme impact
+
+ ([5f8cb5a](https://github.com/NorthernTechHQ/nt-gui/commit/5f8cb5a8e3041280ee45eb00ad4c45618e80004c))  by @mzedel
+
+
+
+
+
+### Security
+
+
+
 ## @northern.tech/common-0.3.1 - 2025-08-22
 
 
