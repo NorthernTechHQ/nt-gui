@@ -1,5 +1,22 @@
 ---
-## @northern.tech/typescript-config-0.6.0 - 2025-08-14
+## @northern.tech/types-0.1.1 - 2025-10-02
+
+
+### Bug fixes
+
+#### Types
+
+
+- *(types)* Cleaned up now unused types
+
+ ([6c03c0a](https://github.com/NorthernTechHQ/nt-gui/commit/6c03c0a9f0bd8e1ba19f03bd1317937d23f4c8ae))  by @mzedel
+
+
+
+
+
+
+## @northern.tech/types-0.1.0 - 2025-08-14
 
 
 ### Bug fixes
