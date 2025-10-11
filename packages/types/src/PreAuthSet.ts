@@ -15,4 +15,18 @@ export type PreAuthSet = {
    * are: RSA, Ed25519 and ECDSA P-256.
    */
   pubkey: string;
+  /**
+   * A device tier.
+   */
+  tier?: PreAuthSet.tier;
 };
+export namespace PreAuthSet {
+  /**
+   * A device tier.
+   */
+  export enum tier {
+    STANDARD = "standard",
+    MICRO = "micro",
+    SYSTEM = "system",
+  }
+}

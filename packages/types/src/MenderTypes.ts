@@ -171,7 +171,7 @@ export type { PlanBindingDetails } from "./PlanBindingDetails";
 export type { PlanChangeRequest } from "./PlanChangeRequest";
 export type { PlanLimits } from "./PlanLimits";
 export { PlanTenantadm } from "./PlanTenantadm";
-export type { PreAuthSet } from "./PreAuthSet";
+export { PreAuthSet } from "./PreAuthSet";
 export { PreviewRequest } from "./PreviewRequest";
 export { Product } from "./Product";
 export type { Release } from "./Release";
