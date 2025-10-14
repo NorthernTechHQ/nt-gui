@@ -39,5 +39,6 @@ export const mockState = {
     }
   },
   settingsInitialized: true,
+  userSettingsInitialized: true,
   userSettings: { '2fa': 'disabled', previousFilters: [], columnSelection: [], onboarding: { something: 'here' }, tooltips: {} }
 };
