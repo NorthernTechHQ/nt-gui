@@ -173,7 +173,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
             class="MuiTablePagination-selectLabel css-s09cke-MuiTablePagination-selectLabel"
             id="_r_2_"
           >
-            Rows
+            Rows per page:
           </p>
           <div
             class="MuiInputBase-root MuiInputBase-colorPrimary MuiTablePagination-select MuiSelect-root MuiTablePagination-input css-oegngy-MuiInputBase-root-MuiTablePagination-select"

@@ -588,7 +588,7 @@ label[data-shrink=false]+.MuiInputBase-formControl .emotion-10:focus::-ms-input-
             class="MuiTablePagination-selectLabel emotion-8"
             id="_r_2_"
           >
-            Rows
+            Rows per page:
           </p>
           <div
             class="MuiInputBase-root MuiInputBase-colorPrimary MuiTablePagination-select MuiSelect-root MuiTablePagination-input emotion-9"
