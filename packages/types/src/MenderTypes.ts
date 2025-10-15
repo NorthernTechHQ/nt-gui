@@ -96,6 +96,7 @@ export { DeviceSortTerm } from "./DeviceSortTerm";
 export type { DeviceState } from "./DeviceState";
 export { DeviceStateDeviceconnect } from "./DeviceStateDeviceconnect";
 export { DeviceStatus } from "./DeviceStatus";
+export type { DeviceTierLimits } from "./DeviceTierLimits";
 export type { DeviceWithImage } from "./DeviceWithImage";
 export type { DirectUploadMetadata } from "./DirectUploadMetadata";
 export type { EmailVerificationCompletion } from "./EmailVerificationCompletion";
