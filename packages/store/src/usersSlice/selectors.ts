@@ -25,7 +25,8 @@ const emptyObject = {} as User;
 export const getRolesById = (state: RootState) => state.users.rolesById;
 export const getTooltipsById = (state: RootState) => state.users.tooltips.byId;
 export const getGlobalSettings = (state: RootState) => state.users.globalSettings;
-export const getUserSettingsInitialized = (state: RootState) => state.users.settingsInitialized;
+export const getGlobalSettingsInitialized = (state: RootState) => state.users.settingsInitialized;
+export const getUserSettingsInitialized = (state: RootState) => state.users.userSettingsInitialized;
 const getCurrentUserId = (state: RootState) => state.users.currentUser;
 export const getUsersById = (state: RootState) => state.users.byId;
 
