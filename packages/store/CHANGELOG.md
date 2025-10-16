@@ -1,4 +1,38 @@
 ---
+## @northern.tech/store-0.6.0 - 2025-10-16
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Aligned chinese Mender deployment location w/ reality
+
+ ([0cc8161](https://github.com/NorthernTechHQ/nt-gui/commit/0cc81618bfb41e4ad8c9bfbe1205949b24edde7e))  by @mzedel
+
+- *(store)* Rectified user setting selector confusion w/ global settings to align w/ Mender
+
+ ([bca8f1a](https://github.com/NorthernTechHQ/nt-gui/commit/bca8f1aca73218c0ff3820027b306eb42a1172f8))  by @mzedel
+
+
+
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Let store rely on newer backend type definitions
+
+ ([5ade1e1](https://github.com/NorthernTechHQ/nt-gui/commit/5ade1e12697c5edf61b205f1720761e586596a88))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/store-0.5.3 - 2025-10-02
 
 
