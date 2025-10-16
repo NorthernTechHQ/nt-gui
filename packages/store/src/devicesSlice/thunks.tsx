@@ -15,18 +15,18 @@
 import { Link } from 'react-router-dom';
 
 import type {
-  AttributeInventory,
+  AttributeV2,
   Device as BackendDevice,
   DeviceConfiguration,
-  DeviceDeviceauth,
-  DeviceReporting,
+  DeviceInventory,
   DeviceState,
+  DeviceWithImage,
   Integration,
-  ManagementAPIConfiguration,
+  ManagementApiConfiguration,
   NewConfigurationDeployment,
   PreAuthSet,
   SortCriteria,
-  StatusDeviceauth
+  Status
 } from '@northern.tech/types/MenderTypes';
 import { attributeDuplicateFilter, dateRangeToUnix, deepCompare, getSnackbarMessage } from '@northern.tech/utils/helpers';
 import { isCancel } from 'axios';
@@ -321,7 +321,7 @@ export const selectGroup = createAppAsyncThunk(
 
 const getEarliestTs = (dateA = '', dateB = '') => (!dateA || !dateB ? dateA || dateB : dateA < dateB ? dateA : dateB);
 
-type ReceivedDevice = DeviceDeviceauth & Omit<BackendDevice, 'status'> & DeviceReporting;
+type ReceivedDevice = BackendDevice & DeviceInventory & Omit<DeviceWithImage, 'status'>;
 const reduceReceivedDevices = (devices: ReceivedDevice[], ids: string[], state: RootState, status?: DeviceStatus) =>
   devices.reduce(
     (accu, device: any) => {
@@ -562,7 +562,7 @@ export const setDeviceListState = createAppAsyncThunk(
     const { isLoading: nextLoading, deviceIds: nextDevices, selection: nextSelection, ...nextRequestState } = nextState;
     if (!nextState.setOnly && !deepCompare(currentRequestState, nextRequestState)) {
       const { direction: sortDown = SORTING_OPTIONS.desc, key: sortCol, scope: sortScope = '' } = nextState.sort ?? {};
-      const sortBy = sortCol ? ([{ attribute: sortCol, order: sortDown as SortCriteria.order, scope: sortScope }] as SortCriteria[]) : undefined;
+      const sortBy = sortCol ? ([{ attribute: sortCol, order: sortDown as SortCriteria['order'], scope: sortScope }] as SortCriteria[]) : undefined;
       const applicableSelectedState = nextState.state === ALL_DEVICE_STATES ? undefined : nextState.state;
       nextState.isLoading = true;
       tasks.push(
@@ -702,7 +702,7 @@ export const searchDevices = createAppAsyncThunk(`${sliceName}/searchDevices`, (
 });
 
 const ATTRIBUTE_LIST_CUTOFF = 100;
-const attributeReducer = (attributes: AttributeInventory[] = []) =>
+const attributeReducer = (attributes: AttributeV2[] = []) =>
   attributes.slice(0, ATTRIBUTE_LIST_CUTOFF).reduce(
     (accu, { name, scope }) => {
       if (!accu[scope]) {
@@ -888,7 +888,7 @@ export const getDevicesWithAuth = createAppAsyncThunk(`${sliceName}/getDevicesWi
 
 export const updateDeviceAuth = createAppAsyncThunk(
   `${sliceName}/updateDeviceAuth`,
-  ({ deviceId, authId, status }: { authId: string; deviceId: string; status: StatusDeviceauth.status }, { dispatch, getState }) =>
+  ({ deviceId, authId, status }: { authId: string; deviceId: string; status: Status['status'] }, { dispatch, getState }) =>
     GeneralApi.put(`${deviceAuthV2}/devices/${deviceId}/auth/${authId}/status`, { status })
       .then(() => Promise.all([dispatch(getDeviceAuth(deviceId)), dispatch(setSnackbar('Device authorization status was updated successfully'))]))
       .catch(err => commonErrorHandler(err, 'There was a problem updating the device authorization status:', dispatch))
@@ -898,7 +898,7 @@ export const updateDeviceAuth = createAppAsyncThunk(
 
 export const updateDevicesAuth = createAppAsyncThunk(
   `${sliceName}/updateDevicesAuth`,
-  ({ deviceIds, status }: { deviceIds: string[]; status: StatusDeviceauth.status }, { dispatch, getState }) => {
+  ({ deviceIds, status }: { deviceIds: string[]; status: Status['status'] }, { dispatch, getState }) => {
     let devices = getDevicesById(getState());
     const deviceIdsWithoutAuth = deviceIds.reduce<{ id: string }[]>((accu, id) => (devices[id].auth_sets ? accu : [...accu, { id }]), []);
     return dispatch(getDevicesWithAuth(deviceIdsWithoutAuth)).then(() => {
@@ -982,7 +982,7 @@ export const getDeviceConfig = createAppAsyncThunk(`${sliceName}/getDeviceConfig
 
 export const setDeviceConfig = createAppAsyncThunk(
   `${sliceName}/setDeviceConfig`,
-  ({ deviceId, config }: { config: ManagementAPIConfiguration; deviceId: string }, { dispatch }) =>
+  ({ deviceId, config }: { config: ManagementApiConfiguration; deviceId: string }, { dispatch }) =>
     GeneralApi.put(`${deviceConfig}/${deviceId}`, config)
       .catch(err => commonErrorHandler(err, `There was an error setting the configuration for device ${deviceId}.`, dispatch, commonErrorFallback))
       .then(() => Promise.resolve(dispatch(getDeviceConfig(deviceId))))

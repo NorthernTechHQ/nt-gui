@@ -17,14 +17,14 @@ import { Link } from 'react-router-dom';
 import { act, defaultState } from '@/testUtils';
 import { inventoryDevice } from '@northern.tech/testing/requestHandlers/deviceHandlers';
 import { mockAbortController } from '@northern.tech/testing/setupTests';
-import type { StatusDeviceauth } from '@northern.tech/types/MenderTypes';
-import { Integration } from '@northern.tech/types/MenderTypes';
+import type { Credentials, Integration, Status } from '@northern.tech/types/MenderTypes';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { describe, expect, it, vi } from 'vitest';
 
 import { actions } from '.';
 import { actions as appActions } from '../appSlice';
+import type { DeviceAuthState } from '../constants';
 import { DEVICE_STATES, EXTERNAL_PROVIDER, TIMEOUTS, UNGROUPED_GROUP } from '../constants';
 import { actions as deploymentActions } from '../deploymentsSlice';
 import { getSingleDeployment } from '../thunks';
@@ -291,7 +291,7 @@ describe('overall device information retrieval', () => {
       { type: getDeviceCount.fulfilled.type },
       { type: getDeviceCount.fulfilled.type }
     ];
-    await Promise.all(Object.values(DEVICE_STATES).map(status => store.dispatch(getDeviceCount(status as StatusDeviceauth.status)))).then(() => {
+    await Promise.all(Object.values(DEVICE_STATES).map(status => store.dispatch(getDeviceCount(status as DeviceAuthState)))).then(() => {
       const storeActions = store.getActions();
       expect(storeActions.length).toEqual(expectedActions.length);
       expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -493,7 +493,7 @@ describe('device auth handling', () => {
       updateDeviceAuth({
         deviceId: defaultState.devices.byId.a1.id,
         authId: defaultState.devices.byId.a1.auth_sets[0].id,
-        status: DEVICE_STATES.pending as StatusDeviceauth.status
+        status: DEVICE_STATES.pending as Status['status']
       })
     );
     const storeActions = store.getActions();
@@ -539,7 +539,7 @@ describe('device auth handling', () => {
     await store.dispatch(
       updateDevicesAuth({
         deviceIds: [defaultState.devices.byId.a1.id, defaultState.devices.byId.c1.id],
-        status: DEVICE_STATES.pending as StatusDeviceauth.status
+        status: DEVICE_STATES.pending as Status['status']
       })
     );
     await act(async () => {
@@ -926,7 +926,7 @@ describe('device retrieval ', () => {
       { type: getDevicesWithAuth.fulfilled.type },
       { type: getDevicesByStatus.fulfilled.type }
     ];
-    await store.dispatch(getDevicesByStatus({ status: DEVICE_STATES.accepted as StatusDeviceauth.status }));
+    await store.dispatch(getDevicesByStatus({ status: DEVICE_STATES.accepted as Status['status'] }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -945,7 +945,7 @@ describe('device retrieval ', () => {
       { type: getDevicesWithAuth.fulfilled.type },
       { type: getDevicesByStatus.fulfilled.type }
     ];
-    await store.dispatch(getDevicesByStatus({ status: DEVICE_STATES.accepted as StatusDeviceauth.status, perPage: 1 }));
+    await store.dispatch(getDevicesByStatus({ status: DEVICE_STATES.accepted as Status['status'], perPage: 1 }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -978,7 +978,7 @@ describe('device retrieval ', () => {
       defaultResults.receivedExpectedDevice,
       { type: getAllDevicesByStatus.fulfilled.type }
     ];
-    await store.dispatch(getAllDevicesByStatus({ status: DEVICE_STATES.accepted as StatusDeviceauth.status, attribute: 'artifact_name' }));
+    await store.dispatch(getAllDevicesByStatus({ status: DEVICE_STATES.accepted as Status['status'], attribute: 'artifact_name' }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -1171,11 +1171,11 @@ describe('troubleshooting related actions', () => {
   });
 });
 
-const integrationMock = {
+const integrationMock: Integration = {
   ...EXTERNAL_PROVIDER['iot-hub'],
-  provider: Integration.provider.IOT_HUB,
+  provider: 'iot-hub',
   credentials: {
-    type: EXTERNAL_PROVIDER['iot-hub'].credentialsType,
+    type: EXTERNAL_PROVIDER['iot-hub'].credentialsType as Credentials['type'],
     aws: {
       access_key_id: 'string',
       secret_access_key: 'string',

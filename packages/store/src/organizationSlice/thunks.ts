@@ -13,7 +13,7 @@
 //    limitations under the License.
 import type {
   AuditLog,
-  TenantTenantadm as BackendTenant,
+  Tenant as BackendTenant,
   BillingInfo,
   BillingProfile,
   Event,
@@ -23,7 +23,6 @@ import type {
   Product,
   SupportRequest
 } from '@northern.tech/types/MenderTypes';
-import { PreviewRequest as PreviewRequestEnum } from '@northern.tech/types/MenderTypes';
 import { dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
@@ -364,7 +363,7 @@ export const getUserBilling = createAppAsyncThunk(`${sliceName}/getUserBilling`,
 export const getUserSubscription = createAppAsyncThunk(`${sliceName}/getUserSubscription`, async (_, { dispatch }) => {
   // We need to fetch current subscription first to ensure non-stripe customers handled right
   const currentSubscription = await dispatch(getCurrentSubscription()).unwrap();
-  const currentPreview = await dispatch(getBillingPreview({ preview_mode: PreviewRequestEnum.preview_mode.NEXT })).unwrap();
+  const currentPreview = await dispatch(getBillingPreview({ preview_mode: 'next' })).unwrap();
   return dispatch(actions.setSubscription({ ...currentPreview, ...currentSubscription }));
 });
 

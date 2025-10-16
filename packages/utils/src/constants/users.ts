@@ -13,7 +13,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { PermissionSet as BackendPermissionSet, Role as BackendRole, RolePermission, RoleUseradm } from '@northern.tech/types/MenderTypes';
+import type { PermissionSet as BackendPermissionSet, Role as BackendRole, RoleV1 as BackendRoleV1, RolePermission } from '@northern.tech/types/MenderTypes';
 
 import { ALL_DEVICES, ALL_RELEASES, useradmApiUrlv1 } from '.';
 
@@ -73,8 +73,8 @@ export const emptyRole: UiRoleDefinition = Object.freeze({
 //   userManagement: UserManagementPermission[];
 // };
 
-export type Role = BackendRole &
-  Omit<RoleUseradm, 'name' | 'description'> & {
+export type Role = BackendRoleV1 &
+  Omit<BackendRole, 'name' | 'description'> & {
     editable?: boolean;
     isCustom?: boolean;
     uiPermissions: UiPermissionsDefinition;

@@ -11,19 +11,29 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { Artifact as BackendArtifact, Release as BackendRelease, DeltaJobDetailsItem, DeltaJobsListItem } from '@northern.tech/types/MenderTypes';
+import type {
+  ArtifactV1 as BackendArtifactV1,
+  ArtifactV2 as BackendArtifactV2,
+  ReleaseV1 as BackendReleaseV1,
+  ReleaseV2 as BackendReleaseV2,
+  UpdateV1,
+  UpdateV2
+} from '@northern.tech/types/MenderTypes';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS } from '../constants';
 import type { SortOptions } from '../constants';
 
-export type Artifact = BackendArtifact & { installCount?: number; url?: string };
-export type Release = BackendRelease & { artifacts: Artifact[]; name: string };
+type Update = Omit<UpdateV1 & UpdateV2, 'meta_data'>;
+export type Artifact = Omit<BackendArtifactV1, 'updates'> &
+  Omit<BackendArtifactV2, 'updates'> & { installCount?: number; updates?: Array<Update>; url?: string };
+export type Release = BackendReleaseV1 & BackendReleaseV2 & { artifacts: Artifact[]; device_types_compatible: string[]; name: string };
 
 export const sliceName = 'releases';
 
-type EnhancedJobDetailsItem = DeltaJobDetailsItem & DeltaJobsListItem;
+// TODO: restore this once delta job related types are restored in specs
+// type EnhancedJobDetailsItem = DeltaJobDetailsItem & DeltaJobsListItem;
 
 export type ReleasesList = {
   isLoading?: boolean;
@@ -45,7 +55,7 @@ export type ReleasesList = {
 export type ReleaseSliceType = {
   artifacts: never[];
   byId: Record<string, Release>;
-  deltaJobs: Record<string, EnhancedJobDetailsItem>;
+  deltaJobs: Record<string, any>;
   deltaJobsList: {
     jobIds: string[];
     page: number;

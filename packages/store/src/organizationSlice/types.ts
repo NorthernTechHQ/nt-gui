@@ -14,12 +14,11 @@
 import type {
   AuditLog as AuditLogEvent,
   Tenant as BackendTenant,
-  TenantTenantadm as BackendTenantAdminTenant,
+  BillingInfo,
   BillingProfile,
   Event,
   Integration,
-  Product,
-  SAMLMetadata
+  SamlMetadata
 } from '@northern.tech/types/MenderTypes';
 
 import type { AvailableAddon, SortOptions } from '../constants';
@@ -62,21 +61,18 @@ export interface Webhook {
   events: Event[];
   eventsTotal: number;
 }
-export type Tenant = BackendTenant &
-  BackendTenantAdminTenant & {
-    addons: Addon[];
-  };
+export type Tenant = BackendTenant;
 
 export interface TenantList {
   page: number;
   perPage: number;
-  selectedTenant: BackendTenantAdminTenant | null;
+  selectedTenant: Tenant | null;
   sort: SortOptions;
-  tenants: BackendTenantAdminTenant[];
+  tenants: Tenant[];
   total: number;
 }
 
-export type SSOConfig = SAMLMetadata & {
+export type SSOConfig = SamlMetadata & {
   config: string;
   type: [keyof typeof SSO_TYPES];
 };
@@ -97,27 +93,7 @@ export interface Addon {
   name: AvailableAddon;
 }
 
-interface SubscriptionLine {
-  amount: number;
-  currency: string;
-  description: string;
-  price_id: string;
-  quantity: number;
-}
-export interface Subscription {
-  currency: string;
-  id: string;
-  lines: SubscriptionLine[];
-  period_end: string;
-  period_start: string;
-  plan: string;
-  products: Product[];
-  status: string;
-  total: number;
-}
-
-export interface Organization extends Tenant {
-  addons: Addon[];
-  billing_profile: BillingProfile;
-  subscription: Subscription;
-}
+export type Organization = Tenant &
+  BillingInfo & {
+    billing_profile: BillingProfile;
+  };

@@ -36,7 +36,7 @@ export const mockState = {
       check_in_time_exact: checkInTimeExact,
       check_in_time_rounded: checkInTimeRounded,
       identity_data: { mac: defaultMacAddress },
-      status: 'accepted',
+      status: DEVICE_STATES.accepted,
       decommissioning: false,
       created_ts: defaultCreationDate,
       updated_ts: '2019-01-01T09:25:00.000Z',
@@ -46,7 +46,7 @@ export const mockState = {
           identity_data: { mac: defaultMacAddress },
           pubkey: '-----BEGIN PUBLIC KEY-----\nMIIBojWELzgJ62hcXIhAfqfoNiaB1326XZByZwcnHr5BuSPAgMBAAE=\n-----END PUBLIC KEY-----\n',
           ts: defaultCreationDate,
-          status: 'accepted'
+          status: DEVICE_STATES.accepted
         }
       ]
     },
@@ -63,7 +63,7 @@ export const mockState = {
       check_in_time_exact: checkInTimeExact,
       check_in_time_rounded: checkInTimeRounded,
       identity_data: { mac: defaultMacAddress },
-      status: 'accepted',
+      status: DEVICE_STATES.accepted,
       decommissioning: false,
       created_ts: defaultCreationDate,
       updated_ts: '2019-01-01T09:25:00.000Z',
@@ -73,7 +73,7 @@ export const mockState = {
           identity_data: { mac: defaultMacAddress },
           pubkey: '-----BEGIN PUBLIC KEY-----\nMIIBojWELzgJ62hcXIhAfqfoNiaB1326XZByZwcnHr5BuSPAgMBAAE=\n-----END PUBLIC KEY-----\n',
           ts: defaultCreationDate,
-          status: 'accepted'
+          status: DEVICE_STATES.accepted
         }
       ]
     },
