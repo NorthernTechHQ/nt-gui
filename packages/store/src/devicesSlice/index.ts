@@ -12,12 +12,13 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import type {
-  DeviceDeviceauth as BackendDeviceAuth,
-  DeviceStateDeviceconnect as BackendDeviceState,
+  Device as BackendDeviceAuth,
+  ConnectionState,
   DeviceConfiguration,
   DeviceState,
   MonitorConfiguration,
-  SortCriteria
+  SortCriteria,
+  Status
 } from '@northern.tech/types/MenderTypes';
 // @ts-nocheck
 import { deepCompare, duplicateFilter } from '@northern.tech/utils/helpers';
@@ -74,7 +75,7 @@ export type Device = BackendDeviceAuth &
     check_in_time_exact?: string;
     check_in_time_rounded?: string;
     config?: DeviceConfiguration;
-    connect_status?: BackendDeviceState['status'];
+    connect_status?: ConnectionState['status'];
     connect_updated_ts?: string;
     deploymentsCount?: number;
     deviceDeployments?: DeviceDeployment;
@@ -85,7 +86,7 @@ export type Device = BackendDeviceAuth &
     isNew?: boolean;
     isOffline?: boolean;
     monitors?: MonitorConfiguration[];
-    status: BackendDeviceAuth.status;
+    status: Status;
     twinsByIntegration?: Record<string, DeviceState & { twinError?: string }>;
   };
 export type DeviceFilter = {

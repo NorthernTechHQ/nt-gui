@@ -13,6 +13,7 @@
 //    limitations under the License.
 // @ts-nocheck
 import type { DeviceAttribute } from '@northern.tech/types/DeviceAttribute';
+import type { Scope } from '@northern.tech/types/MenderTypes';
 import { duplicateFilter, yes } from '@northern.tech/utils/helpers';
 
 import type { DeviceIssueOptionKey } from './constants';
@@ -61,7 +62,7 @@ export const mapTermsToFilters = terms =>
       aliasDefinition => aliasDefinition[1].alias === term.type && aliasDefinition[1].value === term.value
     );
     const operator = aliasedFilter ? aliasedFilter[0] : term.type;
-    return { scope: term.scope, key: term.attribute, operator, value: term.value };
+    return { scope: term.scope as Scope, key: term.attribute, operator, value: term.value };
   });
 
 const convertIssueOptionsToFilters = (issuesSelection, filtersState = {}) =>

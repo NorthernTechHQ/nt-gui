@@ -13,7 +13,7 @@
 //    limitations under the License.
 // @ts-nocheck
 import { mdiAws as AWS, mdiMicrosoftAzure as Azure } from '@mdi/js';
-import { Credentials, Integration } from '@northern.tech/types/MenderTypes';
+import type { Integration } from '@northern.tech/types/MenderTypes';
 
 import type { DEVICE_FILTERING_OPTIONS } from './constants';
 import { ATTRIBUTE_SCOPES } from './constants';
@@ -52,14 +52,14 @@ export interface IdAttribute {
 export const defaultIdAttribute: Readonly<IdAttribute> = Object.freeze({ attribute: 'id', scope: ATTRIBUTE_SCOPES.identity });
 
 export const credentialTypes = {
-  aws: Credentials.type.AWS,
-  http: Credentials.type.HTTP,
-  sas: Credentials.type.SAS,
+  aws: 'aws',
+  http: 'http',
+  sas: 'sas',
   x509: 'x509'
 };
 export const EXTERNAL_PROVIDER = {
   'iot-core': {
-    credentialsType: credentialTypes.aws as Credentials.type.AWS,
+    credentialsType: credentialTypes.aws,
     icon: AWS,
     title: 'AWS IoT Core',
     twinTitle: 'Device Shadow',
@@ -69,7 +69,7 @@ export const EXTERNAL_PROVIDER = {
     configHint: <>For help finding your AWS IoT Core connection string, check the AWS IoT documentation.</>
   },
   'iot-hub': {
-    credentialsType: credentialTypes.sas as Credentials.type.SAS,
+    credentialsType: credentialTypes.sas,
     icon: Azure,
     title: 'Azure IoT Hub',
     twinTitle: 'Device Twin',
@@ -93,7 +93,7 @@ export const EXTERNAL_PROVIDER = {
     )
   },
   webhook: {
-    credentialsType: credentialTypes.http as Credentials.type.HTTP,
+    credentialsType: credentialTypes.http,
     deviceTwin: false,
     twinTitle: '',
     // disable the webhook provider here, since it is treated different than other integrations, with a custom configuration & management view, etc.
@@ -103,12 +103,12 @@ export const EXTERNAL_PROVIDER = {
 } as const;
 
 export interface Webhook extends Integration {
-  provider: Integration.provider.WEBHOOK;
+  provider: 'webhook';
 }
 
 export const emptyWebhook: Webhook = {
   description: '',
-  provider: Integration.provider.WEBHOOK,
+  provider: 'webhook',
   credentials: {
     type: EXTERNAL_PROVIDER.webhook.credentialsType,
     [EXTERNAL_PROVIDER.webhook.credentialsType]: {

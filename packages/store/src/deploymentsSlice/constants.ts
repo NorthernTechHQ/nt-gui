@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { DeploymentStatistics } from '@northern.tech/types/MenderTypes';
+import type { DeploymentStatisticsV2 } from '@northern.tech/types/MenderTypes';
 
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS } from '../constants';
 
@@ -154,7 +154,7 @@ export const deploymentDisplayStates = {
 export const deploymentPrototype = {
   devices: {},
   name: undefined,
-  statistics: { status: {} } as DeploymentStatistics
+  statistics: { status: {} } as DeploymentStatisticsV2
 };
 
 export const pauseMap = {

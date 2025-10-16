@@ -13,7 +13,8 @@
 //    limitations under the License.
 /*eslint import/namespace: ['error', { allowComputed: true }]*/
 import type {
-  DeploymentDeployments as BackendDeployment,
+  DeploymentV1 as BackendDeploymentV1,
+  DeploymentV2 as BackendDeploymentV2,
   DeviceWithImage,
   NewDeployment,
   NewDeploymentForGroup,
@@ -55,14 +56,17 @@ const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
 export const deriveDeploymentGroup = ({ filter, group, groups = [], name }: Deployment) =>
   group || (groups.length === 1 && !isUUID(name)) ? groups[0] : filter?.name;
 
-const transformDeployments = (deployments: BackendDeployment[], deploymentsById: Record<string, Deployment>) =>
+type ReceivedDeployment = BackendDeploymentV1 | BackendDeploymentV2;
+const transformDeployments = (deployments: ReceivedDeployment[], deploymentsById: Record<string, Deployment>) =>
   deployments.sort(customSort(true, 'created')).reduce<{ deploymentIds: string[]; deployments: Record<string, Deployment> }>(
-    (accu, item: BackendDeployment) => {
+    (accu, item) => {
       const filter = item.filter;
       let deployment: Deployment = {
         ...deploymentPrototype,
         ...deploymentsById[item.id],
         ...item,
+        // TODO: explicitly set filter term types to address scope type mismatch in deployment specs
+        // @ts-expect-error: type misalignment in filter terms type
         filter: filter ? { ...filter, name: filter.name ?? filter.id, filters: mapTermsToFilters(filter.terms) } : undefined,
         name: decodeURIComponent(item.name)
       };
@@ -90,7 +94,7 @@ export const getDeploymentsByStatus = createAppAsyncThunk(
     const created_before = endDate ? `&created_before=${endDate}` : '';
     const search = group ? `&search=${group}` : '';
     const typeFilter = type ? `&type=${type}` : '';
-    return GeneralApi.get<BackendDeployment[]>(
+    return GeneralApi.get<BackendDeploymentV1[]>(
       `${deploymentsApiUrl}/deployments?status=${status}&per_page=${perPage}&page=${page}${created_after}${created_before}${search}${typeFilter}&sort=${sort}`
     ).then(res => {
       const { deployments, deploymentIds } = transformDeployments(res.data, getState().deployments.byId);
@@ -346,7 +350,7 @@ export const abortDeployment = createAppAsyncThunk(`${sliceName}/abortDeployment
 
 export const updateDeploymentControlMap = createAppAsyncThunk(
   `${sliceName}/updateDeploymentControlMap`,
-  ({ deploymentId, updateControlMap }: { deploymentId: string; updateControlMap: BackendDeployment['update_control_map'] }, { dispatch }) =>
+  ({ deploymentId, updateControlMap }: { deploymentId: string; updateControlMap: BackendDeploymentV1['update_control_map'] }, { dispatch }) =>
     GeneralApi.patch(`${deploymentsApiUrl}/deployments/${deploymentId}`, { update_control_map: updateControlMap })
       .catch(err => commonErrorHandler(err, 'There was an error while updating the deployment status:', dispatch))
       .then(() => Promise.resolve(dispatch(getSingleDeployment(deploymentId))))

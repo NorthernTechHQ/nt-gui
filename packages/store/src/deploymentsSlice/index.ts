@@ -12,12 +12,13 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import type {
-  DeploymentDeployments as BackendDeployment,
-  Device as BackendDeviceDeployment,
+  DeploymentV1 as BackendDeploymentV1,
+  DeploymentV2 as BackendDeploymentV2,
   Filter as BackendFilter,
   DeviceWithImage,
-  FilterPredicate,
-  Limit
+  FilterPredicateV1,
+  Limit,
+  Scope
 } from '@northern.tech/types/MenderTypes';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -29,22 +30,23 @@ export const sliceName = 'deployments';
 
 type Filter = {
   key: string;
-  operator: FilterPredicate.type;
+  operator: FilterPredicateV1['type'];
   scope: string;
   value: any;
 };
-export type DeviceDeployment = BackendDeviceDeployment & {
+export type DeviceDeployment = DeviceWithImage & {
   deviceId: string;
   release: string;
   route: string;
 };
 
-export type Deployment = BackendDeployment & {
-  devices: Record<string, DeviceWithImage>;
-  filter?: BackendFilter & { filters: Filter[]; name?: string };
-  group?: string;
-  totalDeviceCount: number;
-};
+export type Deployment = BackendDeploymentV1 &
+  BackendDeploymentV2 & {
+    devices: Record<string, DeviceWithImage>;
+    filter?: BackendFilter & { filters: Filter[]; name?: string; scope?: Scope };
+    group?: string;
+    totalDeviceCount: number;
+  };
 
 export type DeploymentStatus = { deploymentIds: string[]; total: number };
 export type DeploymentByStatus = {

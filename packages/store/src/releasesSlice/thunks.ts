@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { ArtifactUpdate, ReleaseUpdate, Tags } from '@northern.tech/types/MenderTypes';
+import type { ArtifactUpdateV1, ReleaseUpdate, ReleaseV1, ReleaseV2, Tags } from '@northern.tech/types/MenderTypes';
 import { customSort, deepCompare, duplicateFilter, extractSoftwareItem } from '@northern.tech/utils/helpers';
 import type { AxiosResponse } from 'axios';
 import { isCancel } from 'axios';
@@ -36,7 +36,8 @@ const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
 
 const sortingDefaults = { direction: SORTING_OPTIONS.desc, key: 'modified' };
 
-const flattenRelease = (release: Release, stateRelease: Release) => {
+type ReceivedRelease = ReleaseV1 & ReleaseV2;
+const flattenRelease = (release: ReceivedRelease, stateRelease: Release): Release => {
   const updatedArtifacts = release.artifacts?.sort(customSort(true, 'modified')) || [];
   const { artifacts, deviceTypes, modified } = updatedArtifacts.reduce<{ artifacts: Artifact[]; deviceTypes: string[]; modified: undefined | string }>(
     (accu, item) => {
@@ -54,17 +55,18 @@ const flattenRelease = (release: Release, stateRelease: Release) => {
   return { ...stateRelease, ...release, artifacts, device_types_compatible: deviceTypes.filter(duplicateFilter), modified };
 };
 
-const reduceReceivedReleases = (releases: Release[], stateReleasesById: Record<string, Release>) =>
-  releases.reduce((accu, release) => {
-    const stateRelease = stateReleasesById[release.name] || {};
-    accu[release.name] = flattenRelease(release, stateRelease);
+const reduceReceivedReleases = (releases: ReceivedRelease[], stateReleasesById: Record<string, Release>) =>
+  releases.reduce<Record<string, Release>>((accu, release) => {
+    const name = (release.name ?? release.Name)!;
+    const stateRelease = stateReleasesById[name] || {};
+    accu[name] = flattenRelease(release, stateRelease);
     return accu;
   }, {});
 
 const findArtifactIndexInRelease = (releases: Record<string, Release>, id: string) =>
   Object.values(releases).reduce<{ index: number; release: Release | null }>(
     (accu, item) => {
-      const index = item.artifacts.findIndex(releaseArtifact => releaseArtifact.id === id);
+      const index = item.artifacts?.findIndex(releaseArtifact => releaseArtifact.id === id) ?? -1;
       if (index > -1) {
         accu = { release: item, index };
       }
@@ -249,7 +251,7 @@ export const cancelFileUpload = createAppAsyncThunk(`${sliceName}/cancelFileUplo
   return Promise.resolve(dispatch(cleanUpUpload(id)));
 });
 
-export const editArtifact = createAppAsyncThunk(`${sliceName}/editArtifact`, ({ id, body }: { body: ArtifactUpdate; id: string }, { dispatch, getState }) =>
+export const editArtifact = createAppAsyncThunk(`${sliceName}/editArtifact`, ({ id, body }: { body: ArtifactUpdateV1; id: string }, { dispatch, getState }) =>
   GeneralApi.put(`${deploymentsApiUrl}/artifacts/${id}`, body)
     .catch(err => commonErrorHandler(err, `Artifact details couldn't be updated.`, dispatch))
     .then(() => {

@@ -13,7 +13,6 @@
 //    limitations under the License.
 import { defaultState } from '@/testUtils';
 import { tenants, webhookEvents } from '@northern.tech/testing/mockData';
-import { Credentials, Integration } from '@northern.tech/types/MenderTypes';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { describe, expect, it, vi } from 'vitest';
@@ -386,9 +385,7 @@ describe('organization actions', () => {
       { type: getIntegrations.fulfilled.type },
       { type: createIntegration.fulfilled.type }
     ];
-    const request = store.dispatch(
-      createIntegration({ id: '1', credentials: { connection_string: 'testString', type: Credentials.type.SAS }, provider: Integration.provider.IOT_HUB })
-    );
+    const request = store.dispatch(createIntegration({ id: '1', credentials: { connection_string: 'testString', type: 'sas' }, provider: 'iot-hub' }));
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
@@ -416,9 +413,7 @@ describe('organization actions', () => {
       { type: getIntegrations.fulfilled.type },
       { type: changeIntegration.fulfilled.type }
     ];
-    const request = store.dispatch(
-      changeIntegration({ provider: Integration.provider.IOT_CORE, credentials: { connection_string: 'testString2', type: Credentials.type.SAS }, id: '1' })
-    );
+    const request = store.dispatch(changeIntegration({ provider: 'iot-core', credentials: { connection_string: 'testString2', type: 'sas' }, id: '1' }));
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
@@ -460,9 +455,7 @@ describe('organization actions', () => {
       { type: actions.receiveExternalDeviceIntegrations.type, payload: [] },
       { type: deleteIntegration.fulfilled.type }
     ];
-    const request = store.dispatch(
-      deleteIntegration({ id: '1', provider: Integration.provider.WEBHOOK, credentials: { type: Credentials.type.HTTP, connection_string: '' } })
-    );
+    const request = store.dispatch(deleteIntegration({ id: '1', provider: 'webhook', credentials: { type: 'http', connection_string: '' } }));
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();

@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { Release } from '@northern.tech/types/MenderTypes';
+import type { ReleaseV2 } from '@northern.tech/types/MenderTypes';
 import { createSelector } from '@reduxjs/toolkit';
 
 import type { RootState } from '../store';
@@ -25,7 +25,7 @@ const getListedReleases = (state: RootState) => state.releases.releasesList.rele
 export const getUpdateTypes = (state: RootState) => state.releases.updateTypes;
 const releaseDefaults = {};
 const getReleaseMappingDefaults = () => releaseDefaults;
-export const getReleasesList = createSelector([getReleasesById, getListedReleases, getReleaseMappingDefaults], listItemMapper<Release>);
+export const getReleasesList = createSelector([getReleasesById, getListedReleases, getReleaseMappingDefaults], listItemMapper<ReleaseV2>);
 
 export const getReleaseTagsById = createSelector([getReleaseTags], releaseTags => releaseTags.reduce((accu, key) => ({ ...accu, [key]: key }), {}));
 export const getHasReleases = createSelector(
