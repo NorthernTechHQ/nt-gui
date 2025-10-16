@@ -1,4 +1,21 @@
 ---
+## @northern.tech/types-0.2.0 - 2025-10-16
+
+
+### Features
+
+#### Types
+
+
+- *(types)* Made package only rely on types generated from official spec file
+
+ ([5ed5919](https://github.com/NorthernTechHQ/nt-gui/commit/5ed5919c9e232609cdec9331e5fb5392f3bfa53a))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/types-0.1.1 - 2025-10-02
 
 
