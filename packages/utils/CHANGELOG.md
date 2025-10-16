@@ -1,4 +1,24 @@
 ---
+## @northern.tech/utils-0.7.0 - 2025-10-16
+
+
+### Features
+
+#### Utils
+
+
+- *(utils)* Let utils rely on newer backend type definitions
+
+ ([2ac5f87](https://github.com/NorthernTechHQ/nt-gui/commit/2ac5f879c0032d3b8c9e5f92aaf5e571da770cb2))  by @mzedel
+
+
+
+
+
+### Security
+
+
+
 ## @northern.tech/utils-0.6.3 - 2025-08-19
 
 
