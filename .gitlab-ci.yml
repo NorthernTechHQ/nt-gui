@@ -30,7 +30,7 @@ stages:
 
 default:
   tags:
-    - hetzner-amd-beefy
+    - k8s
 
 image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/${NODE_IMAGE}
 
