@@ -16,8 +16,7 @@ import type {
   ArtifactV2 as BackendArtifactV2,
   ReleaseV1 as BackendReleaseV1,
   ReleaseV2 as BackendReleaseV2,
-  UpdateV1,
-  UpdateV2
+  Update as BackendUpdate
 } from '@northern.tech/types/MenderTypes';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -25,7 +24,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS } from '../constants';
 import type { SortOptions } from '../constants';
 
-type Update = Omit<UpdateV1 & UpdateV2, 'meta_data'>;
+type Update = Omit<BackendUpdate, 'meta_data'>;
 export type Artifact = Omit<BackendArtifactV1, 'updates'> &
   Omit<BackendArtifactV2, 'updates'> & { installCount?: number; updates?: Array<Update>; url?: string };
 export type Release = BackendReleaseV1 & BackendReleaseV2 & { artifacts: Artifact[]; device_types_compatible: string[]; name: string };

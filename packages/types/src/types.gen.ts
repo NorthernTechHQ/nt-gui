@@ -129,6 +129,40 @@ export type ProvisionDevice = {
 };
 
 /**
+ * The scope of the attribute.
+ *
+ * Scope is a string and acts as namespace for the attribute name.
+ *
+ * * __inventory__: Attributes reported by the device.
+ * * __system__: Attributes populated by the mender-server.
+ * * __identity__: Device's identity attributes provided in the device's auth request.
+ * * __monitor__: Attributes populated by the monitoring add-on.
+ * * __tags__: User-defined attributes associated with the device.
+ *
+ */
+export const Scope = {
+  SYSTEM: 'system',
+  IDENTITY: 'identity',
+  INVENTORY: 'inventory',
+  MONITOR: 'monitor',
+  TAGS: 'tags'
+} as const;
+
+/**
+ * The scope of the attribute.
+ *
+ * Scope is a string and acts as namespace for the attribute name.
+ *
+ * * __inventory__: Attributes reported by the device.
+ * * __system__: Attributes populated by the mender-server.
+ * * __identity__: Device's identity attributes provided in the device's auth request.
+ * * __monitor__: Attributes populated by the monitoring add-on.
+ * * __tags__: User-defined attributes associated with the device.
+ *
+ */
+export type Scope = (typeof Scope)[keyof typeof Scope];
+
+/**
  * The actor may be a user or device.
  * Depending on the type of the actor different information will be available.
  *
@@ -415,18 +449,20 @@ export type UpdateFile = {
 };
 
 /**
+ * meta_data is an object of unknown structure as this is dependent of update type (also custom defined by user)
+ */
+export type MetadataAny = {
+  [key: string]: string;
+};
+
+/**
  * Single updated to be applied.
  *
  */
 export type Update = {
   type_info?: ArtifactTypeInfo;
   files?: Array<UpdateFile>;
-  /**
-   * meta_data is an object of unknown structure as this is dependent of update type (also custom defined by user)
-   */
-  meta_data?: {
-    [key: string]: unknown;
-  };
+  meta_data?: MetadataAny;
 };
 
 export type DeploymentInstructionsArtifactSourceV2 = {
@@ -1118,7 +1154,7 @@ export type DeploymentV1 = {
    *
    */
   autogenerate_delta?: boolean;
-  statistics?: DeploymentStatisticsV1;
+  statistics?: DeploymentStatistics;
   filter?: FilterV1;
 };
 
@@ -1159,92 +1195,6 @@ export type NewDeploymentPhase = {
   start_ts?: string;
 };
 
-export type DeploymentPhase = {
-  /**
-   * Phase identifier.
-   */
-  id?: string;
-  /**
-   * Percentage of devices to update in the phase.
-   *
-   */
-  batch_size?: number;
-  /**
-   * Start date of a phase.
-   * May be undefined for the first phase of a deployment.
-   *
-   */
-  start_ts?: string;
-  /**
-   * Number of devices which already requested an update within this phase.
-   *
-   */
-  device_count?: number;
-};
-
-export type DeploymentStatisticsV1 = {
-  status?: StatisticsV1;
-  /**
-   * Sum of sizes (in bytes) of all artifacts assigned to all device deployments,
-   * which are part of this deployment.
-   * If the same artifact is assigned to multiple device deployments,
-   * its size will be counted multiple times.
-   *
-   */
-  total_size?: number;
-};
-
-export type StatisticsV1 = {
-  /**
-   * Number of successful deployments.
-   */
-  success: number;
-  /**
-   * Number of pending deployments.
-   */
-  pending: number;
-  /**
-   * Number of deployments being downloaded.
-   */
-  downloading: number;
-  /**
-   * Number of deployments devices are rebooting into.
-   */
-  rebooting: number;
-  /**
-   * Number of deployments devices being installed.
-   */
-  installing: number;
-  /**
-   * Number of failed deployments.
-   */
-  failure: number;
-  /**
-   * Do not have appropriate artifact for device type.
-   */
-  noartifact: number;
-  /**
-   * Number of devices unaffected by upgrade, since they are already running the specified software version.
-   */
-  'already-installed': number;
-  /**
-   * Number of deployments aborted by user.
-   */
-  aborted: number;
-  /**
-   * Number of deployments paused before install state.
-   */
-  pause_before_installing: number;
-  /**
-   * Number of deployments paused before reboot phase.
-   */
-  pause_before_rebooting: number;
-  /**
-   * Number of deployments paused before commit phase.
-   */
-  pause_before_committing: number;
-};
-
 export type DeviceDeploymentV1 = {
   id?: string;
   deployment: DeploymentV1;
@@ -1256,16 +1206,6 @@ export type DeviceDeploymentV1 = {
  */
 export type ArtifactUpdateV1 = {
   description?: string;
-};
-
-/**
- * Single updated to be applied.
- *
- */
-export type UpdateV1 = {
-  type_info?: ArtifactTypeInfo;
-  files?: Array<UpdateFile>;
-  meta_data?: Array<MetadataAny>;
 };
 
 /**
@@ -1284,7 +1224,7 @@ export type ArtifactV1 = {
    * Idicates if artifact is signed or not.
    */
   signed?: boolean;
-  updates?: Array<UpdateV1>;
+  updates?: Array<Update>;
   /**
    * List of Artifact provides.
    *
@@ -1390,7 +1330,7 @@ export type DirectUploadMetadata = {
   /**
    * List of updates for this artifact.
    */
-  updates?: Array<UpdateV1>;
+  updates?: Array<Update>;
 };
 
 /**
@@ -1398,38 +1338,6 @@ export type DirectUploadMetadata = {
  */
 export type DeploymentIdentifier = {
   deployment_ids?: Array<string>;
-};
-
-/**
- * Attribute filter predicate
- */
-export type FilterPredicateV1 = {
-  /**
-   * The scope of the attribute.
-   *
-   * Scope is a string and acts as namespace for the attribute name.
-   *
-   */
-  scope: string;
-  /**
-   * Name of the attribute to be queried for filtering.
-   *
-   */
-  attribute: string;
-  /**
-   * Type or operator of the filter predicate.
-   */
-  type: '$eq' | '$gt' | '$gte' | '$in' | '$lt' | '$lte' | '$ne' | '$nin' | '$exists';
-  /**
-   * The value of the attribute to be used in filtering.
-   *
-   * Attribute type is implicit, inferred from the JSON type.
-   *
-   * Supported types: number, string, array of numbers, array of strings.
-   * Mixed arrays are not allowed.
-   *
-   */
-  value: string;
 };
 
 /**
@@ -1447,7 +1355,7 @@ export type FilterV1 = {
    *
    */
   name?: string;
-  terms: Array<FilterPredicateV1>;
+  terms: Array<AttributeFilterPredicate>;
 };
 
 export type DeploymentStatusStatisticsList200ResponseInner = {
@@ -1455,7 +1363,7 @@ export type DeploymentStatusStatisticsList200ResponseInner = {
    * The deployment ID
    */
   id?: string;
-  stats?: StatisticsV1;
+  stats?: Statistics;
 };
 
 /**
@@ -1523,11 +1431,114 @@ export type GenerateArtifactRequest = {
   file: Blob | File;
 };
 
+export type DeploymentPhase = {
+  /**
+   * Phase identifier.
+   */
+  id?: string;
+  /**
+   * Percentage of devices to update in the phase.
+   *
+   */
+  batch_size?: number;
+  /**
+   * Start date of a phase.
+   * May be undefined for the first phase of a deployment.
+   *
+   */
+  start_ts?: string;
+  /**
+   * Number of devices which already requested an update within this phase.
+   *
+   */
+  device_count?: number;
+};
+
+export type Statistics = {
+  /**
+   * Number of successful deployments.
+   */
+  success: number;
+  /**
+   * Number of pending deployments.
+   */
+  pending: number;
+  /**
+   * Number of deployments being downloaded.
+   */
+  downloading: number;
+  /**
+   * Number of deployments devices are rebooting into.
+   */
+  rebooting: number;
+  /**
+   * Number of deployments devices being installed.
+   */
+  installing: number;
+  /**
+   * Number of failed deployments.
+   */
+  failure: number;
+  /**
+   * Do not have appropriate artifact for device type.
+   */
+  noartifact: number;
+  /**
+   * Number of devices unaffected by upgrade, since they are already running the specified software version.
+   */
+  'already-installed': number;
+  /**
+   * Number of deployments aborted by user.
+   */
+  aborted: number;
+  /**
+   * Number of deployments paused before install state.
+   */
+  pause_before_installing: number;
+  /**
+   * Number of deployments paused before reboot phase.
+   */
+  pause_before_rebooting: number;
+  /**
+   * Number of deployments paused before commit phase.
+   */
+  pause_before_committing: number;
+};
+
+export type DeploymentStatistics = {
+  status?: Statistics;
+  /**
+   * Sum of sizes (in bytes) of all artifacts assigned to all device deployments,
+   * which are part of this deployment.
+   * If the same artifact is assigned to multiple device deployments,
+   * its size will be counted multiple times.
+   *
+   */
+  total_size?: number;
+};
+
 /**
- * meta_data is an object of unknown structure as this is dependent of update type (also custom defined by user)
+ * Attribute filter predicate
  */
-export type MetadataAny = {
-  [key: string]: string;
+export type AttributeFilterPredicate = {
+  scope: Scope;
+  /**
+   * Name of the attribute to be queried for filtering.
+   *
+   */
+  attribute: string;
+  /**
+   * Type or operator of the filter predicate.
+   */
+  type: '$eq' | '$gt' | '$gte' | '$in' | '$lt' | '$lte' | '$ne' | '$nin' | '$exists';
+  /**
+   * The value of the attribute to be used in filtering.
+   * Attribute type is implicit, inferred from the JSON type.
+   * Supported types: number, string, array of numbers, array of strings.
+   * Mixed arrays are not allowed.
+   *
+   */
+  value: string;
 };
 
 /**
@@ -1546,7 +1557,7 @@ export type ArtifactV2 = {
    * Idicates if artifact is signed or not.
    */
   signed?: boolean;
-  updates?: Array<UpdateV2>;
+  updates?: Array<Update>;
   /**
    * List of Artifact provides.
    *
@@ -1635,58 +1646,9 @@ export type ReleaseUpdate = {
 export type Tags = Array<string>;
 
 /**
- * Single updated to be applied.
- *
- */
-export type UpdateV2 = {
-  type_info?: ArtifactTypeInfo;
-  files?: Array<UpdateFile>;
-  /**
-   * meta_data is an array of objects of unknown structure as this
-   * is dependent of update type (also custom defined by user)
-   *
-   */
-  meta_data?: Array<{
-    [key: string]: unknown;
-  }>;
-};
-
-/**
  * Update types as present in the images.
  */
 export type UpdateTypes = Array<string>;
-
-/**
- * Attribute filter predicate
- */
-export type FilterPredicateV2 = {
-  /**
-   * The scope of the attribute.
-   *
-   * Scope is a string and acts as namespace for the attribute name.
-   *
-   */
-  scope: string;
-  /**
-   * Name of the attribute to be queried for filtering.
-   *
-   */
-  attribute: string;
-  /**
-   * Type or operator of the filter predicate.
-   */
-  type: '$eq' | '$gt' | '$gte' | '$in' | '$lt' | '$lte' | '$ne' | '$nin' | '$exists';
-  /**
-   * The value of the attribute to be used in filtering.
-   *
-   * Attribute type is implicit, inferred from the JSON type.
-   *
-   * Supported types: number, string, array of numbers, array of strings.
-   * Mixed arrays are not allowed.
-   *
-   */
-  value: string;
-};
 
 /**
  * Inventory filter assigned to the deployment
@@ -1702,70 +1664,7 @@ export type FilterV2 = {
    *
    */
   name: string;
-  terms?: Array<FilterPredicateV2>;
-};
-
-export type StatisticsV2 = {
-  /**
-   * Number of successful deployments.
-   */
-  success: number;
-  /**
-   * Number of pending deployments.
-   */
-  pending: number;
-  /**
-   * Number of deployments being downloaded.
-   */
-  downloading: number;
-  /**
-   * Number of deployments devices are rebooting into.
-   */
-  rebooting: number;
-  /**
-   * Number of deployments devices being installed.
-   */
-  installing: number;
-  /**
-   * Number of failed deployments.
-   */
-  failure: number;
-  /**
-   * Do not have appropriate artifact for device type.
-   */
-  noartifact: number;
-  /**
-   * Number of devices unaffected by upgrade, since they are already running the specified software version.
-   */
-  'already-installed': number;
-  /**
-   * Number of deployments aborted by user.
-   */
-  aborted: number;
-  /**
-   * Number of deployments paused before install state.
-   */
-  pause_before_installing: number;
-  /**
-   * Number of deployments paused before reboot phase.
-   */
-  pause_before_rebooting: number;
-  /**
-   * Number of deployments paused before commit phase.
-   */
-  pause_before_committing: number;
-};
-
-export type DeploymentStatisticsV2 = {
-  status?: StatisticsV2;
-  /**
-   * Sum of sizes (in bytes) of all artifacts assigned to all device deployments,
-   * which are part of this deployment.
-   * If the same artifact is assigned to multiple device deployments,
-   * its size will be counted multiple times.
-   *
-   */
-  total_size?: number;
+  terms?: Array<AttributeFilterPredicate>;
 };
 
 export type DeploymentV2 = {
@@ -1851,7 +1750,7 @@ export type DeploymentV2 = {
    *
    */
   autogenerate_delta?: boolean;
-  statistics?: DeploymentStatisticsV2;
+  statistics?: DeploymentStatistics;
 };
 
 export type NewDeploymentV2 = {
@@ -2455,48 +2354,14 @@ export type SelectAttribute = {
 };
 
 /**
- * The scope of the attribute.
- *
- * Scope is a string and acts as namespace for the attribute name.
- *
- * * __inventory__: Attributes reported by the device.
- * * __system__: Attributes populated by the mender-server.
- * * __identity__: Device's identity attributes provided in the device's auth request.
- * * __monitor__: Attributes populated by the monitoring add-on.
- * * __tags__: User-defined attributes associated with the device.
- *
- */
-export const Scope = {
-  SYSTEM: 'system',
-  IDENTITY: 'identity',
-  INVENTORY: 'inventory',
-  MONITOR: 'monitor',
-  TAGS: 'tags'
-} as const;
-
-/**
- * The scope of the attribute.
- *
- * Scope is a string and acts as namespace for the attribute name.
- *
- * * __inventory__: Attributes reported by the device.
- * * __system__: Attributes populated by the mender-server.
- * * __identity__: Device's identity attributes provided in the device's auth request.
- * * __monitor__: Attributes populated by the monitoring add-on.
- * * __tags__: User-defined attributes associated with the device.
- *
- */
-export type Scope = (typeof Scope)[keyof typeof Scope];
-
-/**
  * Attribute filter predicate
  */
 export type FilterPredicate = {
+  scope: Scope;
   /**
    * Attribute name.
    */
   attribute: string;
-  scope: Scope;
   /**
    * Type or operator of the filter predicate.
    *
@@ -5971,7 +5836,7 @@ export type DeploymentStatusStatisticsResponses = {
   /**
    * OK
    */
-  200: StatisticsV1;
+  200: Statistics;
 };
 
 export type DeploymentStatusStatisticsResponse = DeploymentStatusStatisticsResponses[keyof DeploymentStatusStatisticsResponses];
