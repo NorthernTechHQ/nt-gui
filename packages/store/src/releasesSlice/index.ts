@@ -16,7 +16,9 @@ import type {
   ArtifactV2 as BackendArtifactV2,
   ReleaseV1 as BackendReleaseV1,
   ReleaseV2 as BackendReleaseV2,
-  Update as BackendUpdate
+  Update as BackendUpdate,
+  DeltaJobDetailsItem,
+  DeltaJobsListItem
 } from '@northern.tech/types/MenderTypes';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -31,8 +33,7 @@ export type Release = BackendReleaseV1 & BackendReleaseV2 & { artifacts: Artifac
 
 export const sliceName = 'releases';
 
-// TODO: restore this once delta job related types are restored in specs
-// type EnhancedJobDetailsItem = DeltaJobDetailsItem & DeltaJobsListItem;
+type EnhancedJobDetailsItem = DeltaJobDetailsItem & DeltaJobsListItem;
 
 export type ReleasesList = {
   isLoading?: boolean;
@@ -54,7 +55,7 @@ export type ReleasesList = {
 export type ReleaseSliceType = {
   artifacts: never[];
   byId: Record<string, Release>;
-  deltaJobs: Record<string, any>;
+  deltaJobs: Record<string, EnhancedJobDetailsItem>;
   deltaJobsList: {
     jobIds: string[];
     page: number;
