@@ -16,7 +16,7 @@ import type {
   DeploymentV2 as BackendDeploymentV2,
   Filter as BackendFilter,
   DeviceWithImage,
-  FilterPredicateV1,
+  FilterPredicate,
   Limit,
   Scope
 } from '@northern.tech/types/MenderTypes';
@@ -30,7 +30,7 @@ export const sliceName = 'deployments';
 
 type Filter = {
   key: string;
-  operator: FilterPredicateV1['type'];
+  operator: FilterPredicate['type'];
   scope: string;
   value: any;
 };
