@@ -1807,6 +1807,93 @@ export type ReleasesDeleteError = {
   request_id?: string;
 };
 
+export type DeltaJobsListItem = {
+  /**
+   * Identifier of the job
+   *
+   */
+  id?: string;
+  /**
+   * Workflows id that corresponds to the job executed by the generator, it is an internal id important
+   * to include in case of support requests
+   *
+   */
+  delta_job_id?: string;
+  /**
+   * Release or artifact name of the second argument that we used to generate the delta
+   *
+   */
+  to_version?: string;
+  /**
+   * Release or artifact name of the first argument that we used to generate the delta
+   *
+   */
+  from_version?: string;
+  /**
+   * Array of the devices types names compatible with this artifact
+   *
+   */
+  devices_types_compatible?: Array<string>;
+  /**
+   * Date we started the generation
+   *
+   */
+  started?: string;
+  /**
+   * Gneration status
+   *
+   */
+  status?: 'pending' | 'queued' | 'success' | 'failed' | 'artifact_uploaded';
+};
+
+export type DeltaJobDetailsItem = {
+  /**
+   * Identifier of a deployment
+   *
+   */
+  deployment_id?: string;
+  /**
+   * Array of the devices types names compatible with this artifact
+   *
+   */
+  devices_types_compatible?: Array<string>;
+  /**
+   * Target release name
+   *
+   */
+  to_release?: string;
+  /**
+   * Source release name
+   *
+   */
+  from_release?: string;
+  /**
+   * Gneration status
+   *
+   */
+  status?: 'pending' | 'queued' | 'success' | 'failed' | 'artifact_uploaded';
+  /**
+   * Details of the delta generation job
+   *
+   */
+  log?: string;
+  /**
+   * Exit code of the delta generation job
+   *
+   */
+  exit_code?: number;
+  /**
+   * Size of the target artifact
+   *
+   */
+  to_artifact_size?: number;
+  /**
+   * Size of the resulting delta artifact
+   *
+   */
+  delta_artifact_size?: number;
+};
+
 export type AuthRequest = {
   /**
    * Vendor-specific JSON representation of the device identity data (MACs, serial numbers, etc.).
@@ -7283,6 +7370,95 @@ export type DeploymentsV2ListArtifactsWithPaginationResponses = {
 
 export type DeploymentsV2ListArtifactsWithPaginationResponse =
   DeploymentsV2ListArtifactsWithPaginationResponses[keyof DeploymentsV2ListArtifactsWithPaginationResponses];
+
+export type ListServerSideBinaryDeltaGenerationJobsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Starting page.
+     */
+    page?: number;
+    /**
+     * Maximum number of results per page.
+     */
+    per_page?: number;
+    /**
+     * Sort the job list by the specified field and direction.
+     *
+     */
+    sort?: 'status:asc' | 'status:desc' | 'started:asc' | 'started:desc' | 'to_version:asc' | 'to_version:desc' | 'from_version:asc' | 'from_version:desc';
+  };
+  url: '/api/management/v2/deployments/releases/delta/jobs';
+};
+
+export type ListServerSideBinaryDeltaGenerationJobsErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: _Error;
+  /**
+   * Unauthorized.
+   */
+  401: _Error;
+  /**
+   * Internal Server Error.
+   */
+  500: _Error;
+};
+
+export type ListServerSideBinaryDeltaGenerationJobsError = ListServerSideBinaryDeltaGenerationJobsErrors[keyof ListServerSideBinaryDeltaGenerationJobsErrors];
+
+export type ListServerSideBinaryDeltaGenerationJobsResponses = {
+  /**
+   * Succesful query
+   */
+  200: Array<DeltaJobsListItem>;
+};
+
+export type ListServerSideBinaryDeltaGenerationJobsResponse =
+  ListServerSideBinaryDeltaGenerationJobsResponses[keyof ListServerSideBinaryDeltaGenerationJobsResponses];
+
+export type GetServerSideBinaryDeltaGenerationJobDetailsData = {
+  body?: never;
+  path: {
+    /**
+     * Delta generation job id
+     *
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/api/management/v2/deployments/releases/delta/jobs/{id}';
+};
+
+export type GetServerSideBinaryDeltaGenerationJobDetailsErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: _Error;
+  /**
+   * Unauthorized.
+   */
+  401: _Error;
+  /**
+   * Internal Server Error.
+   */
+  500: _Error;
+};
+
+export type GetServerSideBinaryDeltaGenerationJobDetailsError =
+  GetServerSideBinaryDeltaGenerationJobDetailsErrors[keyof GetServerSideBinaryDeltaGenerationJobDetailsErrors];
+
+export type GetServerSideBinaryDeltaGenerationJobDetailsResponses = {
+  /**
+   * Successful response.
+   */
+  200: DeltaJobDetailsItem;
+};
+
+export type GetServerSideBinaryDeltaGenerationJobDetailsResponse =
+  GetServerSideBinaryDeltaGenerationJobDetailsResponses[keyof GetServerSideBinaryDeltaGenerationJobDetailsResponses];
 
 export type DeviceAuthAuthenticateDeviceData = {
   body: AuthRequest;
