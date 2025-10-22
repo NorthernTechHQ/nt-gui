@@ -7320,6 +7320,8 @@ export type DeploymentsV2ListArtifactsWithPaginationData = {
      * Artifact(s) name(s) filter.
      * Multiple names can be provided (e.g., `?name=foo&name=bar`).
      * Supports exact matching or prefix matching by adding `*` to the end (e.g., `foo*`).
+     * Note: when using prefix matching you may pass only a single value and you cannot combine
+     * prefix matching and exact matching in the same request.
      *
      */
     name?: Array<string>;
