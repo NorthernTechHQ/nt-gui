@@ -1886,7 +1886,7 @@ export type DeltaJobDetailsItem = {
    * Size of the target artifact
    *
    */
-  to_artifact_size?: number;
+  target_size?: number;
   /**
    * Size of the resulting delta artifact
    *
@@ -2015,6 +2015,30 @@ export type Count = {
    * The count of requested items.
    */
   count?: number;
+};
+
+/**
+ * Device limit per tier
+ */
+export type DeviceTierLimits = {
+  /**
+   * The number of standard tier devices that can be accepted by the tenant.
+   * A value of 0 or -1 means that an unlimited amount of standard tier devices can be accepted.
+   *
+   */
+  standard: number;
+  /**
+   * The number of micro tier devices that can be accepted by the tenant.
+   * A value of -1 means that an unlimited amount of micro tier devices can be accepted.
+   *
+   */
+  micro: number;
+  /**
+   * The number of system tier devices that can be accepted by the tenant.
+   * A value of -1 means that an unlimited amount of system tier devices can be accepted.
+   *
+   */
+  system: number;
 };
 
 export type PreAuthSet = {
@@ -7646,14 +7670,19 @@ export type DeviceAuthInternalRevokeDeviceTokensResponse = DeviceAuthInternalRev
 
 export type GetDeviceLimitsData = {
   body?: never;
-  path?: never;
+  path: {
+    /**
+     * Limit identifier.
+     */
+    name: 'max_devices' | 'max_micro_devices' | 'max_system_devices';
+  };
   query: {
     /**
      * Tenant ID.
      */
     tenant_id: Array<string>;
   };
-  url: '/api/internal/v1/devauth/tenant/limits/max_devices';
+  url: '/api/internal/v1/devauth/tenant/limits/{name}';
 };
 
 export type GetDeviceLimitsErrors = {
@@ -7685,9 +7714,13 @@ export type DeviceAuthInternalClearDeviceLimitData = {
      * Tenant ID.
      */
     tenant_id: string;
+    /**
+     * Limit identifier.
+     */
+    name: 'max_devices' | 'max_micro_devices' | 'max_system_devices';
   };
   query?: never;
-  url: '/api/internal/v1/devauth/tenant/{tenant_id}/limits/max_devices';
+  url: '/api/internal/v1/devauth/tenant/{tenant_id}/limits/{name}';
 };
 
 export type DeviceAuthInternalClearDeviceLimitErrors = {
@@ -7715,9 +7748,13 @@ export type DeviceAuthInternalGetDeviceLimitData = {
      * Tenant ID.
      */
     tenant_id: string;
+    /**
+     * Limit identifier.
+     */
+    name: 'max_devices' | 'max_micro_devices' | 'max_system_devices';
   };
   query?: never;
-  url: '/api/internal/v1/devauth/tenant/{tenant_id}/limits/max_devices';
+  url: '/api/internal/v1/devauth/tenant/{tenant_id}/limits/{name}';
 };
 
 export type DeviceAuthInternalGetDeviceLimitErrors = {
@@ -7749,9 +7786,13 @@ export type DeviceAuthInternalUpdateDeviceLimitData = {
      * Tenant ID.
      */
     tenant_id: string;
+    /**
+     * Limit identifier.
+     */
+    name: 'max_devices' | 'max_micro_devices' | 'max_system_devices';
   };
   query?: never;
-  url: '/api/internal/v1/devauth/tenant/{tenant_id}/limits/max_devices';
+  url: '/api/internal/v1/devauth/tenant/{tenant_id}/limits/{name}';
 };
 
 export type DeviceAuthInternalUpdateDeviceLimitErrors = {
@@ -8524,9 +8565,14 @@ export type DeviceAuthManagementGetDeviceLimitData = {
      */
     'X-MEN-RequestID'?: string;
   };
-  path?: never;
+  path: {
+    /**
+     * Limit identifier.
+     */
+    name: 'max_devices' | 'max_micro_devices' | 'max_system_devices';
+  };
   query?: never;
-  url: '/api/management/v2/devauth/limits/max_devices';
+  url: '/api/management/v2/devauth/limits/{name}';
 };
 
 export type DeviceAuthManagementGetDeviceLimitErrors = {
@@ -8546,6 +8592,37 @@ export type DeviceAuthManagementGetDeviceLimitResponses = {
 };
 
 export type DeviceAuthManagementGetDeviceLimitResponse = DeviceAuthManagementGetDeviceLimitResponses[keyof DeviceAuthManagementGetDeviceLimitResponses];
+
+export type GetDeviceLimitsPerTierData = {
+  body?: never;
+  headers?: {
+    /**
+     * A request identification
+     */
+    'X-MEN-RequestID'?: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/api/management/v2/devauth/limits/devices';
+};
+
+export type GetDeviceLimitsPerTierErrors = {
+  /**
+   * Internal Server Error.
+   */
+  500: _Error;
+};
+
+export type GetDeviceLimitsPerTierError = GetDeviceLimitsPerTierErrors[keyof GetDeviceLimitsPerTierErrors];
+
+export type GetDeviceLimitsPerTierResponses = {
+  /**
+   * Usage statistics and limits.
+   */
+  200: DeviceTierLimits;
+};
+
+export type GetDeviceLimitsPerTierResponse = GetDeviceLimitsPerTierResponses[keyof GetDeviceLimitsPerTierResponses];
 
 export type GetDeviceLicenseData = {
   body?: never;

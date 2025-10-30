@@ -196,7 +196,7 @@ export const releaseSlice = createSlice({
       state.deltaJobsList.total = total;
     },
     receivedDeltaJobDetails: (state, action) => {
-      const job = action.payload;
+      const job: DeltaJobDetailsItem & { id: string } = action.payload;
       state.deltaJobs[job.id] = {
         ...state.deltaJobs[job.id],
         ...job
