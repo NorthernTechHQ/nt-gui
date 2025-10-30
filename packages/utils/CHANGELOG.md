@@ -1,4 +1,21 @@
 ---
+## @northern.tech/utils-0.7.1 - 2025-10-30
+
+
+### Bug fixes
+
+#### Utils
+
+
+- *(utils)* Ensured all filtering options have a readable title
+
+ ([9c2cd9c](https://github.com/NorthernTechHQ/nt-gui/commit/9c2cd9c73fcfbbf6f35f2e5c731f01753737386f))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/utils-0.7.0 - 2025-10-16
 
 
