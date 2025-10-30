@@ -1,5 +1,5 @@
 ---
-## @northern.tech/store-0.6.0 - 2025-10-16
+## @northern.tech/store-0.6.0 - 2025-10-30
 
 
 ### Bug fixes
@@ -14,6 +14,18 @@
 - *(store)* Rectified user setting selector confusion w/ global settings to align w/ Mender
 
  ([bca8f1a](https://github.com/NorthernTechHQ/nt-gui/commit/bca8f1aca73218c0ff3820027b306eb42a1172f8))  by @mzedel
+
+- *(store)* Aligned type usage w/ updated backend specs
+
+ ([3af8a38](https://github.com/NorthernTechHQ/nt-gui/commit/3af8a3869041defac33d6651729537fd438cc109))  by @mzedel
+
+- *(store)* Adopted reintroduced delta job related types
+
+ ([8722498](https://github.com/NorthernTechHQ/nt-gui/commit/8722498acca64d4771980cd78f308e2d04a2d627))  by @mzedel
+
+- *(store)* Fixed an issue that prevented getting detailed delta gen information
+
+ ([093f711](https://github.com/NorthernTechHQ/nt-gui/commit/093f7119cf2d4322adfc2d352f7a90876ef78241))  by @mzedel
 
 
 
