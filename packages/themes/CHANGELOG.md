@@ -1,5 +1,5 @@
 ---
-## @northern.tech/themes-0.6.2 - 2025-10-16
+## @northern.tech/themes-0.6.2 - 2025-10-30
 
 
 ### Bug fixes
