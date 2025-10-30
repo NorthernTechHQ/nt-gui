@@ -482,6 +482,6 @@ export const getDeltaGenerationJobs = createAppAsyncThunk(`${sliceName}/getDelta
 
 export const getDeltaGenerationJobDetails = createAppAsyncThunk(`${sliceName}/getDeltaGenerationJobDetails`, (jobId, { dispatch }) =>
   GeneralApi.get(`${deploymentsApiUrlV2}/deployments/releases/delta/jobs/${jobId}`)
-    .then(({ data }) => dispatch(actions.receivedDeltaJobDetails(data)))
+    .then(({ data }) => dispatch(actions.receivedDeltaJobDetails({ ...data, id: jobId })))
     .catch(err => commonErrorHandler(err, 'There was an error retrieving delta generation job details:', dispatch))
 );
