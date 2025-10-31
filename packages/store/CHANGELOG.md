@@ -1,5 +1,5 @@
 ---
-## @northern.tech/store-0.6.0 - 2025-10-30
+## @northern.tech/store-0.6.0 - 2025-10-31
 
 
 ### Bug fixes
@@ -26,6 +26,10 @@
 - *(store)* Fixed an issue that prevented getting detailed delta gen information
 
  ([093f711](https://github.com/NorthernTechHQ/nt-gui/commit/093f7119cf2d4322adfc2d352f7a90876ef78241))  by @mzedel
+
+- *(store)* Fixed an issue that prevented updating sso settings for existing configs
+
+ ([5d2b9e3](https://github.com/NorthernTechHQ/nt-gui/commit/5d2b9e33c0744a8e88cdefa4d05f985f6c7783e5))  by @mzedel
 
 
 
