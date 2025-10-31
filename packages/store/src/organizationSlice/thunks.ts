@@ -516,7 +516,7 @@ export const storeSsoConfig = createAppAsyncThunk(
 export const changeSsoConfig = createAppAsyncThunk(
   `${sliceName}/changeSsoConfig`,
   ({ config, contentType }: { config: SSOConfig; contentType: ContentType }, { dispatch }) =>
-    Api.put(`${ssoIdpApiUrlv1}/${config.id}`, config, { headers: { 'Content-Type': contentType, Accept: 'application/json' } })
+    Api.put(`${ssoIdpApiUrlv1}/${config.id}`, config.config, { headers: { 'Content-Type': contentType, Accept: 'application/json' } })
       .catch(err => dispatch(ssoConfigActionErrorHandler(err, 'edit')))
       .then(() => Promise.all([dispatch(ssoConfigActionSuccessHandler('edit')), dispatch(getSsoConfigs())]))
 );
