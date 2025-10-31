@@ -1876,7 +1876,7 @@ export type DeltaJobDetailsItem = {
    * Details of the delta generation job
    *
    */
-  log?: string;
+  details?: string;
   /**
    * Exit code of the delta generation job
    *
@@ -3019,6 +3019,10 @@ export type Tenant = {
    * Creation date and time, in ISO8601 format.
    */
   created_at?: string;
+  /**
+   * Last update date and time, in ISO8601 format.
+   */
+  updated_at?: string;
   /**
    * Count of accepted devices for the tenant.
    */
