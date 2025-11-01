@@ -449,11 +449,23 @@ export type UpdateFile = {
 };
 
 /**
- * meta_data is an object of unknown structure as this is dependent of update type (also custom defined by user)
+ * metadata is an object of unknown structure as this is dependent of update type (also custom defined by user)
  */
 export type MetadataAny = {
   [key: string]: string;
 };
+
+/**
+ * Deprecated: Please use `metadata` instead.
+ * A list of objects of unknown structure as this is dependent
+ * of update type (also custom defined by user)
+ *
+ *
+ * @deprecated
+ */
+export type MetadataAnyDeprecated = Array<{
+  [key: string]: unknown;
+}>;
 
 /**
  * Single updated to be applied.
@@ -462,7 +474,8 @@ export type MetadataAny = {
 export type Update = {
   type_info?: ArtifactTypeInfo;
   files?: Array<UpdateFile>;
-  meta_data?: MetadataAny;
+  metadata?: MetadataAny;
+  meta_data?: MetadataAnyDeprecated;
 };
 
 export type DeploymentInstructionsArtifactSourceV2 = {
