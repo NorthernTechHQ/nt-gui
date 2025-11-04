@@ -1,4 +1,24 @@
 ---
+## @northern.tech/eslint-config-0.6.2 - 2025-11-04
+
+
+### Bug fixes
+
+#### Eslint-config
+
+
+- *(eslint-config)* Specified config dependency to eslint v9 compatible one
+
+ ([5c59d16](https://github.com/NorthernTechHQ/nt-gui/commit/5c59d160fc4b0b7b5f754cfb22a2768e0391653f))  by @mzedel
+
+
+
+
+
+### Security
+
+
+
 ## @northern.tech/eslint-config-0.6.1 - 2025-08-22
 
 
