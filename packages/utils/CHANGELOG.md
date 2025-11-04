@@ -1,4 +1,24 @@
 ---
+## @northern.tech/utils-0.7.2 - 2025-11-04
+
+
+### Bug fixes
+
+#### Utils
+
+
+- *(utils)* Increased compatibility w/ vitest hooks as they require named functions
+
+ ([918defd](https://github.com/NorthernTechHQ/nt-gui/commit/918defdcc00dd9276b318f7d141b4cc7b1613d52))  by @mzedel
+
+
+
+
+
+### Security
+
+
+
 ## @northern.tech/utils-0.7.1 - 2025-10-30
 
 
