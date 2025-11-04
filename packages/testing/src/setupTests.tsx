@@ -40,9 +40,6 @@ const oldWindowSessionStorage = window.sessionStorage;
 
 vi.mock('uuid', () => ({ v4: () => 'mock-uuid' }));
 
-vi.useFakeTimers({ now: mockDate });
-vi.setSystemTime(mockDate);
-
 const storage = {};
 global.HTMLCanvasElement.prototype.getContext = vi.fn();
 
@@ -80,13 +77,17 @@ export const beforeAll = async () => {
   };
   window.mender_environment = menderEnvironment;
   window.ENV = 'test';
-  global.AbortController = vi.fn().mockImplementation(() => mockAbortController);
+  global.AbortController = vi.fn().mockImplementation(function () {
+    return mockAbortController;
+  });
   global.MessageChannel = MessageChannel;
-  global.ResizeObserver = vi.fn().mockImplementation(() => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn()
-  }));
+  global.ResizeObserver = vi.fn().mockImplementation(function () {
+    return {
+      observe: vi.fn(),
+      unobserve: vi.fn(),
+      disconnect: vi.fn()
+    };
+  });
   window.RTCPeerConnection = () => ({
     createOffer: () => {},
     setLocalDescription: () => {},
@@ -94,10 +95,12 @@ export const beforeAll = async () => {
   });
 
   Object.defineProperty(navigator, 'appVersion', { value: 'Test', writable: true });
-  const intersectionObserverMock = () => ({
-    observe: vi.fn(),
-    disconnect: vi.fn()
-  });
+  const intersectionObserverMock = function () {
+    return {
+      observe: vi.fn(),
+      disconnect: vi.fn()
+    };
+  };
   window.prompt = vi.fn();
   window.IntersectionObserver = vi.fn().mockImplementation(intersectionObserverMock);
   vi.spyOn(React, 'useEffect').mockImplementation(React.useLayoutEffect);
@@ -106,13 +109,25 @@ export const beforeAll = async () => {
   const _jest = globalThis.jest;
 
   globalThis.jest = {
-    ...globalThis.jest,
-    advanceTimersByTime: vi.advanceTimersByTime.bind(vi)
+    ...globalThis.jest
   };
+
+  vi.stubGlobal('jest', {
+    advanceTimersByTime: vi.advanceTimersByTime.bind(vi)
+  });
   return () => void (globalThis.jest = _jest);
 };
 
-export const afterEach = async () => cleanup();
+export const beforeEach = () => {
+  vi.useFakeTimers({ now: mockDate });
+  vi.setSystemTime(mockDate);
+};
+
+export const afterEach = async () => {
+  cleanup();
+  vi.runOnlyPendingTimers();
+  vi.useRealTimers();
+};
 
 export const afterAll = async () => {
   // restore `window.location` etc. to the original `jsdom` `Location` object
@@ -120,6 +135,7 @@ export const afterAll = async () => {
   window.location = oldWindowLocation;
   window.sessionStorage = oldWindowSessionStorage;
   React.useEffect.mockRestore();
+  vi.unstubAllGlobals();
 };
 
 const theme = createTheme(light);

@@ -12,13 +12,6 @@
     },
     "retry": 0,
     "environment": "jsdom",
-    "globals": true,
-    "fakeTimers": {
-      "toFake": [
-        "setTimeout",
-        "clearTimeout",
-        "Date"
-      ]
-    }
+    "globals": true
   }
 }

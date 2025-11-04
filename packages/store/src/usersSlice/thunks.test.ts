@@ -83,7 +83,11 @@ vi.mock('universal-cookie', () => {
     set: vi.fn(),
     remove: vi.fn()
   };
-  return { default: vi.fn(() => mockCookie) };
+  return {
+    default: vi.fn(function () {
+      return mockCookie;
+    })
+  };
 });
 const cookies = new Cookies();
 const tooltipIds = ['foo', 'bar'];

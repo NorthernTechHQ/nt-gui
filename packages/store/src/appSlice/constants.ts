@@ -13,6 +13,8 @@
 //    limitations under the License.
 import { BarChart as BarChartIcon, PieChartOutline as PieChartIcon } from '@mui/icons-material';
 
+import { yes as yesUtil } from '@northern.tech/utils';
+
 const startingDeviceCount = {
   os: 'for first 50 devices',
   professional: 'for first 250 devices'
@@ -183,7 +185,7 @@ export const BENEFITS = {
   default: { id: 'default', benefit: 'gain access to this feature', requiredPlan: PLANS.enterprise.id }
 } as const;
 
-export const yes = () => true;
+export const yes = yesUtil;
 export const canAccess = yes;
 
 export const DARK_MODE = 'dark';

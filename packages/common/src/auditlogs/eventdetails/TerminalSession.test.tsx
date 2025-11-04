@@ -25,7 +25,7 @@ describe('TerminalSession Component', () => {
 
   beforeEach(() => {
     socketSpyFactory = vi.spyOn(window, 'WebSocket');
-    socketSpyFactory.mockImplementation(() => {
+    socketSpyFactory.mockImplementation(function () {
       socketSpy = {
         close: () => {},
         send: () => {}
@@ -34,16 +34,18 @@ describe('TerminalSession Component', () => {
     });
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
-      value: vi.fn().mockImplementation(query => ({
-        matches: false,
-        media: query,
-        onchange: null,
-        addListener: vi.fn(), // Deprecated
-        removeListener: vi.fn(), // Deprecated
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        dispatchEvent: vi.fn()
-      }))
+      value: vi.fn().mockImplementation(function (query) {
+        return {
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: vi.fn(), // Deprecated
+          removeListener: vi.fn(), // Deprecated
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+          dispatchEvent: vi.fn()
+        };
+      })
     });
   });
 

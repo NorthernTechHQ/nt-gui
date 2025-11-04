@@ -29,7 +29,7 @@ describe('CopyCode Component', () => {
   });
 
   it('works as intended', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
     const submitCheck = vi.fn();
     document.execCommand = vi.fn(yes);
     const ui = <CopyCode code="sudo it all!" onCopy={submitCheck} withDescription={true} />;

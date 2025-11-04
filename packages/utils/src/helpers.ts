@@ -35,7 +35,10 @@ export const isEmpty = obj => {
   return true;
 };
 
-export const yes = () => true;
+export const yes = function () {
+  return true;
+};
+
 export const canAccess = yes;
 
 export const versionCompare = (v1, v2) => {
