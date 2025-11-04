@@ -150,7 +150,9 @@ export const useSession = ({ onClose, onHealthCheckFailed, onMessageReceived, on
       socketRef.current.removeEventListener('message', onSocketMessage);
       socketRef.current.removeEventListener('open', onSocketOpen);
     };
+    // eslint-disable-next-line react-hooks/refs
   }, [onSocketClose, onSocketError, onSocketMessage, onSocketOpen, socketRef.current?.readyState]);
 
+  // eslint-disable-next-line react-hooks/refs
   return [connect, sendMessage, close, socketRef.current?.readyState ?? WebSocket.CLOSED, sessionId];
 };
