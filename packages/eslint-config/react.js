@@ -17,7 +17,7 @@ export default defineConfig([
   ts.configs.recommended,
   reactPlugin.configs.flat.recommended,
   reactPlugin.configs.flat['jsx-runtime'],
-  reactHooksPlugin.configs['recommended-latest'],
+  reactHooksPlugin.configs.flat['recommended'],
   eslintConfigPrettier,
   {
     ignores: ['node_modules/', 'dist/', '.eslintrc.js', '**/*.css'],
@@ -77,7 +77,8 @@ export default defineConfig([
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': 'error',
       'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn'
+      'react-hooks/exhaustive-deps': 'warn',
+      'react-hooks/set-state-in-effect': 'warn'
     },
     settings: {
       react: {
