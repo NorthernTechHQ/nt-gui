@@ -11,12 +11,11 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { mockDate } from '@northern.tech/testing/mockData';
 import handlers from '@northern.tech/testing/requestHandlers/requestHandlers';
-import { afterAll as ntAfterAll, afterEach as ntAfterEach, beforeAll as ntBeforeAll } from '@northern.tech/testing/setupTests';
+import { afterAll as ntAfterAll, afterEach as ntAfterEach, beforeAll as ntBeforeAll, beforeEach as ntBeforeEach } from '@northern.tech/testing/setupTests';
 import '@testing-library/jest-dom/vitest';
 import { setupServer } from 'msw/node';
-import { afterAll, afterEach, beforeAll, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest';
 
 process.on('unhandledRejection', err => {
   throw err;
@@ -25,12 +24,13 @@ process.on('unhandledRejection', err => {
 // Setup requests interception
 const server = setupServer(...handlers);
 
-vi.useFakeTimers({ now: mockDate });
-vi.setSystemTime(mockDate);
-
 beforeAll(async () => {
   await server.listen({ onUnhandledRequest: 'error' });
   await ntBeforeAll();
+});
+
+beforeEach(async () => {
+  await ntBeforeEach();
 });
 
 afterEach(async () => {
