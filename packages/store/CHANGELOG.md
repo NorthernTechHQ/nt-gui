@@ -1,5 +1,5 @@
 ---
-## @northern.tech/store-0.6.0 - 2025-10-31
+## @northern.tech/store-0.6.0 - 2025-11-04
 
 
 ### Bug fixes
@@ -31,6 +31,13 @@
 
  ([5d2b9e3](https://github.com/NorthernTechHQ/nt-gui/commit/5d2b9e33c0744a8e88cdefa4d05f985f6c7783e5))  by @mzedel
 
+- *(store)* Removed duplicated yes function to ease vitest usage
+
+ ([6b31671](https://github.com/NorthernTechHQ/nt-gui/commit/6b316712000a879b5bc9db8207eb464ceb722a16))  by @mzedel
+
+
+  - `yes` now needs to be a named function to be usable in vitest hooks
+
 
 
 
@@ -46,6 +53,9 @@
 
 
 
+
+
+### Security
 
 
 
