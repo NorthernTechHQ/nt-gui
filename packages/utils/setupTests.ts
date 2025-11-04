@@ -19,6 +19,9 @@ const oldWindowLocalStorage = window.localStorage;
 const oldWindowLocation = window.location;
 const oldWindowSessionStorage = window.sessionStorage;
 
+// this duplicates what's in the testing package, but is kept here to ease package structure
+const mockAbortController = { signal: { addEventListener: () => {}, removeEventListener: () => {} } };
+
 process.on('unhandledRejection', err => {
   throw err;
 });
@@ -53,13 +56,17 @@ beforeAll(async () => {
     removeItem: vi.fn()
   };
   window.ENV = 'test';
-  global.AbortController = vi.fn().mockImplementation(() => mockAbortController);
+  global.AbortController = vi.fn().mockImplementation(function () {
+    return mockAbortController;
+  });
   global.MessageChannel = MessageChannel;
-  global.ResizeObserver = vi.fn().mockImplementation(() => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn()
-  }));
+  global.ResizeObserver = vi.fn().mockImplementation(function () {
+    return {
+      observe: vi.fn(),
+      unobserve: vi.fn(),
+      disconnect: vi.fn()
+    };
+  });
   window.RTCPeerConnection = () => ({
     createOffer: () => {},
     setLocalDescription: () => {},
