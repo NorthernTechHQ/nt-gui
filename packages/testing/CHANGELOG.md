@@ -1,4 +1,24 @@
 ---
+## @northern.tech/testing-0.2.3 - 2025-11-04
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Align time mock handling w/ vitest + rtl recommendations by providing proper `beforeEach` util
+
+ ([7e26a57](https://github.com/NorthernTechHQ/nt-gui/commit/7e26a577e3737fd0d00f967cdc170589219841f1))  by @mzedel
+
+
+
+
+
+### Security
+
+
+
 ## @northern.tech/testing-0.2.2 - 2025-10-02
 
 
