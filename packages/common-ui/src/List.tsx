@@ -404,6 +404,7 @@ const HeaderItem = <T extends wID>(props: HeaderItemProps<T>) => {
   }, [shouldRemoveListeners, mouseMove, mouseUp]);
 
   let resizeHandleClassName = resizable && isHovering ? 'hovering' : '';
+  // eslint-disable-next-line react-hooks/refs
   resizeHandleClassName = resizeRef.current ? 'resizing' : resizeHandleClassName;
   const header = (
     <div className="columnHeader flexbox space-between relative" style={column.style} onMouseEnter={onMouseOver} onMouseLeave={onMouseOut} ref={ref}>

@@ -38,7 +38,7 @@
   "devDependencies": {
     "@northern.tech/eslint-config": "*",
     "@northern.tech/typescript-config": "*",
-    "eslint": "^9.27.0",
+    "eslint": "^9.39.1",
     "tsup": "8.5.0"
   },
   "dependencies": {

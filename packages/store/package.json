@@ -126,7 +126,7 @@
     "@types/react": "^19.x",
     "@types/react-dom": "^19.x",
     "@vitejs/plugin-react": "^5.1.0",
-    "eslint": "^9.27.0",
+    "eslint": "^9.39.1",
     "jsdom": "^27.1.0",
     "msw": "^2.11.6",
     "tsup": "8.5.0",
