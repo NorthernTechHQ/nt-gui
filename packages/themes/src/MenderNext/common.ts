@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import type { Components, Theme } from '@mui/material';
-import { accordionClasses, alpha, badgeClasses, buttonClasses, menuItemClasses, outlinedInputClasses } from '@mui/material';
+import { accordionClasses, alpha, badgeClasses, buttonClasses, menuItemClasses } from '@mui/material';
 import { blue, cyan, grey, purple } from '@mui/material/colors';
 
 // breakpoints, metadata, shape config, spacing are not adjusted in the theme
@@ -124,17 +124,6 @@ export const components: Components<Theme> = {
       }
     }
   },
-  MuiAutocomplete: {
-    styleOverrides: {
-      root: ({ theme }) => ({
-        [`& .${outlinedInputClasses.root}`]: {
-          '& fieldset': {
-            borderColor: theme.palette.secondary.main
-          }
-        }
-      })
-    }
-  },
   MuiBadge: {
     styleOverrides: {
       badge: ({ theme }) => ({
@@ -146,9 +135,6 @@ export const components: Components<Theme> = {
     }
   },
   MuiButton: {
-    defaultProps: {
-      color: 'secondary'
-    },
     styleOverrides: {
       root: {
         textTransform: 'none'
@@ -164,9 +150,6 @@ export const components: Components<Theme> = {
     }
   },
   MuiButtonBase: {
-    defaultProps: {
-      color: 'secondary'
-    },
     styleOverrides: {
       root: {
         textTransform: 'none'
@@ -183,11 +166,6 @@ export const components: Components<Theme> = {
           boxShadow: theme.shadows[2] // Elevation/2 for neutral buttons
         }
       })
-    }
-  },
-  MuiCheckbox: {
-    defaultProps: {
-      color: 'secondary'
     }
   },
   MuiChip: {
@@ -236,23 +214,13 @@ export const components: Components<Theme> = {
       }
     }
   },
-  MuiLink: {
-    defaultProps: {
-      color: 'secondary'
-    }
-  },
   MuiMenu: {
     styleOverrides: {
       list: ({ theme }) => ({
         [`& .${menuItemClasses.root}.Mui-selected`]: {
-          backgroundColor: theme.palette.secondary.main + '12' // 12% opacity
+          backgroundColor: theme.palette.primary.main + '12' // 12% opacity
         }
       })
-    }
-  },
-  MuiRadio: {
-    defaultProps: {
-      color: 'secondary'
     }
   },
   MuiSelect: {
@@ -267,11 +235,6 @@ export const components: Components<Theme> = {
       }
     }
   },
-  MuiSpeedDial: {
-    defaultProps: {
-      color: 'secondary'
-    }
-  },
   MuiSwitch: {
     defaultProps: {
       size: 'small'
@@ -282,12 +245,6 @@ export const components: Components<Theme> = {
       root: {
         textTransform: 'none'
       }
-    }
-  },
-  MuiTabs: {
-    defaultProps: {
-      indicatorColor: 'secondary',
-      textColor: 'secondary'
     }
   },
   MuiTextField: {

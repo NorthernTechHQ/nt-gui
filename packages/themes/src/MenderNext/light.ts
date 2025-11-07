@@ -27,14 +27,14 @@ const palette: PaletteOptions = {
   ...colors,
   mode: 'light',
   primary: {
-    main: colors.purple[700],
-    dark: colors.purple[800],
-    light: colors.purple[400]
-  },
-  secondary: {
     main: colors.cyan[700],
     dark: colors.cyan[900],
     light: colors.cyan[500]
+  },
+  secondary: {
+    main: colors.purple[700],
+    dark: colors.purple[800],
+    light: colors.purple[400]
   },
   info,
   neutral: info,
