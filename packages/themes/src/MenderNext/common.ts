@@ -136,17 +136,30 @@ export const components: Components<Theme> = {
   },
   MuiButton: {
     styleOverrides: {
-      root: {
-        textTransform: 'none'
-      },
+      root: ({ theme }) => ({
+        textTransform: 'none',
+        variants: [
+          {
+            props: { variant: 'outlined', color: 'info' },
+            style: { color: theme.palette.neutral.contrastText }
+          },
+          {
+            props: { variant: 'outlined', color: 'neutral' },
+            style: { color: theme.palette.neutral.contrastText }
+          },
+          {
+            props: { variant: 'contained', color: 'info' },
+            style: { boxShadow: 'none' }
+          },
+          {
+            props: { variant: 'contained', color: 'neutral' },
+            style: { boxShadow: 'none' }
+          }
+        ]
+      }),
       text: {
         textTransform: 'none'
-      },
-      contained: ({ ownerState }) => ({
-        ...(ownerState?.color !== 'neutral' && {
-          boxShadow: 'none'
-        })
-      })
+      }
     }
   },
   MuiButtonBase: {

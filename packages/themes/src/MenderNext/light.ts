@@ -17,9 +17,9 @@ import { common } from '@mui/material/colors';
 import { components as baseComponents, colors, typography } from './common';
 
 const info = {
-  main: common.white,
-  dark: colors.grey[300],
-  light: colors.grey[100],
+  main: colors.grey[500],
+  dark: colors.grey[700],
+  light: colors.grey[200],
   contrastText: common.black
 };
 
@@ -53,12 +53,6 @@ export const light: ThemeOptions = {
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          [`& .${outlinedInputClasses.notchedOutline}`]: {
-            borderColor: 'rgba(0, 0, 0, 0.42)'
-          },
-          [`&:hover .${outlinedInputClasses.notchedOutline}`]: {
-            borderColor: 'rgba(0, 0, 0, 0.65)'
-          },
           [`&.${outlinedInputClasses.disabled} .${outlinedInputClasses.notchedOutline}`]: {
             borderColor: 'rgba(0, 0, 0, 0.42)'
           }
