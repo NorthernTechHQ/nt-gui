@@ -1,5 +1,5 @@
 ---
-## @northern.tech/themes-0.6.2 - 2025-10-30
+## @northern.tech/themes-0.6.2 - 2025-11-10
 
 
 ### Bug fixes
@@ -10,6 +10,17 @@
 - *(themes)* Made use of more specific alert error override to ensure readable alerts
 
  ([f13ca1a](https://github.com/NorthernTechHQ/nt-gui/commit/f13ca1a98bd4a394d8a2eb1ab0bd83af9a71315a))  by @mzedel
+
+- *(themes)* Align updated theme w/ mui primary/secondary color expectations
+
+ ([c21d1fa](https://github.com/NorthernTechHQ/nt-gui/commit/c21d1fa7c50415721d91f5ba4ce4ecfbfe43f82a))  by @mzedel
+
+- *(themes)* Fixed an issue that would result in invisible info/neutral components
+
+ ([c3468bc](https://github.com/NorthernTechHQ/nt-gui/commit/c3468bc159c388f4a85d0a2c42bc03e72346f58d))  by @mzedel
+
+
+  + adjusted related override to support both info & neutral color settings
 
 
 
