@@ -118,8 +118,17 @@ export const areEqual = (prevProps: PaginationProps, nextProps: PaginationProps)
     return false;
   }
 
-  const pageStart = ((prevProps.page ?? 1) - 1) * (prevProps.rowsPerPage ?? defaultPerPage);
-  const pageEnd = pageStart + (prevProps.rowsPerPage ?? defaultPerPage);
+  const rowsPerPage = prevProps.rowsPerPage ?? defaultPerPage;
+  const prevPages = Math.ceil(prevProps.count / rowsPerPage);
+  const nextPages = Math.ceil(nextProps.count / rowsPerPage);
+
+  // re-render if the number of pages changed
+  if (prevPages !== nextPages) {
+    return false;
+  }
+
+  const pageStart = ((prevProps.page ?? 1) - 1) * rowsPerPage;
+  const pageEnd = pageStart + rowsPerPage;
 
   return Math.min(prevProps.count, pageEnd) === Math.min(nextProps.count, pageEnd);
 };
