@@ -1,5 +1,25 @@
 ---
-## @northern.tech/common-ui-0.7.0 - 2025-10-16
+## @northern.tech/common-ui-0.8.1 - 2025-11-12
+
+
+### Bug fixes
+
+#### Common-ui
+
+
+- *(common-ui)* Fix pagination not re-rendering when only count changes
+
+ ([ce71565](https://github.com/NorthernTechHQ/nt-gui/commit/ce71565343740828ac6f7d3a7bb152d63e323366))  by @aleksandrychev
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/common-ui-0.8.0 - 2025-10-16
 
 
 ### Bug fixes
