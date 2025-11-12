@@ -1,5 +1,18 @@
 ---
-## @northern.tech/common-0.4.0 - 2025-10-02
+## @northern.tech/common-0.4.0 - 2025-11-12
+
+
+### Bug fixes
+
+#### Common-ui
+
+
+- *(common-ui)* Aligned pagination appearance closer w/ updated design
+
+ ([72271c9](https://github.com/NorthernTechHQ/nt-gui/commit/72271c9c8a1ccffda49e1e079ca05e6c17b4739d))  by @mzedel
+
+
+
 
 
 ### Features
