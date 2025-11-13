@@ -72,13 +72,16 @@ interface ListState {
 
 type wID = { id: string };
 
-interface CommonListProps<T extends wID> {
+interface SharedListItemProps {
   columnHeaders: ColumnHeader<T>[];
+  idAttribute?: IdAttribute | string;
+  listState: ListState;
+}
+
+interface CommonListProps<T extends wID> extends SharedListItemProps {
   customColumnSizes?: Attribute[];
-  idAttribute?: IdAttribute;
   ListItemComponent: ComponentType<ListItemComponentProps<T>>;
   listItems: T[];
-  listState: ListState;
   onChangeRowsPerPage: (perPage: number) => void;
   onExpandClick: (item: T) => void;
   onPageChange: (event: MouseEvent | null, page: number) => void;
@@ -89,13 +92,10 @@ interface CommonListProps<T extends wID> {
   PaginationProps?: object;
   sortingNotes?: { [key: string]: string };
 }
-export interface ListItemComponentProps<T> {
-  columnHeaders: ColumnHeader<T>[];
-  idAttribute?: IdAttribute;
+export interface ListItemComponentProps<T> extends SharedListItemProps {
   index: number;
   key: string;
   listItem: T;
-  listState: ListState;
   onClick: (item: T) => void;
   onRowSelect: (selectedRow: T) => void;
   selectable: boolean;
