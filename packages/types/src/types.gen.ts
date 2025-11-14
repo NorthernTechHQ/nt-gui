@@ -760,6 +760,7 @@ export const DeviceStatus = {
   PENDING: 'pending',
   SUCCESS: 'success',
   NOARTIFACT: 'noartifact',
+  ARTIFACT_TOO_BIG: 'artifact_too_big',
   ALREADY_INSTALLED: 'already-installed',
   DECOMMISSIONED: 'decommissioned'
 } as const;
@@ -1497,6 +1498,10 @@ export type Statistics = {
    */
   noartifact: number;
   /**
+   * Artifact size exceeded limit for distribution to the device
+   */
+  artifact_too_big: number;
+  /**
    * Number of devices unaffected by upgrade, since they are already running the specified software version.
    */
   'already-installed': number;
@@ -1931,6 +1936,24 @@ export type AuthRequest = {
    *
    */
   external_id?: string;
+};
+
+/**
+ * Device limit.
+ */
+export type DeviceTenantLimit = {
+  Name: string;
+  current_value: number;
+  value: number;
+  tenant_id: string;
+};
+
+/**
+ * Device limit.
+ */
+export type DeviceTenantLimitPut = {
+  Name: string;
+  value: number;
 };
 
 /**
@@ -3488,7 +3511,10 @@ export type TenantIdName = {
 
 export type TenantsIdName = Array<TenantIdName>;
 
-export type UserWithTenantInfo = User & TenantInfo & TenantsIdName;
+export type UserWithTenantInfo = User &
+  TenantInfo & {
+    tenants?: TenantsIdName;
+  };
 
 /**
  * New user descriptor.
@@ -5134,6 +5160,11 @@ export type GetDeploymentsData = {
      * List only deployments created after and equal to Unix timestamp (UTC)
      */
     created_after?: number;
+    /**
+     * Supports sorting the deployments list by creation date.
+     *
+     */
+    sort?: 'asc' | 'desc';
   };
   url: '/api/internal/v1/deployments/tenants/{id}/deployments';
 };
@@ -5325,6 +5356,7 @@ export type DeploymentsInternalListDeploymentsForADeviceData = {
       | 'pending'
       | 'success'
       | 'noartifact'
+      | 'artifact_too_big'
       | 'already-installed'
       | 'decommissioned'
       | 'pause'
@@ -6031,6 +6063,7 @@ export type ListDevicesInDeploymentData = {
       | 'pending'
       | 'success'
       | 'noartifact'
+      | 'artifact_too_big'
       | 'already-installed'
       | 'decommissioned'
       | 'pause'
@@ -6258,6 +6291,7 @@ export type DeploymentsListDeploymentsForADeviceData = {
       | 'pending'
       | 'success'
       | 'noartifact'
+      | 'artifact_too_big'
       | 'already-installed'
       | 'decommissioned'
       | 'pause'
@@ -7724,6 +7758,40 @@ export type GetDeviceLimitsResponses = {
 
 export type GetDeviceLimitsResponse = GetDeviceLimitsResponses[keyof GetDeviceLimitsResponses];
 
+export type GetAllDeviceLimitsData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Tenant ID.
+     */
+    tenant_id: Array<string>;
+  };
+  url: '/api/internal/v1/devauth/tenant/limits';
+};
+
+export type GetAllDeviceLimitsErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: _Error;
+  /**
+   * Internal Server Error.
+   */
+  500: _Error;
+};
+
+export type GetAllDeviceLimitsError = GetAllDeviceLimitsErrors[keyof GetAllDeviceLimitsErrors];
+
+export type GetAllDeviceLimitsResponses = {
+  /**
+   * Successful response.
+   */
+  200: Array<DeviceTenantLimit>;
+};
+
+export type GetAllDeviceLimitsResponse = GetAllDeviceLimitsResponses[keyof GetAllDeviceLimitsResponses];
+
 export type DeviceAuthInternalClearDeviceLimitData = {
   body?: never;
   path: {
@@ -8101,6 +8169,106 @@ export type DeviceAuthInternalCountDevicesResponses = {
 };
 
 export type DeviceAuthInternalCountDevicesResponse = DeviceAuthInternalCountDevicesResponses[keyof DeviceAuthInternalCountDevicesResponses];
+
+export type DeviceAuthInternalDeleteAllLimitsData = {
+  body?: never;
+  path: {
+    /**
+     * Tenant identifier.
+     */
+    tid: string;
+  };
+  query?: never;
+  url: '/api/internal/v1/devauth/tenant/{tid}/limits';
+};
+
+export type DeviceAuthInternalDeleteAllLimitsErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: _Error;
+  /**
+   * Internal Server Error.
+   */
+  500: _Error;
+};
+
+export type DeviceAuthInternalDeleteAllLimitsError = DeviceAuthInternalDeleteAllLimitsErrors[keyof DeviceAuthInternalDeleteAllLimitsErrors];
+
+export type DeviceAuthInternalDeleteAllLimitsResponses = {
+  /**
+   * Device limits.
+   */
+  200: unknown;
+};
+
+export type DeviceAuthInternalGetAllLimitsData = {
+  body?: never;
+  path: {
+    /**
+     * Tenant identifier.
+     */
+    tid: string;
+  };
+  query?: never;
+  url: '/api/internal/v1/devauth/tenant/{tid}/limits';
+};
+
+export type DeviceAuthInternalGetAllLimitsErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: _Error;
+  /**
+   * Internal Server Error.
+   */
+  500: _Error;
+};
+
+export type DeviceAuthInternalGetAllLimitsError = DeviceAuthInternalGetAllLimitsErrors[keyof DeviceAuthInternalGetAllLimitsErrors];
+
+export type DeviceAuthInternalGetAllLimitsResponses = {
+  /**
+   * Device limits.
+   */
+  200: Array<DeviceTenantLimit>;
+};
+
+export type DeviceAuthInternalGetAllLimitsResponse = DeviceAuthInternalGetAllLimitsResponses[keyof DeviceAuthInternalGetAllLimitsResponses];
+
+export type DeviceAuthInternalPutAllLimitsData = {
+  body: Array<DeviceTenantLimitPut>;
+  path: {
+    /**
+     * Tenant identifier.
+     */
+    tid: string;
+  };
+  query?: never;
+  url: '/api/internal/v1/devauth/tenant/{tid}/limits';
+};
+
+export type DeviceAuthInternalPutAllLimitsErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: _Error;
+  /**
+   * Internal Server Error.
+   */
+  500: _Error;
+};
+
+export type DeviceAuthInternalPutAllLimitsError = DeviceAuthInternalPutAllLimitsErrors[keyof DeviceAuthInternalPutAllLimitsErrors];
+
+export type DeviceAuthInternalPutAllLimitsResponses = {
+  /**
+   * Device limits updated.
+   */
+  204: void;
+};
+
+export type DeviceAuthInternalPutAllLimitsResponse = DeviceAuthInternalPutAllLimitsResponses[keyof DeviceAuthInternalPutAllLimitsResponses];
 
 export type DeviceAuthManagementListDevicesData = {
   body?: never;
