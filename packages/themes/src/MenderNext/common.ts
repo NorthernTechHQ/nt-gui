@@ -231,6 +231,11 @@ export const components: Components<Theme> = {
       }
     }
   },
+  MuiInputLabel: {
+    defaultProps: {
+      size: 'small'
+    }
+  },
   MuiMenu: {
     styleOverrides: {
       list: ({ theme }) => ({
@@ -238,6 +243,11 @@ export const components: Components<Theme> = {
           backgroundColor: theme.palette.primary.main + '12' // 12% opacity
         }
       })
+    }
+  },
+  MuiOutlinedInput: {
+    defaultProps: {
+      size: 'small'
     }
   },
   MuiSelect: {
