@@ -1,5 +1,34 @@
 ---
-## @northern.tech/themes-0.6.2 - 2025-11-10
+## @northern.tech/themes-0.10.1 - 2025-11-24
+
+
+### Bug fixes
+
+#### Themes
+
+
+- *(themes)* Aligned button appearance w/ theme changelog
+
+ ([a6d05c5](https://github.com/NorthernTechHQ/nt-gui/commit/a6d05c54514138a11d62e05808bf22c70871518f))  by @mzedel
+
+- *(themes)* Expanded small input appearance + included associated labels
+
+ ([ced9bfc](https://github.com/NorthernTechHQ/nt-gui/commit/ced9bfc5be574b6c9e50d51580c87bc59959dbdc))  by @mzedel
+
+- *(themes)* Let general page layout rely on subpage paddings instead of uniform one
+
+ ([98c6d59](https://github.com/NorthernTechHQ/nt-gui/commit/98c6d5982d7a836fd3ee2482bbbfdcb21b9669ac))  by @mzedel
+
+- *(themes)* Ensured shared theme component config is applied as well as mode specific config
+
+ ([1574dc8](https://github.com/NorthernTechHQ/nt-gui/commit/1574dc86ba0377eaeead8e39f5d770d2b51d3f85))  by @mzedel
+
+
+
+
+
+
+## @northern.tech/themes-0.10.0 - 2025-11-10
 
 
 ### Bug fixes
