@@ -52,7 +52,9 @@ export const dark: ThemeOptions = {
   components: {
     ...baseComponents,
     MuiOutlinedInput: {
+      ...baseComponents.MuiOutlinedInput,
       styleOverrides: {
+        ...baseComponents.MuiOutlinedInput?.styleOverrides,
         root: {
           [`& .${outlinedInputClasses.notchedOutline}`]: {
             borderColor: 'rgba(255, 255, 255, 0.42)'
@@ -67,7 +69,9 @@ export const dark: ThemeOptions = {
       }
     },
     MuiAlert: {
+      ...baseComponents.MuiAlert,
       styleOverrides: {
+        ...baseComponents.MuiAlert?.styleOverrides,
         root: {
           [`& .${alertClasses.colorError}`]: {
             backgroundColor: 'rgba(244, 67, 54, 0.2)'

@@ -138,6 +138,10 @@ export const components: Components<Theme> = {
     styleOverrides: {
       root: ({ theme }) => ({
         textTransform: 'none',
+        boxShadow: 'none',
+        [`&:hover:not(.${buttonClasses.colorInfo})`]: {
+          boxShadow: 'none'
+        },
         variants: [
           {
             props: { variant: 'outlined', color: 'info' },
@@ -149,11 +153,11 @@ export const components: Components<Theme> = {
           },
           {
             props: { variant: 'contained', color: 'info' },
-            style: { boxShadow: 'none' }
+            style: { boxShadow: theme.shadows[2] }
           },
           {
             props: { variant: 'contained', color: 'neutral' },
-            style: { boxShadow: 'none' }
+            style: { boxShadow: theme.shadows[2] }
           }
         ]
       }),
@@ -227,6 +231,11 @@ export const components: Components<Theme> = {
       }
     }
   },
+  MuiInputLabel: {
+    defaultProps: {
+      size: 'small'
+    }
+  },
   MuiMenu: {
     styleOverrides: {
       list: ({ theme }) => ({
@@ -234,6 +243,11 @@ export const components: Components<Theme> = {
           backgroundColor: theme.palette.primary.main + '12' // 12% opacity
         }
       })
+    }
+  },
+  MuiOutlinedInput: {
+    defaultProps: {
+      size: 'small'
     }
   },
   MuiSelect: {

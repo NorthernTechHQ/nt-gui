@@ -51,7 +51,9 @@ export const light: ThemeOptions = {
   components: {
     ...baseComponents,
     MuiOutlinedInput: {
+      ...baseComponents.MuiOutlinedInput,
       styleOverrides: {
+        ...baseComponents.MuiOutlinedInput?.styleOverrides,
         root: {
           [`&.${outlinedInputClasses.disabled} .${outlinedInputClasses.notchedOutline}`]: {
             borderColor: 'rgba(0, 0, 0, 0.42)'
