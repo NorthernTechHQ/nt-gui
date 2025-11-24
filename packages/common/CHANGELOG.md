@@ -1,21 +1,5 @@
-# Changelog
-
-## [0.5.0](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/common-0.4.0...@northern.tech/common-0.5.0) (2025-11-12)
-
-
-### Features
-
-* **common:** added mui component overview to ease seeing theme impact ([35344f5](https://github.com/NorthernTechHQ/nt-gui/commit/35344f5523eeda22bc101d84f2c06e9c3af0a325))
-* **common:** added mui component overview to ease seeing theme impact ([5f8cb5a](https://github.com/NorthernTechHQ/nt-gui/commit/5f8cb5a8e3041280ee45eb00ad4c45618e80004c))
-
-
-### Bug Fixes
-
-* **common-ui:** aligned pagination appearance closer w/ updated design ([72271c9](https://github.com/NorthernTechHQ/nt-gui/commit/72271c9c8a1ccffda49e1e079ca05e6c17b4739d))
-* **store:** fixed imports of esm unfriendly packages ([d52a3d7](https://github.com/NorthernTechHQ/nt-gui/commit/d52a3d7dae5199b83f0e73dd3a6c10cf30118bb3))
-
 ---
-## @northern.tech/common-0.4.0 - 2025-11-12
+## @northern.tech/common-ui-0.8.1 - 2025-11-12
 
 
 ### Bug fixes
