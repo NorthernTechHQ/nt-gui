@@ -16,7 +16,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export const sliceName = 'onboarding';
 
-export type OnboardingApproach = 'virtual' | 'physical';
+export type OnboardingApproach = 'virtual' | 'physical' | 'mcu';
 type OnboardingSliceType = {
   address?: string;
   approach: OnboardingApproach | null;
