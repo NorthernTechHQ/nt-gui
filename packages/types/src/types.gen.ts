@@ -3401,13 +3401,11 @@ export type NewTenant = {
    */
   binary_delta?: boolean;
   /**
-   * Enable SSO for the tenant.
+   * Inherit single sign-on configuration from service provider.
+   * The new tenant will not be able to modify the SSO configuration.
+   *
    */
   sso?: boolean;
-  /**
-   * Restrict SSO for the children tenants to only that of the parent. No SSO changes allowed in children if set to true.
-   */
-  restrict_sso_to_parent?: boolean;
 };
 
 /**
