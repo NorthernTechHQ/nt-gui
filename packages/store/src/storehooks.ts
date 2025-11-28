@@ -39,7 +39,7 @@ import {
   getDeploymentsByStatus,
   getDeviceAttributes,
   getDeviceById,
-  getDeviceLimit,
+  getDeviceLimits,
   getDevicesByStatus,
   getDynamicGroups,
   getGlobalSettings,
@@ -180,7 +180,7 @@ export const useAppInit = userId => {
       dispatch(getGroups()),
       dispatch(getIntegrations()),
       dispatch(getReleases()),
-      dispatch(getDeviceLimit()),
+      dispatch(getDeviceLimits()),
       dispatch(getRoles())
     ]);
   }, [dispatch, isServiceProvider]);
