@@ -41,7 +41,7 @@ export const useSession = ({ onClose, onHealthCheckFailed, onMessageReceived, on
     if (!socketRef.current || socketRef.current?.readyState !== WebSocket.OPEN) {
       return;
     }
-    sendMessage({ typ: MessageTypes.Stop, body: {}, props: {} });
+    sendMessage({ typ: MessageTypes.Stop, props: {} });
     socketRef.current.close();
     setSessionId();
   }, [sendMessage]);
