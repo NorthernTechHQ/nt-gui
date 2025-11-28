@@ -246,15 +246,15 @@ describe('organization actions', () => {
   });
 
   it('should handle account upgrade completion', async () => {
-    const { getDeviceLimit } = await import('../thunks');
+    const { getDeviceLimits } = await import('../thunks');
     const store = mockStore({ ...defaultState, users: { ...defaultState.users, currentSession: getSessionInfo() } });
     expect(store.getActions()).toHaveLength(0);
     const expectedActions = [
       { type: completeUpgrade.pending.type },
-      { type: getDeviceLimit.pending.type },
+      { type: getDeviceLimits.pending.type },
       { type: getUserOrganization.pending.type },
-      { type: deviceActions.setDeviceLimit.type },
-      { type: getDeviceLimit.fulfilled.type },
+      { type: deviceActions.setDeviceLimits.type },
+      { type: getDeviceLimits.fulfilled.type },
       { type: actions.setOrganization.type, payload: defaultState.organization.organization },
       { type: appActions.setAnnouncement.type, payload: tenantDataDivergedMessage },
       { type: getUserOrganization.fulfilled.type },

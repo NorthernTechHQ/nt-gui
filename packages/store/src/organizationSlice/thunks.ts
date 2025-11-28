@@ -52,7 +52,7 @@ import type { AuditLogSelectionState, SSOConfig, Tenant, TenantList } from '../o
 import { getCurrentSession, getTenantCapabilities, getTenantsList } from '../selectors';
 import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
-import { getDeviceLimit, setFirstLoginAfterSignup } from '../thunks';
+import { getDeviceLimits, setFirstLoginAfterSignup } from '../thunks';
 import type { UserSession } from '../usersSlice';
 import { parseSubscriptionPreview } from '../utils';
 import { SSO_TYPES } from './constants';
@@ -172,7 +172,7 @@ export const completeUpgrade = createAppAsyncThunk(
   ({ tenantId, plan, billing_profile }: completeUpgradePayload, { dispatch }) =>
     Api.post(`${tenantadmApiUrlv2}/tenants/${tenantId}/upgrade/complete`, { plan, billing_profile })
       .catch(err => commonErrorHandler(err, `There was an error upgrading your account:`, dispatch))
-      .then(() => Promise.all([dispatch(getDeviceLimit()), dispatch(getUserOrganization())]))
+      .then(() => Promise.all([dispatch(getDeviceLimits()), dispatch(getUserOrganization())]))
 );
 
 type AuditLogQuery = {
@@ -388,7 +388,7 @@ export const getCurrentSubscription = createAppAsyncThunk(`${sliceName}/getCurre
 export const requestPlanUpgrade = createAppAsyncThunk(`${sliceName}/requestPlanUpgrade`, (order: { plan: string; products: Product[] }, { dispatch }) =>
   Api.post(`${tenantadmApiUrlv2}/billing/subscription`, order)
     .catch(err => commonErrorHandler(err, 'There was an error sending your request', dispatch, commonErrorFallback))
-    .then(() => Promise.all([setTimeout(() => dispatch(getDeviceLimit()), TIMEOUTS.threeSeconds), dispatch(getUserOrganization())]))
+    .then(() => Promise.all([setTimeout(() => dispatch(getDeviceLimits()), TIMEOUTS.threeSeconds), dispatch(getUserOrganization())]))
 );
 
 export const sendSupportMessage = createAppAsyncThunk(`${sliceName}/sendSupportMessage`, (content: SupportRequest, { dispatch }) =>

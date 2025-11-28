@@ -132,5 +132,5 @@ export const mockState = {
     },
     selectedGroup: undefined
   },
-  limit: 500
+  limits: { standard: 500, micro: 0, system: 0 }
 };
