@@ -304,7 +304,7 @@ export const mockApiResponses = {
         }
       }
     },
-    limit: 500,
+    limits: { standard: 500, micro: 0, system: 0 },
     byStatus: {
       accepted: { deviceIds: ['a1', 'b1'], total: 2 },
       active: { deviceIds: [], total: 0 },
