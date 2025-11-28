@@ -48,7 +48,7 @@ import {
   getDeviceCount,
   getDeviceFileDownloadLink,
   getDeviceInfo,
-  getDeviceLimit,
+  getDeviceLimits,
   getDeviceTwin,
   getDevicesByStatus,
   getDevicesWithAuth,
@@ -320,11 +320,11 @@ describe('overall device information retrieval', () => {
   it('should allow limit retrieval', async () => {
     const store = mockStore({ ...defaultState });
     const expectedActions = [
-      { type: getDeviceLimit.pending.type },
-      { type: actions.setDeviceLimit.type, payload: defaultState.devices.limit },
-      { type: getDeviceLimit.fulfilled.type }
+      { type: getDeviceLimits.pending.type },
+      { type: actions.setDeviceLimits.type, payload: defaultState.devices.limits },
+      { type: getDeviceLimits.fulfilled.type }
     ];
-    await store.dispatch(getDeviceLimit());
+    await store.dispatch(getDeviceLimits());
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));

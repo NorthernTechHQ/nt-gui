@@ -34,7 +34,7 @@ export const getSortedFilteringAttributes = createSelector([getFilteringAttribut
   ...filteringAttributes,
   identityAttributes: [...filteringAttributes.identityAttributes, 'id']
 }));
-export const getDeviceLimit = (state: RootState) => state.devices.limit;
+export const getDeviceLimits = (state: RootState) => state.devices.limits;
 const getFilteringAttributesLimit = (state: RootState) => state.devices.filteringAttributesLimit;
 
 export const getDeviceIdentityAttributes = createSelector(
@@ -77,8 +77,14 @@ export const getSelectedGroupInfo = createSelector(
   }
 );
 
-export const getLimitMaxed = createSelector([getAcceptedDevices, getDeviceLimit], ({ total: acceptedDevices = 0 }, deviceLimit) =>
-  Boolean(deviceLimit && deviceLimit <= acceptedDevices)
+export const getCombinedLimit = createSelector(
+  [getDeviceLimits],
+  deviceLimits => Object.values(deviceLimits).reduce((accu, limit) => accu + Math.max(limit ?? 0, 0), 0) // limit might be -1 for unlimited devices
+);
+
+export const getLimitMaxed = createSelector(
+  [getAcceptedDevices, getCombinedLimit],
+  ({ total: acceptedDevices = 0 }, combinedLimit) => combinedLimit <= acceptedDevices
 );
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

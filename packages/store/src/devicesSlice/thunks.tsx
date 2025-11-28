@@ -534,8 +534,8 @@ export const getAllDeviceCounts = createAppAsyncThunk(`${sliceName}/getAllDevice
   Promise.all([DEVICE_STATES.accepted, DEVICE_STATES.pending].map(status => dispatch(getDeviceCount(status))))
 );
 
-export const getDeviceLimit = createAppAsyncThunk(`${sliceName}/getDeviceLimit`, (_, { dispatch }) =>
-  GeneralApi.get(`${deviceAuthV2}/limits/max_devices`).then(res => dispatch(actions.setDeviceLimit(res.data.limit)))
+export const getDeviceLimits = createAppAsyncThunk(`${sliceName}/getDeviceLimit`, (_, { dispatch }) =>
+  GeneralApi.get(`${deviceAuthV2}/limits/devices`).then(res => dispatch(actions.setDeviceLimits(res.data)))
 );
 
 type SetDeviceListStatePayload = {
