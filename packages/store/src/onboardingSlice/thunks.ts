@@ -56,6 +56,14 @@ const deductOnboardingState = ({ devicesById, devicesByStatus, onboardingState, 
     !deviceType.length && acceptedDevices.length && devicesById[acceptedDevices[0]].hasOwnProperty('attributes')
       ? devicesById[acceptedDevices[0]].attributes.device_type
       : deviceType;
+  let approach = '';
+  if (deviceType.some(type => type.startsWith('qemu'))){
+    approach = 'virtual'
+  } else if (deviceType.some(type => type === 'esp32-s3')) {
+    approach = 'mcu'
+  } else if (deviceType.length) {
+    approach = 'physical'
+  }
   const progress = applyOnboardingFallbacks(onboardingState.progress || determineProgress(acceptedDevices, pendingDevices, releases, pastDeployments));
   return {
     ...onboardingState,
@@ -71,7 +79,7 @@ const deductOnboardingState = ({ devicesById, devicesByStatus, onboardingState, 
     ),
     showTips: onboardingState.showTips != null ? onboardingState.showTips : true,
     deviceType,
-    approach: onboardingState.approach || (deviceType.some(type => type.startsWith('qemu')) ? 'virtual' : 'physical'),
+    approach: onboardingState.approach || approach,
     progress
   };
 };
