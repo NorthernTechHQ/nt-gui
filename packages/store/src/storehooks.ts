@@ -168,7 +168,7 @@ export const useAppInit = userId => {
     if (isServiceProvider) {
       return Promise.resolve(dispatch(getRoles()));
     }
-    return Promise.all([
+    const tasks = [
       dispatch(getDeviceAttributes()),
       dispatch(getDeploymentsByStatus({ status: DEPLOYMENT_STATES.finished, shouldSelect: false })),
       dispatch(getDeploymentsByStatus({ status: DEPLOYMENT_STATES.inprogress })),
@@ -179,11 +179,14 @@ export const useAppInit = userId => {
       dispatch(getDynamicGroups()),
       dispatch(getGroups()),
       dispatch(getIntegrations()),
-      dispatch(getReleases()),
-      dispatch(getDeviceLimits()),
-      dispatch(getRoles())
-    ]);
-  }, [dispatch, isServiceProvider]);
+      dispatch(getReleases())
+    ];
+    if (hasMultitenancy) {
+      tasks.push(dispatch(getDeviceLimits()));
+      tasks.push(dispatch(getRoles()));
+    }
+    return Promise.all(tasks);
+  }, [dispatch, hasMultitenancy, isServiceProvider]);
 
   const interpretAppData = useCallback(() => {
     const settings = {};
