@@ -169,7 +169,7 @@ export const deviceHandlers = [
     }
     return new HttpResponse(null, { status: 505 });
   }),
-  http.get(`${deviceAuthV2}/limits/max_devices`, () => HttpResponse.json({ limit: mockApiResponses.devices.limit })),
+  http.get(`${deviceAuthV2}/limits/devices`, () => HttpResponse.json(mockApiResponses.devices.limits)),
   http.get(`${inventoryApiUrl}/devices/:deviceId`, ({ params: { deviceId } }) => {
     if (mockApiResponses.devices.byId[deviceId]) {
       return HttpResponse.json(inventoryDevice);

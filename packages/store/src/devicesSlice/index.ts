@@ -16,6 +16,7 @@ import type {
   ConnectionState,
   DeviceConfiguration,
   DeviceState,
+  DeviceTierLimits,
   MonitorConfiguration,
   SortCriteria,
   Status
@@ -121,7 +122,7 @@ export type DeviceSliceType = {
   filteringAttributesLimit: number;
   filters: DeviceFilter[];
   groups: DeviceGroups;
-  limit: number;
+  limits: DeviceTierLimits;
   reports: DeviceReport[];
   total: number;
 };
@@ -174,7 +175,11 @@ export const initialState: DeviceSliceType = {
     // { items: [{ key: "someKey", count: 42  }], otherCount: 123, total: <otherCount + itemsCount> }
   ],
   total: 0,
-  limit: 0,
+  limits: {
+    standard: 0,
+    micro: 0,
+    system: 0
+  },
   groups: {
     byId: {
       // groupName: { deviceIds: [], total: 0, filters: [] },
@@ -286,8 +291,8 @@ export const devicesSlice = createSlice({
       const { count, status } = action.payload;
       state.byStatus[status].total = count;
     },
-    setDeviceLimit: (state, action: PayloadAction<number>) => {
-      state.limit = action.payload;
+    setDeviceLimits: (state, action: PayloadAction<DeviceTierLimits>) => {
+      state.limits = action.payload;
     },
     receivedDevice: (state, action: PayloadAction<{ id: string } & Partial<Device>>) => {
       state.byId[action.payload.id] = {
