@@ -1,4 +1,21 @@
 ---
+## @northern.tech/themes-0.10.2 - 2025-12-01
+
+
+### Bug fixes
+
+#### Themes
+
+
+- *(themes)* Aligned link appearance w/ new theme
+
+ ([2e7f0b3](https://github.com/NorthernTechHQ/nt-gui/commit/2e7f0b35a80b8f2dc201092281587baff6d60885))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/themes-0.10.1 - 2025-11-24
 
 
