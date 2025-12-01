@@ -5,7 +5,7 @@
   "packages/prettier-config": "0.2.1",
   "packages/store": "0.10.0",
   "packages/testing": "0.2.3",
-  "packages/themes": "0.10.1",
+  "packages/themes": "0.10.2",
   "packages/types": "0.2.2",
   "packages/typescript-config": "0.2.0",
   "packages/utils": "0.7.2"
