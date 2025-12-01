@@ -1,4 +1,21 @@
 ---
+## @northern.tech/common-ui-0.8.2 - 2025-12-01
+
+
+### Bug fixes
+
+#### Common-ui
+
+
+- *(common-ui)* Aligned expected id attribute type w/ current Mender reality
+
+ ([e439017](https://github.com/NorthernTechHQ/nt-gui/commit/e4390172a7af279e9d1845adb6f29683f48ab524))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/common-ui-0.8.1 - 2025-11-12
 
 
