@@ -1,5 +1,35 @@
 ---
-## @northern.tech/store-0.6.0 - 2025-11-04
+## @northern.tech/store-0.10.0 - 2025-12-01
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Ensured initialization skips enterprise/ hosted information when on os only
+
+ ([e66e3a9](https://github.com/NorthernTechHQ/nt-gui/commit/e66e3a9d20f1ff5b23bbe345226495db51c0b976))  by @mzedel
+
+
+
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added support for tiered device limits
+
+ ([97eb3bb](https://github.com/NorthernTechHQ/nt-gui/commit/97eb3bb8b37b9270dd411a003cbb6fd761701d4b))  by @mzedel
+
+
+
+
+
+
+## @northern.tech/store-0.9.0 - 2025-11-04
 
 
 ### Bug fixes
