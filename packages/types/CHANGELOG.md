@@ -1,5 +1,22 @@
 ---
-## @northern.tech/types-0.2.2 - 2025-10-31
+## @northern.tech/typescript-config-0.2.3 - 2025-12-01
+
+
+### Bug fixes
+
+#### Types
+
+
+- *(types)* Types update
+
+ ([963f3bd](https://github.com/NorthernTechHQ/nt-gui/commit/963f3bd009e413f9d55d501db0e64cac26ab5cbc))  by @mender-test-bot
+
+
+
+
+
+
+## @northern.tech/typescript-config-0.2.2 - 2025-10-31
 
 
 ### Bug fixes
