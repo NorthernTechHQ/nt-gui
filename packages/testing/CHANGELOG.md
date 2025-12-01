@@ -1,4 +1,21 @@
 ---
+## @northern.tech/testing-0.3.0 - 2025-12-01
+
+
+### Features
+
+#### Testing
+
+
+- *(testing)* Added support for tiered device limits
+
+ ([bc893e5](https://github.com/NorthernTechHQ/nt-gui/commit/bc893e527e2ae73507a226b6a42506ada58e6d03))  by @mzedel
+
+
+
+
+
+
 ## @northern.tech/testing-0.2.3 - 2025-11-04
 
 
