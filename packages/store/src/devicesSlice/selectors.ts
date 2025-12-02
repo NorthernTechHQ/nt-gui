@@ -84,7 +84,7 @@ export const getCombinedLimit = createSelector(
 
 export const getLimitMaxed = createSelector(
   [getAcceptedDevices, getCombinedLimit],
-  ({ total: acceptedDevices = 0 }, combinedLimit) => combinedLimit <= acceptedDevices
+  ({ total: acceptedDevices = 0 }, combinedLimit) => !!combinedLimit && combinedLimit <= acceptedDevices
 );
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
