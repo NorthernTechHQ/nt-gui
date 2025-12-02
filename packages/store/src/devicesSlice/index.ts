@@ -12,6 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import type {
+  AuthSet,
   Device as BackendDeviceAuth,
   ConnectionState,
   DeviceConfiguration,
@@ -88,6 +89,7 @@ export type Device = BackendDeviceAuth &
     isOffline?: boolean;
     monitors?: MonitorConfiguration[];
     status: Status;
+    tier?: AuthSet['tier'] | null;
     twinsByIntegration?: Record<string, DeviceState & { twinError?: string }>;
   };
 export type DeviceFilter = {

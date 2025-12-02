@@ -87,6 +87,18 @@ export const getLimitMaxed = createSelector(
   ({ total: acceptedDevices = 0 }, combinedLimit) => combinedLimit <= acceptedDevices
 );
 
+export const getAcceptedTiers = createSelector([getDevicesById], devices =>
+  Object.values(devices)
+    .filter(device => device.status === 'accepted')
+    .reduce(
+      (acc, curr) => {
+        acc[curr.tier || 'standard']++;
+        return acc;
+      },
+      { micro: 0, system: 0, standard: 0 }
+    )
+);
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getGroupsByIdWithoutUngrouped = createSelector([getGroupsById], ({ [UNGROUPED_GROUP.id]: ungrouped, ...groups }) => groups);
 
