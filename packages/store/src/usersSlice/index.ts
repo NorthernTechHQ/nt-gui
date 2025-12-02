@@ -64,7 +64,7 @@ export type UserSettings = {
   mode?: 'light' | 'dark';
   onboarding: Partial<{
     address: string;
-    approach: 'physical' | 'virtual';
+    approach: 'physical' | 'virtual' | 'mcu' | null;
     complete: boolean;
     demoArtifactPort: number;
     deviceType: string[] | string;
