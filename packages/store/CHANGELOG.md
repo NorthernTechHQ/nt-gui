@@ -1,5 +1,5 @@
 ---
-## @northern.tech/store-0.10.0 - 2025-12-01
+## @northern.tech/store-0.10.0 - 2025-12-02
 
 
 ### Bug fixes
@@ -10,6 +10,13 @@
 - *(store)* Ensured initialization skips enterprise/ hosted information when on os only
 
  ([e66e3a9](https://github.com/NorthernTechHQ/nt-gui/commit/e66e3a9d20f1ff5b23bbe345226495db51c0b976))  by @mzedel
+
+- *(store)* Let device limits only be considered if they are set
+
+ ([f3c381f](https://github.com/NorthernTechHQ/nt-gui/commit/f3c381f88f2831b72456fd1ea6e51d33baeed7ff))  by @mzedel
+
+
+  - tier separated handling for negative infinity/ limit of -1 will have to be situation dependent in the application
 
 
 
@@ -23,6 +30,10 @@
 - *(store)* Added support for tiered device limits
 
  ([97eb3bb](https://github.com/NorthernTechHQ/nt-gui/commit/97eb3bb8b37b9270dd411a003cbb6fd761701d4b))  by @mzedel
+
+- *(store)* Added mcu onboarding support
+
+([MEN-8583](https://northerntech.atlassian.net/browse/MEN-8583)) ([7b5f6f0](https://github.com/NorthernTechHQ/nt-gui/commit/7b5f6f0021f21f4465f416da87157e42e23e356b))  by @mineralsfree
 
 
 
