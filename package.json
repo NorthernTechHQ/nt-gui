@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.7",
-    "@emotion/jest": "^11.13.0",
+    "@emotion/jest": "^11.14.2",
     "@northern.tech/eslint-config": "*",
     "@northern.tech/prettier-config": "*",
     "@northern.tech/store": "*",
