@@ -3006,6 +3006,16 @@ export type TenantApiLimits = {
 };
 
 /**
+ * Tenant device limits per tier.
+ */
+export type DeviceLimitTenant = {
+  Name: string;
+  tenant_id: string;
+  current_value: number;
+  value: number;
+};
+
+/**
  * Tenant descriptor.
  */
 export type Tenant = {
@@ -3067,6 +3077,11 @@ export type Tenant = {
    * Device limit for the tenant.
    */
   device_limit?: number;
+  device_limits?: {
+    max_devices?: DeviceLimitTenant;
+    max_micro_devices?: DeviceLimitTenant;
+    max_system_devices?: DeviceLimitTenant;
+  };
 };
 
 /**
@@ -3423,10 +3438,20 @@ export type UpdateChildTenant = {
    * Name of the tenant.
    */
   name?: string;
-  /**
-   * Device limit for the tenant.
-   */
   device_limit?: number;
+  device_limits?: {
+    max_devices?: DeviceLimitPut;
+    max_micro_devices?: DeviceLimitPut;
+    max_system_devices?: DeviceLimitPut;
+  };
+};
+
+/**
+ * Device limit.
+ */
+export type DeviceLimitPut = {
+  Name: string;
+  value: number;
 };
 
 /**
@@ -13248,6 +13273,10 @@ export type ListTenantsV2Data = {
   body?: never;
   path?: never;
   query?: {
+    /**
+     * Flag to include tiers in the response.
+     */
+    tiers?: string;
     /**
      * Starting page.
      */
