@@ -61,6 +61,7 @@ export type UserSettings = {
   [x: string]: any;
   columnSelection: Column[];
   feedbackCollectedAt?: string;
+  firstLoginTimestamp: null | string;
   mode?: 'light' | 'dark';
   onboarding: Partial<{
     address: string;
@@ -129,7 +130,8 @@ export const initialState: UserSliceState = {
   },
   userSettings: {
     columnSelection: [],
-    onboarding: {}
+    onboarding: {},
+    firstLoginTimestamp: null
   },
   userSettingsInitialized: false
 };
