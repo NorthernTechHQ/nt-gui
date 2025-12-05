@@ -14,6 +14,7 @@
 import type { PermissionSetWithScope, PersonalAccessToken, RolePermission, RolePermissionObject } from '@northern.tech/types/MenderTypes';
 import { duplicateFilter, extractErrorMessage, isEmpty } from '@northern.tech/utils/helpers';
 import { clearAllRetryTimers } from '@northern.tech/utils/retrytimer';
+import dayjs from 'dayjs';
 import hashString from 'md5';
 import Cookies from 'universal-cookie';
 
@@ -820,6 +821,7 @@ export const saveUserSettings = createAppAsyncThunk(
         const updatedSettings = {
           ...userSettings,
           ...settings,
+          firstLoginTimestamp: userSettings.firstLoginTimestamp ?? dayjs().format(),
           onboarding: {
             ...onboardingState,
             ...settings.onboarding
