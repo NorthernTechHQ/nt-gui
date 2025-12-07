@@ -59,6 +59,7 @@ export const expectedOnboardingActions = [
     type: userActions.setUserSettings.type,
     payload: {
       ...defaultState.users.userSettings,
+      firstLoginTimestamp: '2019-01-13T13:00:00+00:00',
       onboarding: {
         ...defaultOnboardingState,
         address: 'http://192.168.10.141:85',
@@ -91,6 +92,7 @@ describe('onboarding actions', () => {
         type: userActions.setUserSettings.type,
         payload: {
           ...defaultState.users.userSettings,
+          firstLoginTimestamp: '2019-01-13T13:00:00+00:00',
           onboarding: {
             ...defaultOnboardingState,
             complete: true,
@@ -120,6 +122,7 @@ describe('onboarding actions', () => {
         type: userActions.setUserSettings.type,
         payload: {
           ...defaultState.users.userSettings,
+          firstLoginTimestamp: '2019-01-13T13:00:00+00:00',
           onboarding: {
             ...defaultOnboardingState,
             approach: 'physical'
@@ -148,6 +151,7 @@ describe('onboarding actions', () => {
         payload: {
           ...defaultState.users.userSettings,
           columnSelection: [],
+          firstLoginTimestamp: '2019-01-13T13:00:00+00:00',
           onboarding: {
             ...defaultOnboardingState,
             deviceType: ['testtype']
@@ -176,6 +180,7 @@ describe('onboarding actions', () => {
         payload: {
           ...defaultState.users.userSettings,
           columnSelection: [],
+          firstLoginTimestamp: '2019-01-13T13:00:00+00:00',
           onboarding: {
             ...defaultOnboardingState,
             progress: onboardingSteps.DEVICES_PENDING_ONBOARDING_START
@@ -208,6 +213,7 @@ describe('onboarding actions', () => {
         payload: {
           ...defaultState.users.userSettings,
           columnSelection: [],
+          firstLoginTimestamp: '2019-01-13T13:00:00+00:00',
           onboarding: {
             ...defaultOnboardingState,
             complete: true,
