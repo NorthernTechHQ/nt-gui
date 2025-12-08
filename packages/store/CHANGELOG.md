@@ -1,3 +1,13 @@
+# Changelog
+
+## [0.12.0](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.11.0...@northern.tech/store-0.12.0) (2025-12-08)
+
+
+### Features
+
+* **store:** added firstLoginTimestamp for feedback form delay ([f600732](https://github.com/NorthernTechHQ/nt-gui/commit/f600732b4867cfd91e5d062daf82c0300e9d2dd3))
+* **store:** added firstLoginTimestamp for feedback form delay ([00d2612](https://github.com/NorthernTechHQ/nt-gui/commit/00d26124d4774a94b1dfd3a9f56c104e5feb0083))
+
 ---
 ## @northern.tech/store-0.10.0 - 2025-12-02
 
