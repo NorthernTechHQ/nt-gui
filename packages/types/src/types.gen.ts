@@ -129,6 +129,15 @@ export type ProvisionDevice = {
 };
 
 /**
+ * Tenant account limit.
+ */
+export type TenantLimit = {
+  tenant_id: string;
+  current_value: number;
+  limit: number;
+};
+
+/**
  * The scope of the attribute.
  *
  * Scope is a string and acts as namespace for the attribute name.
@@ -161,6 +170,24 @@ export const Scope = {
  *
  */
 export type Scope = (typeof Scope)[keyof typeof Scope];
+
+/**
+ * Tenant device limits per tier.
+ */
+export type DeviceLimitTenant = {
+  name: string;
+  tenant_id: string;
+  current_value: number;
+  value: number;
+};
+
+/**
+ * Device limit.
+ */
+export type DeviceLimitTenantPut = {
+  name: string;
+  value: number;
+};
 
 /**
  * The actor may be a user or device.
@@ -606,22 +633,6 @@ export type StorageSettings = {
   account_key?: string;
 };
 
-/**
- * Tenant account storage limit and storage usage.
- */
-export type StorageUsage = {
-  /**
-   * Storage limit in bytes. If set to 0 - there is no limit for storage.
-   *
-   */
-  limit: number;
-  /**
-   * Current storage usage in bytes.
-   *
-   */
-  usage: number;
-};
-
 export type DeploymentV1Internal = {
   created: string;
   name: string;
@@ -733,19 +744,10 @@ export type DeviceGroups = {
 };
 
 /**
- * Tenant account storage limit and storage usage.
+ * Limit definition
  */
-export type StorageLimit = {
-  /**
-   * Storage limit in bytes. If set to 0 - there is no limit for storage.
-   *
-   */
+export type TenantLimitValue = {
   limit: number;
-  /**
-   * Current storage usage in bytes.
-   *
-   */
-  usage: number;
 };
 
 export const DeviceStatus = {
@@ -1556,7 +1558,23 @@ export type AttributeFilterPredicate = {
    * Mixed arrays are not allowed.
    *
    */
-  value: string;
+  value: unknown;
+};
+
+/**
+ * Tenant account storage limit and storage usage.
+ */
+export type StorageLimit = {
+  /**
+   * Storage limit in bytes. If set to -1 - there is no limit for storage.
+   *
+   */
+  limit: number;
+  /**
+   * Current storage usage in bytes.
+   *
+   */
+  usage: number;
 };
 
 /**
@@ -1832,6 +1850,11 @@ export type DeltaJobsListItem = {
    */
   id?: string;
   /**
+   * Identifier of a deployment
+   *
+   */
+  deployment_id?: string;
+  /**
    * Workflows id that corresponds to the job executed by the generator, it is an internal id important
    * to include in case of support requests
    *
@@ -1848,6 +1871,11 @@ export type DeltaJobsListItem = {
    */
   from_version?: string;
   /**
+   * Details of the delta generation job
+   *
+   */
+  details?: string;
+  /**
    * Array of the devices types names compatible with this artifact
    *
    */
@@ -1858,43 +1886,39 @@ export type DeltaJobsListItem = {
    */
   started?: string;
   /**
+   * Time when the generation terminated.
+   */
+  finished?: string;
+  /**
+   * The duration for the delta generation.
+   */
+  total_time?: string;
+  /**
    * Gneration status
    *
    */
-  status?: 'pending' | 'queued' | 'success' | 'failed' | 'artifact_uploaded';
+  status?: 'pending' | 'queued' | 'success' | 'failed';
 };
 
-export type DeltaJobDetailsItem = {
-  /**
-   * Identifier of a deployment
-   *
-   */
-  deployment_id?: string;
-  /**
-   * Array of the devices types names compatible with this artifact
-   *
-   */
-  devices_types_compatible?: Array<string>;
+export type DeltaJobDetailsItem = DeltaJobsListItem & {
   /**
    * Target release name
    *
+   * Deprecated: contains the same information as to_version.
+   *
+   *
+   * @deprecated
    */
   to_release?: string;
   /**
    * Source release name
    *
+   * Deprecated: contains the same information as from_version.
+   *
+   *
+   * @deprecated
    */
   from_release?: string;
-  /**
-   * Gneration status
-   *
-   */
-  status?: 'pending' | 'queued' | 'success' | 'failed' | 'artifact_uploaded';
-  /**
-   * Details of the delta generation job
-   *
-   */
-  details?: string;
   /**
    * Exit code of the delta generation job
    *
@@ -1910,7 +1934,7 @@ export type DeltaJobDetailsItem = {
    *
    */
   delta_artifact_size?: number;
-};
+} & unknown;
 
 export type AuthRequest = {
   /**
@@ -1936,33 +1960,6 @@ export type AuthRequest = {
    *
    */
   external_id?: string;
-};
-
-/**
- * Device limit.
- */
-export type DeviceTenantLimit = {
-  Name: string;
-  current_value: number;
-  value: number;
-  tenant_id: string;
-};
-
-/**
- * Device limit.
- */
-export type DeviceTenantLimitPut = {
-  Name: string;
-  value: number;
-};
-
-/**
- * Tenant account limit.
- */
-export type TenantLimit = {
-  tenant_id: string;
-  current_value: number;
-  limit: number;
 };
 
 /**
@@ -2318,7 +2315,7 @@ export type MonitorConfiguration = {
  *
  */
 export type LogSubsystem = {
-  log: {
+  log?: {
     /**
      * Log pattern
      *
@@ -2342,7 +2339,7 @@ export type LogSubsystem = {
  *
  */
 export type ServiceSubsystem = {
-  service: {
+  service?: {
     /**
      * Service name
      *
@@ -2361,7 +2358,7 @@ export type ServiceSubsystem = {
  *
  */
 export type DBusSubsystem = {
-  dbus: {
+  dbus?: {
     /**
      * Check name.
      *
@@ -2753,17 +2750,25 @@ export type Integration = {
   scopes?: Array<'deviceauth' | 'inventory'>;
 };
 
-export type Credentials = {
-  /**
-   * The credential type
-   */
-  type: 'aws' | 'sas' | 'http';
-} & (AwsCredentials | AzureSharedAccessSecret | Http);
+export type Credentials =
+  | ({
+      type: 'aws';
+    } & AwsCredentials)
+  | ({
+      type: 'sas';
+    } & AzureSharedAccessSecret)
+  | ({
+      type: 'http';
+    } & Http);
 
 /**
  * AWS credentials in the form of access key id and secret access key, a region and a device policy name.
  */
 export type AwsCredentials = {
+  /**
+   * The credential type
+   */
+  type: 'aws';
   aws: {
     access_key_id: string;
     secret_access_key: string;
@@ -2776,6 +2781,10 @@ export type AwsCredentials = {
  * Shared Access Secret is an authentication mechanism in the form of a connection string for Azure IoT Hub.
  */
 export type AzureSharedAccessSecret = {
+  /**
+   * The credential type
+   */
+  type: 'sas';
   connection_string: string;
 };
 
@@ -2794,6 +2803,10 @@ export type DeviceState = {
  * HTTP Webhook configuration.
  */
 export type Http = {
+  /**
+   * The credential type
+   */
+  type: 'http';
   http: {
     /**
      * The destination URL for the webhook. The webhook will send POST requests with event details to this target URL.
@@ -3067,6 +3080,11 @@ export type Tenant = {
    * Device limit for the tenant.
    */
   device_limit?: number;
+  device_limits?: {
+    max_devices?: DeviceLimitTenant;
+    max_micro_devices?: DeviceLimitTenant;
+    max_system_devices?: DeviceLimitTenant;
+  };
 };
 
 /**
@@ -3423,10 +3441,20 @@ export type UpdateChildTenant = {
    * Name of the tenant.
    */
   name?: string;
-  /**
-   * Device limit for the tenant.
-   */
   device_limit?: number;
+  device_limits?: {
+    max_devices?: DeviceLimitPut;
+    max_micro_devices?: DeviceLimitPut;
+    max_system_devices?: DeviceLimitPut;
+  };
+};
+
+/**
+ * Device limit.
+ */
+export type DeviceLimitPut = {
+  Name: string;
+  value: number;
 };
 
 /**
@@ -5035,49 +5063,57 @@ export type SetStorageSettingsResponses = {
 
 export type SetStorageSettingsResponse = SetStorageSettingsResponses[keyof SetStorageSettingsResponses];
 
-export type DeploymentsInternalGetStorageUsageData = {
+export type DeploymentsInternalGetTenantLimitData = {
   body?: never;
   path: {
     /**
      * Tenant ID
      */
     id: string;
+    /**
+     * Name
+     */
+    name: 'storage' | 'max_artifact_size_micro_device_tier';
   };
   query?: never;
-  url: '/api/internal/v1/deployments/tenants/{id}/limits/storage';
+  url: '/api/internal/v1/deployments/tenants/{id}/limits/{name}';
 };
 
-export type DeploymentsInternalGetStorageUsageErrors = {
+export type DeploymentsInternalGetTenantLimitErrors = {
   /**
    * Internal Server Error.
    */
   500: _Error;
 };
 
-export type DeploymentsInternalGetStorageUsageError = DeploymentsInternalGetStorageUsageErrors[keyof DeploymentsInternalGetStorageUsageErrors];
+export type DeploymentsInternalGetTenantLimitError = DeploymentsInternalGetTenantLimitErrors[keyof DeploymentsInternalGetTenantLimitErrors];
 
-export type DeploymentsInternalGetStorageUsageResponses = {
+export type DeploymentsInternalGetTenantLimitResponses = {
   /**
    * Successful response.
    */
-  200: StorageUsage;
+  200: TenantLimit;
 };
 
-export type DeploymentsInternalGetStorageUsageResponse = DeploymentsInternalGetStorageUsageResponses[keyof DeploymentsInternalGetStorageUsageResponses];
+export type DeploymentsInternalGetTenantLimitResponse = DeploymentsInternalGetTenantLimitResponses[keyof DeploymentsInternalGetTenantLimitResponses];
 
-export type SetStorageLimitData = {
-  body: StorageLimit;
+export type SetTenantLimitData = {
+  body: TenantLimitValue;
   path: {
     /**
      * Tenant ID
      */
     id: string;
+    /**
+     * Name
+     */
+    name: 'storage' | 'max_artifact_size_micro_device_tier';
   };
   query?: never;
-  url: '/api/internal/v1/deployments/tenants/{id}/limits/storage';
+  url: '/api/internal/v1/deployments/tenants/{id}/limits/{name}';
 };
 
-export type SetStorageLimitErrors = {
+export type SetTenantLimitErrors = {
   /**
    * Invalid Request.
    */
@@ -5088,16 +5124,16 @@ export type SetStorageLimitErrors = {
   500: _Error;
 };
 
-export type SetStorageLimitError = SetStorageLimitErrors[keyof SetStorageLimitErrors];
+export type SetTenantLimitError = SetTenantLimitErrors[keyof SetTenantLimitErrors];
 
-export type SetStorageLimitResponses = {
+export type SetTenantLimitResponses = {
   /**
    * Limit information updated.
    */
   204: void;
 };
 
-export type SetStorageLimitResponse = SetStorageLimitResponses[keyof SetStorageLimitResponses];
+export type SetTenantLimitResponse = SetTenantLimitResponses[keyof SetTenantLimitResponses];
 
 export type DeploymentsInternalCreateTenantData = {
   /**
@@ -7785,7 +7821,7 @@ export type GetAllDeviceLimitsResponses = {
   /**
    * Successful response.
    */
-  200: Array<DeviceTenantLimit>;
+  200: Array<DeviceLimitTenant>;
 };
 
 export type GetAllDeviceLimitsResponse = GetAllDeviceLimitsResponses[keyof GetAllDeviceLimitsResponses];
@@ -8229,13 +8265,13 @@ export type DeviceAuthInternalGetAllLimitsResponses = {
   /**
    * Device limits.
    */
-  200: Array<DeviceTenantLimit>;
+  200: Array<DeviceLimitTenant>;
 };
 
 export type DeviceAuthInternalGetAllLimitsResponse = DeviceAuthInternalGetAllLimitsResponses[keyof DeviceAuthInternalGetAllLimitsResponses];
 
 export type DeviceAuthInternalPutAllLimitsData = {
-  body: Array<DeviceTenantLimitPut>;
+  body: Array<DeviceLimitTenantPut>;
   path: {
     /**
      * Tenant identifier.
@@ -13248,6 +13284,10 @@ export type ListTenantsV2Data = {
   body?: never;
   path?: never;
   query?: {
+    /**
+     * Flag to include tiers in the response.
+     */
+    tiers?: string;
     /**
      * Starting page.
      */
