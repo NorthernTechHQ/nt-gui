@@ -11,16 +11,27 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { AuditLog, BillingProfile, Integration, Event as WebhookEvent } from '@northern.tech/types/MenderTypes';
+import type { AuditLog as AuditLogEvent, BillingProfile, Integration, Event as WebhookEvent } from '@northern.tech/types/MenderTypes';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TENANT_LIST_DEFAULT } from '../constants';
-import type { AuditLogSelectionState, Card, Organization, OrganizationState, SSOConfig, TenantList } from '../organizationSlice/types';
+import type { AuditLog, AuditLogSelectionState, Card, Organization,  SSOConfig, TenantList, Webhook } from './types';
 
 export const sliceName = 'organization';
 
-export const initialState: OrganizationState = {
+export type OrganizationSliceType = {
+  auditlog: AuditLog;
+  card: Card;
+  externalDeviceIntegrations: Integration[];
+  intentId: string | null;
+  organization: Partial<Organization>;
+  ssoConfigs: SSOConfig[];
+  tenantList: TenantList;
+  webhooks: Webhook;
+}
+
+export const initialState: OrganizationSliceType = {
   card: {
     last4: '',
     expiration: { month: 1, year: 2020 },
@@ -71,7 +82,7 @@ export const organizationSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    receiveAuditLogs: (state, action: PayloadAction<{ events: AuditLog[]; total: number }>) => {
+    receiveAuditLogs: (state, action: PayloadAction<{ events: AuditLogEvent[]; total: number }>) => {
       const { events, total } = action.payload;
       state.auditlog.events = events;
       state.auditlog.selectionState.total = total;

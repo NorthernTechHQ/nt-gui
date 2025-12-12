@@ -17,7 +17,6 @@ import type {
   BillingInfo,
   BillingProfile,
   Event,
-  Integration,
   SamlMetadata
 } from '@northern.tech/types/MenderTypes';
 
@@ -52,7 +51,7 @@ export interface AuditLogSelectionState {
   user?: { id: string };
 }
 
-interface AuditLog {
+export interface AuditLog {
   events: Array<AuditLogEvent>;
   selectionState: AuditLogSelectionState;
 }
@@ -76,17 +75,6 @@ export type SSOConfig = SamlMetadata & {
   config: string;
   type: [keyof typeof SSO_TYPES];
 };
-
-export interface OrganizationState {
-  auditlog: AuditLog;
-  card: Card;
-  externalDeviceIntegrations: Integration[];
-  intentId: string | null;
-  organization: Partial<Organization>;
-  ssoConfigs: SSOConfig[];
-  tenantList: TenantList;
-  webhooks: Webhook;
-}
 
 export interface Addon {
   enabled: boolean;

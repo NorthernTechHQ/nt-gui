@@ -100,7 +100,8 @@ export type SelectionState = {
 
   selectedId?: string;
 };
-type DeploymentsSliceType = {
+
+export type DeploymentsSliceType = {
   byId: Record<string, Deployment>;
   byStatus: DeploymentByStatus;
   config: DeploymentConfig;

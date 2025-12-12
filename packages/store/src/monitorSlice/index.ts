@@ -24,7 +24,7 @@ type IssueCounts = Record<DeviceIssueOptionKey, { filtered: number; total: numbe
 type ChannelSettings = Record<AlertChannelKey, { enabled: boolean }>;
 type SanitizedAlert = Alert & { fullName?: string };
 
-type MonitorSliceType = {
+export type MonitorSliceType = {
   alerts: {
     alertList: {
       page: number;
