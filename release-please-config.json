@@ -1,8 +1,7 @@
 {
   "include-component-in-tag": true,
   "include-v-in-tag": false,
-  "last-release-sha": "9fc98a15f77ea1a73bbee242c2cd92a0c79fa616",
-  "release-type": "simple",
+  "last-release-sha": "de803da9e41ee18222ed2d95bfd764cdc26bfab8",
   "separate-pull-requests": true,
   "signoff": "mender-test-bot <mender@northern.tech>",
   "packages": {
