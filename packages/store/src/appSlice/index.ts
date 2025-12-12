@@ -94,7 +94,7 @@ export type SentryConfig = {
   tracesSampleRate?: number;
 };
 
-type AppSliceType = {
+export type AppSliceType = {
   cancelSource: any;
   commit: string;
   demoArtifactLink: string;

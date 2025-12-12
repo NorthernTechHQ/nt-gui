@@ -76,7 +76,8 @@ export type UserSettings = {
   tooltips?: object;
   trackingConsentGiven?: boolean;
 };
-type UserSliceState = {
+
+export type UserSliceType = {
   activationCode?: string;
   byId: Record<string, User>;
   currentSession?: UserSession | object;
@@ -97,7 +98,8 @@ type UserSliceState = {
   userSettings: UserSettings;
   userSettingsInitialized: boolean;
 };
-export const initialState: UserSliceState = {
+
+export const initialState: UserSliceType = {
   activationCode: undefined,
   byId: {},
   currentUser: null,
@@ -210,7 +212,7 @@ export const usersSlice = createSlice({
       const { id, readState = READ_STATES.read } = action.payload;
       state.tooltips.byId[id] = { ...state.tooltips.byId[id], readState };
     },
-    setTooltipsState: (state, action: PayloadAction<UserSliceState['tooltips']['byId']>) => {
+    setTooltipsState: (state, action: PayloadAction<UserSliceType['tooltips']['byId']>) => {
       state.tooltips.byId = {
         ...state.tooltips.byId,
         ...action.payload
