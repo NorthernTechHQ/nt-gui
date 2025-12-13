@@ -85,7 +85,6 @@ changelog:
       --token=${GITHUB_BOT_TOKEN_REPO_FULL}
       --repo-url=${GITHUB_REPO_URL}
       --target-branch=${CI_COMMIT_REF_NAME}
-      --monorepo-tags
     # git cliff: override the changelog
     - test $GIT_CLIFF == "false" && echo "INFO - Skipping git-cliff" && exit 0
     - git remote add github-${CI_JOB_ID} https://${GITHUB_USER_NAME}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL} || true # Ignore already existing remote
@@ -94,20 +93,21 @@ changelog:
     - |
       for component in $(jq -r 'keys[] | select(. != ".")' .release-please-manifest.json); do
         component_name=$(echo "$component" | cut -d'/' -f2);
-        RELEASE_PLEASE_PR=$(gh pr list --author "${GITHUB_USER_NAME}" --head "release-please--branches--${CI_COMMIT_REF_NAME}" --search "${component_name} in:title" --json number --jq '.[0].number');
+        # Use exact branch name match for the specific component's release PR
+        RELEASE_PLEASE_PR=$(gh pr list --author "${GITHUB_USER_NAME}" --head "release-please--branches--${CI_COMMIT_REF_NAME}--components--@northern.tech/${component_name}" --json number --jq '.[0].number');
         if [[ -z "$RELEASE_PLEASE_PR" ]]; then
-          echo "INFO - no PR found for $component_name";
+          echo "INFO - no PR found for @northern.tech/$component_name";
           continue;
         fi
         gh pr checkout --force $RELEASE_PLEASE_PR;
         cd $component;
           wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml.scoped;
-          git cliff --bump --output ./CHANGELOG.md --repository "../../" --include-path "${component}/**/*" --github-repo ${GITHUB_REPO_URL} --tag-pattern "${component_name}.*";
+          git cliff --bump --output ./CHANGELOG.md --repository "../../" --include-path "${component}/**/*" --github-repo ${GITHUB_REPO_URL} --tag-pattern "@northern.tech/${component_name}-.*";
           cat CHANGELOG.md;
           git add CHANGELOG.md;
           git commit --amend -s --no-edit;
           git push github-${CI_JOB_ID} --force;
-          git cliff --unreleased --bump -o tmp_pr_body.md --repository "../../" --include-path "${component}/**/*" --github-repo ${GITHUB_REPO_URL} --tag-pattern "${component_name}.*";
+          git cliff --unreleased --bump -o tmp_pr_body.md --repository "../../" --include-path "${component}/**/*" --github-repo ${GITHUB_REPO_URL} --tag-pattern "@northern.tech/${component_name}-.*";
           gh pr edit $RELEASE_PLEASE_PR --body-file tmp_pr_body.md;
           rm tmp_pr_body.md;
         cd ../..;
@@ -131,7 +131,6 @@ release:github:
       --token=${GITHUB_BOT_TOKEN_REPO_FULL}
       --repo-url=${GITHUB_REPO_URL}
       --target-branch=${CI_COMMIT_REF_NAME}
-      --monorepo-tags
 
 release:npmjs:
   stage: .post
