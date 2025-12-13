@@ -2404,7 +2404,7 @@ export type Attribute = {
    * Mixed type arrays are not allowed.
    *
    */
-  value: string;
+  value: string | number | Array<string> | Array<number>;
 };
 
 export type DeviceNew = {
@@ -2580,7 +2580,7 @@ export type AttributeV2 = {
    * Mixed arrays are not allowed.
    *
    */
-  value: string;
+  value: string | number | Array<string> | Array<number>;
 };
 
 /**
@@ -2629,7 +2629,7 @@ export type AttributeV1 = {
    * Mixed type arrays are not allowed.
    *
    */
-  value: string;
+  value: string | number | Array<string> | Array<number>;
   /**
    * The date and time of last tag update in RFC3339 format.
    *
@@ -5428,7 +5428,7 @@ export type DeploymentsInternalListDeploymentsForADeviceResponses = {
 export type DeploymentsInternalListDeploymentsForADeviceResponse =
   DeploymentsInternalListDeploymentsForADeviceResponses[keyof DeploymentsInternalListDeploymentsForADeviceResponses];
 
-export type UploadArtifactData = {
+export type DeploymentsInternalUploadArtifactData = {
   body: UploadArtifactRequest;
   path: {
     /**
@@ -5440,7 +5440,7 @@ export type UploadArtifactData = {
   url: '/api/internal/v1/deployments/tenants/{id}/artifacts';
 };
 
-export type UploadArtifactErrors = {
+export type DeploymentsInternalUploadArtifactErrors = {
   /**
    * Invalid Request.
    */
@@ -5451,9 +5451,9 @@ export type UploadArtifactErrors = {
   500: _Error;
 };
 
-export type UploadArtifactError = UploadArtifactErrors[keyof UploadArtifactErrors];
+export type DeploymentsInternalUploadArtifactError = DeploymentsInternalUploadArtifactErrors[keyof DeploymentsInternalUploadArtifactErrors];
 
-export type UploadArtifactResponses = {
+export type DeploymentsInternalUploadArtifactResponses = {
   /**
    * Artifact uploaded.
    */
@@ -6547,14 +6547,14 @@ export type ListArtifactsResponses = {
 
 export type ListArtifactsResponse = ListArtifactsResponses[keyof ListArtifactsResponses];
 
-export type UploadArtifact2Data = {
+export type UploadArtifactData = {
   body: UploadArtifactRequest2;
   path?: never;
   query?: never;
   url: '/api/management/v1/deployments/artifacts';
 };
 
-export type UploadArtifact2Errors = {
+export type UploadArtifactErrors = {
   /**
    * Invalid Request.
    */
@@ -6574,9 +6574,9 @@ export type UploadArtifact2Errors = {
   500: _Error;
 };
 
-export type UploadArtifact2Error = UploadArtifact2Errors[keyof UploadArtifact2Errors];
+export type UploadArtifactError = UploadArtifactErrors[keyof UploadArtifactErrors];
 
-export type UploadArtifact2Responses = {
+export type UploadArtifactResponses = {
   /**
    * Artifact uploaded.
    */
@@ -7613,6 +7613,10 @@ export type DeviceAuthAuthenticateDeviceErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailabe.
+   */
+  503: _Error;
 };
 
 export type DeviceAuthAuthenticateDeviceError = DeviceAuthAuthenticateDeviceErrors[keyof DeviceAuthAuthenticateDeviceErrors];
@@ -7710,6 +7714,10 @@ export type DeviceAuthInternalVerifyJwtErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailabe.
+   */
+  503: _Error;
 };
 
 export type DeviceAuthInternalVerifyJwtError = DeviceAuthInternalVerifyJwtErrors[keyof DeviceAuthInternalVerifyJwtErrors];
@@ -7740,6 +7748,10 @@ export type DeviceAuthInternalRevokeDeviceTokensErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailabe.
+   */
+  503: _Error;
 };
 
 export type DeviceAuthInternalRevokeDeviceTokensError = DeviceAuthInternalRevokeDeviceTokensErrors[keyof DeviceAuthInternalRevokeDeviceTokensErrors];
@@ -7992,6 +8004,10 @@ export type DeviceAuthInternalDeleteDeviceErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailabe.
+   */
+  503: _Error;
 };
 
 export type DeviceAuthInternalDeleteDeviceError = DeviceAuthInternalDeleteDeviceErrors[keyof DeviceAuthInternalDeleteDeviceErrors];
@@ -8484,6 +8500,10 @@ export type DeviceAuthManagementDecommissionDeviceErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailabe.
+   */
+  503: _Error;
 };
 
 export type DeviceAuthManagementDecommissionDeviceError = DeviceAuthManagementDecommissionDeviceErrors[keyof DeviceAuthManagementDecommissionDeviceErrors];
@@ -8577,6 +8597,10 @@ export type DeviceAuthManagementRemoveAuthenticationErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailabe.
+   */
+  503: _Error;
 };
 
 export type DeviceAuthManagementRemoveAuthenticationError =
@@ -8681,6 +8705,10 @@ export type DeviceAuthManagementSetAuthenticationStatusErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailabe.
+   */
+  503: _Error;
 };
 
 export type DeviceAuthManagementSetAuthenticationStatusError =
@@ -8763,6 +8791,10 @@ export type DeviceAuthManagementRevokeApiTokenErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailabe.
+   */
+  503: _Error;
 };
 
 export type DeviceAuthManagementRevokeApiTokenError = DeviceAuthManagementRevokeApiTokenErrors[keyof DeviceAuthManagementRevokeApiTokenErrors];
@@ -8916,6 +8948,10 @@ export type AutomaticallyAuthenticateDeviceErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailabe.
+   */
+  503: _Error;
 };
 
 export type AutomaticallyAuthenticateDeviceError = AutomaticallyAuthenticateDeviceErrors[keyof AutomaticallyAuthenticateDeviceErrors];
@@ -14290,6 +14326,10 @@ export type RevokeUserTokensErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailabe.
+   */
+  503: _Error;
 };
 
 export type RevokeUserTokensError = RevokeUserTokensErrors[keyof RevokeUserTokensErrors];
@@ -14538,6 +14578,10 @@ export type LoginErrors = {
    * Internal server error.
    */
   500: _Error;
+  /**
+   * Service is unavailabe.
+   */
+  503: _Error;
 };
 
 export type LoginError = LoginErrors[keyof LoginErrors];
