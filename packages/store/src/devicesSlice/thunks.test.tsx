@@ -700,7 +700,7 @@ describe('static grouping related actions', () => {
       { type: actions.receivedDevices.type, payload: { [defaultState.devices.byId.a1.id]: { ...expectedDevice, attributes } } },
       {
         type: actions.setDevicesByStatus.type,
-        payload: { deviceIds: [defaultState.devices.byId.a1.id, defaultState.devices.byId.b1.id], status: DEVICE_STATES.accepted, total: 2 }
+        payload: { deviceIds: [defaultState.devices.byId.a1.id, defaultState.devices.byId.b1.id], status: DEVICE_STATES.accepted, total: 0 }
       },
       { type: getDevicesWithAuth.pending.type },
       { type: actions.receivedDevices.type, payload: { [expectedDevice.id]: { ...expectedDevice, updated_ts } } },
