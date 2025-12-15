@@ -20,6 +20,7 @@ import type {
   DeviceConfiguration,
   DeviceInventory,
   DeviceState,
+  DeviceTierLimits,
   DeviceWithImage,
   Integration,
   ManagementApiConfiguration,
@@ -518,20 +519,12 @@ export const getDeviceInfo = createAppAsyncThunk(`${sliceName}/getDeviceInfo`, (
 /*
     Device Auth + admission
   */
-export const getDeviceCount = createAppAsyncThunk(`${sliceName}/getDeviceCount`, (status: DeviceAuthState, { dispatch, getState }) =>
-  GeneralApi.post(getSearchEndpoint(getState()), {
-    page: 1,
-    per_page: 1,
-    filters: mapFiltersToTerms([{ key: 'status', value: status, operator: DEVICE_FILTERING_OPTIONS.$eq.key, scope: 'identity' }]),
-    attributes: defaultAttributes
-  }).then(response => {
-    const count = Number(response.headers[headerNames.total]);
-    return dispatch(actions.setDevicesCountByStatus({ count, status }));
-  })
-);
-
 export const getAllDeviceCounts = createAppAsyncThunk(`${sliceName}/getAllDeviceCounts`, (_, { dispatch }) =>
-  Promise.all([DEVICE_STATES.accepted, DEVICE_STATES.pending].map(status => dispatch(getDeviceCount(status))))
+  GeneralApi.get(`${inventoryApiUrlV2}/statistics`).then(({ data }) => {
+    const { devices_by_status }: { devices_by_status: Record<DeviceAuthState, DeviceTierLimits> } = data;
+    Object.entries(devices_by_status).map(([status, countsPerTier]) => dispatch(actions.setDevicesCountByStatus({ countsPerTier, status })));
+    return;
+  })
 );
 
 export const getDeviceLimits = createAppAsyncThunk(`${sliceName}/getDeviceLimit`, (_, { dispatch }) =>
@@ -629,7 +622,7 @@ export const getDevicesByStatus = createAppAsyncThunk(
         const state = getState();
         const deviceAccu = reduceReceivedDevices(response.data, [], state, status);
         let total = !applicableFilters.length ? Number(response.headers[headerNames.total]) : 0;
-        if (status && state.devices.byStatus[status].total === deviceAccu.ids.length) {
+        if (status && state.devices.byStatus[status].counts.total === deviceAccu.ids.length) {
           total = deviceAccu.ids.length;
         }
         const tasks: ReturnType<AppDispatch>[] = [dispatch(actions.receivedDevices(deviceAccu.devicesById))];

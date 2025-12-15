@@ -251,6 +251,14 @@ export const deviceHandlers = [
     }
     return new HttpResponse(JSON.stringify({}), { headers: { location: 'find/me/here/createdFilterId' } });
   }),
+  http.get(`${inventoryApiUrlV2}/statistics`, async () =>
+    HttpResponse.json({
+      devices_by_status: {
+        accepted: { standard: mockApiResponses.devices.byStatus.accepted.total, micro: 0, system: 0 },
+        pending: { standard: mockApiResponses.devices.byStatus.pending.total, micro: 0, system: 0 }
+      }
+    })
+  ),
   http.put(`${deviceAuthV2}/devices/:deviceId/auth/:authId/status`, async ({ params: { authId, deviceId }, request }) => {
     const { status } = await request.json();
     if (mockApiResponses.devices.byId[deviceId].auth_sets.find(authSet => authSet.id === authId) && DEVICE_STATES[status]) {
