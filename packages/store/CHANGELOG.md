@@ -1,15 +1,71 @@
-# Changelog
-
-## [0.12.0](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.11.0...@northern.tech/store-0.12.0) (2025-12-08)
+---
+## @northern.tech/store-0.13.0 - 2025-12-15
 
 
 ### Features
 
-* **store:** added firstLoginTimestamp for feedback form delay ([f600732](https://github.com/NorthernTechHQ/nt-gui/commit/f600732b4867cfd91e5d062daf82c0300e9d2dd3))
-* **store:** added firstLoginTimestamp for feedback form delay ([00d2612](https://github.com/NorthernTechHQ/nt-gui/commit/00d26124d4774a94b1dfd3a9f56c104e5feb0083))
+#### Store
 
----
-## @northern.tech/store-0.10.0 - 2025-12-02
+
+- *(store)* Made slice types available consistently
+
+ ([77c506e](https://github.com/NorthernTechHQ/nt-gui/commit/77c506ea6f6b536c5ed243d7ab2b82ff0489626f))  by @mzedel
+
+
+
+
+  - and aligned them slightly along the way
+
+- *(store)* Made use of combined device counts endpoint & adjusted related tracking state
+
+ ([4d0bb34](https://github.com/NorthernTechHQ/nt-gui/commit/4d0bb34af23d726019e4b7d906701c9bc2b60c60))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/store-0.12.0 - 2025-12-08
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Do not encode empty msgpack fixmap on close
+
+ ([8349f07](https://github.com/NorthernTechHQ/nt-gui/commit/8349f07784f29e40d57dcd0f17ec26c31b490ff4))  by @alfrunes
+
+
+
+
+
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added firstLoginTimestamp for feedback form delay
+
+([MEN-8896](https://northerntech.atlassian.net/browse/MEN-8896)) ([00d2612](https://github.com/NorthernTechHQ/nt-gui/commit/00d26124d4774a94b1dfd3a9f56c104e5feb0083))  by @mineralsfree
+
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/store-0.11.0 - 2025-12-02
 
 
 ### Bug fixes
@@ -21,9 +77,13 @@
 
  ([e66e3a9](https://github.com/NorthernTechHQ/nt-gui/commit/e66e3a9d20f1ff5b23bbe345226495db51c0b976))  by @mzedel
 
+
+
 - *(store)* Let device limits only be considered if they are set
 
  ([f3c381f](https://github.com/NorthernTechHQ/nt-gui/commit/f3c381f88f2831b72456fd1ea6e51d33baeed7ff))  by @mzedel
+
+
 
 
   - tier separated handling for negative infinity/ limit of -1 will have to be situation dependent in the application
@@ -41,9 +101,14 @@
 
  ([97eb3bb](https://github.com/NorthernTechHQ/nt-gui/commit/97eb3bb8b37b9270dd411a003cbb6fd761701d4b))  by @mzedel
 
+
+
 - *(store)* Added mcu onboarding support
 
 ([MEN-8583](https://northerntech.atlassian.net/browse/MEN-8583)) ([7b5f6f0](https://github.com/NorthernTechHQ/nt-gui/commit/7b5f6f0021f21f4465f416da87157e42e23e356b))  by @mineralsfree
+
+
+
 
 
 
@@ -62,29 +127,43 @@
 
  ([0cc8161](https://github.com/NorthernTechHQ/nt-gui/commit/0cc81618bfb41e4ad8c9bfbe1205949b24edde7e))  by @mzedel
 
+
+
 - *(store)* Rectified user setting selector confusion w/ global settings to align w/ Mender
 
  ([bca8f1a](https://github.com/NorthernTechHQ/nt-gui/commit/bca8f1aca73218c0ff3820027b306eb42a1172f8))  by @mzedel
+
+
 
 - *(store)* Aligned type usage w/ updated backend specs
 
  ([3af8a38](https://github.com/NorthernTechHQ/nt-gui/commit/3af8a3869041defac33d6651729537fd438cc109))  by @mzedel
 
+
+
 - *(store)* Adopted reintroduced delta job related types
 
  ([8722498](https://github.com/NorthernTechHQ/nt-gui/commit/8722498acca64d4771980cd78f308e2d04a2d627))  by @mzedel
+
+
 
 - *(store)* Fixed an issue that prevented getting detailed delta gen information
 
  ([093f711](https://github.com/NorthernTechHQ/nt-gui/commit/093f7119cf2d4322adfc2d352f7a90876ef78241))  by @mzedel
 
+
+
 - *(store)* Fixed an issue that prevented updating sso settings for existing configs
 
  ([5d2b9e3](https://github.com/NorthernTechHQ/nt-gui/commit/5d2b9e33c0744a8e88cdefa4d05f985f6c7783e5))  by @mzedel
 
+
+
 - *(store)* Removed duplicated yes function to ease vitest usage
 
  ([6b31671](https://github.com/NorthernTechHQ/nt-gui/commit/6b316712000a879b5bc9db8207eb464ceb722a16))  by @mzedel
+
+
 
 
   - `yes` now needs to be a named function to be usable in vitest hooks
@@ -101,6 +180,8 @@
 - *(store)* Let store rely on newer backend type definitions
 
  ([5ade1e1](https://github.com/NorthernTechHQ/nt-gui/commit/5ade1e12697c5edf61b205f1720761e586596a88))  by @mzedel
+
+
 
 
 
@@ -126,6 +207,8 @@
 
 
 
+
+
 ### Security
 
 
@@ -143,11 +226,15 @@
  ([81512d2](https://github.com/NorthernTechHQ/nt-gui/commit/81512d2925cce055d1f8fc4fc66877824b1372a1))  by @mzedel
 
 
+
+
   + align deployment stats
 
 - *(store)* Aligned snackbar open state automation w/ mender
 
  ([a78beaa](https://github.com/NorthernTechHQ/nt-gui/commit/a78beaade61972a836c03b47b79510b14e4b5d77))  by @mzedel
+
+
 
 
 
@@ -166,9 +253,13 @@
 
  ([294b140](https://github.com/NorthernTechHQ/nt-gui/commit/294b14054fa97cdb80a4d7d15759f6223aa177f2))  by @mzedel
 
+
+
 - *(store)* Additional adjustment for esm compatibility
 
  ([3808f01](https://github.com/NorthernTechHQ/nt-gui/commit/3808f01e4a8c379e63a599a74c92ffa08e56ead4))  by @mzedel
+
+
 
 
 
@@ -188,15 +279,21 @@
  ([d52a3d7](https://github.com/NorthernTechHQ/nt-gui/commit/d52a3d7dae5199b83f0e73dd3a6c10cf30118bb3))  by @mzedel
 
 
+
+
   - common + common-ui affected as well, not mentioned due to scope policy
 
 - *(store)* Removed country flags as their exported ref was not usable externally
 
  ([4a12781](https://github.com/NorthernTechHQ/nt-gui/commit/4a12781e8e02efb1f465c5f7034789058c3ab927))  by @mzedel
 
+
+
 - *(store)* Synced app state selectors w/ mender
 
  ([eff0a98](https://github.com/NorthernTechHQ/nt-gui/commit/eff0a98e1a72029cf8f7872682d6c9957d486f91))  by @mzedel
+
+
 
 
 
@@ -216,6 +313,8 @@
 
 
 
+
+
 ## @northern.tech/store-0.4.0 - 2025-08-14
 
 
@@ -228,9 +327,14 @@
 
  ([2474698](https://github.com/NorthernTechHQ/nt-gui/commit/2474698b27b9c61a0201e4ee2671a39b5305339e))  by @mzedel
 
+
+
 - *(store)* Colocated mock data with slices they correspond to
 
  ([5f452c4](https://github.com/NorthernTechHQ/nt-gui/commit/5f452c423bb7a6c6565ab89bdea68ef445c951f6))  by @mzedel
+
+
+
 
 
 
@@ -246,6 +350,8 @@
 
 
 
+
+
 ### Refactor
 
 #### Store,common-ui
@@ -254,6 +360,8 @@
 - *(store,common-ui)* Switched package internal imports to relative locations - to remove path mapping differences in vitest vs. tsup
 
  ([38f6fd8](https://github.com/NorthernTechHQ/nt-gui/commit/38f6fd8fc6b72caaf03f87bf2e7e9a9167aca6f0))  by @mzedel
+
+
 
 
 
@@ -281,6 +389,8 @@
 
 
 
+
+
 #### Store
 
 
@@ -288,13 +398,19 @@
 
  ([cf5ea53](https://github.com/NorthernTechHQ/nt-gui/commit/cf5ea5339e88f3767c25358221f52060941363e4))  by @mzedel
 
+
+
 - *(store)* Aligned dependencies with referenced packages
 
  ([182dedd](https://github.com/NorthernTechHQ/nt-gui/commit/182dedd8a4a1f81ed4f22bf9e345bc0e4f73cc2d))  by @mzedel
 
+
+
 - *(store)* Aligned sorting behaviour with type expectation & single sorting function
 
  ([f9d71d4](https://github.com/NorthernTechHQ/nt-gui/commit/f9d71d411907d3ba0106c2c7da4a6f46e5ac2cb0))  by @mzedel
+
+
 
 
 
@@ -314,6 +430,8 @@
 
 
 
+
+
 ## @northern.tech/store-0.3.3 - 2025-01-31
 
 
@@ -326,9 +444,13 @@
 
  ([106415a](https://github.com/NorthernTechHQ/nt-gui/commit/106415a590755e8400ba2b8a99069032fd6f6bcb))  by @mzedel
 
+
+
 - *(store)* Added missing type for device data retrieval
 
  ([3b33c43](https://github.com/NorthernTechHQ/nt-gui/commit/3b33c4380f6cf47688452319ef0bf88554179eef))  by @mzedel
+
+
 
 
 
@@ -349,6 +471,8 @@
 - *(store)* Fixed end date filters out today's entries in the Audit log and Devices
 
  ([aee3e80](https://github.com/NorthernTechHQ/nt-gui/commit/aee3e8053fe5744b99ab7432662c21c3fea38331))  by @aleksandrychev
+
+
 
 
 
@@ -377,9 +501,13 @@
 
  ([bcba9da](https://github.com/NorthernTechHQ/nt-gui/commit/bcba9da4b8b29d27481f17383af66cf791b36bd8))  by @mzedel
 
+
+
 - *(store)* Reintroduced locations definition to allow build to pass
 
  ([48da257](https://github.com/NorthernTechHQ/nt-gui/commit/48da2579d6941a020493521d83d7c41fb5c75f2b))  by @mzedel
+
+
 
 
 
@@ -414,6 +542,8 @@
 - *(store)* Fixed type generation issue bypassing type only files
 
  ([7b8add6](https://github.com/NorthernTechHQ/nt-gui/commit/7b8add6703b06fd1b45fb27dff8c86b29cc98eaf))  by @mzedel
+
+
 
 
 
