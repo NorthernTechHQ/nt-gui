@@ -87,7 +87,15 @@ import {
   progress
 } from '../utils';
 import { emptyFilter } from './constants';
-import { getDeviceById as getDeviceByIdSelector, getDeviceFilters, getDeviceListState, getDevicesById, getGroupsById, getSelectedGroup } from './selectors';
+import {
+  getDeviceById as getDeviceByIdSelector,
+  getDeviceCountsByStatus,
+  getDeviceFilters,
+  getDeviceListState,
+  getDevicesById,
+  getGroupsById,
+  getSelectedGroup
+} from './selectors';
 
 const { cleanUpUpload, initUpload, setSnackbar, uploadProgress } = storeActions;
 const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
@@ -743,8 +751,8 @@ export const updateReportData = createAppAsyncThunk(`${sliceName}/updateReportDa
   const { group = '' } = report;
   const devicesById = getDevicesById(getState());
   const groups = getGroupsById(getState());
-  const acceptedDevices = getAcceptedDevices(getState());
-  const totalDeviceCount = groups[group] ? (groups[group].total as number) : acceptedDevices.total;
+  const { accepted: acceptedDevicesCount } = getDeviceCountsByStatus(getState());
+  const totalDeviceCount = groups[group] ? (groups[group].total as number) : acceptedDevicesCount;
 
   const reportsData = getDeviceReports(getState());
   const newReports = [...reportsData];
@@ -764,6 +772,7 @@ export const getReportDataWithoutBackendSupport = createAppAsyncThunk(
     const effectiveAttribute = software ? software : attribute;
     const devicesById = getDevicesById(getState());
     const acceptedDevices = getAcceptedDevices(getState());
+    const { accepted: acceptedDevicesCount } = getDeviceCountsByStatus(getState());
     const groups = getGroupsById(getState());
     const { deviceIds = [], filters = [], total = 0 } = groups[group] || {};
     let groupDevicesRequest = Promise.resolve({
@@ -773,7 +782,7 @@ export const getReportDataWithoutBackendSupport = createAppAsyncThunk(
       groupDevicesRequest = filters.length
         ? dispatch(getAllDynamicGroupDevices({ group, attribute: effectiveAttribute })).unwrap()
         : dispatch(getAllGroupDevices({ group, attribute: effectiveAttribute })).unwrap();
-    } else if (!group && (acceptedDevices.deviceIds.length !== acceptedDevices.total || !acceptedDevices.deviceIds.every(id => !!devicesById[id]))) {
+    } else if (!group && (acceptedDevices.deviceIds.length !== acceptedDevicesCount || !acceptedDevices.deviceIds.every(id => !!devicesById[id]))) {
       groupDevicesRequest = dispatch(getAllDevicesByStatus({ status: DEVICE_STATES.accepted, attribute: effectiveAttribute })).unwrap();
     }
     return groupDevicesRequest.then(() => dispatch(updateReportData(reportIndex)));
