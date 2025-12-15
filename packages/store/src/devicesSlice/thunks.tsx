@@ -33,7 +33,7 @@ import { isCancel } from 'axios';
 import pluralize from 'pluralize';
 import { v4 as uuid } from 'uuid';
 
-import type { Device, DeviceFilter, DeviceGroup, DeviceGroups, DeviceListState, DeviceSelectedAttribute, DeviceStatus } from '.';
+import type { Device, DeviceFilter, DeviceGroup, DeviceGroups, DeviceListState, DeviceSelectedAttribute } from '.';
 import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import GeneralApi from '../api/general-api';
@@ -58,7 +58,7 @@ import {
   iotManagerBaseURL,
   rootfsImageVersion
 } from '../constants';
-import type { DeviceIssueOptionKey } from '../constants';
+import type { DeviceAuthState, DeviceIssueOptionKey } from '../constants';
 import {
   getAcceptedDevices,
   getAttrsEndpoint,
@@ -322,7 +322,7 @@ export const selectGroup = createAppAsyncThunk(
 const getEarliestTs = (dateA = '', dateB = '') => (!dateA || !dateB ? dateA || dateB : dateA < dateB ? dateA : dateB);
 
 type ReceivedDevice = BackendDevice & DeviceInventory & Omit<DeviceWithImage, 'status'>;
-const reduceReceivedDevices = (devices: ReceivedDevice[], ids: string[], state: RootState, status?: DeviceStatus) =>
+const reduceReceivedDevices = (devices: ReceivedDevice[], ids: string[], state: RootState, status?: DeviceAuthState) =>
   devices.reduce(
     (accu, device: any) => {
       const stateDevice = getDeviceByIdSelector(state, device.id);
@@ -518,7 +518,7 @@ export const getDeviceInfo = createAppAsyncThunk(`${sliceName}/getDeviceInfo`, (
 /*
     Device Auth + admission
   */
-export const getDeviceCount = createAppAsyncThunk(`${sliceName}/getDeviceCount`, (status: DeviceStatus, { dispatch, getState }) =>
+export const getDeviceCount = createAppAsyncThunk(`${sliceName}/getDeviceCount`, (status: DeviceAuthState, { dispatch, getState }) =>
   GeneralApi.post(getSearchEndpoint(getState()), {
     page: 1,
     per_page: 1,
@@ -566,7 +566,7 @@ export const setDeviceListState = createAppAsyncThunk(
       const applicableSelectedState = nextState.state === ALL_DEVICE_STATES ? undefined : nextState.state;
       nextState.isLoading = true;
       tasks.push(
-        dispatch(getDevicesByStatus({ ...nextState, status: applicableSelectedState as DeviceStatus | undefined, sortOptions: sortBy, fetchAuth }))
+        dispatch(getDevicesByStatus({ ...nextState, status: applicableSelectedState as DeviceAuthState | undefined, sortOptions: sortBy, fetchAuth }))
           .unwrap()
           .then(results => {
             const { deviceAccu, total } = results[results.length - 1];
@@ -591,7 +591,7 @@ type GetDevicesByStatusPayload = {
   selectedAttributes: DeviceSelectedAttribute[];
   selectedIssues: DeviceIssueOptionKey[];
   sortOptions: SortCriteria[];
-  status: DeviceStatus;
+  status: DeviceAuthState;
 };
 // get devices from inventory
 export const getDevicesByStatus = createAppAsyncThunk(
@@ -650,7 +650,7 @@ export const getDevicesByStatus = createAppAsyncThunk(
 
 export const getAllDevicesByStatus = createAppAsyncThunk(
   `${sliceName}/getAllDevicesByStatus`,
-  ({ status, attribute }: { attribute: string; status: DeviceStatus }, { dispatch, getState }) => {
+  ({ status, attribute }: { attribute: string; status: DeviceAuthState }, { dispatch, getState }) => {
     const attributes = [...defaultAttributes, getIdAttribute(getState())];
     const getAllDevices = (perPage = MAX_PAGE_SIZE, page = 1, devices: string[] = []) =>
       GeneralApi.post(getSearchEndpoint(getState()), {

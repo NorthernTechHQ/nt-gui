@@ -107,7 +107,6 @@ type FilteringAttributesConfig = {
   count: number;
   limit: number;
 };
-export type DeviceStatus = DeviceAuthState | 'active' | 'inactive';
 
 export type DeviceGroups = {
   byId: Record<string, DeviceGroup>;
@@ -115,7 +114,7 @@ export type DeviceGroups = {
 };
 export type DeviceSliceType = {
   byId: Record<string, Device>;
-  byStatus: Record<DeviceStatus, { deviceIds: string[]; total: number }>;
+  byStatus: Record<DeviceAuthState, { deviceIds: string[]; total: number }>;
   deviceList: DeviceListState;
   filteringAttributes: FilteringAttributes;
   filteringAttributesConfig: FilteringAttributesConfig;
