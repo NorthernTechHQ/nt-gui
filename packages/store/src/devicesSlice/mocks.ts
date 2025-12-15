@@ -87,8 +87,6 @@ export const mockState = {
   },
   byStatus: {
     accepted: { deviceIds: ['a1', 'b1'], total: 2 },
-    active: { deviceIds: [], total: 0 },
-    inactive: { deviceIds: [], total: 0 },
     pending: { deviceIds: ['c1'], total: 1 },
     preauthorized: { deviceIds: [], total: 0 },
     rejected: { deviceIds: [], total: 0 }

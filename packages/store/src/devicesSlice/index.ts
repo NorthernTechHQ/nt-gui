@@ -135,8 +135,6 @@ export const initialState: DeviceSliceType = {
   },
   byStatus: {
     [DEVICE_STATES.accepted]: { deviceIds: [], total: 0 },
-    active: { deviceIds: [], total: 0 },
-    inactive: { deviceIds: [], total: 0 },
     [DEVICE_STATES.pending]: { deviceIds: [], total: 0 },
     [DEVICE_STATES.preauth]: { deviceIds: [], total: 0 },
     [DEVICE_STATES.rejected]: { deviceIds: [], total: 0 }
@@ -274,11 +272,6 @@ export const devicesSlice = createSlice({
         return;
       }
       state.filters = action.payload.filter(filter => filter.key && filter.operator && filter.scope && typeof filter.value !== 'undefined');
-    },
-    setInactiveDevices: (state, action: PayloadAction<{ activeDeviceTotal: number; inactiveDeviceTotal: number }>) => {
-      const { activeDeviceTotal, inactiveDeviceTotal } = action.payload;
-      state.byStatus.active.total = activeDeviceTotal;
-      state.byStatus.inactive.total = inactiveDeviceTotal;
     },
     setDeviceReports: (state, action: PayloadAction<DeviceReport[]>) => {
       state.reports = action.payload;
