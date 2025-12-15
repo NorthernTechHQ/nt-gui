@@ -107,7 +107,6 @@ type FilteringAttributesConfig = {
   count: number;
   limit: number;
 };
-export type DeviceStatus = DeviceAuthState | 'active' | 'inactive';
 
 export type DeviceGroups = {
   byId: Record<string, DeviceGroup>;
@@ -115,7 +114,7 @@ export type DeviceGroups = {
 };
 export type DeviceSliceType = {
   byId: Record<string, Device>;
-  byStatus: Record<DeviceStatus, { deviceIds: string[]; total: number }>;
+  byStatus: Record<DeviceAuthState, { counts: DeviceTierLimits & { total: number }; deviceIds: string[] }>;
   deviceList: DeviceListState;
   filteringAttributes: FilteringAttributes;
   filteringAttributesConfig: FilteringAttributesConfig;
@@ -134,12 +133,10 @@ export const initialState: DeviceSliceType = {
     // }
   },
   byStatus: {
-    [DEVICE_STATES.accepted]: { deviceIds: [], total: 0 },
-    active: { deviceIds: [], total: 0 },
-    inactive: { deviceIds: [], total: 0 },
-    [DEVICE_STATES.pending]: { deviceIds: [], total: 0 },
-    [DEVICE_STATES.preauth]: { deviceIds: [], total: 0 },
-    [DEVICE_STATES.rejected]: { deviceIds: [], total: 0 }
+    [DEVICE_STATES.accepted]: { deviceIds: [], counts: { standard: 0, micro: 0, system: 0, total: 0 } },
+    [DEVICE_STATES.pending]: { deviceIds: [], counts: { standard: 0, micro: 0, system: 0, total: 0 } },
+    [DEVICE_STATES.preauth]: { deviceIds: [], counts: { standard: 0, micro: 0, system: 0, total: 0 } },
+    [DEVICE_STATES.rejected]: { deviceIds: [], counts: { standard: 0, micro: 0, system: 0, total: 0 } }
   },
   deviceList: {
     deviceIds: [],
@@ -275,21 +272,19 @@ export const devicesSlice = createSlice({
       }
       state.filters = action.payload.filter(filter => filter.key && filter.operator && filter.scope && typeof filter.value !== 'undefined');
     },
-    setInactiveDevices: (state, action: PayloadAction<{ activeDeviceTotal: number; inactiveDeviceTotal: number }>) => {
-      const { activeDeviceTotal, inactiveDeviceTotal } = action.payload;
-      state.byStatus.active.total = activeDeviceTotal;
-      state.byStatus.inactive.total = inactiveDeviceTotal;
-    },
     setDeviceReports: (state, action: PayloadAction<DeviceReport[]>) => {
       state.reports = action.payload;
     },
-    setDevicesByStatus: (state, action: PayloadAction<{ deviceIds: string[]; forceUpdate?: boolean; status: DeviceStatus; total: number }>) => {
-      const { forceUpdate, status, total, deviceIds } = action.payload;
-      state.byStatus[status] = total || forceUpdate ? { deviceIds, total } : state.byStatus[status];
+    setDevicesByStatus: (state, action: PayloadAction<{ deviceIds: string[]; status: DeviceAuthState; total: number }>) => {
+      const { status, total, deviceIds } = action.payload;
+      if (total) {
+        state.byStatus[status].deviceIds = deviceIds;
+        state.byStatus[status].counts.total = total;
+      }
     },
-    setDevicesCountByStatus: (state, action: PayloadAction<{ count: number; status: DeviceStatus }>) => {
-      const { count, status } = action.payload;
-      state.byStatus[status].total = count;
+    setDevicesCountByStatus: (state, action: PayloadAction<{ countsPerTier: DeviceTierLimits; status: DeviceAuthState }>) => {
+      const { countsPerTier, status } = action.payload;
+      state.byStatus[status].counts = { ...countsPerTier, total: Object.values(countsPerTier).reduce((accu, tieredCount) => (accu += tieredCount), 0) };
     },
     setDeviceLimits: (state, action: PayloadAction<DeviceTierLimits>) => {
       state.limits = action.payload;
@@ -306,7 +301,15 @@ export const devicesSlice = createSlice({
       const hasMultipleAuthSets = authId && device.auth_sets ? device.auth_sets.filter(authset => authset.id !== authId).length > 0 : false;
       if (!hasMultipleAuthSets && (Object.values(DEVICE_STATES) as string[]).includes(device.status)) {
         const deviceIds = state.byStatus[device.status].deviceIds.filter(id => id !== deviceId);
-        state.byStatus[device.status] = { deviceIds, total: Math.max(0, state.byStatus[device.status].total - 1) };
+        const deviceTier = (device.attributes.tier as string) || 'standard';
+        state.byStatus[device.status] = {
+          deviceIds,
+          counts: {
+            ...state.byStatus[device.status].counts,
+            [deviceTier]: Math.max(0, state.byStatus[device.status].counts[deviceTier] - 1),
+            total: Math.max(0, state.byStatus[device.status].counts.total - 1)
+          }
+        };
       }
     }
   }

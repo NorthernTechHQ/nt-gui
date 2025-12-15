@@ -15,6 +15,7 @@ import { duplicateFilter } from '@northern.tech/utils/helpers';
 import { createSelector } from '@reduxjs/toolkit';
 
 import type { DeviceFilter, DeviceGroup } from '.';
+import type { DeviceAuthState } from '../constants';
 import { DEVICE_STATES, UNGROUPED_GROUP } from '../constants';
 import type { RootState } from '../store';
 
@@ -56,17 +57,25 @@ export const getDeviceIdentityAttributes = createSelector(
 );
 
 export const getDeviceCountsByStatus = createSelector([getDevicesByStatus], byStatus =>
-  Object.values(DEVICE_STATES).reduce((accu, state) => {
-    accu[state] = byStatus[state].total || 0;
-    return accu;
-  }, {})
+  Object.values(DEVICE_STATES).reduce<Record<DeviceAuthState, number>>(
+    (accu, deviceState) => {
+      const { counts } = byStatus[deviceState];
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { total, ...tieredCounts } = counts;
+      const count = Object.values(tieredCounts).reduce((accu, countPerTier) => accu + countPerTier, 0);
+      accu[deviceState] = count;
+      accu.total = accu.total + count;
+      return accu;
+    },
+    { total: 0 }
+  )
 );
 
 export const getDeviceById = createSelector([getDevicesById, (_, deviceId) => deviceId], (devicesById, deviceId = '') => devicesById[deviceId] ?? {});
 
 export const getSelectedGroupInfo = createSelector(
-  [getAcceptedDevices, getGroupsById, getSelectedGroup],
-  ({ total: acceptedDeviceTotal }, groupsById, selectedGroup) => {
+  [getDeviceCountsByStatus, getGroupsById, getSelectedGroup],
+  ({ accepted: acceptedDeviceTotal }, groupsById, selectedGroup) => {
     let groupCount = acceptedDeviceTotal;
     let groupFilters: DeviceFilter[] = [];
     if (selectedGroup && groupsById[selectedGroup]) {
@@ -83,8 +92,8 @@ export const getCombinedLimit = createSelector(
 );
 
 export const getLimitMaxed = createSelector(
-  [getAcceptedDevices, getCombinedLimit],
-  ({ total: acceptedDevices = 0 }, combinedLimit) => !!combinedLimit && combinedLimit <= acceptedDevices
+  [getDeviceCountsByStatus, getCombinedLimit],
+  ({ accepted: acceptedDevices }, combinedLimit) => !!combinedLimit && combinedLimit <= acceptedDevices
 );
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

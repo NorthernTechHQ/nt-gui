@@ -24,7 +24,6 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { actions } from '.';
 import { actions as appActions } from '../appSlice';
-import type { DeviceAuthState } from '../constants';
 import { DEVICE_STATES, EXTERNAL_PROVIDER, TIMEOUTS, UNGROUPED_GROUP } from '../constants';
 import { actions as deploymentActions } from '../deploymentsSlice';
 import { getSingleDeployment } from '../thunks';
@@ -45,7 +44,6 @@ import {
   getDeviceById,
   getDeviceConfig,
   getDeviceConnect,
-  getDeviceCount,
   getDeviceFileDownloadLink,
   getDeviceInfo,
   getDeviceLimits,
@@ -108,7 +106,7 @@ const acceptedDevices = {
   payload: {
     deviceIds: [defaultState.devices.byId.a1.id, defaultState.devices.byId.b1.id],
     status: DEVICE_STATES.accepted,
-    total: defaultState.devices.byStatus.accepted.total
+    total: defaultState.devices.byStatus.accepted.counts.standard
   }
 };
 
@@ -263,52 +261,14 @@ describe('selecting things', () => {
 });
 
 describe('overall device information retrieval', () => {
-  it('should allow count retrieval', async () => {
-    const store = mockStore({ ...defaultState });
-    const expectedActions = [
-      { type: getDeviceCount.pending.type },
-      { type: getDeviceCount.pending.type },
-      { type: getDeviceCount.pending.type },
-      { type: getDeviceCount.pending.type },
-      {
-        type: actions.setDevicesCountByStatus.type,
-        payload: { count: defaultState.devices.byStatus.accepted.total, status: DEVICE_STATES.accepted }
-      },
-      {
-        type: actions.setDevicesCountByStatus.type,
-        payload: { count: defaultState.devices.byStatus.pending.total, status: DEVICE_STATES.pending }
-      },
-      {
-        type: actions.setDevicesCountByStatus.type,
-        payload: { count: defaultState.devices.byStatus.preauthorized.total, status: DEVICE_STATES.preauth }
-      },
-      {
-        type: actions.setDevicesCountByStatus.type,
-        payload: { count: defaultState.devices.byStatus.rejected.total, status: DEVICE_STATES.rejected }
-      },
-      { type: getDeviceCount.fulfilled.type },
-      { type: getDeviceCount.fulfilled.type },
-      { type: getDeviceCount.fulfilled.type },
-      { type: getDeviceCount.fulfilled.type }
-    ];
-    await Promise.all(Object.values(DEVICE_STATES).map(status => store.dispatch(getDeviceCount(status as DeviceAuthState)))).then(() => {
-      const storeActions = store.getActions();
-      expect(storeActions.length).toEqual(expectedActions.length);
-      expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
-    });
-  });
   it('should allow count retrieval for all state counts', async () => {
     const store = mockStore({ ...defaultState });
     const expectedActions = [
       { type: getAllDeviceCounts.pending.type },
-      { type: getDeviceCount.pending.type },
-      { type: getDeviceCount.pending.type },
       ...[DEVICE_STATES.accepted, DEVICE_STATES.pending].map(status => ({
         type: actions.setDevicesCountByStatus.type,
-        payload: { count: defaultState.devices.byStatus[status].total, status }
+        payload: { countsPerTier: defaultState.devices.byStatus[status].counts, status }
       })),
-      { type: getDeviceCount.fulfilled.type },
-      { type: getDeviceCount.fulfilled.type },
       { type: getAllDeviceCounts.fulfilled.type }
     ];
     await store.dispatch(getAllDeviceCounts());
@@ -740,7 +700,7 @@ describe('static grouping related actions', () => {
       { type: actions.receivedDevices.type, payload: { [defaultState.devices.byId.a1.id]: { ...expectedDevice, attributes } } },
       {
         type: actions.setDevicesByStatus.type,
-        payload: { deviceIds: [defaultState.devices.byId.a1.id, defaultState.devices.byId.b1.id], status: DEVICE_STATES.accepted, total: 2 }
+        payload: { deviceIds: [defaultState.devices.byId.a1.id, defaultState.devices.byId.b1.id], status: DEVICE_STATES.accepted, total: 0 }
       },
       { type: getDevicesWithAuth.pending.type },
       { type: actions.receivedDevices.type, payload: { [expectedDevice.id]: { ...expectedDevice, updated_ts } } },
@@ -938,7 +898,7 @@ describe('device retrieval ', () => {
       defaultResults.receivedExpectedDevice,
       {
         type: actions.setDevicesByStatus.type,
-        payload: { deviceIds: [defaultState.devices.byId.a1.id], status: DEVICE_STATES.accepted, total: defaultState.devices.byStatus.accepted.total }
+        payload: { deviceIds: [defaultState.devices.byId.a1.id], status: DEVICE_STATES.accepted, total: defaultState.devices.byStatus.accepted.counts.standard }
       },
       { type: getDevicesWithAuth.pending.type },
       defaultResults.receivedExpectedDevice,

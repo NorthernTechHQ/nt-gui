@@ -86,12 +86,10 @@ export const mockState = {
     }
   },
   byStatus: {
-    accepted: { deviceIds: ['a1', 'b1'], total: 2 },
-    active: { deviceIds: [], total: 0 },
-    inactive: { deviceIds: [], total: 0 },
-    pending: { deviceIds: ['c1'], total: 1 },
-    preauthorized: { deviceIds: [], total: 0 },
-    rejected: { deviceIds: [], total: 0 }
+    accepted: { deviceIds: ['a1', 'b1'], counts: { micro: 0, standard: 2, system: 0 } },
+    pending: { deviceIds: ['c1'], counts: { micro: 0, standard: 1, system: 0 } },
+    preauthorized: { deviceIds: [], counts: { micro: 0, standard: 0, system: 0 } },
+    rejected: { deviceIds: [], counts: { micro: 0, standard: 0, system: 0 } }
   },
   deviceList: {
     deviceIds: [],
