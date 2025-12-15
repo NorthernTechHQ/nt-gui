@@ -1,4 +1,23 @@
 ---
+## @northern.tech/testing-0.4.0 - 2025-12-15
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Made use of combined device counts endpoint & adjusted related tracking state
+
+ ([4d0bb34](https://github.com/NorthernTechHQ/nt-gui/commit/4d0bb34af23d726019e4b7d906701c9bc2b60c60))  by @mzedel
+
+
+
+
+
+
+
+
 ## @northern.tech/testing-0.3.0 - 2025-12-01
 
 
@@ -16,6 +35,8 @@
 
 
 
+
+
 ## @northern.tech/testing-0.2.3 - 2025-11-04
 
 
@@ -27,6 +48,8 @@
 - *(testing)* Align time mock handling w/ vitest + rtl recommendations by providing proper `beforeEach` util
 
  ([7e26a57](https://github.com/NorthernTechHQ/nt-gui/commit/7e26a577e3737fd0d00f967cdc170589219841f1))  by @mzedel
+
+
 
 
 
@@ -53,6 +76,8 @@
 
 
 
+
+
 ## @northern.tech/testing-0.2.1 - 2025-08-24
 
 
@@ -64,6 +89,8 @@
 - *(testing)* Synced msw handlers with current mender
 
  ([4dfe2d0](https://github.com/NorthernTechHQ/nt-gui/commit/4dfe2d02ad4c58329c0c99a2f1cf305e4cee8997))  by @mzedel
+
+
 
 
 
@@ -87,6 +114,8 @@
 
 
 
+
+
 ## @northern.tech/testing-0.1.0 - 2025-08-14
 
 
@@ -101,6 +130,9 @@
 - *(testing)* Added testing package
 
 ([MEN-8006](https://northerntech.atlassian.net/browse/MEN-8006)) ([46c2efd](https://github.com/NorthernTechHQ/nt-gui/commit/46c2efd789d54a3a0393e3a1337645ca138eefa3))  by @mzedel
+
+
+
 
 
   + adopted it in the related packages tests
