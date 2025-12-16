@@ -10718,6 +10718,55 @@ export type UpdateInventoryForADeviceResponses = {
   200: unknown;
 };
 
+export type UpdateInventoryForADeviceScopeWiseData = {
+  /**
+   * A list of attribute descriptors.
+   */
+  body: Array<Attribute>;
+  headers?: {
+    /**
+     * Skips updating the device if modified after the given RFC1123 timestamp.
+     */
+    'If-Unmodified-Since'?: string;
+  };
+  path: {
+    /**
+     * ID of given tenant.
+     */
+    tenant_id: string;
+    /**
+     * ID of given device.
+     */
+    device_id: string;
+  };
+  query?: never;
+  url: '/api/internal/v1/inventory/tenants/{tenant_id}/device/{device_id}/attributes';
+};
+
+export type UpdateInventoryForADeviceScopeWiseErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: _Error;
+  /**
+   * Precondition failed: If-Unmodified-Since condition not met
+   */
+  412: _Error;
+  /**
+   * Internal Server Error.
+   */
+  500: _Error;
+};
+
+export type UpdateInventoryForADeviceScopeWiseError = UpdateInventoryForADeviceScopeWiseErrors[keyof UpdateInventoryForADeviceScopeWiseErrors];
+
+export type UpdateInventoryForADeviceScopeWiseResponses = {
+  /**
+   * Device inventory successfully updated.
+   */
+  200: unknown;
+};
+
 export type GetDeviceGroupsData = {
   body?: never;
   path: {
