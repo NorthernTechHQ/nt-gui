@@ -2714,6 +2714,23 @@ export type FilterDefinition = {
   terms?: Array<FilterPredicate>;
 };
 
+/**
+ * Device statistics grouped by device status
+ */
+export type DeviceStatusStatistics = {
+  accepted: DeviceCountByTier;
+  pending: DeviceCountByTier;
+};
+
+/**
+ * Number of devices per tier
+ */
+export type DeviceCountByTier = {
+  standard: number;
+  micro: number;
+  system: number;
+};
+
 export type NewDevice = {
   /**
    * ID of the new device.
@@ -10718,6 +10735,55 @@ export type UpdateInventoryForADeviceResponses = {
   200: unknown;
 };
 
+export type UpdateInventoryForADeviceScopeWiseData = {
+  /**
+   * A list of attribute descriptors.
+   */
+  body: Array<Attribute>;
+  headers?: {
+    /**
+     * Skips updating the device if modified after the given RFC1123 timestamp.
+     */
+    'If-Unmodified-Since'?: string;
+  };
+  path: {
+    /**
+     * ID of given tenant.
+     */
+    tenant_id: string;
+    /**
+     * ID of given device.
+     */
+    device_id: string;
+  };
+  query?: never;
+  url: '/api/internal/v1/inventory/tenants/{tenant_id}/device/{device_id}/attributes';
+};
+
+export type UpdateInventoryForADeviceScopeWiseErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: _Error;
+  /**
+   * Precondition failed: If-Unmodified-Since condition not met
+   */
+  412: _Error;
+  /**
+   * Internal Server Error.
+   */
+  500: _Error;
+};
+
+export type UpdateInventoryForADeviceScopeWiseError = UpdateInventoryForADeviceScopeWiseErrors[keyof UpdateInventoryForADeviceScopeWiseErrors];
+
+export type UpdateInventoryForADeviceScopeWiseResponses = {
+  /**
+   * Device inventory successfully updated.
+   */
+  200: unknown;
+};
+
 export type GetDeviceGroupsData = {
   body?: never;
   path: {
@@ -11830,6 +11896,33 @@ export type ExecuteFilterResponses = {
 };
 
 export type ExecuteFilterResponse = ExecuteFilterResponses[keyof ExecuteFilterResponses];
+
+export type GetStatisticsData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/management/v2/inventory/statistics';
+};
+
+export type GetStatisticsErrors = {
+  /**
+   * Internal Server Error.
+   */
+  500: _Error;
+};
+
+export type GetStatisticsError = GetStatisticsErrors[keyof GetStatisticsErrors];
+
+export type GetStatisticsResponses = {
+  /**
+   * Successful response.
+   */
+  200: {
+    devices_by_status: DeviceStatusStatistics;
+  };
+};
+
+export type GetStatisticsResponse = GetStatisticsResponses[keyof GetStatisticsResponses];
 
 export type IoTManagerInternalCheckHealthData = {
   body?: never;
