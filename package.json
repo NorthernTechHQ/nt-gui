@@ -46,7 +46,7 @@
     "msw-storybook-addon": "^2.0.6",
     "react-idle-timer": "^5.7.2",
     "serve": "^14.2.5",
-    "storybook": "^10.0.2",
+    "storybook": "^10.1.10",
     "tsup": "8.5.0",
     "turbo": "^2.6.0",
     "typescript": "^5.9.3",
