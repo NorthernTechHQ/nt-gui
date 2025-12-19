@@ -44,8 +44,8 @@
     "@northern.tech/eslint-config": "*",
     "@northern.tech/typescript-config": "*",
     "eslint": "^9.39.1",
-    "jsdom": "^27.1.0",
-    "tsup": "8.5.0",
+    "jsdom": "^27.3.0",
+    "tsup": "8.5.1",
     "vitest": "^4.0.14"
   },
   "dependencies": {
