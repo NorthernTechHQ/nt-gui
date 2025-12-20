@@ -7631,7 +7631,7 @@ export type DeviceAuthAuthenticateDeviceErrors = {
    */
   500: _Error;
   /**
-   * Service is unavailabe.
+   * Service is unavailable.
    */
   503: _Error;
 };
@@ -7732,7 +7732,7 @@ export type DeviceAuthInternalVerifyJwtErrors = {
    */
   500: _Error;
   /**
-   * Service is unavailabe.
+   * Service is unavailable.
    */
   503: _Error;
 };
@@ -7766,7 +7766,7 @@ export type DeviceAuthInternalRevokeDeviceTokensErrors = {
    */
   500: _Error;
   /**
-   * Service is unavailabe.
+   * Service is unavailable.
    */
   503: _Error;
 };
@@ -8022,7 +8022,7 @@ export type DeviceAuthInternalDeleteDeviceErrors = {
    */
   500: _Error;
   /**
-   * Service is unavailabe.
+   * Service is unavailable.
    */
   503: _Error;
 };
@@ -8518,7 +8518,7 @@ export type DeviceAuthManagementDecommissionDeviceErrors = {
    */
   500: _Error;
   /**
-   * Service is unavailabe.
+   * Service is unavailable.
    */
   503: _Error;
 };
@@ -8615,7 +8615,7 @@ export type DeviceAuthManagementRemoveAuthenticationErrors = {
    */
   500: _Error;
   /**
-   * Service is unavailabe.
+   * Service is unavailable.
    */
   503: _Error;
 };
@@ -8723,7 +8723,7 @@ export type DeviceAuthManagementSetAuthenticationStatusErrors = {
    */
   500: _Error;
   /**
-   * Service is unavailabe.
+   * Service is unavailable.
    */
   503: _Error;
 };
@@ -8809,7 +8809,7 @@ export type DeviceAuthManagementRevokeApiTokenErrors = {
    */
   500: _Error;
   /**
-   * Service is unavailabe.
+   * Service is unavailable.
    */
   503: _Error;
 };
@@ -8966,7 +8966,7 @@ export type AutomaticallyAuthenticateDeviceErrors = {
    */
   500: _Error;
   /**
-   * Service is unavailabe.
+   * Service is unavailable.
    */
   503: _Error;
 };
@@ -14420,7 +14420,7 @@ export type RevokeUserTokensErrors = {
    */
   500: _Error;
   /**
-   * Service is unavailabe.
+   * Service is unavailable.
    */
   503: _Error;
 };
@@ -14672,7 +14672,7 @@ export type LoginErrors = {
    */
   500: _Error;
   /**
-   * Service is unavailabe.
+   * Service is unavailable.
    */
   503: _Error;
 };
@@ -16043,7 +16043,7 @@ export type DeleteSamlOrOpenIdConnectMetadataData = {
 
 export type DeleteSamlOrOpenIdConnectMetadataErrors = {
   /**
-   * Request forbidden, possibly due to feature not being available in current Mender plan.
+   * Request forbidden, possibly due to feature not being available in current Mender plan or read-only permission.
    *
    */
   403: _Error;
@@ -16052,11 +16052,6 @@ export type DeleteSamlOrOpenIdConnectMetadataErrors = {
    *
    */
   404: _Error;
-  /**
-   * The tenant is managed by a Service Provider and the configuration cannot be changed.
-   *
-   */
-  409: _Error;
   /**
    * Internal Server Error.
    */
@@ -16130,7 +16125,7 @@ export type UpdateSamlMetadataErrors = {
    */
   400: _Error;
   /**
-   * Request forbidden, possibly due to feature not being available in current Mender plan.
+   * Request forbidden, possibly due to feature not being available in current Mender plan read-only permission.
    *
    */
   403: _Error;
@@ -16139,11 +16134,6 @@ export type UpdateSamlMetadataErrors = {
    *
    */
   404: _Error;
-  /**
-   * The tenant is managed by a Service Provider and the configuration cannot be changed.
-   *
-   */
-  409: _Error;
   /**
    * Endpoint does not support the Content-Type provided.
    *
