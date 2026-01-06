@@ -8879,6 +8879,10 @@ export type GetDeviceLimitsPerTierErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailable.
+   */
+  503: _Error;
 };
 
 export type GetDeviceLimitsPerTierError = GetDeviceLimitsPerTierErrors[keyof GetDeviceLimitsPerTierErrors];
@@ -14721,6 +14725,10 @@ export type LoginUsingAMagicLinkErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailable.
+   */
+  503: _Error;
 };
 
 export type LoginUsingAMagicLinkError = LoginUsingAMagicLinkErrors[keyof LoginUsingAMagicLinkErrors];
@@ -14768,6 +14776,10 @@ export type SubmitAssertionDataErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailable.
+   */
+  503: _Error;
 };
 
 export type SubmitAssertionDataError = SubmitAssertionDataErrors[keyof SubmitAssertionDataErrors];
@@ -14815,6 +14827,10 @@ export type LogoutErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailable.
+   */
+  503: _Error;
 };
 
 export type LogoutError = LogoutErrors[keyof LogoutErrors];
@@ -16401,6 +16417,10 @@ export type IssueTokenErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailable.
+   */
+  503: _Error;
 };
 
 export type IssueTokenError = IssueTokenErrors[keyof IssueTokenErrors];
