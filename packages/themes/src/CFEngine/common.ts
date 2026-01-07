@@ -11,23 +11,24 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { FormControlProps } from '@mui/material'
 import { Color, autocompleteClasses, inputBaseClasses, outlinedInputClasses } from '@mui/material';
 
-const componentProps = {
+ const componentProps = {
   MuiTextField: {
     defaultProps: {
-      variant: 'standard'
+      variant: 'standard' as FormControlProps['variant']
     }
   },
   MuiFormControl: {
     defaultProps: {
-      variant: 'standard'
+      variant: 'standard' as FormControlProps['variant']
     }
   },
   MuiSelect: {
     defaultProps: {
       autoWidth: true,
-      variant: 'standard'
+      variant: 'standard' as FormControlProps['variant']
     }
   }
 };
