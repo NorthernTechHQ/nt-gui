@@ -36,6 +36,7 @@ import {
   getUserSettings as getUserSettingsSelector
 } from './selectors';
 import {
+  getAllDeviceCounts,
   getDeploymentsByStatus,
   getDeviceAttributes,
   getDeviceById,
@@ -179,7 +180,8 @@ export const useAppInit = userId => {
       dispatch(getDynamicGroups()),
       dispatch(getGroups()),
       dispatch(getIntegrations()),
-      dispatch(getReleases())
+      dispatch(getReleases()),
+      dispatch(getAllDeviceCounts()).unwrap()
     ];
     if (hasMultitenancy) {
       tasks.push(dispatch(getDeviceLimits()));
@@ -225,6 +227,7 @@ export const useAppInit = userId => {
       }
       tasks.push(dispatch(saveGlobalSettings({ id_attribute: { attribute, scope: 'identity' } })));
     }
+    tasks.push(dispatch(storeActions.setAppInitDone()));
     return Promise.all(tasks);
   }, [
     columnSelection,
