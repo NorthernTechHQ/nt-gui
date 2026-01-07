@@ -45,10 +45,10 @@
     "@vitejs/plugin-react": "^5.1.2",
     "eslint": "9.39.1",
     "jsdom": "^27.4.0",
-    "msw": "^2.12.3",
+    "msw": "^2.12.7",
     "tsup": "8.5.1",
     "typescript": "5.9.3",
-    "vitest": "^4.0.14"
+    "vitest": "^4.0.16"
   },
   "dependencies": {
     "@mui/icons-material": "^7.x",

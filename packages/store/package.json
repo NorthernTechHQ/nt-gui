@@ -128,9 +128,9 @@
     "@vitejs/plugin-react": "^5.1.2",
     "eslint": "^9.39.1",
     "jsdom": "^27.4.0",
-    "msw": "^2.12.3",
+    "msw": "^2.12.7",
     "tsup": "8.5.1",
-    "vitest": "^4.0.14"
+    "vitest": "^4.0.16"
   },
   "dependencies": {
     "@emotion/react": "^11.x",
@@ -140,7 +140,7 @@
     "@northern.tech/utils": "*",
     "@mui/icons-material": "^7.x",
     "@reduxjs/toolkit": "^2.x",
-    "@sentry/react": "^10.27.0",
+    "@sentry/react": "^10.32.1",
     "axios": "^1.x",
     "dayjs": "^1.x",
     "jwt-decode": "^4.x",
