@@ -270,18 +270,18 @@ export const mapDeviceAttributes = (
   );
 
 export const isDarkMode = mode => mode === DARK_MODE;
-type Line = { addon?: string; amount: number; currency: string; description: string; quantity: number };
+type Line = { addon?: string; amount: number; currency: string; description: string; product: 'mender_standard' | 'mender_micro'; quantity: number };
 
 export const parseSubscriptionPreview = (lines: Line[]) =>
   lines.reduce(
-    (acc, { addon, amount }) => {
-      const key = addon || 'plan';
-      if (key === 'plan') {
-        acc.plan += amount;
+    (acc, { addon, amount, product }) => {
+      const planId = product.slice('mender_'.length);
+      if (!addon) {
+        acc[planId] = (acc[planId] ?? 0) + amount;
       } else {
-        acc.addons[key] = (acc.addons[key] ?? 0) + amount;
+        acc.addons[addon] = (acc.addons[addon] ?? 0) + amount;
       }
       return acc;
     },
-    { plan: 0, addons: {} }
+    { addons: {} }
   );
