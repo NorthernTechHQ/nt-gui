@@ -58,12 +58,12 @@ const deductOnboardingState = ({ devicesById, devicesByStatus, onboardingState, 
       : deviceType;
   const deviceTier = acceptedDevices.length && devicesById[acceptedDevices[0]].tier;
   let approach: OnboardingApproach | null = null;
-  if (deviceType.some(type => type.startsWith('qemu'))){
-    approach = 'virtual'
+  if (deviceType.some(type => type.startsWith('qemu'))) {
+    approach = 'virtual';
   } else if (deviceType.some(type => type.startsWith('esp32')) || deviceTier === 'micro') {
-    approach = 'mcu'
+    approach = 'mcu';
   } else if (deviceType.length) {
-    approach = 'physical'
+    approach = 'physical';
   }
   const progress = applyOnboardingFallbacks(onboardingState.progress || determineProgress(acceptedDevices, pendingDevices, releases, pastDeployments));
   return {

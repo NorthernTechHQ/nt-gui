@@ -16,7 +16,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TENANT_LIST_DEFAULT } from '../constants';
-import type { AuditLog, AuditLogSelectionState, Card, Organization,  SSOConfig, TenantList, Webhook } from './types';
+import type { AuditLog, AuditLogSelectionState, Card, Organization, SSOConfig, TenantList, Webhook } from './types';
 
 export const sliceName = 'organization';
 
@@ -29,7 +29,7 @@ export type OrganizationSliceType = {
   ssoConfigs: SSOConfig[];
   tenantList: TenantList;
   webhooks: Webhook;
-}
+};
 
 export const initialState: OrganizationSliceType = {
   card: {

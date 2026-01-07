@@ -20,7 +20,7 @@ import { getDevicesById } from './selectors';
 import { useAppDispatch } from './store';
 import { getDeviceById } from './thunks';
 
-const { isUUID } = validator
+const { isUUID } = validator;
 
 export const useDeploymentDevice = deploymentName => {
   const isLoading = useRef(false);
