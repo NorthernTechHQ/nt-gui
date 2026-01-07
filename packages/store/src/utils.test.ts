@@ -16,7 +16,14 @@ import { defaultState } from '@/testUtils';
 import { describe, expect, it } from 'vitest';
 
 import { DARK_MODE, LIGHT_MODE } from './constants';
-import { generateDeploymentGroupDetails, groupDeploymentDevicesStats, groupDeploymentStats, isDarkMode, mapDeviceAttributes } from './utils';
+import {
+  generateDeploymentGroupDetails,
+  groupDeploymentDevicesStats,
+  groupDeploymentStats,
+  isDarkMode,
+  mapDeviceAttributes,
+  parseSubscriptionPreview
+} from './utils';
 
 describe('mapDeviceAttributes function', () => {
   const defaultAttributes = {
@@ -159,5 +166,92 @@ describe('isDarkMode function', () => {
   });
   it('should return `false` if LIGHT_MODE was passed in', () => {
     expect(isDarkMode(LIGHT_MODE)).toEqual(false);
+  });
+});
+
+const stripePreview = {
+  id: 'upcoming_in_1Sn4EAFlFfXikjZVtG4Rqrwe',
+  period_start: '2026-01-07T21:25:13Z',
+  period_end: '2026-01-07T21:25:13Z',
+  total: 7400,
+  currency: 'usd',
+  lines: [
+    {
+      description: '100 mcu × Mender Micro Basic (Tier 1 at $0.00 / month)',
+      amount: 0,
+      currency: 'usd',
+      quantity: 100,
+      product: 'mender_micro',
+      proration: false
+    },
+    {
+      description: 'Mender Micro Basic (Tier 1 at $32.00 / month)',
+      amount: 3200,
+      currency: 'usd',
+      quantity: 0,
+      product: 'mender_micro',
+      proration: false
+    },
+    {
+      description: '50 device × Mender Basic (Tier 1 at $0.00 / month)',
+      amount: 0,
+      currency: 'usd',
+      quantity: 50,
+      product: 'mender_standard',
+      proration: false
+    },
+    {
+      description: 'Mender Basic (Tier 1 at $32.00 / month)',
+      amount: 3200,
+      currency: 'usd',
+      quantity: 0,
+      product: 'mender_standard',
+      proration: false
+    },
+    {
+      description: '50 device × Mender Configure (Tier 1 at $0.00 / month)',
+      amount: 0,
+      currency: 'usd',
+      quantity: 50,
+      product: 'mender_standard',
+      addon: 'configure',
+      proration: false
+    },
+    {
+      description: 'Mender Configure (Tier 1 at $10.00 / month)',
+      amount: 1000,
+      currency: 'usd',
+      quantity: 0,
+      product: 'mender_standard',
+      addon: 'configure',
+      proration: false
+    },
+    {
+      description: '50 device × Mender Troubleshoot (Tier 1 at $0.00 / month)',
+      amount: 0,
+      currency: 'usd',
+      quantity: 50,
+      product: 'mender_standard',
+      addon: 'troubleshoot',
+      proration: false
+    },
+    {
+      description: 'Mender Troubleshoot (Tier 1 at $20.00 / month)',
+      amount: 2000,
+      currency: 'usd',
+      quantity: 0,
+      product: 'mender_standard',
+      addon: 'troubleshoot',
+      proration: false
+    }
+  ]
+};
+describe('subscription utils', () => {
+  it('stripe subscription preview', async () => {
+    const result = parseSubscriptionPreview(stripePreview.lines);
+    expect(result.standard).toEqual(3200);
+    expect(result.micro).toEqual(3200);
+    expect(result.addons.configure).toEqual(1000);
+    expect(result.addons.troubleshoot).toEqual(2000);
   });
 });
