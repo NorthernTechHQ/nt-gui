@@ -1,4 +1,27 @@
 ---
+## @northern.tech/store-0.14.0 - 2026-01-08
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added feature flag for MCU
+
+([MEN-9205](https://northerntech.atlassian.net/browse/MEN-9205)) ([5a66d7e](https://github.com/NorthernTechHQ/nt-gui/commit/5a66d7e18690c4048b785a57af86f9bdd5fa1a9e))  by @mineralsfree
+
+
+
+
+
+
+
+
+### Security
+
+
+
 ## @northern.tech/store-0.13.0 - 2025-12-15
 
 
