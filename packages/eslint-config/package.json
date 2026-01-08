@@ -26,7 +26,7 @@
     "eslint-plugin-react-hooks": "7.x",
     "eslint-plugin-sonarjs": "3.x",
     "eslint-plugin-storybook": "^10.x",
-    "globals": "16.x",
+    "globals": "17.x",
     "typescript-eslint": "8.x"
   },
   "devDependencies": {
