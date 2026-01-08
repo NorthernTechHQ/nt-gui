@@ -71,6 +71,7 @@ const featureFlags = [
   'hasFeedbackEnabled',
   'hasReporting',
   'hasMonitor',
+  'hasMCUEnabled',
   'isEnterprise'
 ];
 

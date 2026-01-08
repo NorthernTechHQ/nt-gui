@@ -139,6 +139,7 @@ export const initialState: AppSliceType = {
     hasDeviceConnect: false,
     hasFeedbackEnabled: false,
     hasMonitor: false,
+    hasMCUEnabled: false,
     hasReporting: false,
     isHosted: true,
     isEnterprise: false
