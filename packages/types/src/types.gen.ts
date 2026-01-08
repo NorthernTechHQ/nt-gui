@@ -1204,6 +1204,13 @@ export type NewDeploymentPhase = {
    */
   batch_size?: number;
   /**
+   * Exact number of devices to update in this phase.
+   * This field is optional for the last phase, which will contain the remaining devices.
+   * Note that you can only specify either `batch_size` or `batch_size_devices`, not both for all phases in a deployment.
+   *
+   */
+  batch_size_devices?: number;
+  /**
    * Start date of a phase.
    * Can be skipped for the first phase of a new deployment definition ('start immediately').
    *
@@ -2952,6 +2959,9 @@ export type TenantUpdateInternal = {
    * Planned suspention date and time, in ISO8601 format.
    */
   suspend_at?: string;
+  customer_id?: string;
+  subscription_id?: string;
+  subscription_type?: string;
 };
 
 /**
@@ -8879,6 +8889,10 @@ export type GetDeviceLimitsPerTierErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailable.
+   */
+  503: _Error;
 };
 
 export type GetDeviceLimitsPerTierError = GetDeviceLimitsPerTierErrors[keyof GetDeviceLimitsPerTierErrors];
@@ -12839,10 +12853,8 @@ export type UpdateTenantResponses = {
   /**
    * Tenant information updated.
    */
-  204: void;
+  202: unknown;
 };
-
-export type UpdateTenantResponse = UpdateTenantResponses[keyof UpdateTenantResponses];
 
 export type DeleteTenantChildrenData = {
   body?: never;
@@ -14721,6 +14733,10 @@ export type LoginUsingAMagicLinkErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailable.
+   */
+  503: _Error;
 };
 
 export type LoginUsingAMagicLinkError = LoginUsingAMagicLinkErrors[keyof LoginUsingAMagicLinkErrors];
@@ -14768,6 +14784,10 @@ export type SubmitAssertionDataErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailable.
+   */
+  503: _Error;
 };
 
 export type SubmitAssertionDataError = SubmitAssertionDataErrors[keyof SubmitAssertionDataErrors];
@@ -14815,6 +14835,10 @@ export type LogoutErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailable.
+   */
+  503: _Error;
 };
 
 export type LogoutError = LogoutErrors[keyof LogoutErrors];
@@ -16125,7 +16149,7 @@ export type UpdateSamlMetadataErrors = {
    */
   400: _Error;
   /**
-   * Request forbidden, possibly due to feature not being available in current Mender plan read-only permission.
+   * Request forbidden, possibly due to feature not being available in current Mender plan or read-only permission.
    *
    */
   403: _Error;
@@ -16401,6 +16425,10 @@ export type IssueTokenErrors = {
    * Internal Server Error.
    */
   500: _Error;
+  /**
+   * Service is unavailable.
+   */
+  503: _Error;
 };
 
 export type IssueTokenError = IssueTokenErrors[keyof IssueTokenErrors];
