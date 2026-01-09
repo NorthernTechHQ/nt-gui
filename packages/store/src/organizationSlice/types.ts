@@ -11,14 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type {
-  AuditLog as AuditLogEvent,
-  Tenant as BackendTenant,
-  BillingInfo,
-  BillingProfile,
-  Event,
-  SamlMetadata
-} from '@northern.tech/types/MenderTypes';
+import type { AuditLog as AuditLogEvent, Tenant as BackendTenant, BillingInfo, BillingProfile, Event, SamlMetadata } from '@northern.tech/types/MenderTypes';
 
 import type { AvailableAddon, SortOptions } from '../constants';
 import type { SSO_TYPES } from './constants';

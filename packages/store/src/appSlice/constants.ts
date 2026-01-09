@@ -42,7 +42,7 @@ export type Plan = {
   deviceCount: string;
   features: string[];
   id: AvailablePlans;
-  minimalDeviceCount: number;
+  minimalDeviceCount: { micro: number; standard: number };
   name: string;
   offer?: boolean;
   offerprice?: string;
@@ -56,7 +56,7 @@ export const PLANS: { [key in AvailablePlans]: Plan } = {
   os: {
     id: 'os',
     name: 'Basic',
-    minimalDeviceCount: 50,
+    minimalDeviceCount: { standard: 50, micro: 100 },
     offer: true,
     price: '$34 / month',
     deviceCount: startingDeviceCount.os,
@@ -67,7 +67,7 @@ export const PLANS: { [key in AvailablePlans]: Plan } = {
   professional: {
     id: 'professional',
     name: 'Professional',
-    minimalDeviceCount: 250,
+    minimalDeviceCount: { standard: 250, micro: 500 },
     offer: true,
     price: '$291 / month',
     deviceCount: startingDeviceCount.professional,
@@ -77,7 +77,7 @@ export const PLANS: { [key in AvailablePlans]: Plan } = {
   enterprise: {
     id: 'enterprise',
     name: 'Enterprise',
-    minimalDeviceCount: 1000,
+    minimalDeviceCount: { standard: 1000, micro: 2000 },
     price: 'Custom pricing',
     deviceCount: 'Unlimited devices',
     description:

@@ -31,6 +31,7 @@ export const getSentryConfig = (state: RootState) => state.app.sentry;
 export const getCommit = (state: RootState) => state.app.commit;
 export const getIsFirstLogin = (state: RootState) => state.app.firstLoginAfterSignup;
 export const getFeedbackProbability = (state: RootState) => state.app.feedbackProbability;
+export const getAppInitDone = (state: RootState) => state.app.appInitDone;
 
 export const getIsUploading = createSelector([getUploads], uploadsById => !!Object.keys(uploadsById).length);
 export const getSearchedDevices = createSelector([getSearchState], ({ deviceIds }) => deviceIds);

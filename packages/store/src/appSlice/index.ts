@@ -95,6 +95,7 @@ export type SentryConfig = {
 };
 
 export type AppSliceType = {
+  appInitDone: boolean;
   cancelSource: any;
   commit: string;
   demoArtifactLink: string;
@@ -118,6 +119,7 @@ export type AppSliceType = {
 };
 
 export const initialState: AppSliceType = {
+  appInitDone: false,
   cancelSource: undefined,
   commit: '',
   demoArtifactLink: 'https://dgsbl4vditpls.cloudfront.net/mender-demo-artifact.mender',
@@ -246,7 +248,10 @@ export const appSlice = createSlice({
         ...action.payload
       };
     },
-    setEnvironmentData: (state, action) => ({ ...state, ...action.payload })
+    setEnvironmentData: (state, action) => ({ ...state, ...action.payload }),
+    setAppInitDone: state => {
+      state.appInitDone = true;
+    }
   }
 });
 
