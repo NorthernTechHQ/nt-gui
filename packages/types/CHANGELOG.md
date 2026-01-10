@@ -1,5 +1,27 @@
 ---
-## @northern.tech/typescript-config-0.3.1 - 2025-12-15
+## @northern.tech/types-0.3.2 - 2026-01-10
+
+
+### Bug fixes
+
+#### Types
+
+
+- *(types)* Types update
+
+ ([d4b839a](https://github.com/NorthernTechHQ/nt-gui/commit/d4b839af1d193ca39c147418816de431785e3f37))  by @mender-test-bot
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/types-0.3.1 - 2025-12-15
 
 
 ### Bug fixes
@@ -18,7 +40,7 @@
 
 
 
-## @northern.tech/typescript-config-0.3.0 - 2025-12-02
+## @northern.tech/types-0.3.0 - 2025-12-02
 
 
 ### Bug fixes
@@ -38,7 +60,7 @@
 
 
 
-## @northern.tech/typescript-config-0.2.2 - 2025-10-31
+## @northern.tech/types-0.2.2 - 2025-10-31
 
 
 ### Bug fixes
