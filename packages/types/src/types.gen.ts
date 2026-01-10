@@ -856,6 +856,10 @@ export type DeviceWithImage = {
    * Number of deployment attempts for this device
    */
   attempts?: number;
+  /**
+   * Deployment phase identifier
+   */
+  phase_id?: string;
   image?: DeviceWithImageImage;
 };
 
