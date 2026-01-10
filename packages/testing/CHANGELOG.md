@@ -1,4 +1,11 @@
 ---
+## @northern.tech/testing-0.4.1 - 2026-01-10
+
+
+### Security
+
+
+
 ## @northern.tech/testing-0.4.0 - 2025-12-15
 
 
