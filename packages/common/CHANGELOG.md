@@ -1,3 +1,13 @@
+# Changelog
+
+## [0.6.0](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/common-0.5.0...@northern.tech/common-0.6.0) (2026-01-10)
+
+
+### Features
+
+* **store:** added app initialized flag to app slice ([d009d0f](https://github.com/NorthernTechHQ/nt-gui/commit/d009d0fae7d2784c8f32e600e07bfeeed6dbcb84))
+* **store:** added appInitialized flag to app slice ([02d0cf5](https://github.com/NorthernTechHQ/nt-gui/commit/02d0cf548b351f92e1f2eb643a9e0aaa9ea1899b))
+
 ---
 ## @northern.tech/common-ui-0.8.1 - 2025-11-12
 
