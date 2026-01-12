@@ -1,4 +1,27 @@
 ---
+## @northern.tech/testing-0.4.1 - 2026-01-12
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Adjusted invoice preview mock response
+
+([MEN-8878](https://northerntech.atlassian.net/browse/MEN-8878)) ([e7c9cd5](https://github.com/NorthernTechHQ/nt-gui/commit/e7c9cd561cf5370a5316fea5b8a338e07e544ec1))  by @mineralsfree
+
+
+
+
+
+
+
+
+### Security
+
+
+
 ## @northern.tech/testing-0.4.0 - 2025-12-15
 
 
