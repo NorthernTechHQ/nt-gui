@@ -99,6 +99,7 @@ const invoicePreviewBasic = {
       description: '50 device × Mender Basic (Tier 1 at $0.00 / month)',
       amount: 0,
       currency: 'usd',
+      product: 'mender_standard',
       quantity: 50,
       price_id: 'price_1PYktlFlFfXikjZVh2aNHp7i'
     },
@@ -106,6 +107,7 @@ const invoicePreviewBasic = {
       description: 'Mender Basic (Tier 1 at $32.00 / month)',
       amount: 3200,
       currency: 'usd',
+      product: 'mender_standard',
       quantity: 0,
       price_id: 'price_1PYktlFlFfXikjZVh2aNHp7i'
     }
