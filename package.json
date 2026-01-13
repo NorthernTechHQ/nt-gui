@@ -17,7 +17,8 @@
     "clean": "turbo run clean && rm -rf node_modules",
     "release": "turbo run build",
     "publish-packages": "turbo publish --continue",
-    "publish-packages-next": "turbo pre-publish --continue"
+    "publish-packages-next": "turbo pre-publish --continue",
+    "yalc:publish": "npm run release && npm exec --workspaces -- yalc publish --no-script --push"
   },
   "dependencies": {
     "react": "^19.x",
