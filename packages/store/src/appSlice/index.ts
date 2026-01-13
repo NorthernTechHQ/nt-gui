@@ -142,6 +142,7 @@ export const initialState: AppSliceType = {
     hasFeedbackEnabled: false,
     hasMonitor: false,
     hasMCUEnabled: false,
+    hasOldTheme: false,
     hasReporting: false,
     isHosted: true,
     isEnterprise: false

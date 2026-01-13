@@ -70,6 +70,7 @@ const featureFlags = [
   'hasDeviceConfig',
   'hasDeviceConnect',
   'hasFeedbackEnabled',
+  'hasOldTheme',
   'hasReporting',
   'hasMonitor',
   'hasMCUEnabled',
