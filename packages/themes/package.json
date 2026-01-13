@@ -43,6 +43,7 @@
   ],
   "scripts": {
     "build": "tsup",
+    "dev": "tsup --watch --no-dts --onSuccess 'yalc publish --no-script --push'",
     "lint": "eslint src/**/*.{js,ts} *.{js,ts}",
     "publish": "npm publish",
     "pre-publish": "npm publish --tag next"
