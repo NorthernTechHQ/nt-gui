@@ -1,4 +1,27 @@
 ---
+## @northern.tech/themes-0.11.0 - 2026-01-14
+
+
+### Features
+
+#### Themes
+
+
+- *(themes)* Adjusted widget styles
+
+([MEN-8882](https://northerntech.atlassian.net/browse/MEN-8882)) ([37fbec9](https://github.com/NorthernTechHQ/nt-gui/commit/37fbec97549484207372f86364c8d1c32d1e7090))  by @mineralsfree
+
+
+
+
+
+
+
+
+### Security
+
+
+
 ## @northern.tech/themes-0.10.2 - 2025-12-01
 
 
@@ -10,6 +33,8 @@
 - *(themes)* Aligned link appearance w/ new theme
 
  ([2e7f0b3](https://github.com/NorthernTechHQ/nt-gui/commit/2e7f0b35a80b8f2dc201092281587baff6d60885))  by @mzedel
+
+
 
 
 
@@ -28,17 +53,25 @@
 
  ([a6d05c5](https://github.com/NorthernTechHQ/nt-gui/commit/a6d05c54514138a11d62e05808bf22c70871518f))  by @mzedel
 
+
+
 - *(themes)* Expanded small input appearance + included associated labels
 
  ([ced9bfc](https://github.com/NorthernTechHQ/nt-gui/commit/ced9bfc5be574b6c9e50d51580c87bc59959dbdc))  by @mzedel
+
+
 
 - *(themes)* Let general page layout rely on subpage paddings instead of uniform one
 
  ([98c6d59](https://github.com/NorthernTechHQ/nt-gui/commit/98c6d5982d7a836fd3ee2482bbbfdcb21b9669ac))  by @mzedel
 
+
+
 - *(themes)* Ensured shared theme component config is applied as well as mode specific config
 
  ([1574dc8](https://github.com/NorthernTechHQ/nt-gui/commit/1574dc86ba0377eaeead8e39f5d770d2b51d3f85))  by @mzedel
+
+
 
 
 
@@ -57,13 +90,19 @@
 
  ([f13ca1a](https://github.com/NorthernTechHQ/nt-gui/commit/f13ca1a98bd4a394d8a2eb1ab0bd83af9a71315a))  by @mzedel
 
+
+
 - *(themes)* Align updated theme w/ mui primary/secondary color expectations
 
  ([c21d1fa](https://github.com/NorthernTechHQ/nt-gui/commit/c21d1fa7c50415721d91f5ba4ce4ecfbfe43f82a))  by @mzedel
 
+
+
 - *(themes)* Fixed an issue that would result in invisible info/neutral components
 
  ([c3468bc](https://github.com/NorthernTechHQ/nt-gui/commit/c3468bc159c388f4a85d0a2c42bc03e72346f58d))  by @mzedel
+
+
 
 
   + adjusted related override to support both info & neutral color settings
@@ -93,6 +132,9 @@
 
 
 
+
+
+
 ## @northern.tech/themes-0.6.0 - 2025-09-10
 
 
@@ -105,17 +147,25 @@
 
  ([b81b260](https://github.com/NorthernTechHQ/nt-gui/commit/b81b260e7c7a6ca85755be849102cb2820c28c8f))  by @mzedel
 
+
+
 - *(themes)* Adjusted theme values using design system changelog
 
  ([1e21e7a](https://github.com/NorthernTechHQ/nt-gui/commit/1e21e7a5376564a8112e875b4db79d0f6cf42e9c))  by @mzedel
+
+
 
 - *(themes)* Removed faulty interpreted textinput padding settings
 
  ([078ca6d](https://github.com/NorthernTechHQ/nt-gui/commit/078ca6dd6b5960d1d9806a4d8627f1e98f7f44e8))  by @mzedel
 
+
+
 - *(themes)* Adjusted link appearance & color mapping to match new theme
 
  ([8636345](https://github.com/NorthernTechHQ/nt-gui/commit/8636345925ba4314ba46442811cb33cf698b8dfc))  by @mzedel
+
+
 
 
 
@@ -130,9 +180,13 @@
 
  ([7a231e3](https://github.com/NorthernTechHQ/nt-gui/commit/7a231e321c839cb6d9cd88bbac1ae4ddd64e6a66))  by @mzedel
 
+
+
 - *(themes)* Let dialog dividers always show
 
  ([d3f1bba](https://github.com/NorthernTechHQ/nt-gui/commit/d3f1bbad8fe6bc5a1f52c446b992c5581515bda6))  by @mzedel
+
+
 
 
 
@@ -151,9 +205,13 @@
 
  ([4dfbcc4](https://github.com/NorthernTechHQ/nt-gui/commit/4dfbcc49055b96483a2846fc4743b1f8453e25da))  by @mzedel
 
+
+
 - *(themes)* Introduced default button color to align w/ new theme
 
  ([a862211](https://github.com/NorthernTechHQ/nt-gui/commit/a862211cf5ecf0f70ebd7fb9151ef30341b15092))  by @mzedel
+
+
 
 
 
@@ -176,6 +234,8 @@
 
 
 
+
+
 ### Features
 
 #### Theme
@@ -188,6 +248,9 @@
 
 
 
+
+
+
 #### Themes
 
 
@@ -196,15 +259,22 @@
  ([ed802a6](https://github.com/NorthernTechHQ/nt-gui/commit/ed802a604da7152613b51ee1d2b3e78a14b732d7))  by @chiachenglu
 
 
+
+
   Added Red Hat mono font for code text.
 
 - *(themes)* Added monospace font to mui theme + assets
 
  ([3bc1302](https://github.com/NorthernTechHQ/nt-gui/commit/3bc13026380120f67bde4d7b5031d70f22bacc72))  by @mzedel
 
+
+
 - *(themes)* Let text & select inputs default to small appearance to align w/ updated design
 
 ([MEN-8016](https://northerntech.atlassian.net/browse/MEN-8016)) ([43a3fca](https://github.com/NorthernTechHQ/nt-gui/commit/43a3fca7123d34cb8995ebf091a200d51c33b4b1))  by @mzedel
+
+
+
 
 
 
@@ -223,9 +293,13 @@
 
  ([6dab37c](https://github.com/NorthernTechHQ/nt-gui/commit/6dab37c1fd318b954878e3d518fdf7bd979616df))  by @mzedel
 
+
+
 - *(themes)* Added updated Mender theme based on figma tokens
 
  ([e2e2278](https://github.com/NorthernTechHQ/nt-gui/commit/e2e227835543d7d88ecd07666ac9a481c5409c9c))  by @mzedel
+
+
 
 
   + kept reliance on less based style definitions
