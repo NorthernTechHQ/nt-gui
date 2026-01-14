@@ -1,5 +1,5 @@
 ---
-## @northern.tech/prettier-config-0.6.0 - 2025-08-14
+## @northern.tech/prettier-config-0.14.0 - 2026-01-14
 
 
 ### Bug fixes
