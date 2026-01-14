@@ -534,10 +534,9 @@ each(@directions, .(@direction) {
     cursor: pointer;
     display: grid;
     grid-template-rows: max-content 1fr;
-    height: 180px;
     min-width: 250px;
     max-width: 15vw;
-    min-height: 175px;
+    min-height: 180px;
     padding: @defaultGutterWidth 1.5 * @defaultGutterWidth;
     position: relative;
     &.chart-widget {
@@ -560,7 +559,8 @@ each(@directions, .(@direction) {
   .widgetMainContent {
     padding: 10px 0;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
     .header {
       margin-bottom: 1pt;
     }
