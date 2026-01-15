@@ -3,7 +3,7 @@
   "packages/common": "0.5.0",
   "packages/eslint-config": "0.6.2",
   "packages/prettier-config": "0.2.1",
-  "packages/store": "0.15.0",
+  "packages/store": "0.16.0",
   "packages/testing": "0.5.0",
   "packages/themes": "0.11.0",
   "packages/types": "0.3.1",

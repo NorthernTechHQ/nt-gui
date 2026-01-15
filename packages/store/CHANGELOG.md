@@ -1,4 +1,30 @@
 ---
+## @northern.tech/store-0.16.0 - 2026-01-14
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added support for feature flag to revert new theme
+
+ ([49e43a2](https://github.com/NorthernTechHQ/nt-gui/commit/49e43a25e2226798fbb29be3350de154d0565509))  by @mzedel
+
+
+
+- *(store)* Added device limit stats selector
+
+([MEN-8882](https://northerntech.atlassian.net/browse/MEN-8882)) ([ec730e5](https://github.com/NorthernTechHQ/nt-gui/commit/ec730e5b389da6edb2f9213eaeb372f4c2847382))  by @mineralsfree
+
+
+
+
+
+
+
+
+
 ## @northern.tech/store-0.14.0 - 2026-01-08
 
 
