@@ -73,6 +73,7 @@ export type UserSettings = {
     showTips: null | boolean;
     showTipsDialog: boolean;
   }>;
+  securityAlertDismissedTimestamp: null | string;
   tooltips?: object;
   trackingConsentGiven?: boolean;
 };
@@ -133,7 +134,8 @@ export const initialState: UserSliceType = {
   userSettings: {
     columnSelection: [],
     onboarding: {},
-    firstLoginTimestamp: null
+    firstLoginTimestamp: null,
+    securityAlertDismissedTimestamp: null
   },
   userSettingsInitialized: false
 };

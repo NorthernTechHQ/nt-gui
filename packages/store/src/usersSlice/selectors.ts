@@ -70,3 +70,5 @@ export const getRolesList = createSelector([getRolesById], rolesById => Object.e
 
 export const getCurrentSession = (state: RootState) => state.users.currentSession;
 export const getRolesInitialized = (state: RootState) => state.users.rolesInitialized;
+
+export const getSecurityAlertDismissedTimestamp = (state: RootState) => state.users.userSettings.securityAlertDismissedTimestamp;
