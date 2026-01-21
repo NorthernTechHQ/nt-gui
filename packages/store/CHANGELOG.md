@@ -1,5 +1,25 @@
 ---
-## @northern.tech/store-0.16.0 - 2026-01-14
+## @northern.tech/store-0.17.0 - 2026-01-20
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added security alert dismission timestamp
+
+([MEN-9095](https://northerntech.atlassian.net/browse/MEN-9095)) ([30abe5a](https://github.com/NorthernTechHQ/nt-gui/commit/30abe5ab61e2754919fc9ccb67503c7ad20a8f72))  by @mineralsfree
+
+
+
+
+
+
+
+
+
+## @northern.tech/store-0.16.0 - 2026-01-15
 
 
 ### Features
