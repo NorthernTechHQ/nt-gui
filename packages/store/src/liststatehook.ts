@@ -13,7 +13,7 @@
 //    limitations under the License.
 //@ts-nocheck
 import { useCallback, useMemo } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useNavigationType, useSearchParams } from 'react-router-dom';
 
 import {
   commonProcessor,
@@ -71,6 +71,10 @@ export const useLocationParams = (key, extras, processors = defaultProcessors) =
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const navigationType = useNavigationType();
+
+  // POP (back/ forward/ initial load) -> rely on url state - otherwise on stored redux state
+  const shouldInitializeFromUrl = navigationType === 'POP';
 
   const value = useMemo(() => {
     const { pageState, params, sort } = processors.common.parse(searchParams);
@@ -93,5 +97,5 @@ export const useLocationParams = (key, extras, processors = defaultProcessors) =
     [JSON.stringify(extras), key]
   );
 
-  return [value, setValue];
+  return [value, setValue, { shouldInitializeFromUrl }];
 };
