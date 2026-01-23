@@ -14,6 +14,7 @@
 // @ts-nocheck
 import { attributeDuplicateFilter, getDemoDeviceAddress as getDemoDeviceAddressHelper } from '@northern.tech/utils/helpers';
 import { createSelector } from '@reduxjs/toolkit';
+import dayjs from 'dayjs';
 
 import { ADDONS, PLANS, defaultReports } from './appSlice/constants';
 import { getFeatures, getSearchedDevices } from './appSlice/selectors';
@@ -36,7 +37,16 @@ import { onboardingSteps } from './onboardingSlice/constants';
 import { getOnboarding } from './onboardingSlice/selectors';
 import { getAuditLogEntry, getIsServiceProvider, getOrganization } from './organizationSlice/selectors';
 import { getReleasesById } from './releasesSlice/selectors';
-import { getCurrentUser, getGlobalSettings, getRolesById, getRolesList, getUserSettings } from './usersSlice/selectors';
+import {
+  getCurrentUser,
+  getGlobalSettings,
+  getHas2FA,
+  getRolesById,
+  getRolesList,
+  getSecurityAlertDismissedTimestamp,
+  getUserSettings,
+  getUserSettingsInitialized
+} from './usersSlice/selectors';
 import { listItemMapper, mapUserRolesToUiPermissions } from './utils';
 
 export const getIsEnterprise = createSelector(
@@ -276,3 +286,23 @@ export const getRelevantRoles = createSelector([getOrganization, getRolesList], 
       return accu;
     }, roles);
 });
+
+export const getShowSecurityAlert = createSelector(
+  [getCurrentUser, getHas2FA, getFeatures, getIsEnterprise, getUserSettingsInitialized, getSecurityAlertDismissedTimestamp],
+  (currentUser, has2FA, features, isEnterprise, settingsInitialized, dismissedTimestamp) => {
+    const isHosted = features?.isHosted;
+    const canHave2FA = isEnterprise || isHosted;
+    if (!currentUser || !settingsInitialized || has2FA || !canHave2FA) {
+      return false;
+    }
+
+    if (dismissedTimestamp === null) {
+      return true;
+    }
+
+    const today = dayjs();
+    const dismissedMonthAgo = today.diff(dismissedTimestamp, 'months');
+
+    return dismissedMonthAgo > 0;
+  }
+);
