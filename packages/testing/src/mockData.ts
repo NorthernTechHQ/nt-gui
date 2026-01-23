@@ -391,7 +391,7 @@ export const mockApiResponses = {
             description: 'test description',
             device_types_compatible: [deviceTypes.qemu],
             modified: '2020-09-10T12:16:22.667Z',
-            updates: [{ type_info: 'testtype' }],
+            updates: [{ type_info: { type: 'testtype' } }],
             artifact_depends: {
               device_type: [deviceTypes.qemu]
             },
@@ -444,7 +444,7 @@ export const releasesList = Array.from({ length: 5000 }, (x, i) => ({
       description: 'test description',
       device_types_compatible: [deviceTypes.qemu],
       modified: '2020-09-10T12:16:22.667Z',
-      updates: [{ type_info: 'testtype' }],
+      updates: [{ type_info: { type: 'testtype' } }],
       artifact_depends: {
         device_type: [deviceTypes.qemu]
       },
