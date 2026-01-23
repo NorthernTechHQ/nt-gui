@@ -1,5 +1,39 @@
 ---
-## @northern.tech/store-0.17.0 - 2026-01-20
+## @northern.tech/store-0.18.0 - 2026-01-23
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Aligned faulty update type mock w/ api response reality
+
+ ([9de44da](https://github.com/NorthernTechHQ/nt-gui/commit/9de44dad6735a411c21fef7728c2cc00048bbf70))  by @mzedel
+
+
+
+
+
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Allowed finer grained navigation event handling
+
+ ([77f32b1](https://github.com/NorthernTechHQ/nt-gui/commit/77f32b1460b9b69ab875f22bb7583c77fef2a4c0))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/store-0.17.0 - 2026-01-21
 
 
 ### Features
