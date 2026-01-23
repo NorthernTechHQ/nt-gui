@@ -3366,7 +3366,7 @@ export type Product = {
 };
 
 /**
- * Plan assigned to the tenant account.
+ * Plan / access scope for the tenant account.
  */
 export const TenantPlan = {
   OS: 'os',
@@ -3375,7 +3375,7 @@ export const TenantPlan = {
 } as const;
 
 /**
- * Plan assigned to the tenant account.
+ * Plan / access scope for the tenant account.
  */
 export type TenantPlan = (typeof TenantPlan)[keyof typeof TenantPlan];
 
@@ -16900,7 +16900,7 @@ export type WorkflowsCheckHealthData = {
   body?: never;
   path?: never;
   query?: never;
-  url: '/health';
+  url: '/api/v1/health';
 };
 
 export type WorkflowsCheckHealthErrors = {
