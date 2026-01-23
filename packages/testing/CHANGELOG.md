@@ -1,5 +1,24 @@
 ---
-## @northern.tech/testing-0.4.1 - 2026-01-12
+## @northern.tech/testing-0.5.1 - 2026-01-23
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Aligned faulty update type mock w/ api response reality
+
+ ([237064b](https://github.com/NorthernTechHQ/nt-gui/commit/237064b4e3eaefd4e785552211127f32b10ddde3))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/testing-0.5.0 - 2026-01-12
 
 
 ### Bug fixes
