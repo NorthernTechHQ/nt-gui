@@ -3187,6 +3187,35 @@ export type SubscriptionData = {
   [key: string]: unknown;
 };
 
+export type ProductInfo = {
+  name: string;
+  billing_unit: string;
+  prices: Array<PriceInfo>;
+  addons?: Array<AddonInfo>;
+};
+
+export type AddonInfo = {
+  name?: string;
+  prices?: Array<PriceInfo>;
+};
+
+export type PriceInfo = {
+  /**
+   * Plan name.
+   */
+  plan: string;
+  constraints?: ConstraintsInfo;
+};
+
+/**
+ * Min/max values for units.
+ */
+export type ConstraintsInfo = {
+  min?: number;
+  max?: number;
+  div?: number;
+};
+
 /**
  * Billing related data, such as credit card information and next billing date
  */
@@ -13013,6 +13042,39 @@ export type TenantInfoResponses = {
 };
 
 export type TenantInfoResponse = TenantInfoResponses[keyof TenantInfoResponses];
+
+export type GetBillingProductInformationData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/management/v2/tenantadm/billing/products';
+};
+
+export type GetBillingProductInformationErrors = {
+  /**
+   * Unauthorized.
+   */
+  401: _Error;
+  /**
+   * Not Found.
+   */
+  404: _Error;
+  /**
+   * Internal Server Error.
+   */
+  500: _Error;
+};
+
+export type GetBillingProductInformationError = GetBillingProductInformationErrors[keyof GetBillingProductInformationErrors];
+
+export type GetBillingProductInformationResponses = {
+  /**
+   * Successful response.
+   */
+  200: ProductInfo;
+};
+
+export type GetBillingProductInformationResponse = GetBillingProductInformationResponses[keyof GetBillingProductInformationResponses];
 
 export type GetBillingInformationData = {
   body?: never;
