@@ -29,18 +29,18 @@ export const getSessionInfo = (): UserSession => {
   } catch {
     // most likely not logged in - nothing to do here
   }
+
+  // check for cookie first to handles sso login while an old/expired token may still exist in cache/ localStorage
+  const jwtTokenFromCookie = cookies.get('JWT', { doNotParse: true }) ?? '';
+  if (jwtTokenFromCookie) {
+    setSessionInfo({ token: jwtTokenFromCookie });
+    cookies.remove('JWT');
+    cookies.remove('JWT', { path: '/' });
+    return { token: jwtTokenFromCookie, expiresAt: undefined };
+  }
   if (sessionInfo.expiresAt && new Date(sessionInfo.expiresAt) < new Date()) {
     cleanUp();
     return { ...emptySession };
-  }
-  if (!sessionInfo.token) {
-    const jwtTokenFromCookie = cookies.get('JWT', { doNotParse: true }) ?? '';
-    if (jwtTokenFromCookie) {
-      setSessionInfo({ token: jwtTokenFromCookie });
-      sessionInfo.token = jwtTokenFromCookie;
-      cookies.remove('JWT');
-      cookies.remove('JWT', { path: '/' });
-    }
   }
   sessionInfo.token = sessionInfo.token || '';
   tokenCache = sessionInfo.token;
