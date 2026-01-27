@@ -1,5 +1,5 @@
 ---
-## @northern.tech/themes-0.11.0 - 2026-01-14
+## @northern.tech/themes-0.11.0 - 2026-01-27
 
 
 ### Features
