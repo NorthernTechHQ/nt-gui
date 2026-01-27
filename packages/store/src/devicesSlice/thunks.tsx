@@ -76,7 +76,7 @@ import {
 } from '../selectors';
 import type { AppDispatch, RootState } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
-import { getDeviceMonitorConfig, getLatestDeviceAlerts, getSingleDeployment, saveGlobalSettings } from '../thunks';
+import { getDeviceMonitorConfig, getLatestDeviceAlerts, getSingleDeployment, saveGlobalSettings, saveUserSettings } from '../thunks';
 import {
   convertDeviceListStateToFilters,
   extractErrorMessage,
@@ -214,11 +214,19 @@ export const addStaticGroup = createAppAsyncThunk(
       )
       .catch(err => commonErrorHandler(err, `Group could not be updated:`, dispatch))
 );
+const removeReportsByGroupName = createAppAsyncThunk(`${sliceName}/removeReportsByGroupName`, (groupName: string, { dispatch, getState }) => {
+  if (!groupName) return Promise.resolve();
+  const userSettings = getUserSettings(getState());
+  const filteredReports = userSettings.reports.filter(report => report.group !== groupName);
+
+  dispatch(saveUserSettings({ reports: filteredReports }));
+});
 
 export const removeStaticGroup = createAppAsyncThunk(`${sliceName}/removeStaticGroup`, (groupName: string, { dispatch }) =>
   GeneralApi.delete(`${inventoryApiUrl}/groups/${groupName}`).then(() =>
     Promise.all([
       dispatch(actions.removeGroup(groupName)),
+      dispatch(removeReportsByGroupName(groupName)),
       dispatch(getGroups()),
       dispatch(setSnackbar({ message: 'Group was removed successfully', autoHideDuration: TIMEOUTS.fiveSeconds }))
     ])
@@ -292,6 +300,7 @@ export const removeDynamicGroup = createAppAsyncThunk(`${sliceName}/removeDynami
   return GeneralApi.delete(`${inventoryApiUrlV2}/filters/${filterId}`).then(() =>
     Promise.all([
       dispatch(actions.removeGroup(groupName)),
+      dispatch(removeReportsByGroupName(groupName)),
       dispatch(setSnackbar({ message: 'Group was removed successfully', autoHideDuration: TIMEOUTS.fiveSeconds }))
     ])
   );
