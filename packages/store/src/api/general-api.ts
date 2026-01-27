@@ -13,12 +13,21 @@
 //    limitations under the License.
 // @ts-nocheck
 import axios, { isCancel } from 'axios';
+import Cookies from 'universal-cookie';
 
 import { cleanUp, getToken } from '../auth';
 import { TIMEOUTS } from '../constants';
 
+const cookies = new Cookies();
+
 const unauthorizedRedirect = error => {
   if (!isCancel(error) && error.response?.status === 401 && getToken() && !window.location.pathname.endsWith('/subscription')) {
+    // a new jwt might have been set by sso while the current request was in-flight with an old token
+    //   => reload instead of logging out
+    if (cookies.get('JWT', { doNotParse: true })) {
+      window.location.reload();
+      return Promise.reject(error);
+    }
     cleanUp();
     window.location.replace('/ui/');
   }
