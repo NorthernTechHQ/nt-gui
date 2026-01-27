@@ -1,4 +1,24 @@
 ---
+## @northern.tech/store-0.19.1 - 2026-01-27
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Fixed an issue that would require re-login when relying on sso in some situations
+
+([ME-365](https://northerntech.atlassian.net/browse/ME-365)) ([653f009](https://github.com/NorthernTechHQ/nt-gui/commit/653f00968941af9d508e7d44fa394789f30583f7))  by @mzedel
+
+
+
+
+
+
+
+
+
 ## @northern.tech/store-0.18.0 - 2026-01-23
 
 
