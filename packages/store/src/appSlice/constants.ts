@@ -105,7 +105,7 @@ export const ADDONS: { [key in AvailableAddon]: Addon } = {
   configure: {
     id: 'configure',
     title: 'Configure',
-    description: 'Expand your plan with device configuration features',
+    description: 'Seamlessly configure applications and devices remotely – configure each device to its environment.',
     needs: ['hasDeviceConfig'],
     os: {
       price: '$11/month',
@@ -120,7 +120,7 @@ export const ADDONS: { [key in AvailableAddon]: Addon } = {
   monitor: {
     id: 'monitor',
     title: 'Monitor',
-    description: 'Expand your plan with device monitoring features',
+    description: 'Detect and analyze health issues of devices, services and applications. Set up alerts so you can act quickly.',
     needs: ['hasMonitor'],
     os: {
       price: '-',
@@ -135,7 +135,7 @@ export const ADDONS: { [key in AvailableAddon]: Addon } = {
   troubleshoot: {
     id: 'troubleshoot',
     title: 'Troubleshoot',
-    description: 'Expand your plan with device troubleshooting features',
+    description: 'Secure, remote access to your devices – quickly diagnose and fix issues in real time.',
     needs: ['hasDeviceConnect'],
     os: {
       price: '$27/month',
