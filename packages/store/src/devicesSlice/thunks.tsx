@@ -214,11 +214,10 @@ export const addStaticGroup = createAppAsyncThunk(
       )
       .catch(err => commonErrorHandler(err, `Group could not be updated:`, dispatch))
 );
-const removeReportsByGroupName = createAppAsyncThunk(`${sliceName}/removeReportsByGroupName`, (groupName: string, { dispatch, getState }) => {
+export const removeReportsByGroupName = createAppAsyncThunk(`${sliceName}/removeReportsByGroupName`, (groupName: string, { dispatch, getState }) => {
   if (!groupName) return Promise.resolve();
-  const userSettings = getUserSettings(getState());
-  const filteredReports = userSettings.reports.filter(report => report.group !== groupName);
-
+  const reports = getDeviceReportsForUser(getState());
+  const filteredReports = reports.filter(report => report.group !== groupName);
   dispatch(saveUserSettings({ reports: filteredReports }));
 });
 
