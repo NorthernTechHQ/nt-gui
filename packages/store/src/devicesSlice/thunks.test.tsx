@@ -26,7 +26,7 @@ import { actions } from '.';
 import { actions as appActions } from '../appSlice';
 import { DEVICE_STATES, EXTERNAL_PROVIDER, TIMEOUTS, UNGROUPED_GROUP } from '../constants';
 import { actions as deploymentActions } from '../deploymentsSlice';
-import { getSingleDeployment } from '../thunks';
+import { getSingleDeployment, saveUserSettings, getUserSettings } from '../thunks';
 import {
   addDevicesToGroup,
   addDynamicGroup,
@@ -60,6 +60,7 @@ import {
   preauthDevice,
   removeDevicesFromGroup,
   removeDynamicGroup,
+  removeReportsByGroupName,
   removeStaticGroup,
   selectGroup,
   setDeviceConfig,
@@ -668,8 +669,12 @@ describe('static grouping related actions', () => {
     const expectedActions = [
       { type: removeStaticGroup.pending.type },
       { type: actions.removeGroup.type, payload: groupName },
+      { type: removeReportsByGroupName.pending.type },
+      { type: saveUserSettings.pending.type },
+      { type: getUserSettings.pending.type },
       { type: getGroups.pending.type },
       { type: appActions.setSnackbar.type, payload: { autoHideDuration: 5000, message: 'Group was removed successfully' } },
+      { type: removeReportsByGroupName.fulfilled.type },
       { type: actions.receivedGroups.type, payload: { testGroup: defaultState.devices.groups.byId.testGroup } },
       { type: getDevicesByStatus.pending.type },
       {
@@ -819,7 +824,11 @@ describe('dynamic grouping related actions', () => {
     const expectedActions = [
       { type: removeDynamicGroup.pending.type },
       { type: actions.removeGroup.type, payload: groupName },
+      { type: removeReportsByGroupName.pending.type },
+      { type: saveUserSettings.pending.type },
+      { type: getUserSettings.pending.type },
       { type: appActions.setSnackbar.type, payload: { autoHideDuration: 5000, message: 'Group was removed successfully' } },
+      { type: removeReportsByGroupName.fulfilled.type },
       { type: removeDynamicGroup.fulfilled.type }
     ];
     await store.dispatch(removeDynamicGroup(groupName));
