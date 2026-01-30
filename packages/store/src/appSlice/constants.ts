@@ -150,7 +150,11 @@ export const ADDONS: { [key in AvailableAddon]: Addon } = {
 };
 
 export const BENEFITS = {
-  auditlog: { id: 'auditlog', benefit: 'trace change across your devices and access troubleshooting session replay', requiredPlan: PLANS.enterprise.id },
+  auditlog: {
+    id: 'auditlog',
+    benefit: 'gain access to logs for important events such as changes to devices, deployments and user management, as well as remote terminal session replays',
+    requiredPlan: PLANS.enterprise.id
+  },
   dashboard: { id: 'dashboard', benefit: 'actionable insights into the devices you are updating with Mender', requiredPlan: PLANS.enterprise.id },
   deltaGeneration: {
     id: 'deltaGeneration',
