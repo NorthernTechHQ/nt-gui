@@ -12,8 +12,20 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
+import React from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
+
+import { createSerializer } from '@emotion/jest';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+import { yes } from '@northern.tech/utils/helpers';
+import { configureStore } from '@reduxjs/toolkit';
+import { cleanup, render } from '@testing-library/react';
 import { act, queryByRole, waitFor, within } from '@testing-library/react';
 import { expect } from 'vitest';
+
+import { light } from './theme/light';
 
 export const selectMaterialUiSelectOption = async (element, optionText, user) => {
   // The button that opens the dropdown, which is a sibling of the input
@@ -28,4 +40,18 @@ export const selectMaterialUiSelectOption = async (element, optionText, user) =>
   // Wait for the listbox to be removed, so it isn't visible in subsequent calls
   await waitFor(() => expect(queryByRole(document.documentElement, 'listbox')).not.toBeInTheDocument());
   return Promise.resolve();
+};
+
+export const theme = createTheme(light);
+
+export const renderWithRouter = (ui: React.ReactElement, { route = '/', preloadedState } = {}) => {
+  const store = getConfiguredStore({ preloadedState });
+  const Wrapper = ({ children }) => (
+    <ThemeProvider theme={theme}>
+      <MemoryRouter initialEntries={[route]}>
+        <Provider store={store}>{children}</Provider>
+      </MemoryRouter>
+    </ThemeProvider>
+  );
+  return { store, ...render(ui, { wrapper: Wrapper }) };
 };

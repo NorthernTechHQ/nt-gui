@@ -26,7 +26,7 @@ import { expect, vi } from 'vitest';
 import { MessageChannel } from 'worker_threads';
 
 import { menderEnvironment, mockDate, token as mockToken } from './mockData';
-import { light } from './theme/light';
+import { theme } from './utils';
 
 expect.addSnapshotSerializer(createSerializer({ includeStyles: true }));
 
@@ -137,8 +137,6 @@ export const afterAll = async () => {
   React.useEffect.mockRestore();
   vi.unstubAllGlobals();
 };
-
-const theme = createTheme(light);
 
 const customRender = (ui, options = {}) => {
   const { preloadedState = { users: { currentSession: { token: mockToken, expiresAt: undefined } } }, ...remainder } = options;
