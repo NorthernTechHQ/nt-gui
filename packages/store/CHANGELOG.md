@@ -1,4 +1,45 @@
 ---
+## @northern.tech/store-0.19.2 - 2026-02-02
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Remove reports when associated group is removed
+
+ ([bbbc095](https://github.com/NorthernTechHQ/nt-gui/commit/bbbc0950318d3838be7d559268d0eac70b0d72da))  by @mineralsfree
+
+
+
+- *(store)* Updated the add-ons description
+
+([MEN-9275](https://northerntech.atlassian.net/browse/MEN-9275)) ([f386747](https://github.com/NorthernTechHQ/nt-gui/commit/f3867474c7abd6cf433d30abedfef0e3e42bdb62))  by @mineralsfree
+
+
+
+
+- *(store)* Handle the empty reports case
+
+ ([7c2b038](https://github.com/NorthernTechHQ/nt-gui/commit/7c2b0385d7c3a8ff3e05b76727bba15322ac96f3))  by @mineralsfree
+
+
+
+- *(store)* Aligned auditlogs hint visibility to correct plan
+
+ ([4f5bd8f](https://github.com/NorthernTechHQ/nt-gui/commit/4f5bd8f4745f0215c1f0011e5f7bd6d6e1f0a904))  by @mzedel
+
+
+
+
+
+
+
+### Security
+
+
+
 ## @northern.tech/store-0.19.1 - 2026-01-27
 
 
