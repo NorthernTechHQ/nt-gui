@@ -1,4 +1,38 @@
 ---
+## @northern.tech/testing-0.6.0 - 2026-02-02
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Aligned provided abortcontroller w/  functionality expected by jsdom
+
+ ([d7f9242](https://github.com/NorthernTechHQ/nt-gui/commit/d7f9242d61c4600933e509d4dde7bbe891ef6af0))  by @mzedel
+
+
+
+
+
+
+
+### Features
+
+#### Testing
+
+
+- *(testing)* Added rendering helper to ease url state mocking
+
+ ([a5c8abf](https://github.com/NorthernTechHQ/nt-gui/commit/a5c8abfc3a5b9d8ce7cc729ea43f18b35b5dc0fe))  by @mzedel
+
+
+
+
+
+
+
+
 ## @northern.tech/testing-0.5.1 - 2026-01-23
 
 
