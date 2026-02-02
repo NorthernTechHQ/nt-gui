@@ -32,7 +32,10 @@ expect.addSnapshotSerializer(createSerializer({ includeStyles: true }));
 
 export const TEST_LOCATION = 'localhost';
 
-export const mockAbortController = { signal: { addEventListener: () => {}, removeEventListener: () => {} } };
+export const mockAbortController: { abort: () => void; signal: { addEventListener: () => void; removeEventListener: () => void } } = {
+  abort: vi.fn(),
+  signal: { addEventListener: () => {}, removeEventListener: () => {} }
+};
 
 const oldWindowLocalStorage = window.localStorage;
 const oldWindowLocation = window.location;

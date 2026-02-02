@@ -20,7 +20,7 @@ const oldWindowLocation = window.location;
 const oldWindowSessionStorage = window.sessionStorage;
 
 // this duplicates what's in the testing package, but is kept here to ease package structure
-const mockAbortController = { signal: { addEventListener: () => {}, removeEventListener: () => {} } };
+const mockAbortController = { abort: vi.fn(), signal: { addEventListener: () => {}, removeEventListener: () => {} } };
 
 process.on('unhandledRejection', err => {
   throw err;
