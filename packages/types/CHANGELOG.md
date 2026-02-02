@@ -1,25 +1,27 @@
-# Changelog
-
-## [0.4.0](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/types-0.3.1...@northern.tech/types-0.4.0) (2026-01-23)
-
-
-### Features
-
-* **store:** added app initialized flag to app slice ([d009d0f](https://github.com/NorthernTechHQ/nt-gui/commit/d009d0fae7d2784c8f32e600e07bfeeed6dbcb84))
-* **store:** added appInitialized flag to app slice ([02d0cf5](https://github.com/NorthernTechHQ/nt-gui/commit/02d0cf548b351f92e1f2eb643a9e0aaa9ea1899b))
-
-
-### Bug Fixes
-
-* **types:** types update ([25c62fb](https://github.com/NorthernTechHQ/nt-gui/commit/25c62fb9cfb7372a11707e5d9d3e52bc0adcc3b5))
-* **types:** types update ([8244b02](https://github.com/NorthernTechHQ/nt-gui/commit/8244b02aacf81316c859a4bc7897d67a610a9eee))
-* **types:** types update ([2a28191](https://github.com/NorthernTechHQ/nt-gui/commit/2a281915561562a90ace84c8a077d3701445c77e))
-* **types:** types update ([2ff59e1](https://github.com/NorthernTechHQ/nt-gui/commit/2ff59e1bab7e7d19dedf51bbb475746f1f629d21))
-* **types:** types update ([35d325a](https://github.com/NorthernTechHQ/nt-gui/commit/35d325acee768e5d26599baaeed075a426ad3d7b))
-* **types:** types update ([d4b839a](https://github.com/NorthernTechHQ/nt-gui/commit/d4b839af1d193ca39c147418816de431785e3f37))
-
 ---
-## @northern.tech/typescript-config-0.3.1 - 2025-12-15
+## @northern.tech/types-0.3.2 - 2026-02-02
+
+
+### Bug fixes
+
+#### Types
+
+
+- *(types)* Types update
+
+ ([d4b839a](https://github.com/NorthernTechHQ/nt-gui/commit/d4b839af1d193ca39c147418816de431785e3f37))  by @mender-test-bot
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/types-0.3.1 - 2025-12-15
 
 
 ### Bug fixes
@@ -38,7 +40,7 @@
 
 
 
-## @northern.tech/typescript-config-0.3.0 - 2025-12-02
+## @northern.tech/types-0.3.0 - 2025-12-02
 
 
 ### Bug fixes
@@ -58,7 +60,7 @@
 
 
 
-## @northern.tech/typescript-config-0.2.2 - 2025-10-31
+## @northern.tech/types-0.2.2 - 2025-10-31
 
 
 ### Bug fixes
