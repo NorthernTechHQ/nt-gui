@@ -71,7 +71,7 @@
     "@northern.tech/testing": "*",
     "@northern.tech/typescript-config": "*",
     "@testing-library/jest-dom": "6.9.1",
-    "@testing-library/react": "^16.3.1",
+    "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "14.6.1",
     "@vitejs/plugin-react": "^5.1.2",
     "eslint": "^9.39.1",
@@ -79,7 +79,7 @@
     "msw": "^2.12.7",
     "redux-mock-store": "1.5.5",
     "tsup": "8.5.1",
-    "vitest": "^4.0.16"
+    "vitest": "^4.0.18"
   },
   "dependencies": {
     "@mdi/js": "^7.x",

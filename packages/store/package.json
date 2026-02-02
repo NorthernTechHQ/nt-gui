@@ -131,7 +131,7 @@
     "jsdom": "^27.4.0",
     "msw": "^2.12.7",
     "tsup": "8.5.1",
-    "vitest": "^4.0.16"
+    "vitest": "^4.0.18"
   },
   "dependencies": {
     "@emotion/react": "^11.x",
@@ -141,7 +141,7 @@
     "@northern.tech/utils": "*",
     "@mui/icons-material": "^7.x",
     "@reduxjs/toolkit": "^2.x",
-    "@sentry/react": "^10.32.1",
+    "@sentry/react": "^10.38.0",
     "axios": "^1.x",
     "dayjs": "^1.x",
     "jwt-decode": "^4.x",

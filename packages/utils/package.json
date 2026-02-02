@@ -47,7 +47,7 @@
     "eslint": "^9.39.1",
     "jsdom": "^27.4.0",
     "tsup": "8.5.1",
-    "vitest": "^4.0.16"
+    "vitest": "^4.0.18"
   },
   "dependencies": {
     "@northern.tech/types": "*",
