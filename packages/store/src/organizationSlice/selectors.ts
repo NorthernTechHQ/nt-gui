@@ -17,6 +17,7 @@ import { EXTERNAL_PROVIDER } from '../constants';
 import type { RootState } from '../store';
 
 export const getOrganization = (state: RootState) => state.organization.organization;
+export const getProducts = (state: RootState) => state.organization.products;
 export const getExternalIntegrations = (state: RootState) => state.organization.externalDeviceIntegrations;
 export const getAuditlogState = (state: RootState) => state.organization.auditlog.selectionState;
 export const getAuditLog = (state: RootState) => state.organization.auditlog.events;

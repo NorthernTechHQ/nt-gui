@@ -11,7 +11,15 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { AuditLog as AuditLogEvent, Tenant as BackendTenant, BillingInfo, BillingProfile, Event, SamlMetadata } from '@northern.tech/types/MenderTypes';
+import type {
+  AuditLog as AuditLogEvent,
+  Tenant as BackendTenant,
+  BillingInfo,
+  BillingProfile,
+  ConstraintsInfo,
+  Event,
+  SamlMetadata
+} from '@northern.tech/types/MenderTypes';
 
 import type { AvailableAddon, SortOptions } from '../constants';
 import type { SSO_TYPES } from './constants';
@@ -78,3 +86,31 @@ export type Organization = Tenant &
   BillingInfo & {
     billing_profile: BillingProfile;
   };
+
+export interface ProductAddon {
+  description: string;
+  id: string;
+  title: string;
+}
+
+export interface ProductPlan {
+  description: string;
+  id: string;
+  name: string;
+  tierLimitsConstrains: Record<string, Required<ConstraintsInfo>>;
+}
+
+export interface ProductTier {
+  addons: Record<string, string[]>;
+  addonsByPlan: Record<string, string[]>;
+  id: string;
+  limitConstrains: Record<string, Required<ConstraintsInfo>>;
+  stripeProductName: string;
+  title: string;
+}
+
+export interface ProductConfig {
+  addons: Record<string, ProductAddon>;
+  plans: Record<string, ProductPlan>;
+  tiers: ProductTier[];
+}

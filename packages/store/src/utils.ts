@@ -13,10 +13,11 @@
 //    limitations under the License.
 // @ts-nocheck
 import type { DeviceAttribute } from '@northern.tech/types/DeviceAttribute';
-import type { Scope } from '@northern.tech/types/MenderTypes';
+import type { ProductInfo, Scope } from '@northern.tech/types/MenderTypes';
 import { duplicateFilter, yes } from '@northern.tech/utils/helpers';
 
 import type { DeviceIssueOptionKey } from './constants';
+import { ADDONS, PLANS } from './constants';
 import {
   ATTRIBUTE_SCOPES,
   DARK_MODE,
@@ -33,6 +34,7 @@ import {
   softwareIndicator
 } from './constants';
 import type { DeviceFilter, DeviceGroup, InventoryAttributes } from './devicesSlice';
+import type { ProductConfig, ProductTier } from './organizationSlice/types';
 
 // for some reason these functions can not be stored in the deviceConstants...
 const filterProcessors = {
@@ -74,13 +76,13 @@ const convertIssueOptionsToFilters = (issuesSelection, filtersState = {}) =>
   });
 
 export const convertDeviceListStateToFilters = ({
-  filters = [],
-  group,
-  groups = { byId: {} },
-  offlineThreshold,
-  selectedIssues = [],
-  status
-}: {
+                                                  filters = [],
+                                                  group,
+                                                  groups = { byId: {} },
+                                                  offlineThreshold,
+                                                  selectedIssues = [],
+                                                  status
+                                                }: {
   filters?: DeviceFilter[];
   group?: string;
   groups?: { byId: Record<string, DeviceGroup> };
@@ -239,8 +241,8 @@ export const getDeploymentState = deployment => {
 export const generateDeploymentGroupDetails = (filter, groupName) =>
   filter && filter.terms?.length
     ? `${groupName} (${filter.terms
-        .map(filter => `${filter.attribute || filter.key} ${DEVICE_FILTERING_OPTIONS[filter.type || filter.operator].shortform} ${filter.value}`)
-        .join(', ')})`
+      .map(filter => `${filter.attribute || filter.key} ${DEVICE_FILTERING_OPTIONS[filter.type || filter.operator].shortform} ${filter.value}`)
+      .join(', ')})`
     : groupName;
 
 export const mapDeviceAttributes = (
@@ -285,3 +287,63 @@ export const parseSubscriptionPreview = (lines: Line[]) =>
     },
     { addons: {} }
   );
+
+
+export const transformProductResponse = (products: ProductInfo[]): ProductConfig => {
+  const plans = new Set<string>();
+  const addons = new Set<string>();
+  const tiers: ProductTier[] = [];
+  const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name));
+  sortedProducts.forEach(tier => {
+    const addonsSupported = Object.fromEntries((tier.addons || []).map(addon => [addon.name, addon.prices?.map(p => p.plan)]));
+
+    const allPlans = tier.prices.map(price => price.plan);
+
+    const addonsTransposed = allPlans.reduce((acc, plan) => {
+      acc[plan] = Object.entries(addonsSupported)
+        .filter(([, addonSupportedPlans]) => addonSupportedPlans.includes(plan))
+        .map(([addon]) => addon);
+
+      return acc;
+    }, {});
+
+    const tierId = tier.name.replace('mender_', '');
+    tiers.push({
+      id: tierId,
+      title: tierId,
+      stripeProductName: tier.name,
+      limitConstrains: Object.fromEntries(tier.prices.map(p => [p.plan, p.constraints])),
+      addons: addonsSupported,
+      addonsByPlan: addonsTransposed
+    });
+    Object.keys(addonsSupported).forEach(addonId => addons.add(addonId));
+    tier.prices.forEach(plan => plans.add(plan.plan));
+  });
+  const plansArr: string[] = Array.from(plans);
+  const addonsArr = Array.from(addons).sort((a, b) => a.localeCompare(b));
+  const transformedPlans = Object.fromEntries(
+    plansArr.map(planId => [
+      planId,
+      {
+        id: planId,
+        name: PLANS[planId].name,
+        tierLimitsConstrains: Object.fromEntries(tiers.map(tier => [tier.id, tier.limitConstrains[planId]])),
+        description: PLANS[planId].description
+      }
+    ])
+  );
+
+  const transformedAddons = Object.fromEntries(
+    addonsArr.map(addon => [
+      addon,
+      {
+        id: addon,
+        title: ADDONS[addon].title,
+        description: ADDONS[addon].description,
+        eligible: [...new Set(tiers.map(tier => tier.addons[addon] || []).flat()), PLANS.enterprise.id]
+      }
+    ])
+  );
+
+  return { plans: { ...transformedPlans, enterprise: { ...PLANS.enterprise } }, tiers, addons: transformedAddons };
+};

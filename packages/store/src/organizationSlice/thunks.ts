@@ -54,7 +54,7 @@ import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { getDeviceLimits, setFirstLoginAfterSignup } from '../thunks';
 import type { UserSession } from '../usersSlice';
-import { parseSubscriptionPreview } from '../utils';
+import { parseSubscriptionPreview, transformProductResponse } from '../utils';
 import { SSO_TYPES } from './constants';
 import { getAuditlogState, getOrganization } from './selectors';
 
@@ -383,6 +383,11 @@ export const getCurrentSubscription = createAppAsyncThunk(`${sliceName}/getCurre
       }
       return commonErrorHandler(err, 'There was an error retrieving your current subscription', dispatch, commonErrorFallback);
     })
+);
+export const getProducts = createAppAsyncThunk(`${sliceName}/getEnabledTiers`, (_, { dispatch }) =>
+  Api.get(`${tenantadmApiUrlv2}/billing/products`)
+    .catch(err => commonErrorHandler(err, 'There was an error getting Mender products:', dispatch, commonErrorFallback))
+    .then(res => dispatch(actions.setProducts(transformProductResponse(res.data))))
 );
 
 export const requestPlanUpgrade = createAppAsyncThunk(`${sliceName}/requestPlanUpgrade`, (order: { plan: string; products: Product[] }, { dispatch }) =>
