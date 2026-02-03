@@ -76,13 +76,13 @@ const convertIssueOptionsToFilters = (issuesSelection, filtersState = {}) =>
   });
 
 export const convertDeviceListStateToFilters = ({
-                                                  filters = [],
-                                                  group,
-                                                  groups = { byId: {} },
-                                                  offlineThreshold,
-                                                  selectedIssues = [],
-                                                  status
-                                                }: {
+  filters = [],
+  group,
+  groups = { byId: {} },
+  offlineThreshold,
+  selectedIssues = [],
+  status
+}: {
   filters?: DeviceFilter[];
   group?: string;
   groups?: { byId: Record<string, DeviceGroup> };
@@ -241,8 +241,8 @@ export const getDeploymentState = deployment => {
 export const generateDeploymentGroupDetails = (filter, groupName) =>
   filter && filter.terms?.length
     ? `${groupName} (${filter.terms
-      .map(filter => `${filter.attribute || filter.key} ${DEVICE_FILTERING_OPTIONS[filter.type || filter.operator].shortform} ${filter.value}`)
-      .join(', ')})`
+        .map(filter => `${filter.attribute || filter.key} ${DEVICE_FILTERING_OPTIONS[filter.type || filter.operator].shortform} ${filter.value}`)
+        .join(', ')})`
     : groupName;
 
 export const mapDeviceAttributes = (
