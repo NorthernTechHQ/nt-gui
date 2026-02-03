@@ -48,6 +48,7 @@ import {
   getIntegrations,
   getLatestReleaseInfo,
   getOnboardingState,
+  getProducts,
   getReleases,
   getRoles,
   getUserOrganization,
@@ -183,7 +184,8 @@ export const useAppInit = userId => {
       dispatch(getGroups()),
       dispatch(getIntegrations()),
       dispatch(getReleases()),
-      dispatch(getAllDeviceCounts()).unwrap()
+      dispatch(getAllDeviceCounts()).unwrap(),
+      dispatch(getProducts())
     ];
     if (hasMultitenancy) {
       tasks.push(dispatch(getDeviceLimits()));
