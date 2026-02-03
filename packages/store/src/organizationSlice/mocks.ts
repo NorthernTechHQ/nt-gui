@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { DEVICE_LIST_DEFAULTS } from '../constants';
+import { DEVICE_LIST_DEFAULTS, PLANS } from '../constants';
 import { initialState } from './index';
 
 export const mockState = {
@@ -88,6 +88,84 @@ export const mockState = {
       isLoading: false,
       sort: {},
       total: 3
+    }
+  },
+  products: {
+    plans: {
+      os: {
+        id: 'os',
+        name: 'Basic',
+        tierLimitsConstrains: {
+          standard: { min: 50, max: 1000, div: 50 },
+          micro: { min: 50, max: 5000, div: 50 }
+        },
+        description:
+          'The core features of Mender. To continue using Enterprise Trial features—like Delta updates, scheduled deployments, phased rollouts, device filtering, dynamic groups, RBAC, audit logs, and more—please upgrade to a higher plan.'
+      },
+      professional: {
+        id: 'professional',
+        name: 'Professional',
+        tierLimitsConstrains: {
+          standard: { min: 250, max: 10000, div: 50 },
+          micro: { min: 500, max: 100000, div: 50 }
+        },
+        description: 'Everything in Basic, plus enhanced update management and automation features.'
+      },
+      enterprise: { ...PLANS.enterprise }
+    },
+    tiers: [
+      {
+        id: 'standard',
+        title: 'Standard',
+        stripeProductName: 'mender_standard',
+        limitConstrains: {
+          os: { min: 50, max: 1000, div: 50 },
+          professional: { min: 250, max: 10000, div: 50 }
+        },
+        addons: {
+          troubleshoot: ['os', 'professional'],
+          configure: ['os', 'professional'],
+          monitor: ['professional']
+        },
+        addonsByPlan: {
+          os: ['troubleshoot', 'configure'],
+          professional: ['troubleshoot', 'configure', 'monitor']
+        }
+      },
+      {
+        id: 'micro',
+        stripeProductName: 'mender_micro',
+        title: 'Micro',
+        limitConstrains: {
+          os: { min: 50, max: 5000, div: 50 },
+          professional: { min: 500, max: 100000, div: 50 }
+        },
+        addonsByPlan: {
+          os: [],
+          professional: []
+        },
+        addons: {}
+      }
+    ],
+    addons: {
+      configure: {
+        id: 'configure',
+        title: 'Configure',
+        eligible: ['os', 'professional', 'enterprise'],
+        description: 'Seamlessly configure applications and devices remotely – configure each device to its environment.'
+      },
+      monitor: {
+        id: 'monitor',
+        title: 'Monitor',
+        eligible: ['professional', 'enterprise'],
+        description: 'Detect and analyze health issues of devices, services and applications. Set up alerts so you can act quickly.'
+      },
+      troubleshoot: {
+        id: 'troubleshoot',
+        title: 'Troubleshoot',
+        eligible: ['os', 'professional', 'enterprise'],
+        description: 'Secure, remote access to your devices – quickly diagnose and fix issues in real time.'
+      }
     }
   },
   intentId: 'testIntent',
