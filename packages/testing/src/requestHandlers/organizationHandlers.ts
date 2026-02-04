@@ -198,6 +198,7 @@ export const organizationHandlers = [
   http.post(`${tenantadmApiUrlv2}/billing/subscription`, () => new HttpResponse(null, { status: 202 })),
   http.post(`${tenantadmApiUrlv2}/billing/subscription/invoices/preview`, () => HttpResponse.json(invoicePreviewBasic)),
   http.get(`${tenantadmApiUrlv2}/billing/subscription`, () => HttpResponse.json(subscriptionBasic)),
+  http.get(`${tenantadmApiUrlv2}/billing/products`, ()=> HttpResponse.json(mockApiResponses.organization.products)),
   http.get(`${auditLogsApiUrl}/logs`, ({ request }) => {
     const { searchParams } = new URL(request.url);
     const perPage = Number(searchParams.get('per_page'));

@@ -322,6 +322,66 @@ export const mockApiResponses = {
       plan: 'os',
       trial: false
     },
+    products: [
+      {
+        name: 'mender_standard',
+        billing_unit: 'devices',
+        prices: [
+          {
+            plan: 'os',
+            constraints: {
+              min: 50,
+              max: 1000,
+              div: 50
+            }
+          },
+          {
+            plan: 'professional',
+            constraints: {
+              min: 250,
+              max: 10000,
+              div: 50
+            }
+          }
+        ],
+        addons: [
+          {
+            name: 'troubleshoot',
+            prices: [{ plan: 'os' }, { plan: 'professional' }]
+          },
+          {
+            name: 'configure',
+            prices: [{ plan: 'os' }, { plan: 'professional' }]
+          },
+          {
+            name: 'monitor',
+            prices: [{ plan: 'professional' }]
+          }
+        ]
+      },
+      {
+        name: 'mender_micro',
+        billing_unit: 'devices',
+        prices: [
+          {
+            plan: 'os',
+            constraints: {
+              min: 50,
+              max: 5000,
+              div: 50
+            }
+          },
+          {
+            plan: 'professional',
+            constraints: {
+              min: 500,
+              max: 100000,
+              div: 50
+            }
+          }
+        ]
+      }
+    ],
     intentId: 'testIntent',
     auditlog: {
       events: [

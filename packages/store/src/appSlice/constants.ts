@@ -15,11 +15,6 @@ import { BarChart as BarChartIcon, PieChartOutline as PieChartIcon } from '@mui/
 
 import { yes as yesUtil } from '@northern.tech/utils';
 
-const startingDeviceCount = {
-  os: 'for first 50 devices',
-  professional: 'for first 250 devices'
-} as const;
-
 export const chartTypes = {
   bar: { key: 'bar', Icon: BarChartIcon },
   pie: { key: 'pie', Icon: PieChartIcon }
@@ -39,15 +34,8 @@ export type AvailablePlans = 'os' | 'professional' | 'enterprise';
 
 export type Plan = {
   description: string;
-  deviceCount: string;
-  features: string[];
   id: AvailablePlans;
-  minimalDeviceCount: { micro: number; standard: number };
   name: string;
-  offer?: boolean;
-  offerprice?: string;
-  price: string;
-  price2?: string;
 };
 
 export type AvailableAddon = 'configure' | 'troubleshoot' | 'monitor';
@@ -56,33 +44,19 @@ export const PLANS: { [key in AvailablePlans]: Plan } = {
   os: {
     id: 'os',
     name: 'Basic',
-    minimalDeviceCount: { standard: 50, micro: 100 },
-    offer: true,
-    price: '$34 / month',
-    deviceCount: startingDeviceCount.os,
     description:
-      'The core features of Mender. To continue using Enterprise Trial features—like Delta updates, scheduled deployments, phased rollouts, device filtering, dynamic groups, RBAC, audit logs, and more—please upgrade to a higher plan.',
-    features: ['Access to core features of Mender', 'Basic support']
+      'The core features of Mender. To continue using Enterprise Trial features—like Delta updates, scheduled deployments, phased rollouts, device filtering, dynamic groups, RBAC, audit logs, and more—please upgrade to a higher plan.'
   },
   professional: {
     id: 'professional',
     name: 'Professional',
-    minimalDeviceCount: { standard: 250, micro: 500 },
-    offer: true,
-    price: '$291 / month',
-    deviceCount: startingDeviceCount.professional,
-    description: 'Everything in Basic, plus enhanced update management and automation features.',
-    features: ['Advanced OTA features', 'Higher priority support']
+    description: 'Everything in Basic, plus enhanced update management and automation features.'
   },
   enterprise: {
     id: 'enterprise',
     name: 'Enterprise',
-    minimalDeviceCount: { standard: 1000, micro: 2000 },
-    price: 'Custom pricing',
-    deviceCount: 'Unlimited devices',
     description:
-      'Every advanced feature of Mender, tailored for complex and large-scale deployments. Not available as a monthly subscription — ask us for a quote.',
-    features: ['All Mender features', 'Advanced security features', 'SLA-backed support']
+      'Every advanced feature of Mender, tailored for complex and large-scale deployments. Not available as a monthly subscription — ask us for a quote.'
   }
 } as const;
 export type Addon = {
@@ -91,11 +65,6 @@ export type Addon = {
   id: string;
   needs: string[];
   title: string;
-} & {
-  [key in Exclude<AvailablePlans, 'enterprise'>]: {
-    deviceCount: string;
-    price: string;
-  };
 };
 
 export type AddonId = keyof typeof ADDONS;
@@ -107,14 +76,6 @@ export const ADDONS: { [key in AvailableAddon]: Addon } = {
     title: 'Configure',
     description: 'Seamlessly configure applications and devices remotely – configure each device to its environment.',
     needs: ['hasDeviceConfig'],
-    os: {
-      price: '$11/month',
-      deviceCount: startingDeviceCount.os
-    },
-    professional: {
-      price: '$65/month',
-      deviceCount: startingDeviceCount.professional
-    },
     eligible: ['os', 'professional', 'enterprise']
   },
   monitor: {
@@ -122,14 +83,6 @@ export const ADDONS: { [key in AvailableAddon]: Addon } = {
     title: 'Monitor',
     description: 'Detect and analyze health issues of devices, services and applications. Set up alerts so you can act quickly.',
     needs: ['hasMonitor'],
-    os: {
-      price: '-',
-      deviceCount: '-'
-    },
-    professional: {
-      price: '$86/month',
-      deviceCount: startingDeviceCount.professional
-    },
     eligible: ['professional', 'enterprise']
   },
   troubleshoot: {
@@ -137,14 +90,6 @@ export const ADDONS: { [key in AvailableAddon]: Addon } = {
     title: 'Troubleshoot',
     description: 'Secure, remote access to your devices – quickly diagnose and fix issues in real time.',
     needs: ['hasDeviceConnect'],
-    os: {
-      price: '$27/month',
-      deviceCount: startingDeviceCount.os
-    },
-    professional: {
-      price: '$72/month',
-      deviceCount: startingDeviceCount.professional
-    },
     eligible: ['os', 'professional', 'enterprise']
   }
 };
