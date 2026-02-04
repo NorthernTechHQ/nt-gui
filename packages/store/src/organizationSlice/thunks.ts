@@ -433,7 +433,7 @@ export const getUserSubscription = createAppAsyncThunk(`${sliceName}/getUserSubs
 export const getBillingPreview = createAppAsyncThunk(`${sliceName}/getBillingPreview`, (order: PreviewRequest, { dispatch }) =>
   Api.post(`${tenantadmApiUrlv2}/billing/subscription/invoices/preview`, order)
     .catch(err => commonErrorHandler(err, 'There was an error getting your billing information:', dispatch, commonErrorFallback))
-    .then(({ data }) => (order.preview_mode === 'recurring' ? { ...parseSubscriptionPreview(data.lines), total: data.total } : data))
+    .then(({ data }) => (order.preview_mode === 'recurring' ? { items: parseSubscriptionPreview(data.lines), total: data.total } : data))
 );
 
 export const getCurrentSubscription = createAppAsyncThunk(`${sliceName}/getCurrentSubscription`, (_, { dispatch }) =>
