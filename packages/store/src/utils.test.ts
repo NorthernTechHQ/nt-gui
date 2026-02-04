@@ -13,19 +13,16 @@
 //    limitations under the License.
 // @ts-nocheck
 import { defaultState } from '@/testUtils';
-import { mockApiResponses } from '@northern.tech/testing/mockData';
 import { describe, expect, it } from 'vitest';
 
 import { DARK_MODE, LIGHT_MODE } from './constants';
-import { mockState } from './organizationSlice/mocks';
 import {
   generateDeploymentGroupDetails,
   groupDeploymentDevicesStats,
   groupDeploymentStats,
   isDarkMode,
   mapDeviceAttributes,
-  parseSubscriptionPreview,
-  transformProductResponse
+  parseSubscriptionPreview
 } from './utils';
 
 describe('mapDeviceAttributes function', () => {
@@ -256,14 +253,6 @@ describe('subscription utils', () => {
     expect(result.micro).toEqual(3200);
     expect(result.addons.configure).toEqual(1000);
     expect(result.addons.troubleshoot).toEqual(2000);
-  });
-});
 
-const apiResponse = mockApiResponses.organization.products;
-const transformedObject = mockState.products;
-describe('transformer test', () => {
-  it('transforms backend products into consumable frontend object', async () => {
-    const results = transformProductResponse(apiResponse);
-    expect(results).toEqual(transformedObject);
   });
 });

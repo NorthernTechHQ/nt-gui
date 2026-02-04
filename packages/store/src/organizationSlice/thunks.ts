@@ -16,11 +16,13 @@ import type {
   Tenant as BackendTenant,
   BillingInfo,
   BillingProfile,
+  ConstraintsInfo,
   Event,
   Integration,
   NewTenant,
   PreviewRequest,
   Product,
+  ProductInfo,
   SupportRequest
 } from '@northern.tech/types/MenderTypes';
 import { dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
@@ -34,6 +36,7 @@ import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import Api from '../api/general-api';
 import type { AvailablePlans, ContentType, SortOptions } from '../constants';
+import { ADDONS, PLANS } from '../constants';
 import {
   DEVICE_LIST_DEFAULTS,
   SORTING_OPTIONS,
@@ -48,15 +51,15 @@ import {
   tenantadmApiUrlv1,
   tenantadmApiUrlv2
 } from '../constants';
-import type { AuditLogSelectionState, SSOConfig, Tenant, TenantList } from '../organizationSlice/types';
 import { getCurrentSession, getTenantCapabilities, getTenantsList } from '../selectors';
 import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { getDeviceLimits, setFirstLoginAfterSignup } from '../thunks';
 import type { UserSession } from '../usersSlice';
-import { parseSubscriptionPreview, transformProductResponse } from '../utils';
+import { parseSubscriptionPreview } from '../utils';
 import { SSO_TYPES } from './constants';
 import { getAuditlogState, getOrganization } from './selectors';
+import type { AuditLogSelectionState, ProductConfig, ProductPlan, ProductTier, SSOConfig, Tenant, TenantList } from './types';
 
 const cookies = new Cookies();
 
@@ -70,6 +73,65 @@ export const cancelRequest = createAppAsyncThunk(`${sliceName}/cancelRequest`, (
     Promise.resolve(dispatch(setSnackbar({ message: 'Deactivation request was sent successfully', autoHideDuration: TIMEOUTS.fiveSeconds })))
   );
 });
+
+export const transformProductResponse = (products: ProductInfo[]): ProductConfig => {
+  const plans = new Set<string>();
+  const addons = new Set<string>();
+  const tiers: ProductTier[] = [];
+  const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name));
+  sortedProducts.forEach(tier => {
+    const addonsSupported = Object.fromEntries((tier.addons || []).map(addon => [addon.name, addon.prices?.map(p => p.plan)])) as Record<string, string[]>;
+
+    const allPlans = tier.prices.map(price => price.plan);
+
+    const addonsTransposed = allPlans.reduce((acc, plan) => {
+      acc[plan] = Object.entries(addonsSupported)
+        .filter(([, addonSupportedPlans]) => addonSupportedPlans.includes(plan))
+        .map(([addon]) => addon);
+
+      return acc;
+    }, {});
+
+    const tierId = tier.name.replace('mender_', '');
+    tiers.push({
+      id: tierId,
+      title: tierId,
+      stripeProductName: tier.name,
+      limitConstrains: Object.fromEntries(tier.prices.map(p => [p.plan, p.constraints])) as Record<string, Required<ConstraintsInfo>>,
+      addons: addonsSupported,
+      addonsByPlan: addonsTransposed
+    });
+    Object.keys(addonsSupported).forEach(addonId => addons.add(addonId));
+    tier.prices.forEach(plan => plans.add(plan.plan));
+  });
+  const plansArr: string[] = Array.from(plans);
+  const addonsArr = Array.from(addons).sort((a, b) => a.localeCompare(b));
+  const transformedPlans = Object.fromEntries(
+    plansArr.map(planId => [
+      planId,
+      {
+        id: planId,
+        name: PLANS[planId].name,
+        tierLimitsConstrains: Object.fromEntries(tiers.map(tier => [tier.id, tier.limitConstrains[planId]])),
+        description: PLANS[planId].description
+      }
+    ])
+  );
+
+  const transformedAddons = Object.fromEntries(
+    addonsArr.map(addon => [
+      addon,
+      {
+        id: addon,
+        title: ADDONS[addon].title,
+        description: ADDONS[addon].description,
+        eligible: [...new Set(tiers.map(tier => tier.addons[addon] || []).flat()), PLANS.enterprise.id]
+      }
+    ])
+  );
+
+  return { plans: { ...transformedPlans, enterprise: { ...PLANS.enterprise } as ProductPlan }, tiers, addons: transformedAddons };
+};
 
 export const getTargetLocation = (key: string) => {
   if (devLocations.includes(window.location.hostname)) {

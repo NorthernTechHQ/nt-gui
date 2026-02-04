@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { defaultState } from '@/testUtils';
-import { tenants, webhookEvents } from '@northern.tech/testing/mockData';
+import { mockApiResponses, tenants, webhookEvents } from '@northern.tech/testing/mockData';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { describe, expect, it, vi } from 'vitest';
@@ -24,6 +24,7 @@ import { EXTERNAL_PROVIDER, TIMEOUTS, locations } from '../constants';
 import { actions as deviceActions } from '../devicesSlice';
 import { setFirstLoginAfterSignup } from '../thunks';
 import { SSO_TYPES } from './constants';
+import { mockState } from './mocks';
 import {
   addTenant,
   cancelRequest,
@@ -54,7 +55,8 @@ import {
   startCardUpdate,
   startUpgrade,
   storeSsoConfig,
-  tenantDataDivergedMessage
+  tenantDataDivergedMessage,
+  transformProductResponse
 } from './thunks';
 
 const middlewares = [thunk];
@@ -698,5 +700,11 @@ describe('organization actions', () => {
     const storeActions = store.getActions();
     expect(storeActions).toHaveLength(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+  it('transforms backend products into consumable frontend object', async () => {
+    const apiResponse = mockApiResponses.organization.products;
+    const transformedObject = mockState.products;
+    const results = transformProductResponse(apiResponse);
+    expect(results).toEqual(transformedObject);
   });
 });
