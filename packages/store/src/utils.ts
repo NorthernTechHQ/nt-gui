@@ -17,7 +17,7 @@ import type { ProductInfo, Scope } from '@northern.tech/types/MenderTypes';
 import { duplicateFilter, yes } from '@northern.tech/utils/helpers';
 
 import type { DeviceIssueOptionKey } from './constants';
-import { PLANS } from './constants';
+import { ADDONS, PLANS } from './constants';
 import {
   ATTRIBUTE_SCOPES,
   DARK_MODE,
@@ -287,45 +287,30 @@ export const parseSubscriptionPreview = (lines: Line[]) =>
     },
     { addons: {} }
   );
-const capitalize = s => (s && String(s[0]).toUpperCase() + String(s).slice(1)) || '';
-const monitorPlans = ['professional', 'enterprise'];
-const defaultPlans = ['os', 'professional', 'enterprise'];
 
-const planNameMapping = { os: 'Basic' };
-const planDescriptionMapping = {
-  os: 'The core features of Mender. To continue using Enterprise Trial features—like Delta updates, scheduled deployments, phased rollouts, device filtering, dynamic groups, RBAC, audit logs, and more—please upgrade to a higher plan.',
-  professional: 'Everything in Basic, plus enhanced update management and automation features.',
-  enterprise:
-    'Every advanced feature of Mender, tailored for complex and large-scale deployments. Not available as a monthly subscription — ask us for a quote.'
-};
-const addonDescriptionMapping = {
-  configure: 'Seamlessly configure applications and devices remotely – configure each device to its environment.',
-  monitor: 'Detect and analyze health issues of devices, services and applications. Set up alerts so you can act quickly.',
-  troubleshoot: 'Secure, remote access to your devices – quickly diagnose and fix issues in real time.'
-};
 
 export const transformProductResponse = (products: ProductInfo[]): ProductConfig => {
   const plans = new Set<string>();
   const addons = new Set<string>();
   const tiers: ProductTier[] = [];
-  products.forEach(tier => {
+  const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name));
+  sortedProducts.forEach(tier => {
     const addonsSupported = Object.fromEntries((tier.addons || []).map(addon => [addon.name, addon.prices?.map(p => p.plan)]));
 
     const allPlans = tier.prices.map(price => price.plan);
 
-    const addonsTransposed = Object.fromEntries(
-      allPlans.map(plan => [
-        plan,
-        Object.entries(addonsSupported)
-          .filter(([, plans]) => plans.includes(plan))
-          .map(([addon]) => addon)
-      ])
-    );
+    const addonsTransposed = allPlans.reduce((acc, plan) => {
+      acc[plan] = Object.entries(addonsSupported)
+        .filter(([, addonSupportedPlans]) => addonSupportedPlans.includes(plan))
+        .map(([addon]) => addon);
+
+      return acc;
+    }, {});
 
     const tierId = tier.name.replace('mender_', '');
     tiers.push({
       id: tierId,
-      title: capitalize(tierId),
+      title: tierId,
       stripeProductName: tier.name,
       limitConstrains: Object.fromEntries(tier.prices.map(p => [p.plan, p.constraints])),
       addons: addonsSupported,
@@ -341,9 +326,9 @@ export const transformProductResponse = (products: ProductInfo[]): ProductConfig
       planId,
       {
         id: planId,
-        name: planNameMapping[planId] || capitalize(planId),
+        name: PLANS[planId].name,
         tierLimitsConstrains: Object.fromEntries(tiers.map(tier => [tier.id, tier.limitConstrains[planId]])),
-        description: planDescriptionMapping[planId]
+        description: PLANS[planId].description
       }
     ])
   );
@@ -353,9 +338,9 @@ export const transformProductResponse = (products: ProductInfo[]): ProductConfig
       addon,
       {
         id: addon,
-        title: capitalize(addon),
-        description: addonDescriptionMapping[addon],
-        eligible: addon === 'monitor' ? monitorPlans : defaultPlans
+        title: ADDONS[addon].title,
+        description: ADDONS[addon].description,
+        eligible: [...new Set(tiers.map(tier => tier.addons[addon] || []).flat()), PLANS.enterprise.id]
       }
     ])
   );
