@@ -14,6 +14,10 @@
 import { DEVICE_LIST_DEFAULTS, PLANS } from '../constants';
 import { initialState } from './index';
 
+const basicPlanId = PLANS.os.id;
+const professionalPlanId = PLANS.professional.id;
+const enterprisePlanId = PLANS.enterprise.id;
+
 export const mockState = {
   ...initialState,
   card: {
@@ -92,8 +96,8 @@ export const mockState = {
   },
   products: {
     plans: {
-      os: {
-        id: 'os',
+      [basicPlanId]: {
+        id: basicPlanId,
         name: 'Basic',
         tierLimitsConstrains: {
           standard: { min: 50, max: 1000, div: 50 },
@@ -102,8 +106,8 @@ export const mockState = {
         description:
           'The core features of Mender. To continue using Enterprise Trial features—like Delta updates, scheduled deployments, phased rollouts, device filtering, dynamic groups, RBAC, audit logs, and more—please upgrade to a higher plan.'
       },
-      professional: {
-        id: 'professional',
+      [professionalPlanId]: {
+        id: professionalPlanId,
         name: 'Professional',
         tierLimitsConstrains: {
           standard: { min: 250, max: 10000, div: 50 },
@@ -115,55 +119,55 @@ export const mockState = {
     },
     tiers: [
       {
-        id: 'standard',
-        title: 'Standard',
-        stripeProductName: 'mender_standard',
-        limitConstrains: {
-          os: { min: 50, max: 1000, div: 50 },
-          professional: { min: 250, max: 10000, div: 50 }
-        },
-        addons: {
-          troubleshoot: ['os', 'professional'],
-          configure: ['os', 'professional'],
-          monitor: ['professional']
-        },
-        addonsByPlan: {
-          os: ['troubleshoot', 'configure'],
-          professional: ['troubleshoot', 'configure', 'monitor']
-        }
-      },
-      {
         id: 'micro',
+        title: 'micro',
         stripeProductName: 'mender_micro',
-        title: 'Micro',
         limitConstrains: {
-          os: { min: 50, max: 5000, div: 50 },
-          professional: { min: 500, max: 100000, div: 50 }
+          [basicPlanId]: { min: 50, max: 5000, div: 50 },
+          [professionalPlanId]: { min: 500, max: 100000, div: 50 }
         },
         addonsByPlan: {
-          os: [],
-          professional: []
+          [basicPlanId]: [],
+          [professionalPlanId]: []
         },
         addons: {}
+      },
+      {
+        id: 'standard',
+        title: 'standard',
+        stripeProductName: 'mender_standard',
+        limitConstrains: {
+          [basicPlanId]: { min: 50, max: 1000, div: 50 },
+          [professionalPlanId]: { min: 250, max: 10000, div: 50 }
+        },
+        addons: {
+          troubleshoot: [basicPlanId, professionalPlanId],
+          configure: [basicPlanId, professionalPlanId],
+          monitor: [professionalPlanId]
+        },
+        addonsByPlan: {
+          [basicPlanId]: ['troubleshoot', 'configure'],
+          [professionalPlanId]: ['troubleshoot', 'configure', 'monitor']
+        }
       }
     ],
     addons: {
       configure: {
         id: 'configure',
         title: 'Configure',
-        eligible: ['os', 'professional', 'enterprise'],
+        eligible: [basicPlanId, professionalPlanId, enterprisePlanId],
         description: 'Seamlessly configure applications and devices remotely – configure each device to its environment.'
       },
       monitor: {
         id: 'monitor',
         title: 'Monitor',
-        eligible: ['professional', 'enterprise'],
+        eligible: [professionalPlanId, enterprisePlanId],
         description: 'Detect and analyze health issues of devices, services and applications. Set up alerts so you can act quickly.'
       },
       troubleshoot: {
         id: 'troubleshoot',
         title: 'Troubleshoot',
-        eligible: ['os', 'professional', 'enterprise'],
+        eligible: [basicPlanId, professionalPlanId, enterprisePlanId],
         description: 'Secure, remote access to your devices – quickly diagnose and fix issues in real time.'
       }
     }
