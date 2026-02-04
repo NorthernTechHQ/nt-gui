@@ -114,3 +114,9 @@ export interface ProductConfig {
   plans: Record<string, ProductPlan>;
   tiers: ProductTier[];
 }
+
+type PreviewPlanItem = { addons: Record<string, number>; amount: number };
+export type PricePreview = {
+  items: Record<string, PreviewPlanItem>;
+  total: number;
+};

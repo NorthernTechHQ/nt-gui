@@ -272,16 +272,19 @@ export const mapDeviceAttributes = (
 export const isDarkMode = mode => mode === DARK_MODE;
 type Line = { addon?: string; amount: number; currency: string; description: string; product: 'mender_standard' | 'mender_micro'; quantity: number };
 
-export const parseSubscriptionPreview = (lines: Line[]) =>
-  lines.reduce(
-    (acc, { addon, amount, product }) => {
-      const planId = product.slice('mender_'.length);
-      if (!addon) {
-        acc[planId] = (acc[planId] ?? 0) + amount;
-      } else {
-        acc.addons[addon] = (acc.addons[addon] ?? 0) + amount;
-      }
-      return acc;
-    },
-    { addons: {} }
-  );
+export const parseSubscriptionPreview = (lines: Line[]): Omit<PricePreview, 'total'> =>
+  lines.reduce((acc, { addon, amount, product }) => {
+    const tier = product.replace('mender_', '');
+    if (!acc[tier]) {
+      acc[tier] = {
+        amount: 0,
+        addons: {}
+      };
+    }
+    if (!addon) {
+      acc[tier].amount += amount;
+    } else {
+      acc[tier].addons[addon] = (acc[tier].addons[addon] ?? 0) + amount;
+    }
+    return acc;
+  }, {});
