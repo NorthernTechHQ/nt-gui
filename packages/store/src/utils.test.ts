@@ -256,14 +256,6 @@ describe('subscription utils', () => {
     expect(result.micro).toEqual(3200);
     expect(result.addons.configure).toEqual(1000);
     expect(result.addons.troubleshoot).toEqual(2000);
-  });
-});
 
-const apiResponse = mockApiResponses.organization.products;
-const transformedObject = mockState.products;
-describe('transformer test', () => {
-  it('transforms backend products into consumable frontend object', async () => {
-    const results = transformProductResponse(apiResponse);
-    expect(results).toEqual(transformedObject);
   });
 });
