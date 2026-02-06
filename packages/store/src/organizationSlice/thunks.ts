@@ -35,10 +35,11 @@ import Cookies from 'universal-cookie';
 import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import Api from '../api/general-api';
-import type { AvailablePlans, ContentType, SortOptions } from '../constants';
-import { ADDONS, PLANS } from '../constants';
+import type { Addon, AvailablePlans, ContentType, SortOptions } from '../constants';
 import {
+  ADDONS,
   DEVICE_LIST_DEFAULTS,
+  PLANS,
   SORTING_OPTIONS,
   TENANT_LIST_DEFAULT,
   TIMEOUTS,
@@ -74,9 +75,47 @@ export const cancelRequest = createAppAsyncThunk(`${sliceName}/cancelRequest`, (
   );
 });
 
+const getTierId = tierName => tierName.replace('mender_', '');
+
+const getProductPlans = products =>
+  products.reduce(
+    (plansById: Record<string, ProductPlan>, product: ProductInfo) => {
+      const { name, prices } = product;
+      const tierId = getTierId(name);
+      prices.forEach(price => {
+        const existing = plansById[price.plan] ?? { ...PLANS[price.plan], tierLimitsConstrains: {} };
+        const tierConstraints = price.constraints
+          ? { [tierId]: { min: price.constraints.min!, max: price.constraints.max!, div: price.constraints.div! } }
+          : {};
+        plansById[price.plan] = {
+          ...existing,
+          tierLimitsConstrains: {
+            ...existing.tierLimitsConstrains,
+            ...tierConstraints
+          }
+        };
+      });
+      return plansById;
+    },
+    { enterprise: { ...PLANS.enterprise } as ProductPlan }
+  );
+
+const getProductAddons = products =>
+  products.reduce((accu: Record<string, Addon>, product: ProductInfo) => {
+    const { addons = [] } = product;
+    addons.forEach(addon => {
+      const { name: addonName = '', prices: addonPrices = [] } = addon;
+      const existingEligible = accu[addonName]?.eligible ?? [];
+      const newEligible = addonPrices.map(p => p.plan);
+      accu[addonName] = {
+        ...ADDONS[addonName],
+        eligible: [...new Set([...existingEligible, ...newEligible, PLANS.enterprise.id])]
+      };
+    });
+    return accu;
+  }, {});
+
 export const transformProductResponse = (products: ProductInfo[]): ProductConfig => {
-  const plans = new Set<string>();
-  const addons = new Set<string>();
   const tiers: ProductTier[] = [];
   const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name));
   sortedProducts.forEach(tier => {
@@ -92,7 +131,7 @@ export const transformProductResponse = (products: ProductInfo[]): ProductConfig
       return acc;
     }, {});
 
-    const tierId = tier.name.replace('mender_', '');
+    const tierId = getTierId(tier.name);
     tiers.push({
       id: tierId,
       title: tierId,
@@ -101,36 +140,13 @@ export const transformProductResponse = (products: ProductInfo[]): ProductConfig
       addons: addonsSupported,
       addonsByPlan: addonsTransposed
     });
-    Object.keys(addonsSupported).forEach(addonId => addons.add(addonId));
-    tier.prices.forEach(plan => plans.add(plan.plan));
   });
-  const plansArr: string[] = Array.from(plans);
-  const addonsArr = Array.from(addons).sort((a, b) => a.localeCompare(b));
-  const transformedPlans = Object.fromEntries(
-    plansArr.map(planId => [
-      planId,
-      {
-        id: planId,
-        name: PLANS[planId].name,
-        tierLimitsConstrains: Object.fromEntries(tiers.map(tier => [tier.id, tier.limitConstrains[planId]])),
-        description: PLANS[planId].description
-      }
-    ])
-  );
 
-  const transformedAddons = Object.fromEntries(
-    addonsArr.map(addon => [
-      addon,
-      {
-        id: addon,
-        title: ADDONS[addon].title,
-        description: ADDONS[addon].description,
-        eligible: [...new Set(tiers.map(tier => tier.addons[addon] || []).flat()), PLANS.enterprise.id]
-      }
-    ])
-  );
+  const plans = getProductPlans(products);
 
-  return { plans: { ...transformedPlans, enterprise: { ...PLANS.enterprise } as ProductPlan }, tiers, addons: transformedAddons };
+  const addons = getProductAddons(products);
+
+  return { plans, tiers, addons };
 };
 
 export const getTargetLocation = (key: string) => {
