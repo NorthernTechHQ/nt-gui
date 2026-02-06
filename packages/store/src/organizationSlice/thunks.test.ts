@@ -13,6 +13,7 @@
 //    limitations under the License.
 import { defaultState } from '@/testUtils';
 import { mockApiResponses, tenants, webhookEvents } from '@northern.tech/testing/mockData';
+import type { ProductInfo } from '@northern.tech/types/MenderTypes';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { describe, expect, it, vi } from 'vitest';
@@ -702,7 +703,7 @@ describe('organization actions', () => {
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
   it('transforms backend products into consumable frontend object', async () => {
-    const apiResponse = mockApiResponses.organization.products;
+    const apiResponse = mockApiResponses.organization.products as ProductInfo[];
     const transformedObject = mockState.products;
     const results = transformProductResponse(apiResponse);
     expect(results).toEqual(transformedObject);
