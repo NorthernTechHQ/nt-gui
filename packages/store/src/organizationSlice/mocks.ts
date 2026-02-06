@@ -154,18 +154,21 @@ export const mockState = {
     addons: {
       configure: {
         id: 'configure',
+        needs: ['hasDeviceConfig'],
         title: 'Configure',
         eligible: [basicPlanId, professionalPlanId, enterprisePlanId],
         description: 'Seamlessly configure applications and devices remotely – configure each device to its environment.'
       },
       monitor: {
         id: 'monitor',
+        needs: ['hasMonitor'],
         title: 'Monitor',
         eligible: [professionalPlanId, enterprisePlanId],
         description: 'Detect and analyze health issues of devices, services and applications. Set up alerts so you can act quickly.'
       },
       troubleshoot: {
         id: 'troubleshoot',
+        needs: ['hasDeviceConnect'],
         title: 'Troubleshoot',
         eligible: [basicPlanId, professionalPlanId, enterprisePlanId],
         description: 'Secure, remote access to your devices – quickly diagnose and fix issues in real time.'

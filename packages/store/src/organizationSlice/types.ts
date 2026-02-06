@@ -21,7 +21,7 @@ import type {
   SamlMetadata
 } from '@northern.tech/types/MenderTypes';
 
-import type { AvailableAddon, SortOptions } from '../constants';
+import type { Addon, SortOptions } from '../constants';
 import type { SSO_TYPES } from './constants';
 
 export interface Card {
@@ -77,21 +77,10 @@ export type SSOConfig = SamlMetadata & {
   type: [keyof typeof SSO_TYPES];
 };
 
-export interface Addon {
-  enabled: boolean;
-  name: AvailableAddon;
-}
-
 export type Organization = Tenant &
   BillingInfo & {
     billing_profile: BillingProfile;
   };
-
-export interface ProductAddon {
-  description: string;
-  id: string;
-  title: string;
-}
 
 export interface ProductPlan {
   description: string;
@@ -110,7 +99,7 @@ export interface ProductTier {
 }
 
 export interface ProductConfig {
-  addons: Record<string, ProductAddon>;
+  addons: Record<string, Addon>;
   plans: Record<string, ProductPlan>;
   tiers: ProductTier[];
 }
