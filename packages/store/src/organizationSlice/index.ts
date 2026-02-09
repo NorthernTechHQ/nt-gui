@@ -16,7 +16,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TENANT_LIST_DEFAULT } from '../constants';
-import type { AuditLog, AuditLogSelectionState, Card, Organization, SSOConfig, TenantList, Webhook } from './types';
+import type { AuditLog, AuditLogSelectionState, Card, Organization, ProductConfig, SSOConfig, TenantList, Webhook } from './types';
 
 export const sliceName = 'organization';
 
@@ -26,6 +26,7 @@ export type OrganizationSliceType = {
   externalDeviceIntegrations: Integration[];
   intentId: string | null;
   organization: Partial<Organization>;
+  products?: ProductConfig;
   ssoConfigs: SSOConfig[];
   tenantList: TenantList;
   webhooks: Webhook;
@@ -104,6 +105,9 @@ export const organizationSlice = createSlice({
     },
     setSubscription: (state, action) => {
       state.organization.subscription = { ...state.organization.subscription, ...action.payload };
+    },
+    setProducts: (state, action: PayloadAction<ProductConfig>) => {
+      state.products = action.payload;
     },
     setBillingProfile: (state, action: PayloadAction<BillingProfile>) => {
       state.organization.billing_profile = action.payload;

@@ -249,9 +249,9 @@ const stripePreview = {
 describe('subscription utils', () => {
   it('stripe subscription preview', async () => {
     const result = parseSubscriptionPreview(stripePreview.lines);
-    expect(result.standard).toEqual(3200);
-    expect(result.micro).toEqual(3200);
-    expect(result.addons.configure).toEqual(1000);
-    expect(result.addons.troubleshoot).toEqual(2000);
+    expect(result.standard.amount).toEqual(3200);
+    expect(result.micro.amount).toEqual(3200);
+    expect(result.standard.addons.configure).toEqual(1000);
+    expect(result.standard.addons.troubleshoot).toEqual(2000);
   });
 });

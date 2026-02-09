@@ -16,11 +16,13 @@ import type {
   Tenant as BackendTenant,
   BillingInfo,
   BillingProfile,
+  ConstraintsInfo,
   Event,
   Integration,
   NewTenant,
   PreviewRequest,
   Product,
+  ProductInfo,
   SupportRequest
 } from '@northern.tech/types/MenderTypes';
 import { dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
@@ -33,9 +35,11 @@ import Cookies from 'universal-cookie';
 import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import Api from '../api/general-api';
-import type { AvailablePlans, ContentType, SortOptions } from '../constants';
+import type { Addon, AvailablePlans, ContentType, SortOptions } from '../constants';
 import {
+  ADDONS,
   DEVICE_LIST_DEFAULTS,
+  PLANS,
   SORTING_OPTIONS,
   TENANT_LIST_DEFAULT,
   TIMEOUTS,
@@ -48,7 +52,6 @@ import {
   tenantadmApiUrlv1,
   tenantadmApiUrlv2
 } from '../constants';
-import type { AuditLogSelectionState, SSOConfig, Tenant, TenantList } from '../organizationSlice/types';
 import { getCurrentSession, getTenantCapabilities, getTenantsList } from '../selectors';
 import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
@@ -57,6 +60,7 @@ import type { UserSession } from '../usersSlice';
 import { parseSubscriptionPreview } from '../utils';
 import { SSO_TYPES } from './constants';
 import { getAuditlogState, getOrganization } from './selectors';
+import type { AuditLogSelectionState, ProductConfig, ProductPlan, ProductTier, SSOConfig, Tenant, TenantList } from './types';
 
 const cookies = new Cookies();
 
@@ -70,6 +74,80 @@ export const cancelRequest = createAppAsyncThunk(`${sliceName}/cancelRequest`, (
     Promise.resolve(dispatch(setSnackbar({ message: 'Deactivation request was sent successfully', autoHideDuration: TIMEOUTS.fiveSeconds })))
   );
 });
+
+const getTierId = tierName => tierName.replace('mender_', '');
+
+const getProductPlans = products =>
+  products.reduce(
+    (plansById: Record<string, ProductPlan>, product: ProductInfo) => {
+      const { name, prices } = product;
+      const tierId = getTierId(name);
+      prices.forEach(price => {
+        const existing = plansById[price.plan] ?? { ...PLANS[price.plan], tierLimitsConstrains: {} };
+        const tierConstraints = price.constraints
+          ? { [tierId]: { min: price.constraints.min!, max: price.constraints.max!, div: price.constraints.div! } }
+          : {};
+        plansById[price.plan] = {
+          ...existing,
+          tierLimitsConstrains: {
+            ...existing.tierLimitsConstrains,
+            ...tierConstraints
+          }
+        };
+      });
+      return plansById;
+    },
+    { enterprise: { ...PLANS.enterprise } as ProductPlan }
+  );
+
+const getProductAddons = products =>
+  products.reduce((accu: Record<string, Addon>, product: ProductInfo) => {
+    const { addons = [] } = product;
+    addons.forEach(addon => {
+      const { name: addonName = '', prices: addonPrices = [] } = addon;
+      const existingEligible = accu[addonName]?.eligible ?? [];
+      const newEligible = addonPrices.map(p => p.plan);
+      accu[addonName] = {
+        ...ADDONS[addonName],
+        eligible: [...new Set([...existingEligible, ...newEligible, PLANS.enterprise.id])]
+      };
+    });
+    return accu;
+  }, {});
+
+export const transformProductResponse = (products: ProductInfo[]): ProductConfig => {
+  const tiers: ProductTier[] = [];
+  const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name));
+  sortedProducts.forEach(tier => {
+    const addonsSupported = Object.fromEntries((tier.addons || []).map(addon => [addon.name, addon.prices?.map(p => p.plan)])) as Record<string, string[]>;
+
+    const allPlans = tier.prices.map(price => price.plan);
+
+    const addonsTransposed = allPlans.reduce((acc, plan) => {
+      acc[plan] = Object.entries(addonsSupported)
+        .filter(([, addonSupportedPlans]) => addonSupportedPlans.includes(plan))
+        .map(([addon]) => addon);
+
+      return acc;
+    }, {});
+
+    const tierId = getTierId(tier.name);
+    tiers.push({
+      id: tierId,
+      title: tierId,
+      stripeProductName: tier.name,
+      limitConstrains: Object.fromEntries(tier.prices.map(p => [p.plan, p.constraints])) as Record<string, Required<ConstraintsInfo>>,
+      addons: addonsSupported,
+      addonsByPlan: addonsTransposed
+    });
+  });
+
+  const plans = getProductPlans(products);
+
+  const addons = getProductAddons(products);
+
+  return { plans, tiers, addons };
+};
 
 export const getTargetLocation = (key: string) => {
   if (devLocations.includes(window.location.hostname)) {
@@ -371,7 +449,7 @@ export const getUserSubscription = createAppAsyncThunk(`${sliceName}/getUserSubs
 export const getBillingPreview = createAppAsyncThunk(`${sliceName}/getBillingPreview`, (order: PreviewRequest, { dispatch }) =>
   Api.post(`${tenantadmApiUrlv2}/billing/subscription/invoices/preview`, order)
     .catch(err => commonErrorHandler(err, 'There was an error getting your billing information:', dispatch, commonErrorFallback))
-    .then(({ data }) => (order.preview_mode === 'recurring' ? { ...parseSubscriptionPreview(data.lines), total: data.total } : data))
+    .then(({ data }) => (order.preview_mode === 'recurring' ? { items: parseSubscriptionPreview(data.lines), total: data.total } : data))
 );
 
 export const getCurrentSubscription = createAppAsyncThunk(`${sliceName}/getCurrentSubscription`, (_, { dispatch }) =>
@@ -383,6 +461,11 @@ export const getCurrentSubscription = createAppAsyncThunk(`${sliceName}/getCurre
       }
       return commonErrorHandler(err, 'There was an error retrieving your current subscription', dispatch, commonErrorFallback);
     })
+);
+export const getProducts = createAppAsyncThunk(`${sliceName}/getEnabledTiers`, (_, { dispatch }) =>
+  Api.get(`${tenantadmApiUrlv2}/billing/products`)
+    .catch(err => commonErrorHandler(err, 'There was an error getting Mender products:', dispatch, commonErrorFallback))
+    .then(res => dispatch(actions.setProducts(transformProductResponse(res.data))))
 );
 
 export const requestPlanUpgrade = createAppAsyncThunk(`${sliceName}/requestPlanUpgrade`, (order: { plan: string; products: Product[] }, { dispatch }) =>
