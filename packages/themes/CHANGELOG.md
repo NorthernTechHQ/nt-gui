@@ -1,5 +1,5 @@
 ---
-## @northern.tech/themes-0.11.0 - 2026-01-14
+## @northern.tech/themes-0.11.0 - 2026-02-09
 
 
 ### Features
@@ -11,6 +11,12 @@
 
 ([MEN-8882](https://northerntech.atlassian.net/browse/MEN-8882)) ([37fbec9](https://github.com/NorthernTechHQ/nt-gui/commit/37fbec97549484207372f86364c8d1c32d1e7090))  by @mineralsfree
 
+
+
+
+- *(themes)* Added medium-sized spacing variant
+
+ ([2342b57](https://github.com/NorthernTechHQ/nt-gui/commit/2342b579cc44222aea0d42aaed33499e8aca0e7f))  by @mineralsfree
 
 
 
