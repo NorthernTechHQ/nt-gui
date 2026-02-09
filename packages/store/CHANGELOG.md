@@ -1,4 +1,31 @@
 ---
+## @northern.tech/store-0.20.0 - 2026-02-09
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added product retrieval and parsing
+
+([MEN-9277](https://northerntech.atlassian.net/browse/MEN-9277)) ([62c5a6c](https://github.com/NorthernTechHQ/nt-gui/commit/62c5a6c0b59d37e86c481c305f6dd677a030aca2))  by @mineralsfree
+
+
+
+
+- *(store)* Updated subscription preview parsing to support per-tier addons
+
+([MEN-9277](https://northerntech.atlassian.net/browse/MEN-9277)) ([c798295](https://github.com/NorthernTechHQ/nt-gui/commit/c79829521585d9a812fc1e38ae15b09b48156908))  by @mineralsfree
+
+
+
+
+
+
+
+
+
 ## @northern.tech/store-0.19.2 - 2026-02-02
 
 
