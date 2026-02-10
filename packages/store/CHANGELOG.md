@@ -1,5 +1,20 @@
 ---
-## @northern.tech/store-0.20.0 - 2026-02-09
+## @northern.tech/store-0.20.0 - 2026-02-10
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Let subscription page handle products retrieval to prevent erroneous on-prem requests
+
+ ([a9e89ae](https://github.com/NorthernTechHQ/nt-gui/commit/a9e89ae3dca67163400756497f30fefb50daeab7))  by @mzedel
+
+
+
+
+
 
 
 ### Features
