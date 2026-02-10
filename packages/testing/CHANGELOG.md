@@ -1,4 +1,23 @@
 ---
+## @northern.tech/testing-0.6.1 - 2026-02-10
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Products mock
+
+ ([a8ba060](https://github.com/NorthernTechHQ/nt-gui/commit/a8ba0600c0b2db527f2429d336ad5b309ff82037))  by @mineralsfree
+
+
+
+
+
+
+
+
 ## @northern.tech/testing-0.6.0 - 2026-02-02
 
 
