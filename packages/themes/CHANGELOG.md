@@ -1,5 +1,21 @@
 ---
-## @northern.tech/themes-0.11.0 - 2026-02-09
+## @northern.tech/themes-0.11.0 - 2026-02-12
+
+
+### Bug fixes
+
+#### Themes
+
+
+- *(themes)* Aligned dial color to match the theme
+
+([MEN-8645](https://northerntech.atlassian.net/browse/MEN-8645)) ([23d7e3f](https://github.com/NorthernTechHQ/nt-gui/commit/23d7e3f036dbf49b5d48eb0e690049bc41acb9c5))  by @mineralsfree
+
+
+
+
+
+
 
 
 ### Features
