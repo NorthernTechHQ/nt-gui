@@ -284,5 +284,16 @@ export const components: Components<Theme> = {
         minWidth: 220
       }
     }
+  },
+  MuiSpeedDialAction: {
+    styleOverrides: {
+      fab: ({ theme }) => ({
+        color: alpha(theme.palette.info.contrastText, 0.54)
+      }),
+      staticTooltipLabel: ({ theme }) => ({
+        color: theme.palette.text.primary,
+        boxShadow: theme.shadows[6]
+      })
+    }
   }
 };
