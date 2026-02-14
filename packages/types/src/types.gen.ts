@@ -2742,7 +2742,7 @@ export type DeviceCountByTier = {
   system: number;
 };
 
-export type NewDevice = {
+export type NewDeviceInternalProvision = {
   /**
    * ID of the new device.
    */
@@ -3536,6 +3536,87 @@ export type PlanChangeRequest = {
 };
 
 /**
+ * Role permission
+ */
+export type RolePermission = {
+  /**
+   * Action
+   */
+  action: 'any' | 'http' | 'CREATE_DEPLOYMENT' | 'MANAGE_DEVICE' | 'REMOTE_TERMINAL' | 'VIEW_DEVICE';
+  object: RolePermissionObject;
+};
+
+/**
+ * Role permission object
+ */
+export type RolePermissionObject = {
+  /**
+   * Type
+   */
+  type: string;
+  /**
+   * Value
+   */
+  value: string;
+};
+
+export type PermissionSetWithScope = {
+  /**
+   * Permission set name.
+   */
+  name?: string;
+  scope?: PermissionSetScope;
+};
+
+export type PermissionSetScope = {
+  /**
+   * Scope type.
+   */
+  type?: string;
+  /**
+   * Scope value.
+   */
+  value?: Array<string>;
+};
+
+export type Permission = {
+  /**
+   * Action
+   */
+  action: 'any' | 'http';
+  object: PermissionObject;
+};
+
+export type PermissionObject = {
+  /**
+   * Type
+   */
+  type: string;
+  /**
+   * Value
+   */
+  value: string;
+};
+
+/**
+ * Single Sign On descriptor.
+ */
+export type SsoObject = {
+  /**
+   * An id of the identity provider.
+   */
+  id: string;
+  /**
+   * Single Sign On provider kind.
+   */
+  kind: string;
+  /**
+   * Single Sign On subject.
+   */
+  subject?: string;
+};
+
+/**
  * User descriptor.
  */
 export type User = {
@@ -3578,6 +3659,18 @@ export type User = {
    * Flag indicating wether to trigger password reset on user creation.
    */
   send_reset_password?: boolean;
+  /**
+   * SSO login schemes.
+   */
+  sso?: Array<SsoObject>;
+  /**
+   * Tenant identifier of a tenant, user will log in to by default.
+   */
+  tenant_id?: string;
+  /**
+   * List of tenant Ids user can login to.
+   */
+  tenant_ids?: Array<string>;
 };
 
 export type TenantInfo = {
@@ -3767,24 +3860,6 @@ export type UserNew = {
 };
 
 /**
- * Single Sign On descriptor.
- */
-export type SsoObject = {
-  /**
-   * An id of the identity provider.
-   */
-  id: string;
-  /**
-   * Single Sign On provider kind.
-   */
-  kind: string;
-  /**
-   * Single Sign On subject.
-   */
-  subject?: string;
-};
-
-/**
  * Update user information.
  */
 export type UserUpdate = {
@@ -3952,26 +4027,8 @@ export type RoleV1 = {
    * Description of the role, as shown in the UI.
    */
   description?: string;
+  permissions?: Array<RolePermission>;
   permission_sets_with_scope?: Array<PermissionSetWithScope>;
-};
-
-/**
- * Permission set with optional scope.
- */
-export type PermissionSetWithScope = {
-  /**
-   * Unique permission set name.
-   */
-  name: string;
-  scope?: PermissionSetScope;
-};
-
-export type PermissionSetScope = {
-  /**
-   * Type of the scope.
-   */
-  type: 'DeviceGroups' | 'ReleaseTags';
-  value: Array<string>;
 };
 
 /**
@@ -3987,31 +4044,10 @@ export type Role = {
    */
   description?: string;
   permissions?: Array<RolePermission>;
-};
-
-/**
- * Role permission
- */
-export type RolePermission = {
   /**
-   * Action
+   * A list of permission sets with optional scope restrictions.
    */
-  action: 'any' | 'http' | 'CREATE_DEPLOYMENT' | 'MANAGE_DEVICE' | 'REMOTE_TERMINAL' | 'VIEW_DEVICE';
-  object: RolePermissionObject;
-};
-
-/**
- * Role permission object
- */
-export type RolePermissionObject = {
-  /**
-   * Type
-   */
-  type: string;
-  /**
-   * Value
-   */
-  value: string;
+  permission_sets_with_scope?: Array<PermissionSetWithScope>;
 };
 
 /**
@@ -4030,25 +4066,6 @@ export type PermissionSet = {
   description?: string;
   permissions: Array<Permission>;
   supported_scope_types?: Array<string>;
-};
-
-export type Permission = {
-  /**
-   * Action
-   */
-  action: 'any' | 'http';
-  object: PermissionObject;
-};
-
-export type PermissionObject = {
-  /**
-   * Type
-   */
-  type: string;
-  /**
-   * Value
-   */
-  value: string;
 };
 
 /**
@@ -12033,7 +12050,7 @@ export type IoTManagerInternalCheckLivelinessResponses = {
 export type IoTManagerInternalCheckLivelinessResponse = IoTManagerInternalCheckLivelinessResponses[keyof IoTManagerInternalCheckLivelinessResponses];
 
 export type IoTManagerInternalProvisionDeviceData = {
-  body: NewDevice;
+  body: NewDeviceInternalProvision;
   path: {
     /**
      * ID of tenant the device belongs to.
