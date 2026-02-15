@@ -1304,7 +1304,7 @@ export {
   type NewDeploymentForGroup,
   type NewDeploymentPhase,
   type NewDeploymentV2,
-  type NewDevice,
+  type NewDeviceInternalProvision,
   type NewTenant,
   type Object,
   type OwnUserUpdate,
