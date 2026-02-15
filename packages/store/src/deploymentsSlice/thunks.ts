@@ -39,7 +39,7 @@ import storeActions from '../actions';
 import GeneralApi from '../api/general-api';
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TIMEOUTS, apiRoot, deploymentsApiUrl, deploymentsApiUrlV2, headerNames } from '../constants';
 import type { SortOptions } from '../constants';
-import { getDevicesById, getGlobalSettings, getOrganization, getUserCapabilities } from '../selectors';
+import { getDevicesById, getGlobalSettings, getIdAttribute, getOrganization, getUserCapabilities } from '../selectors';
 import { commonErrorHandler, createAppAsyncThunk } from '../store';
 import type { AppDispatch } from '../store';
 import { getDeviceAuth, getDeviceById, saveGlobalSettings } from '../thunks';
@@ -92,7 +92,9 @@ export const getDeploymentsByStatus = createAppAsyncThunk(
     const { status, page = defaultPage, perPage = defaultPerPage, startDate, endDate, group, type, shouldSelect = true, sort = SORTING_OPTIONS.desc } = options;
     const created_after = startDate ? `&created_after=${startDate}` : '';
     const created_before = endDate ? `&created_before=${endDate}` : '';
-    const search = group ? `&search=${group}` : '';
+    const { attribute, scope } = getIdAttribute(getState());
+    const attributeHint = `&id_attribute=${attribute}&id_scope=${scope}`;
+    const search = group ? `&search=${group}${attributeHint}` : '';
     const typeFilter = type ? `&type=${type}` : '';
     return GeneralApi.get<BackendDeploymentV1[]>(
       `${deploymentsApiUrl}/deployments?status=${status}&per_page=${perPage}&page=${page}${created_after}${created_before}${search}${typeFilter}&sort=${sort}`
