@@ -66,7 +66,6 @@ const getLatestRelease = (thing: VersionRelease): VersionRelease => {
 
 const repoKeyMap = {
   integration: 'Integration',
-  mender: 'Mender-Client',
   'mender-artifact': 'Mender-Artifact'
 } as const;
 
