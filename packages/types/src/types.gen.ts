@@ -750,7 +750,7 @@ export type TenantLimitValue = {
   limit: number;
 };
 
-export const DeviceStatus = {
+export const DeploymentDeviceStatus = {
   FAILURE: 'failure',
   ABORTED: 'aborted',
   PAUSE_BEFORE_INSTALLING: 'pause_before_installing',
@@ -767,7 +767,7 @@ export const DeviceStatus = {
   DECOMMISSIONED: 'decommissioned'
 } as const;
 
-export type DeviceStatus = (typeof DeviceStatus)[keyof typeof DeviceStatus];
+export type DeploymentDeviceStatus = (typeof DeploymentDeviceStatus)[keyof typeof DeploymentDeviceStatus];
 
 export type DeviceWithImageImageMeta = {
   /**
@@ -834,7 +834,7 @@ export type DeviceWithImage = {
    * Device identifier.
    */
   id: string;
-  status: DeviceStatus;
+  status: DeploymentDeviceStatus;
   created?: string;
   started?: string;
   finished?: string;
@@ -1016,7 +1016,7 @@ export type ErrorExt = {
   };
 };
 
-export type NewDeployment = {
+export type NewDeploymentTypeManagement = {
   /**
    * Name of the deployment
    */
@@ -1039,7 +1039,7 @@ export type NewDeployment = {
    * Force the installation of the Artifact disabling the `already-installed` check.
    */
   force_installation?: boolean;
-  phases?: Array<NewDeploymentPhase>;
+  phases?: Array<NewDeploymentPhaseTypeManagement>;
   /**
    * The number of times a device can retry the deployment in case of failure, defaults to 0
    */
@@ -1072,7 +1072,7 @@ export type NewDeploymentForGroup = {
    * Force the installation of the Artifact disabling the `already-installed` check.
    */
   force_installation?: boolean;
-  phases?: Array<NewDeploymentPhase>;
+  phases?: Array<NewDeploymentPhaseTypeManagement>;
   /**
    * The number of times a device can retry the deployment in case of failure, defaults to 0
    */
@@ -1193,7 +1193,7 @@ export type DeploymentV1 = {
  * schedule deployments, this feature is not available for Starter plan.
  *
  */
-export type NewDeploymentPhase = {
+export type NewDeploymentPhaseTypeManagement = {
   /**
    * Percentage of devices to update in the phase.
    * This field is optional for the last phase.
@@ -1569,8 +1569,16 @@ export type AttributeFilterPredicate = {
    * Mixed arrays are not allowed.
    *
    */
-  value: unknown;
+  value: string | number | Array<string> | Array<number>;
 };
+
+export const DeploymentDeviceStatusGet = {
+  PAUSE: 'pause',
+  ACTIVE: 'active',
+  FINISHED: 'finished'
+} as const;
+
+export type DeploymentDeviceStatusGet = (typeof DeploymentDeviceStatusGet)[keyof typeof DeploymentDeviceStatusGet];
 
 /**
  * Tenant account storage limit and storage usage.
@@ -1800,7 +1808,7 @@ export type DeploymentV2 = {
   statistics?: DeploymentStatistics;
 };
 
-export type NewDeploymentV2 = {
+export type NewDeploymentV2TypeManagement = {
   name: string;
   artifact_name: string;
   /**
@@ -1811,7 +1819,7 @@ export type NewDeploymentV2 = {
    * Phased rollout feature is available only to Enterprise users.
    *
    */
-  phases?: Array<NewDeploymentPhase>;
+  phases?: Array<NewDeploymentPhaseTypeManagement>;
   /**
    * The number of times a device can retry the deployment in case of failure, defaults to 0
    */
@@ -2049,6 +2057,7 @@ export type Device = {
    */
   decommissioning?: boolean;
   external_id?: ExternalIdentity;
+  tier?: 'standard' | 'micro' | 'system';
 };
 
 /**
@@ -2742,7 +2751,7 @@ export type DeviceCountByTier = {
   system: number;
 };
 
-export type NewDevice = {
+export type NewDeviceInternalProvisionTypeInternal = {
   /**
    * ID of the new device.
    */
@@ -3121,7 +3130,7 @@ export type Tenant = {
 /**
  * Status of a tenant account.
  */
-export type TenantStatus = {
+export type TenantStatusTypeManagement = {
   status: 'active' | 'suspended';
 };
 
@@ -3378,7 +3387,7 @@ export type Subscription = SubscriptionRequest & {
 };
 
 export type SubscriptionRequest = {
-  plan?: TenantPlan;
+  plan?: TenantPlanTypeManagement;
   /**
    * The requested product and additional properties like quantity and addons
    */
@@ -3404,7 +3413,7 @@ export type Product = {
 /**
  * Plan / access scope for the tenant account.
  */
-export const TenantPlan = {
+export const TenantPlanTypeManagement = {
   OS: 'os',
   PROFESSIONAL: 'professional',
   ENTERPRISE: 'enterprise'
@@ -3413,7 +3422,7 @@ export const TenantPlan = {
 /**
  * Plan / access scope for the tenant account.
  */
-export type TenantPlan = (typeof TenantPlan)[keyof typeof TenantPlan];
+export type TenantPlanTypeManagement = (typeof TenantPlanTypeManagement)[keyof typeof TenantPlanTypeManagement];
 
 /**
  * Checkout data.
@@ -3442,7 +3451,7 @@ export type SupportRequest = {
 /**
  * New Tenant
  */
-export type NewTenant = {
+export type NewTenantTypeManagement = {
   /**
    * Name of the tenant.
    */
@@ -3536,6 +3545,87 @@ export type PlanChangeRequest = {
 };
 
 /**
+ * Role permission
+ */
+export type RolePermission = {
+  /**
+   * Action
+   */
+  action: 'any' | 'http' | 'CREATE_DEPLOYMENT' | 'MANAGE_DEVICE' | 'REMOTE_TERMINAL' | 'VIEW_DEVICE';
+  object: RolePermissionObject;
+};
+
+/**
+ * Role permission object
+ */
+export type RolePermissionObject = {
+  /**
+   * Type
+   */
+  type: string;
+  /**
+   * Value
+   */
+  value: string;
+};
+
+export type PermissionSetWithScope = {
+  /**
+   * Permission set name.
+   */
+  name?: string;
+  scope?: PermissionSetScope;
+};
+
+export type PermissionSetScope = {
+  /**
+   * Scope type.
+   */
+  type?: string;
+  /**
+   * Scope value.
+   */
+  value?: Array<string>;
+};
+
+export type Permission = {
+  /**
+   * Action
+   */
+  action: 'any' | 'http';
+  object: PermissionObject;
+};
+
+export type PermissionObject = {
+  /**
+   * Type
+   */
+  type: string;
+  /**
+   * Value
+   */
+  value: string;
+};
+
+/**
+ * Single Sign On descriptor.
+ */
+export type SsoObject = {
+  /**
+   * An id of the identity provider.
+   */
+  id: string;
+  /**
+   * Single Sign On provider kind.
+   */
+  kind: string;
+  /**
+   * Single Sign On subject.
+   */
+  subject?: string;
+};
+
+/**
  * User descriptor.
  */
 export type User = {
@@ -3578,6 +3668,18 @@ export type User = {
    * Flag indicating wether to trigger password reset on user creation.
    */
   send_reset_password?: boolean;
+  /**
+   * SSO login schemes.
+   */
+  sso?: Array<SsoObject>;
+  /**
+   * Tenant identifier of a tenant, user will log in to by default.
+   */
+  tenant_id?: string;
+  /**
+   * List of tenant Ids user can login to.
+   */
+  tenant_ids?: Array<string>;
 };
 
 export type TenantInfo = {
@@ -3767,24 +3869,6 @@ export type UserNew = {
 };
 
 /**
- * Single Sign On descriptor.
- */
-export type SsoObject = {
-  /**
-   * An id of the identity provider.
-   */
-  id: string;
-  /**
-   * Single Sign On provider kind.
-   */
-  kind: string;
-  /**
-   * Single Sign On subject.
-   */
-  subject?: string;
-};
-
-/**
  * Update user information.
  */
 export type UserUpdate = {
@@ -3952,26 +4036,8 @@ export type RoleV1 = {
    * Description of the role, as shown in the UI.
    */
   description?: string;
+  permissions?: Array<RolePermission>;
   permission_sets_with_scope?: Array<PermissionSetWithScope>;
-};
-
-/**
- * Permission set with optional scope.
- */
-export type PermissionSetWithScope = {
-  /**
-   * Unique permission set name.
-   */
-  name: string;
-  scope?: PermissionSetScope;
-};
-
-export type PermissionSetScope = {
-  /**
-   * Type of the scope.
-   */
-  type: 'DeviceGroups' | 'ReleaseTags';
-  value: Array<string>;
 };
 
 /**
@@ -3987,31 +4053,10 @@ export type Role = {
    */
   description?: string;
   permissions?: Array<RolePermission>;
-};
-
-/**
- * Role permission
- */
-export type RolePermission = {
   /**
-   * Action
+   * A list of permission sets with optional scope restrictions.
    */
-  action: 'any' | 'http' | 'CREATE_DEPLOYMENT' | 'MANAGE_DEVICE' | 'REMOTE_TERMINAL' | 'VIEW_DEVICE';
-  object: RolePermissionObject;
-};
-
-/**
- * Role permission object
- */
-export type RolePermissionObject = {
-  /**
-   * Type
-   */
-  type: string;
-  /**
-   * Value
-   */
-  value: string;
+  permission_sets_with_scope?: Array<PermissionSetWithScope>;
 };
 
 /**
@@ -4030,25 +4075,6 @@ export type PermissionSet = {
   description?: string;
   permissions: Array<Permission>;
   supported_scope_types?: Array<string>;
-};
-
-export type Permission = {
-  /**
-   * Action
-   */
-  action: 'any' | 'http';
-  object: PermissionObject;
-};
-
-export type PermissionObject = {
-  /**
-   * Type
-   */
-  type: string;
-  /**
-   * Value
-   */
-  value: string;
 };
 
 /**
@@ -5326,7 +5352,7 @@ export type GetDeploymentGroupsResponses = {
 
 export type GetDeploymentGroupsResponse = GetDeploymentGroupsResponses[keyof GetDeploymentGroupsResponses];
 
-export type DeleteTenantData = {
+export type DeleteTenantInternalDeploymentsData = {
   body?: never;
   path: {
     /**
@@ -5338,23 +5364,23 @@ export type DeleteTenantData = {
   url: '/api/internal/v1/deployments/tenants/{id}';
 };
 
-export type DeleteTenantErrors = {
+export type DeleteTenantInternalDeploymentsErrors = {
   /**
    * Internal Server Error.
    */
   500: Error;
 };
 
-export type DeleteTenantError = DeleteTenantErrors[keyof DeleteTenantErrors];
+export type DeleteTenantInternalDeploymentsError = DeleteTenantInternalDeploymentsErrors[keyof DeleteTenantInternalDeploymentsErrors];
 
-export type DeleteTenantResponses = {
+export type DeleteTenantInternalDeploymentsResponses = {
   /**
    * Successful removal.
    */
   204: void;
 };
 
-export type DeleteTenantResponse = DeleteTenantResponses[keyof DeleteTenantResponses];
+export type DeleteTenantInternalDeploymentsResponse = DeleteTenantInternalDeploymentsResponses[keyof DeleteTenantInternalDeploymentsResponses];
 
 export type ListDeviceDeploymentsEntriesData = {
   body?: never;
@@ -5806,7 +5832,7 @@ export type DeploymentsCreateDeploymentData = {
   /**
    * New deployment that needs to be created.
    */
-  body: NewDeployment;
+  body: NewDeploymentTypeManagement;
   path?: never;
   query?: never;
   url: '/api/management/v1/deployments/deployments';
@@ -6152,24 +6178,7 @@ export type ListDevicesInDeploymentData = {
     /**
      * Filter devices by status within deployment.
      */
-    status?:
-      | 'failure'
-      | 'aborted'
-      | 'pause_before_installing'
-      | 'pause_before_committing'
-      | 'pause_before_rebooting'
-      | 'downloading'
-      | 'installing'
-      | 'rebooting'
-      | 'pending'
-      | 'success'
-      | 'noartifact'
-      | 'artifact_too_big'
-      | 'already-installed'
-      | 'decommissioned'
-      | 'pause'
-      | 'active'
-      | 'finished';
+    status?: DeploymentDeviceStatus | DeploymentDeviceStatusGet;
     /**
      * Starting page.
      */
@@ -6380,24 +6389,7 @@ export type DeploymentsListDeploymentsForADeviceData = {
     /**
      * Filter deployments by status for the given device.
      */
-    status?:
-      | 'failure'
-      | 'aborted'
-      | 'pause_before_installing'
-      | 'pause_before_committing'
-      | 'pause_before_rebooting'
-      | 'downloading'
-      | 'installing'
-      | 'rebooting'
-      | 'pending'
-      | 'success'
-      | 'noartifact'
-      | 'artifact_too_big'
-      | 'already-installed'
-      | 'decommissioned'
-      | 'pause'
-      | 'active'
-      | 'finished';
+    status?: DeploymentDeviceStatus;
     /**
      * Starting page.
      */
@@ -6614,14 +6606,14 @@ export type ListArtifactsResponses = {
 
 export type ListArtifactsResponse = ListArtifactsResponses[keyof ListArtifactsResponses];
 
-export type UploadArtifactData = {
+export type UploadArtifactDeploymentsManagementData = {
   body: UploadArtifactRequest2;
   path?: never;
   query?: never;
   url: '/api/management/v1/deployments/artifacts';
 };
 
-export type UploadArtifactErrors = {
+export type UploadArtifactDeploymentsManagementErrors = {
   /**
    * Invalid Request.
    */
@@ -6641,9 +6633,9 @@ export type UploadArtifactErrors = {
   500: Error;
 };
 
-export type UploadArtifactError = UploadArtifactErrors[keyof UploadArtifactErrors];
+export type UploadArtifactDeploymentsManagementError = UploadArtifactDeploymentsManagementErrors[keyof UploadArtifactDeploymentsManagementErrors];
 
-export type UploadArtifactResponses = {
+export type UploadArtifactDeploymentsManagementResponses = {
   /**
    * Artifact uploaded.
    */
@@ -7168,7 +7160,7 @@ export type CreateDeploymentData = {
   /**
    * New deployment that needs to be created.
    */
-  body: NewDeploymentV2;
+  body: NewDeploymentV2TypeManagement;
   path?: never;
   query?: never;
   url: '/api/management/v2/deployments/deployments';
@@ -8125,7 +8117,7 @@ export type DeviceAuthInternalSetExternalIdentityResponses = {
 export type DeviceAuthInternalSetExternalIdentityResponse =
   DeviceAuthInternalSetExternalIdentityResponses[keyof DeviceAuthInternalSetExternalIdentityResponses];
 
-export type DeleteTenant2Data = {
+export type DeleteTenantInternalDeviceauthData = {
   body?: never;
   path: {
     /**
@@ -8137,23 +8129,23 @@ export type DeleteTenant2Data = {
   url: '/api/internal/v1/devauth/tenants/{tid}';
 };
 
-export type DeleteTenant2Errors = {
+export type DeleteTenantInternalDeviceauthErrors = {
   /**
    * Internal Server Error.
    */
   500: Error;
 };
 
-export type DeleteTenant2Error = DeleteTenant2Errors[keyof DeleteTenant2Errors];
+export type DeleteTenantInternalDeviceauthError = DeleteTenantInternalDeviceauthErrors[keyof DeleteTenantInternalDeviceauthErrors];
 
-export type DeleteTenant2Responses = {
+export type DeleteTenantInternalDeviceauthResponses = {
   /**
    * All the tenant data have been successfully deleted.
    */
   204: void;
 };
 
-export type DeleteTenant2Response = DeleteTenant2Responses[keyof DeleteTenant2Responses];
+export type DeleteTenantInternalDeviceauthResponse = DeleteTenantInternalDeviceauthResponses[keyof DeleteTenantInternalDeviceauthResponses];
 
 export type DeviceAuthInternalDeviceStatusData = {
   body?: never;
@@ -12033,7 +12025,7 @@ export type IoTManagerInternalCheckLivelinessResponses = {
 export type IoTManagerInternalCheckLivelinessResponse = IoTManagerInternalCheckLivelinessResponses[keyof IoTManagerInternalCheckLivelinessResponses];
 
 export type IoTManagerInternalProvisionDeviceData = {
-  body: NewDevice;
+  body: NewDeviceInternalProvisionTypeInternal;
   path: {
     /**
      * ID of tenant the device belongs to.
@@ -12747,7 +12739,7 @@ export type SetAccountStatusData = {
   /**
    * Target suspension status
    */
-  body: TenantStatus;
+  body: TenantStatusTypeManagement;
   path: {
     /**
      * Tenant ID.
@@ -13020,7 +13012,12 @@ export type DeleteParentReferenceResponse = DeleteParentReferenceResponses[keyof
 export type TenantInfoData = {
   body?: never;
   path?: never;
-  query?: never;
+  query?: {
+    /**
+     * Flag to include per-tiers limits in the response.
+     */
+    tiers?: boolean;
+  };
   url: '/api/management/v1/tenantadm/user/tenant';
 };
 
@@ -13538,7 +13535,7 @@ export type CreateNewTenantData = {
   /**
    * New Tenant
    */
-  body: NewTenant;
+  body: NewTenantTypeManagement;
   path?: never;
   query?: never;
   url: '/api/management/v2/tenantadm/tenants';
@@ -13954,7 +13951,7 @@ export type ActivateAccountData = {
   /**
    * Target suspension status
    */
-  body: TenantStatus;
+  body: TenantStatusTypeManagement;
   path: {
     /**
      * Tenant ID.
@@ -16994,7 +16991,7 @@ export type WorkflowsCheckHealthResponses = {
 
 export type WorkflowsCheckHealthResponse = WorkflowsCheckHealthResponses[keyof WorkflowsCheckHealthResponses];
 
-export type DeleteTenantData2Data = {
+export type DeleteTenantDataInternalWorkflowsData = {
   body?: never;
   path: {
     /**
@@ -17006,23 +17003,23 @@ export type DeleteTenantData2Data = {
   url: '/api/v1/tenants/{id}';
 };
 
-export type DeleteTenantData2Errors = {
+export type DeleteTenantDataInternalWorkflowsErrors = {
   /**
    * Internal Server Error.
    */
   500: Error;
 };
 
-export type DeleteTenantData2Error = DeleteTenantData2Errors[keyof DeleteTenantData2Errors];
+export type DeleteTenantDataInternalWorkflowsError = DeleteTenantDataInternalWorkflowsErrors[keyof DeleteTenantDataInternalWorkflowsErrors];
 
-export type DeleteTenantData2Responses = {
+export type DeleteTenantDataInternalWorkflowsResponses = {
   /**
    * Tenant data removed
    */
   204: void;
 };
 
-export type DeleteTenantData2Response = DeleteTenantData2Responses[keyof DeleteTenantData2Responses];
+export type DeleteTenantDataInternalWorkflowsResponse = DeleteTenantDataInternalWorkflowsResponses[keyof DeleteTenantDataInternalWorkflowsResponses];
 
 export type StartWorkflowData = {
   /**
