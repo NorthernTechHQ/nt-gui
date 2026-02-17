@@ -203,6 +203,16 @@ each(@directions, .(@direction) {
     }
   });
 })
+each(@alignmentActions, .(@action) {
+  each(@alignmentPositions, .(@position) {
+    each(@alignmentTargets, .(@target) {
+      .@{action}-@{target}-@{position} {
+        @{action}-@{target}: @position;
+      }
+    })
+  })
+});
+
 .padding {
   padding: 2 * @defaultGutterWidth;
 }
