@@ -177,7 +177,6 @@ export const initialState: AppSliceType = {
   offlineThreshold: getYesterday(),
   versionInformation: {
     Integration: '',
-    'Mender-Client': '',
     'Mender-Artifact': '',
     'Meta-Mender': ''
   },

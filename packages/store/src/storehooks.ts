@@ -92,7 +92,6 @@ export const parseEnvironmentInfo = () => (dispatch, getState) => {
       demoArtifactPort: port,
       disableOnboarding,
       integrationVersion,
-      menderVersion,
       menderArtifactVersion,
       metaMenderVersion
     } = mender_environment;
@@ -107,7 +106,6 @@ export const parseEnvironmentInfo = () => (dispatch, getState) => {
       docs: isNaN(integrationVersion.charAt(0)) ? '' : integrationVersion.split('.').slice(0, 2).join('.'),
       remainder: {
         Integration: getComparisonCompatibleVersion(integrationVersion),
-        'Mender-Client': getComparisonCompatibleVersion(menderVersion),
         'Mender-Artifact': menderArtifactVersion,
         'Meta-Mender': metaMenderVersion
       }

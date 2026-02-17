@@ -69,7 +69,6 @@ const appInitActions = [
       docsVersion: '',
       Integration: 'master',
       'Mender-Artifact': undefined,
-      'Mender-Client': 'next',
       'Meta-Mender': 'saas-123.34'
     }
   },
@@ -93,7 +92,6 @@ const appInitActions = [
     payload: {
       Integration: '1.2.3',
       'Mender-Artifact': '1.3.7',
-      'Mender-Client': '3.2.1',
       Server: latestSaasReleaseTag,
       latestRelease: {
         releaseDate: '2022-02-02',
