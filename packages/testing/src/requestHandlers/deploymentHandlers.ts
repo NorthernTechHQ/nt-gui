@@ -81,7 +81,7 @@ const defaultDeploymentConfig = {
 
 export const deploymentHandlers = [
   http.get(
-    `${deploymentsApiUrl}/deployments`,
+    `${deploymentsApiUrlV2}/deployments`,
     () =>
       new HttpResponse(JSON.stringify(Object.values(mockApiResponses.deployments.byId).reverse()), {
         headers: { [headerNames.total]: Object.keys(mockApiResponses.deployments.byId).length }
