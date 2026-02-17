@@ -231,6 +231,14 @@ export const removeStaticGroup = createAppAsyncThunk(`${sliceName}/removeStaticG
     ])
   )
 );
+export const getDynamicGroup = createAppAsyncThunk(`${sliceName}/getDynamicGroupById`, (id, { dispatch }) =>
+  GeneralApi.get(`${inventoryApiUrlV2}/filters/${id}`).catch(err => {
+    if (err.response && err.response.status === 404) {
+      throw new Error('Request failed with status code 404');
+    }
+    return commonErrorHandler(err, `Error retrieving the group: `, dispatch, commonErrorFallback);
+  })
+);
 
 export const getDynamicGroups = createAppAsyncThunk(`${sliceName}/getDynamicGroups`, (_, { dispatch, getState }) =>
   GeneralApi.get(`${inventoryApiUrlV2}/filters?per_page=${MAX_PAGE_SIZE}`)

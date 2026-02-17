@@ -153,7 +153,8 @@ export const parseDeviceQuery = (searchParams, extraProps = {}) => {
   }
 
   const detailsTab = queryParams.has('tab') ? queryParams.get('tab') : '';
-  return { detailsTab, filters: Object.values(scopedFilters).flat(), groupName, ...pageStateExtension };
+  const groupId = queryParams.has('groupId') ? queryParams.get('groupId'): ''
+  return { detailsTab, filters: Object.values(scopedFilters).flat(), groupName, ...pageStateExtension, groupId };
 };
 
 const formatSorting = (sort, { sort: sortDefault }) => {
@@ -207,7 +208,7 @@ const formatFilters = filters => {
     .flat();
 };
 
-export const formatDeviceSearch = ({ pageState, filters, selectedGroup }) => {
+export const formatDeviceSearch = ({ pageState, filters, selectedGroup, groupId }) => {
   let activeFilters = [...filters];
   if (selectedGroup && selectedGroup !== ALL_DEVICES) {
     const isUngroupedGroup = selectedGroup === UNGROUPED_GROUP.id;
@@ -222,6 +223,9 @@ export const formatDeviceSearch = ({ pageState, filters, selectedGroup }) => {
   const formattedFilters = formatFilters(activeFilters).filter(i => i);
   if (pageState.detailsTab && pageState.selectedId) {
     formattedFilters.push(`tab=${pageState.detailsTab}`);
+  }
+  if (groupId){
+    formattedFilters.push(`groupId=${groupId}`)
   }
   return formattedFilters.join('&');
 };
