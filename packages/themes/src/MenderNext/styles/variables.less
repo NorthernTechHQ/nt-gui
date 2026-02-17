@@ -59,3 +59,17 @@
 
 // Not used
 // @textsecondary: #decfd9;
+
+@directions: top, bottom, left, right;
+@variants: {
+  none: 0;
+  x-small: 0.5 * @defaultGutterWidth;
+  small: @defaultGutterWidth;
+  medium: 1.5 * @defaultGutterWidth;
+  large: 3 * @defaultGutterWidth;
+  x-large: 6 * @defaultGutterWidth;
+};
+
+@alignmentPositions: start, end, center, baseline, stretch;
+@alignmentActions: align, justify;
+@alignmentTargets: self, content, items;

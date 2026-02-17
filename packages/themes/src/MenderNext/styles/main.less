@@ -183,16 +183,6 @@ ul.link-list {
   position: absolute !important;
 }
 
-
-@directions: top, bottom, left, right;
-@variants: {
-  none: 0;
-  x-small: 0.5 * @defaultGutterWidth;
-  small: @defaultGutterWidth;
-  medium: 1.5 * @defaultGutterWidth;
-  large: 3 * @defaultGutterWidth;
-  x-large: 6 * @defaultGutterWidth;
-}
 .margin {
   margin: 2 * @defaultGutterWidth;
 }
@@ -213,6 +203,16 @@ each(@directions, .(@direction) {
     }
   });
 })
+each(@alignmentActions, .(@action) {
+  each(@alignmentPositions, .(@position) {
+    each(@alignmentTargets, .(@target) {
+      .@{action}-@{target}-@{position} {
+        @{action}-@{target}: @position;
+      }
+    })
+  })
+});
+
 .padding {
   padding: 2 * @defaultGutterWidth;
 }
@@ -299,19 +299,10 @@ each(@directions, .(@direction) {
     grid-template-columns: @defaultLeftBarWidth 1fr;
   }
 }
-.align-self-start {
-  align-self: start;
-}
-.align-self-end {
-  align-self: end;
-}
 .flexbox {
   display: flex;
-  &.center-aligned,
   &.centered {
     align-items: center;
-  }
-  &.centered {
     justify-content: center;
   }
   &.column {
