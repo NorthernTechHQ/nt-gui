@@ -1,5 +1,24 @@
 ---
-## @northern.tech/testing-0.6.1 - 2026-02-10
+## @northern.tech/testing-0.7.1 - 2026-02-18
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Let deployments search rely on non-deprecated endpoint
+
+ ([71797db](https://github.com/NorthernTechHQ/nt-gui/commit/71797dbb11dcb9730af717f1fe16a50d464e5571))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/testing-0.7.0 - 2026-02-10
 
 
 ### Bug fixes
