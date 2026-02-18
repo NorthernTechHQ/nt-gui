@@ -473,6 +473,9 @@ const isEmptyPermissionSet = (permissionSet: Partial<UiPermissionsDefinition>) =
 const parseRolePermissions = ({ permission_sets_with_scope = [], permissions = [] }: Role, permissionSets: Record<string, PermissionSet>) => {
   const preliminaryResult = permission_sets_with_scope.reduce(
     (accu, permissionSet) => {
+      if (!permissionSet.name) {
+        return accu;
+      }
       const processor = permissionSets[permissionSet.name];
       if (!processor) {
         return accu;
@@ -481,7 +484,7 @@ const parseRolePermissions = ({ permission_sets_with_scope = [], permissions = [
       if (scope) {
         const result = mapPermissionSet(
           permissionSet.name as PermissionSetId,
-          permissionSet.scope!.value,
+          permissionSet.scope?.value ?? [],
           scope,
           accu.uiPermissions[scope] as CombinedPermissions
         );

@@ -19,7 +19,7 @@ import type {
   ConstraintsInfo,
   Event,
   Integration,
-  NewTenant,
+  NewTenantTypeManagement as NewTenant,
   PreviewRequest,
   Product,
   ProductInfo,

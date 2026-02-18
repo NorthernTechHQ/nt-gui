@@ -16,9 +16,9 @@ import type {
   DeploymentV1 as BackendDeploymentV1,
   DeploymentV2 as BackendDeploymentV2,
   DeviceWithImage,
-  NewDeployment,
+  NewDeploymentTypeManagement as NewDeployment,
   NewDeploymentForGroup,
-  NewDeploymentV2
+  NewDeploymentV2TypeManagement as NewDeploymentV2
 } from '@northern.tech/types/MenderTypes';
 import { customSort, deepCompare, isEmpty, standardizePhases } from '@northern.tech/utils/helpers';
 import Tracking from '@northern.tech/utils/tracking';
