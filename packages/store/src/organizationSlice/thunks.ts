@@ -77,8 +77,8 @@ export const cancelRequest = createAppAsyncThunk(`${sliceName}/cancelRequest`, (
 
 const getTierId = tierName => tierName.replace('mender_', '');
 
-const getProductPlans = products =>
-  products.reduce(
+const getProductPlans = (products: ProductInfo[]) => {
+  const backendPlansById = products.reduce(
     (plansById: Record<string, ProductPlan>, product: ProductInfo) => {
       const { name, prices } = product;
       const tierId = getTierId(name);
@@ -97,8 +97,10 @@ const getProductPlans = products =>
       });
       return plansById;
     },
-    { enterprise: { ...PLANS.enterprise } as ProductPlan }
+    {} as Record<string, ProductPlan>
   );
+  return { ...backendPlansById, enterprise: { ...PLANS.enterprise } as ProductPlan };
+};
 
 const getProductAddons = products =>
   products.reduce((accu: Record<string, Addon>, product: ProductInfo) => {
