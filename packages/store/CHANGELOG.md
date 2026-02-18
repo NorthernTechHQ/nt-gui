@@ -1,5 +1,51 @@
 ---
-## @northern.tech/store-0.20.0 - 2026-02-10
+## @northern.tech/store-1.0.0 - 2026-02-18
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Removed mender client links
+
+([QA-1468](https://northerntech.atlassian.net/browse/QA-1468)) ([2beda54](https://github.com/NorthernTechHQ/nt-gui/commit/2beda543ae4f0254b44ff7f7a0261abea5eb72d4))  by @mineralsfree
+
+
+
+
+- *(store)* Let deployments search rely on non-deprecated endpoint
+
+ ([06dab26](https://github.com/NorthernTechHQ/nt-gui/commit/06dab26bde2a307f73439fa4ff16935dcc1d6c48))  by @mzedel
+  - **BREAKING**: let deployments search rely on non-deprecated endpoint
+
+
+
+
+  - this will lead to different results for the same input as the prior endpoint would also consider a deployments description or artifact name
+
+
+
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added dynamic group fetching thunk
+
+([ME-550](https://northerntech.atlassian.net/browse/ME-550)) ([582bde8](https://github.com/NorthernTechHQ/nt-gui/commit/582bde89be5849f86ebcf052139081603f5d3043))  by @mineralsfree
+
+
+
+
+
+
+
+
+
+## @northern.tech/store-0.21.0 - 2026-02-10
 
 
 ### Bug fixes
