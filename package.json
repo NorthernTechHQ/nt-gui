@@ -19,11 +19,18 @@
     "release": "turbo run build",
     "publish-packages": "turbo publish --continue",
     "publish-packages-next": "turbo pre-publish --continue",
-    "yalc:publish": "npm run release && npm exec --workspaces -- yalc publish --no-script --push"
+    "yalc:publish": "npm run release && npm exec --workspaces -- yalc publish --no-script --push",
+    "prepare": "husky"
   },
   "dependencies": {
     "react": "^19.x",
     "react-dom": "^19.x"
+  },
+  "lint-staged": {
+    "packages/**/*.{ts,tsx,js,jsx,less}": [
+      "prettier --write",
+      "eslint --fix --quiet"
+    ]
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.8",
@@ -43,9 +50,12 @@
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@vitejs/plugin-react": "^5.1.2",
     "eslint": "^9.39.1",
+    "husky": "^9.1.7",
     "jsdom": "^27.4.0",
+    "lint-staged": "^16.2.7",
     "msw": "^2.12.7",
     "msw-storybook-addon": "^2.0.6",
+    "prettier": "^3.8.1",
     "react-idle-timer": "^5.7.2",
     "serve": "^14.2.5",
     "storybook": "^10.1.10",
