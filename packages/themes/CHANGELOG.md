@@ -1,5 +1,5 @@
 ---
-## @northern.tech/themes-0.11.0 - 2026-02-12
+## @northern.tech/themes-0.11.0 - 2026-02-19
 
 
 ### Bug fixes
@@ -11,6 +11,12 @@
 
 ([MEN-8645](https://northerntech.atlassian.net/browse/MEN-8645)) ([23d7e3f](https://github.com/NorthernTechHQ/nt-gui/commit/23d7e3f036dbf49b5d48eb0e690049bc41acb9c5))  by @mineralsfree
 
+
+
+
+- *(themes)* Decoupled table styling from deployments to reflect shared usage
+
+ ([51eda9c](https://github.com/NorthernTechHQ/nt-gui/commit/51eda9c4feb7e4d4dfe9a69279f670c10e0285a7))  by @mzedel
 
 
 
@@ -35,6 +41,19 @@
  ([2342b57](https://github.com/NorthernTechHQ/nt-gui/commit/2342b579cc44222aea0d42aaed33499e8aca0e7f))  by @mineralsfree
 
 
+
+- *(themes)* Added set of flex alignment helpers to help avoid inline pulls to the end
+
+ ([40c47b5](https://github.com/NorthernTechHQ/nt-gui/commit/40c47b5d68b190ac4fe9de99656a8934ecbd0d65))  by @mzedel
+
+
+
+
+  - this will generate e.g.:
+  ```
+  .align-items-end { align-items: end; }
+  .justify-self-start { justify-self: start; }
+  ```
 
 
 
