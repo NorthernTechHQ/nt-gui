@@ -13,6 +13,9 @@ import ts from 'typescript-eslint';
  * Flat config version of the React ESLint configuration.
  */
 export default defineConfig([
+  {
+    ignores: ['**/node_modules/**', '**/dist/**', '.eslintrc.js', '**/*.css']
+  },
   js.configs.recommended,
   ts.configs.recommended,
   reactPlugin.configs.flat.recommended,
@@ -20,7 +23,7 @@ export default defineConfig([
   reactHooksPlugin.configs.flat['recommended'],
   eslintConfigPrettier,
   {
-    ignores: ['node_modules/', 'dist/', '.eslintrc.js', '**/*.css'],
+    files: ['**/*.{js,mjs,cjs,ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2020,
       sourceType: 'module',

@@ -11,19 +11,22 @@ import ts from 'typescript-eslint';
  * Flat config version of the TypeScript library ESLint configuration.
  */
 export default defineConfig([
+  {
+    ignores: ['**/node_modules/**', '**/dist/**', '.eslintrc.js', '**/*.css']
+  },
   js.configs.recommended,
   ts.configs.recommended,
   eslintConfigPrettier,
   {
-    ignores: ['node_modules/', 'dist/', '.eslintrc.js', '**/*.css'],
+    files: ['**/*.{js,mjs,cjs,ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2020,
       sourceType: 'module',
       globals: {
         ...globals.browser
       },
+      parser: ts.parser,
       parserOptions: {
-        parser: ts.parser,
         tsconfigRootDir: resolve(process.cwd())
       }
     },

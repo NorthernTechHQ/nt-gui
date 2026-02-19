@@ -12,21 +12,23 @@ import ts from 'typescript-eslint';
  * Flat config version of the Storybook ESLint configuration.
  */
 export default defineConfig([
+  {
+    ignores: ['**/node_modules/**', '**/dist/**', '.eslintrc.js', '**/*.css']
+  },
   js.configs.recommended,
   ts.configs.recommended,
   eslintPluginMdx.flat,
   ...eslintPluginStorybook.configs['flat/recommended'],
   eslintConfigPrettier,
   {
-    ignores: ['node_modules/', 'dist/', '**/*.css'],
     languageOptions: {
       ecmaVersion: 2020,
       sourceType: 'module',
       globals: {
         ...globals.browser
       },
+      parser: ts.parser,
       parserOptions: {
-        parser: ts.parser,
         tsconfigRootDir: resolve(process.cwd())
       }
     },
