@@ -31,8 +31,8 @@ export default defineConfig([
         ...globals.browser,
         JSX: true
       },
+      parser: ts.parser,
       parserOptions: {
-        parser: ts.parser,
         tsconfigRootDir: resolve(process.cwd())
       }
     },

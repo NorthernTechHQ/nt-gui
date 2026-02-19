@@ -5,6 +5,6 @@ export default [
   ...reactConfig,
   ...storybookConfig,
   {
-    ignores: ['node_modules/', 'dist/', 'packages/', 'storybook-static/']
+    ignores: ['node_modules/', 'dist/', 'packages/types', 'packages/eslint-config', 'storybook-static/', '**/*.md']
   }
 ];

@@ -9,7 +9,8 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite dev",
-    "lint": "eslint . && turbo run lint",
+    "lint": "turbo run lint",
+    "format:check": "prettier --check \"packages/**/*.{js,ts,jsx,tsx,less}\"",
     "test": "turbo run test-ci",
     "dev-storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build --docs",

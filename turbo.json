@@ -35,9 +35,6 @@
       ]
     },
     "lint": {
-      "dependsOn": [
-        "@northern.tech/common-ui#build"
-      ],
       "cache": true
     },
     "dev": {

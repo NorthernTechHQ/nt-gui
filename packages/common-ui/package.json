@@ -13,7 +13,7 @@
   "scripts": {
     "build": "tsup-node",
     "dev": "tsup --watch --no-dts --onSuccess 'yalc publish --no-script --push'",
-    "lint": "eslint src/**/*.{ts,tsx} src/*.{ts,tsx} *.ts",
+    "lint": "eslint --quiet .",
     "publish": "npm publish",
     "pre-publish": "npm publish --tag next",
     "test": "vitest",
