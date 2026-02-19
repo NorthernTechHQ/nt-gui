@@ -12,10 +12,10 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { Provider } from 'react-redux';
-import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { getConfiguredStore } from '@northern.tech/store/store';
 import { mockApiResponses as defaultState } from '@northern.tech/testing/mockData';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { FileUpload } from './FileUpload';
 

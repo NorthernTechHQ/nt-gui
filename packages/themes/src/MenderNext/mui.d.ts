@@ -22,7 +22,7 @@ declare module '@mui/material' {
       main: string;
     };
   }
-  
+
   interface Palette {
     neutral: {
       contrastText: string;
