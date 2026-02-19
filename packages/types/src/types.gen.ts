@@ -176,7 +176,7 @@ export type Scope = (typeof Scope)[keyof typeof Scope];
  */
 export type DeviceLimitTenant = {
   name: string;
-  tenant_id: string;
+  tenant_id?: string;
   current_value: number;
   value: number;
 };
