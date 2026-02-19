@@ -40,6 +40,7 @@ body {
     display: flex;
     flex-direction: column;
     padding-bottom: 0;
+    padding-right: 0;
   }
   #offerHeader {
     justify-content: center;
@@ -67,7 +68,7 @@ body {
 }
 
 .link-color {
-  color: @linkgreen;
+  color: @linkcolor;
 }
 
 .warning {
@@ -104,11 +105,9 @@ time,
 a,
 span.link,
 .copy-to-clipboard svg {
-  font-weight: bold;
-  text-decoration: none;
-  color: @linkgreen;
+  font-weight: 500;
+  color: @linkcolor;
   cursor: pointer;
-
   &:hover {
     color: @linkhover;
   }
@@ -187,14 +186,6 @@ ul.link-list {
   position: absolute !important;
 }
 
-@directions: top, bottom, left, right;
-@variants: {
-  none: 0;
-  x-small: 0.5 * @defaultGutterWidth;
-  small: @defaultGutterWidth;
-  large: 3 * @defaultGutterWidth;
-  x-large: 6 * @defaultGutterWidth;
-};
 .margin {
   margin: 2 * @defaultGutterWidth;
 }
@@ -215,7 +206,17 @@ each(@directions, .(@direction) {
     }
   });
 })
-  .padding {
+each(@alignmentActions, .(@action) {
+  each(@alignmentPositions, .(@position) {
+    each(@alignmentTargets, .(@target) {
+      .@{action}-@{target}-@{position} {
+        @{action}-@{target}: @position;
+      }
+    })
+  })
+});
+
+.padding {
   padding: 2 * @defaultGutterWidth;
 }
 each(@directions, .(@direction) {
@@ -298,19 +299,10 @@ each(@directions, .(@direction) {
     grid-template-columns: @defaultLeftBarWidth 1fr;
   }
 }
-.align-self-start {
-  align-self: start;
-}
-.align-self-end {
-  align-self: end;
-}
 .flexbox {
   display: flex;
-  &.center-aligned,
   &.centered {
     align-items: center;
-  }
-  &.centered {
     justify-content: center;
   }
   &.column {
@@ -749,7 +741,7 @@ form .required::after {
   position: absolute;
   left: 102%;
   font-size: 12px;
-  color: @linkgreen;
+  color: @linkcolor;
   width: 100px;
   height: 100%;
   display: flex;
@@ -1141,156 +1133,17 @@ div.waiting-inventory {
   grid-column-gap: 2 * @defaultGutterWidth;
 }
 
-.deploy-table-contain {
+.table-container {
   margin-bottom: 4 * @defaultGutterWidth;
   margin-top: 2 * @defaultGutterWidth;
 }
 
 /* Deployments */
-.deployments-pending {
-  padding: 10px @defaultGutterWidth 2 * @defaultGutterWidth;
-  border-radius: 4px;
-  border-style: solid;
-  border-width: 1px;
-  .dashboard-header {
-    margin-bottom: 2 * @defaultGutterWidth;
-  }
-  .deploy-table-contain {
-    margin-bottom: initial;
-  }
-}
-
-.deployment-item {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 0.75fr 4fr 1.2fr 50px;
-  grid-column-gap: 2 * @defaultGutterWidth;
-  margin: 0 @defaultGutterWidth;
-  padding: 10px 0;
-  align-items: center;
-  position: relative;
-  min-width: 1300px;
-  height: unset;
-  min-height: unset;
-  max-height: unset;
-  &.deployment-header-item {
-    border-bottom: transparent;
-    &.progress-item {
-      padding-right: @defaultGutterWidth;
-    }
-  }
-  &.scheduled-item {
-    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1.2fr 50px;
-  }
-  &.past-item {
-    grid-template-columns: 2fr 1fr 1fr 1fr 0.75fr 2fr 1fr 1fr;
-  }
-  &.pending-item {
-    grid-template-columns: 2fr 1fr 1fr 1fr 0.75fr 2fr 1.2fr 50px;
-  }
-  > div,
-  time {
-    min-width: 100px;
-  }
-  > .column-defined {
-    min-width: initial;
-  }
-  .cancelButton:hover {
-    color: @red;
-  }
-  .deployment-item-title {
-    display: none;
-  }
-}
-.confirmation-overlay {
-  position: absolute;
-  z-index: 1;
-  background: @overlay;
-  opacity: 0.9;
-  width: 100%;
-  height: 100%;
-  justify-content: flex-end;
-}
-
-.progress-chart,
-.progress-step-total,
-.progress-step {
-  display: flex;
-  min-height: 20px;
-}
-.progress-step {
-  align-items: center;
-  z-index: 1;
-}
-.progress-bar {
-  position: absolute;
-  width: 100%;
-  height: 8px;
-  background-color: currentColor;
-}
-.progress-step-number {
-  text-align: center;
-  width: 100%;
-}
-.progress-step-total {
-  border: none;
-  position: absolute;
-  z-index: 0;
-  width: 100%;
-}
-
 .deployment-phases-report {
   display: grid;
   grid-template-columns: repeat(auto-fit, 270px);
   grid-column-gap: @defaultGutterWidth;
   grid-row-gap: @defaultGutterWidth;
-}
-
-.deployment-phases-list {
-  overflow: auto;
-  max-width: 900px;
-  & > .column {
-    min-width: 115px;
-    margin: 0 5px;
-    justify-content: flex-end;
-    & > div {
-      margin: 5px 0;
-    }
-    .MuiChip-root {
-      width: fit-content;
-    }
-  }
-}
-
-@media screen and (max-width: 1599px) {
-  .deployment-item {
-    display: block;
-    margin-left: 0;
-    margin-bottom: 30px;
-    min-width: initial;
-    padding-left: 120px;
-
-    &.deployment-header-item {
-      display: none;
-    }
-
-    > div {
-      margin-bottom: 10px;
-      position: relative;
-
-      .deployment-item-title {
-        display: block;
-        position: absolute;
-        left: -120px;
-        top: 0px;
-        width: 110px;
-        text-align: left;
-      }
-
-      .align-right {
-        text-align: left;
-      }
-    }
-  }
 }
 
 .statusLarge {
@@ -1305,31 +1158,10 @@ div.waiting-inventory {
     position: relative;
     font-size: 16px;
     white-space: normal;
-    &:after {
-      content: '';
-      width: 0;
-      height: 0;
-      position: absolute;
-      z-index: 1490;
-      top: 5px;
-      left: -19px;
-      border-bottom: 10px solid transparent;
-    }
-
     .statusWrapperMessage {
       vertical-align: middle;
     }
   }
-}
-
-.substate {
-  width: 64%;
-  min-width: 200px;
-  overflow: hidden;
-  color: @darkgrey;
-  white-space: normal;
-  word-wrap: break-word;
-  margin-left: 5px;
 }
 
 // Releases & Artifacts
@@ -1339,11 +1171,9 @@ div.waiting-inventory {
     margin: 18px 12px 0 0;
   }
   &.repo-header {
-    padding-left: 2 * @defaultGutterWidth;
-    padding-right: 12px;
-    height: 56px;
-    font-size: 12px;
-    color: @mendermaroon;
+    padding-left: 6 * @defaultGutterWidth;
+    padding-right: 4 * @defaultGutterWidth;
+    font-size: 0.8rem;
   }
   &.repo-item,
   .repo-item {

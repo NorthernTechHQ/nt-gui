@@ -11,23 +11,45 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { PaletteOptions as MuiPaletteOptions } from '@mui/material';
+
+declare module '@mui/material' {
+  interface PaletteOptions extends MuiPaletteOptions {
+    neutral?: {
+      contrastText: string;
+      dark: string;
+      light: string;
+      main: string;
+    };
+  }
+  
+  interface Palette {
+    neutral: {
+      contrastText: string;
+      dark: string;
+      light: string;
+      main: string;
+    };
+  }
+}
+
+declare module '@mui/material/Button' {
+  interface ButtonPropsColorOverrides {
+    neutral: true;
+  }
+}
+
+declare module '@mui/material/Chip' {
+  interface ChipPropsColorOverrides {
+    neutral: true;
+  }
+}
 
 declare module '@mui/material/styles' {
-  interface Palette {
-    tooltip: {
-      background: string;
-      text: string;
-      tierTipBackground: string;
-    };
+  interface TypographyVariants {
+    mono: React.CSSProperties;
   }
-  interface PaletteOptions {
-    tooltip: {
-      background: string;
-      text: string;
-      tierTipBackground: string;
-    };
-  }
-  interface PaletteColor {
-    lighter: string; // Add 'lighter' property
+  interface TypographyVariantsOptions {
+    mono?: React.CSSProperties;
   }
 }

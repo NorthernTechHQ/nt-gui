@@ -1,4 +1,4 @@
-// Copyright 2022 Northern.tech AS
+// Copyright 2025 Northern.tech AS
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -11,128 +11,271 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { lighten } from '@mui/material';
-import { accordionClasses } from '@mui/material/Accordion';
-import { accordionSummaryClasses } from '@mui/material/AccordionSummary';
+import type { Components, Theme } from '@mui/material';
+import { accordionClasses, alpha, badgeClasses, buttonClasses, menuItemClasses } from '@mui/material';
+import { blue, cyan, grey, purple } from '@mui/material/colors';
 
-const secondaryText = 'rgba(0, 0, 0, 0.54)';
+// breakpoints, metadata, shape config, spacing are not adjusted in the theme
+import colorDefinitions from './figma/material_colors.json' with { type: 'json' };
+import typographyDefinitions from './figma/typography.json' with { type: 'json' };
 
-/**
- * @param qualitative if set is an ordered set of distinct colors availabe for programatic use.
- * @example Chart dataset colors
- */
-export const palette = {
-  background: {
-    terminal: 'rgba(33, 36, 41, 0.25)'
+const typographyTokens = typographyDefinitions.collections.find(({ name }) => name === 'typography');
+const colorTokens = colorDefinitions.collections.find(({ name }) => name === 'material/colors');
+
+const themeMode = 'Mode 1';
+
+export const typography = {
+  fontFamily: typographyTokens?.variables['fontFamily (body)'].values[themeMode],
+  h1: {
+    fontWeight: 500
   },
-  primary: {
-    main: '#337a87'
+  h2: {
+    fontWeight: 500
   },
-  border: {
-    main: '#e3e3e3'
+  h3: {
+    fontWeight: 500
   },
-  secondary: {
-    main: '#5d0f43',
-    lighter: '#921267'
+  h4: {
+    fontWeight: 500
   },
-  error: {
-    light: 'rgba(93, 15, 67, 0.075)',
-    main: '#ab1000',
-    dark: '#770b00' // hardcode same as darken to match less variables
+  h5: {
+    fontWeight: 500
   },
-  success: {
-    main: '#009e73'
+  h6: {
+    fontWeight: 500
   },
-  text: {
-    /**
-     * color matched from variables.less @text of #404041 but by opacity, same as main
-     */
-    primary: 'rgba(10, 10, 11, 0.78)',
-    secondary: secondaryText,
-    hint: secondaryText,
-    link: '#679ba5'
+  subtitle1: {
+    fontWeight: 500
   },
-  brand: {
-    mender: '#015969',
-    northernTech: '#28aee4'
+  mono: {
+    fontFamily: typographyTokens?.variables['fontFamily (mono)'].values[themeMode]
+  }
+};
+
+export const colors = {
+  grey: {
+    ...grey,
+    50: colorTokens?.variables['grey (M)']['50'].values[themeMode] || grey[50],
+    100: colorTokens?.variables['grey (M)']['100'].values[themeMode] || grey[100],
+    200: colorTokens?.variables['grey (M)']['200'].values[themeMode] || grey[200],
+    300: colorTokens?.variables['grey (M)']['300'].values[themeMode] || grey[300],
+    400: colorTokens?.variables['grey (M)']['400'].values[themeMode] || grey[400],
+    500: colorTokens?.variables['grey (M)']['500'].values[themeMode] || grey[500],
+    600: colorTokens?.variables['grey (M)']['600'].values[themeMode] || grey[600],
+    700: colorTokens?.variables['grey (M)']['700'].values[themeMode] || grey[700],
+    800: colorTokens?.variables['grey (M)']['800'].values[themeMode] || grey[800],
+    900: colorTokens?.variables['grey (M)']['900'].values[themeMode] || grey[900]
+  },
+  purple: {
+    ...blue, // ...remainder colors (A100 - A700) should be based on 'blue'
+    50: colorTokens?.variables['purple(M)']['50'].values[themeMode] || purple[50],
+    100: colorTokens?.variables['purple(M)']['100'].values[themeMode] || purple[100],
+    200: colorTokens?.variables['purple(M)']['200'].values[themeMode] || purple[200],
+    300: colorTokens?.variables['purple(M)']['300'].values[themeMode] || purple[300],
+    400: colorTokens?.variables['purple(M)']['400'].values[themeMode] || purple[400],
+    500: colorTokens?.variables['purple(M)']['500'].values[themeMode] || purple[500],
+    600: colorTokens?.variables['purple(M)']['600'].values[themeMode] || purple[600],
+    700: colorTokens?.variables['purple(M)']['700'].values[themeMode] || purple[700],
+    800: colorTokens?.variables['purple(M)']['800'].values[themeMode] || purple[800],
+    900: colorTokens?.variables['purple(M)']['900'].values[themeMode] || purple[900]
+  },
+  cyan: {
+    ...cyan,
+    50: colorTokens?.variables['cyan (M)']['50'].values[themeMode] || cyan[50],
+    100: colorTokens?.variables['cyan (M)']['100'].values[themeMode] || cyan[100],
+    200: colorTokens?.variables['cyan (M)']['200'].values[themeMode] || cyan[200],
+    300: colorTokens?.variables['cyan (M)']['300'].values[themeMode] || cyan[300],
+    400: colorTokens?.variables['cyan (M)']['400'].values[themeMode] || cyan[400],
+    500: colorTokens?.variables['cyan (M)']['500'].values[themeMode] || cyan[500],
+    600: colorTokens?.variables['cyan (M)']['600'].values[themeMode] || cyan[600],
+    700: colorTokens?.variables['cyan (M)']['700'].values[themeMode] || cyan[700],
+    800: colorTokens?.variables['cyan (M)']['800'].values[themeMode] || cyan[800],
+    900: colorTokens?.variables['cyan (M)']['900'].values[themeMode] || cyan[900]
   }
 };
 
 const generatedColors = {
-  a: palette.primary.main,
+  a: colors.cyan[700],
   b: '#a31773',
   c: '#00859e',
   d: '#14cfda',
   e: '#9bfff0',
   f: '#d5d5d5'
 };
-const qualitative = {};
-for (const [grp, col] of Object.entries(generatedColors)) {
-  qualitative[grp] = {
-    main: col
-  };
-}
-palette['qualitative'] = qualitative;
 
 export const chartColorPalette = Object.values(generatedColors);
 
-const round = value => Math.round(value * 1e4) / 1e4;
-const htmlFontSize = 16;
-const fontSize = 13;
-const coef = fontSize / 14;
-const pxToRem = size => `${round((size / htmlFontSize) * coef)}rem`;
-
-export const typography = {
-  fontFamily: 'Lato, sans-serif',
-  fontSize, // will be transformed to rem automatically by mui
-  body1: {
-    lineHeight: 1.5
+export const components: Components<Theme> = {
+  MuiAccordion: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        backgroundColor: 'transparent',
+        border: `1px solid ${theme.palette.divider}`,
+        boxShadow: 'none',
+        '&:before': {
+          display: 'none'
+        },
+        '&:hover': {
+          borderColor: theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.42)' : 'rgba(255, 255, 255, 0.42)'
+        },
+        padding: theme.spacing(1, 2),
+        alignItems: 'flex-start',
+        alignSelf: 'stretch',
+        [`&.${accordionClasses.expanded}`]: {
+          margin: 'auto'
+        }
+      })
+    }
   },
-  pxToRem
-};
-
-const componentProps = {
+  MuiAccordionDetails: {
+    styleOverrides: {
+      root: {
+        alignItems: 'flex-start',
+        alignSelf: 'stretch'
+      }
+    }
+  },
+  MuiBadge: {
+    styleOverrides: {
+      badge: ({ theme }) => ({
+        [`& .${badgeClasses.colorInfo}`]: {
+          backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey?.[100] : theme.palette.grey?.[700],
+          color: theme.palette.text.primary
+        }
+      })
+    }
+  },
+  MuiButton: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        textTransform: 'none',
+        boxShadow: 'none',
+        [`&:hover:not(.${buttonClasses.colorInfo})`]: {
+          boxShadow: 'none'
+        },
+        variants: [
+          {
+            props: { variant: 'outlined', color: 'info' },
+            style: { color: theme.palette.neutral.contrastText }
+          },
+          {
+            props: { variant: 'outlined', color: 'neutral' },
+            style: { color: theme.palette.neutral.contrastText }
+          },
+          {
+            props: { variant: 'contained', color: 'info' },
+            style: { boxShadow: theme.shadows[2] }
+          },
+          {
+            props: { variant: 'contained', color: 'neutral' },
+            style: { boxShadow: theme.shadows[2] }
+          }
+        ]
+      }),
+      text: {
+        textTransform: 'none'
+      }
+    }
+  },
+  MuiButtonBase: {
+    styleOverrides: {
+      root: {
+        textTransform: 'none'
+      }
+    }
+  },
+  MuiButtonGroup: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        [`& .${buttonClasses.contained}:not(.${buttonClasses.colorInfo})`]: {
+          boxShadow: 'none'
+        },
+        [`& .${buttonClasses.colorInfo}.${buttonClasses.contained}`]: {
+          boxShadow: theme.shadows[2] // Elevation/2 for neutral buttons
+        }
+      })
+    }
+  },
+  MuiChip: {
+    styleOverrides: {
+      root: {
+        boxShadow: 'none'
+      }
+    }
+  },
+  MuiDialogActions: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        [`.${buttonClasses.text}`]: {
+          color: theme.palette.text.primary
+        },
+        [`.${buttonClasses.text}:hover`]: {
+          backgroundColor: alpha(theme.palette.text.primary, 0.08)
+        }
+      })
+    }
+  },
+  MuiDialogContent: {
+    defaultProps: {
+      dividers: true
+    }
+  },
+  MuiDrawer: {
+    styleOverrides: {
+      paper: ({ theme }) => ({
+        minWidth: 'min-content',
+        maxWidth: '80vw',
+        padding: theme.spacing(3, 8),
+        borderRadius: 0
+      })
+    }
+  },
   MuiFormControl: {
     defaultProps: {
       variant: 'outlined'
     }
   },
   MuiInput: {
-    defaultProps: {
-      variant: 'outlined'
+    styleOverrides: {
+      root: {
+        minWidth: 220
+      }
     }
   },
-  MuiTextField: {
+  MuiInputLabel: {
     defaultProps: {
-      variant: 'outlined'
+      size: 'small'
+    }
+  },
+  MuiMenu: {
+    styleOverrides: {
+      list: ({ theme }) => ({
+        [`& .${menuItemClasses.root}.Mui-selected`]: {
+          backgroundColor: theme.palette.primary.main + '12' // 12% opacity
+        }
+      })
+    }
+  },
+  MuiOutlinedInput: {
+    defaultProps: {
+      size: 'small'
     }
   },
   MuiSelect: {
     defaultProps: {
       autoWidth: true,
+      size: 'small',
       variant: 'outlined'
-    }
-  }
-};
-
-export const overrides = {
-  ...componentProps,
-  MuiAlert: {
+    },
     styleOverrides: {
-      root: ({ theme, ownerState }) => ({
-        ...(ownerState.severity === 'error' &&
-          theme.palette.mode === 'light' && {
-            backgroundColor: lighten(theme.palette.error.main, 0.95),
-            color: theme.palette.text.primary
-          })
-      })
+      root: {
+        minWidth: 220
+      }
     }
   },
-  MuiSnackbarContent: {
-    styleOverrides: {
-      action: {
-        color: '#9E6F8E'
-      }
+  MuiSwitch: {
+    defaultProps: {
+      size: 'small'
     }
   },
   MuiTab: {
@@ -142,150 +285,26 @@ export const overrides = {
       }
     }
   },
-  MuiAccordion: {
+  MuiTextField: {
+    defaultProps: {
+      size: 'small',
+      variant: 'outlined'
+    },
     styleOverrides: {
       root: {
-        border: 'none',
-        boxShadow: 'none',
-        '&:before': {
-          display: 'none'
-        },
-        padding: 0,
-        [`&.${accordionClasses.expanded}`]: {
-          margin: 'auto'
-        }
+        minWidth: 220
       }
     }
   },
-  MuiAccordionSummary: {
+  MuiSpeedDialAction: {
     styleOverrides: {
-      root: {
-        marginBottom: 0,
-        height: 48,
-        [`&.${accordionSummaryClasses.expanded}`]: {
-          height: 48,
-          minHeight: 48
-        }
-      },
-      content: {
-        alignItems: 'center',
-        [`&.${accordionSummaryClasses.expanded}`]: {
-          margin: 0
-        },
-        '& > :last-child': {
-          paddingRight: 12
-        }
-      }
-    }
-  },
-  MuiAccordionDetails: {
-    styleOverrides: {
-      root: {
-        flexDirection: 'column'
-      }
-    }
-  },
-  MuiInput: {
-    ...componentProps.MuiInput,
-    styleOverrides: {
-      underline: {
-        '&:before': {
-          borderBottom: '1px solid rgb(224, 224, 224)'
-        },
-        '&:hover:not($disabled):before': {
-          borderBottom: `2px solid ${palette.primary.main} !important`
-        },
-        '&:after': {
-          borderBottom: `2px solid ${palette.primary.main}`
-        }
-      }
-    }
-  },
-  MuiFormControl: {
-    ...componentProps.MuiFormControl,
-    styleOverrides: {
-      root: {
-        minWidth: '240px'
-      }
-    }
-  },
-  MuiFormControlLabel: {
-    styleOverrides: {
-      root: {
-        marginTop: '18px'
-      }
-    }
-  },
-  MuiIconButton: {
-    styleOverrides: {
-      root: {
-        fontSize: '1.2rem'
-      }
-    }
-  },
-  MuiButton: {
-    styleOverrides: {
-      root: {
-        borderRadius: 2,
-        fontSize: 14,
-        fontWeight: 'bold',
-        '&:hover': {
-          colors: palette.primary.main
-        }
-      },
-      text: {
-        padding: '10px 15px'
-      }
-    }
-  },
-  MuiSvgIcon: {
-    styleOverrides: {
-      root: {
-        iconButton: {
-          marginRight: '8px'
-        }
-      }
-    }
-  },
-  MuiListItem: {
-    styleOverrides: {
-      root: {
-        paddingTop: 11,
-        paddingBottom: 11
-      }
-    }
-  },
-  MuiListItemText: {
-    styleOverrides: {
-      root: {
-        marginTop: 0,
-        marginBottom: 0
-      }
-    }
-  },
-  MuiTableCell: {
-    styleOverrides: {
-      root: {
-        padding: '0px 24px 0px 24px',
-        height: '48px'
-      },
-      head: {
-        height: '56px',
-        lineHeight: '1.15rem'
-      },
-      paddingCheckbox: {
-        padding: '0 0 0 6px',
-        width: '54px'
-      }
-    }
-  },
-  MuiDrawer: {
-    styleOverrides: {
-      paper: {
-        minWidth: '40vw',
-        maxWidth: '80vw',
-        padding: '30px 75px 5%'
-      }
+      fab: ({ theme }) => ({
+        color: alpha(theme.palette.info.contrastText, 0.54)
+      }),
+      staticTooltipLabel: ({ theme }) => ({
+        color: theme.palette.text.primary,
+        boxShadow: theme.shadows[6]
+      })
     }
   }
 };
