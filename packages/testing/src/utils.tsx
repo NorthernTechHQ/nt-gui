@@ -16,12 +16,9 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 
-import { createSerializer } from '@emotion/jest';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-import { yes } from '@northern.tech/utils/helpers';
-import { configureStore } from '@reduxjs/toolkit';
-import { cleanup, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { act, queryByRole, waitFor, within } from '@testing-library/react';
 import { expect } from 'vitest';
 

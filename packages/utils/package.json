@@ -33,7 +33,8 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch --no-dts --onSuccess 'yalc publish --no-script --push'",
-    "lint": "eslint src/**/*.ts src/*.ts *.ts",
+    "lint": "eslint --quiet .",
+    "format:check": "prettier --check \"src/**/*.{js,ts,jsx,tsx,less}\"",
     "publish": "npm publish",
     "pre-publish": "npm publish --tag next",
     "test": "vitest",

@@ -14,13 +14,12 @@
 //@ts-nocheck
 import { useState } from 'react';
 
-import CopyToClipboard from '../CopyToClipboard';
-
 import { Button, DialogActions, DialogContent } from '@mui/material';
 
 import { createFileDownload } from '@northern.tech/utils/helpers';
 
 import { Code } from '../CopyCode';
+import CopyToClipboard from '../CopyToClipboard';
 import { BaseDialog } from './BaseDialog';
 
 const wrapperStyle = { marginRight: 10, display: 'inline-block' };

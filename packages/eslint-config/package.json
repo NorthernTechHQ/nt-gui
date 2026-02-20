@@ -13,7 +13,8 @@
   "files": [
     "library.js",
     "react.js",
-    "storybook.js"
+    "storybook.js",
+    "base.js"
   ],
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "8.x",
@@ -34,6 +35,8 @@
   },
   "type": "module",
   "scripts": {
+    "test": "vitest eslint.test.js",
+    "test-ci": "vitest eslint.test.js",
     "build": "tsup library.js react.js storybook.js",
     "publish": "npm publish",
     "pre-publish": "npm publish --tag next"

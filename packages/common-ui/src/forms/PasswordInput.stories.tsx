@@ -11,11 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useForm } from 'react-hook-form';
 
-import { PasswordInput } from './PasswordInput';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+
 import { Form } from './Form';
+import { PasswordInput } from './PasswordInput';
 
 const PasswordInputWrapper = (props: any) => {
   const { control } = useForm({ defaultValues: { password: '' } });

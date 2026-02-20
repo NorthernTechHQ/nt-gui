@@ -11,9 +11,11 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { TextField } from '@mui/material';
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Controller, useFormContext } from 'react-hook-form';
+
+import { TextField } from '@mui/material';
+
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Form } from './Form';
 
@@ -21,12 +23,20 @@ const SampleFormContent = () => {
   const { control } = useFormContext();
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <Controller name="name" control={control} rules={{ required: 'Name is required' }} render={({ field, fieldState }) => (
-        <TextField {...field} label="Name" error={!!fieldState.error} helperText={fieldState.error?.message} />
-      )} />
-      <Controller name="email" control={control} rules={{ required: 'Email is required' }} render={({ field, fieldState }) => (
-        <TextField {...field} label="Email" type="email" error={!!fieldState.error} helperText={fieldState.error?.message} />
-      )} />
+      <Controller
+        name="name"
+        control={control}
+        rules={{ required: 'Name is required' }}
+        render={({ field, fieldState }) => <TextField {...field} label="Name" error={!!fieldState.error} helperText={fieldState.error?.message} />}
+      />
+      <Controller
+        name="email"
+        control={control}
+        rules={{ required: 'Email is required' }}
+        render={({ field, fieldState }) => (
+          <TextField {...field} label="Email" type="email" error={!!fieldState.error} helperText={fieldState.error?.message} />
+        )}
+      />
     </div>
   );
 };

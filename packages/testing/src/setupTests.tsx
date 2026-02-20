@@ -17,7 +17,7 @@ import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 
 import { createSerializer } from '@emotion/jest';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 
 import { yes } from '@northern.tech/utils/helpers';
 import { configureStore } from '@reduxjs/toolkit';

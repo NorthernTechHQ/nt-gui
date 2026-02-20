@@ -26,7 +26,7 @@ import { actions } from '.';
 import { actions as appActions } from '../appSlice';
 import { DEVICE_STATES, EXTERNAL_PROVIDER, TIMEOUTS, UNGROUPED_GROUP } from '../constants';
 import { actions as deploymentActions } from '../deploymentsSlice';
-import { getSingleDeployment, saveUserSettings, getUserSettings } from '../thunks';
+import { getSingleDeployment, getUserSettings, saveUserSettings } from '../thunks';
 import {
   addDevicesToGroup,
   addDynamicGroup,

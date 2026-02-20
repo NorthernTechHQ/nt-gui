@@ -87,14 +87,7 @@ export const parseEnvironmentInfo = () => (dispatch, getState) => {
   let environmentFeatures = {};
   let versionInfo = {};
   if (mender_environment) {
-    const {
-      features = {},
-      demoArtifactPort: port,
-      disableOnboarding,
-      integrationVersion,
-      menderArtifactVersion,
-      metaMenderVersion
-    } = mender_environment;
+    const { features = {}, demoArtifactPort: port, disableOnboarding, integrationVersion, menderArtifactVersion, metaMenderVersion } = mender_environment;
     demoArtifactPort = port || demoArtifactPort;
     environmentData = environmentDatas.reduce((accu, flag) => ({ ...accu, [flag]: mender_environment[flag] || state.app[flag] }), {});
     environmentFeatures = {

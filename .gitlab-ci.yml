@@ -21,6 +21,9 @@ variables:
   GITHUB_STATUS_API_URL:
     value: 'https://api.github.com/repos/NorthernTechHQ/$CI_PROJECT_NAME/statuses/$CI_COMMIT_SHA'
     description: 'Github endpoint to update CI pipeline progress'
+  HUSKY:
+    value: "0"
+    description: 'Disable pre-commit hooks in CI'
 
 stages:
   - test
@@ -51,6 +54,13 @@ lint:
   script:
     - npm ci
     - npm run lint
+
+format:
+  stage: test
+  needs: []
+  script:
+    - npm ci
+    - npm run format:check
 
 test:
   stage: test

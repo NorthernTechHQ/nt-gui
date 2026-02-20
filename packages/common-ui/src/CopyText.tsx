@@ -13,13 +13,13 @@
 //    limitations under the License.
 import { useEffect, useRef, useState } from 'react';
 
-import CopyToClipboard from './CopyToClipboard';
-
 import { FileCopy as CopyPasteIcon } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
 import { TIMEOUTS, yes } from '@northern.tech/store/constants';
+
+import CopyToClipboard from './CopyToClipboard';
 
 const useStyles = makeStyles()(() => ({
   copyNotification: { height: 15 }

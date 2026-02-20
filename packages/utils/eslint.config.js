@@ -11,10 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import eslintConfigLibrary from '@northern.tech/eslint-config/library.js';
+import eslintConfigReact from '@northern.tech/eslint-config/react.js';
 
 export default [
-  ...eslintConfigLibrary,
+  ...eslintConfigReact,
   {
     rules: {
       '@typescript-eslint/consistent-type-imports': 'error'

@@ -153,7 +153,7 @@ export const parseDeviceQuery = (searchParams, extraProps = {}) => {
   }
 
   const detailsTab = queryParams.has('tab') ? queryParams.get('tab') : '';
-  const groupId = queryParams.has('groupId') ? queryParams.get('groupId'): ''
+  const groupId = queryParams.has('groupId') ? queryParams.get('groupId') : '';
   return { detailsTab, filters: Object.values(scopedFilters).flat(), groupName, ...pageStateExtension, groupId };
 };
 
@@ -224,8 +224,8 @@ export const formatDeviceSearch = ({ pageState, filters, selectedGroup, groupId 
   if (pageState.detailsTab && pageState.selectedId) {
     formattedFilters.push(`tab=${pageState.detailsTab}`);
   }
-  if (groupId){
-    formattedFilters.push(`groupId=${groupId}`)
+  if (groupId) {
+    formattedFilters.push(`groupId=${groupId}`);
   }
   return formattedFilters.join('&');
 };
