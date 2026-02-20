@@ -1,4 +1,4 @@
-// Copyright 2022 Northern.tech AS
+// Copyright 2025 Northern.tech AS
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -11,125 +11,99 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { accordionClasses } from '@mui/material/Accordion';
-import { buttonClasses } from '@mui/material/Button';
+import {
+  PaletteOptions,
+  ThemeOptions,
+  alertClasses,
+  outlinedInputClasses,
+  alpha,
+  getOverlayAlpha
+} from '@mui/material';
+import { common, red } from '@mui/material/colors';
 
-import { palette as commonPalette, overrides, typography } from './common';
+import { components as baseComponents, colors, typography } from './common';
 
-const grey = {
-  'A400': '#1d1f20',
-  '900': '#4dc3bc',
-  '800': '#89c6c1',
-  '700': '#a0c7c4',
-  '600': '#d7d7d7',
-  '500': '#484747',
-  '400': '#2a2828',
-  '300': '#696868',
-  '200': '#b1b1b1',
-  '100': '#8c8c8c',
-  '50': '#4a4a4a'
+const info = {
+  main: colors.grey[700],
+  dark: colors.grey[800],
+  light: colors.grey[300],
+  contrastText: common.white
 };
-const paper = '#23252a';
 
-const palette = {
-  ...commonPalette,
+const palette: PaletteOptions = {
+  ...colors,
   mode: 'dark',
   primary: {
-    main: '#4d8b96'
-  },
-  border: {
-    main: '#e7e7e7'
+    main: colors.cyan[200],
+    dark: colors.cyan[400],
+    light: colors.cyan[50]
   },
   secondary: {
-    lighter: '#9e6f8e',
-    light: '#8e577b',
-    main: '#7d3f69'
-  },
-  grey,
-  background: {
-    light: '#1d1f20',
-    lightgrey: paper,
-    default: '#1b1c22',
-    paper
-  },
-  text: {
-    primary: 'hsl(240deg 5% 93% / 67%)',
-    hint: 'hsl(240deg 5% 93% / 67%)'
+    main: colors.purple[200],
+    dark: colors.purple[400],
+    light: colors.purple[50]
   },
   error: {
-    main: '#ab1000',
-    dark: '#dc6a5e'
+    main: red[400],
+    dark: red[700],
+    light: red[300],
+    contrastText: common.white
   },
-  tooltip: {
-    text: grey[600],
-    tierTipBackground: grey[50]
-  }
+  info,
+  neutral: info
 };
 
-export const dark = {
+export const dark: ThemeOptions = {
   palette,
   typography,
   components: {
-    ...overrides,
-    MuiAccordion: {
-      ...overrides.MuiAccordion,
+    ...baseComponents,
+    MuiOutlinedInput: {
+      ...baseComponents.MuiOutlinedInput,
       styleOverrides: {
+        ...baseComponents.MuiOutlinedInput?.styleOverrides,
         root: {
-          ...overrides.MuiAccordion.styleOverrides.root,
-          [`&.${accordionClasses.expanded}`]: {
-            // @ts-ignore
-            ...overrides.MuiAccordion.styleOverrides.root[`&.${accordionClasses.expanded}`],
-            backgroundColor: palette.grey['A400']
-          }
-        }
-      }
-    },
-    MuiButton: {
-      ...overrides.MuiButton,
-      styleOverrides: {
-        ...overrides.MuiButton.styleOverrides,
-        root: {
-          ...overrides.MuiButton.styleOverrides.root,
-          [`&.${buttonClasses.text}`]: {
-            ...overrides.MuiButton.styleOverrides.root[`&.${buttonClasses.text}`],
-            color: palette.text.primary
-          }
-        }
-      }
-    },
-    MuiIconButton: {
-      ...overrides.MuiIconButton,
-      styleOverrides: {
-        ...overrides.MuiIconButton.styleOverrides,
-        root: {
-          ...overrides.MuiIconButton.styleOverrides.root,
-          color: palette.text.primary
-        }
-      }
-    },
-    MuiListItem: {
-      ...overrides.MuiListItem,
-      styleOverrides: {
-        ...overrides.MuiListItem.styleOverrides,
-        root: {
-          ...overrides.MuiListItem.styleOverrides.root,
-          [`&.active`]: {
-            backgroundColor: palette.background.default
+          [`& .${outlinedInputClasses.notchedOutline}`]: {
+            borderColor: 'rgba(255, 255, 255, 0.42)'
           },
-          [`&.leftNav.active`]: {
-            borderTop: `1px solid ${palette.grey[50]}`,
-            borderBottom: `1px solid ${palette.grey[50]}`
+          [`&:hover .${outlinedInputClasses.notchedOutline}`]: {
+            borderColor: 'rgba(255, 255, 255, 0.65)'
+          },
+          [`&.${outlinedInputClasses.disabled} .${outlinedInputClasses.notchedOutline}`]: {
+            borderColor: 'rgba(255, 255, 255, 0.42)'
           }
         }
       }
     },
-    MuiListItemText: {
-      ...overrides.MuiListItemText,
+    MuiAlert: {
+      ...baseComponents.MuiAlert,
       styleOverrides: {
-        ...overrides.MuiListItemText.styleOverrides,
+        ...baseComponents.MuiAlert?.styleOverrides,
         root: {
-          ...overrides.MuiListItemText.styleOverrides.root,
-          color: palette.text.primary
+          [`& .${alertClasses.colorError}`]: {
+            backgroundColor: 'rgba(244, 67, 54, 0.2)'
+          },
+          [`& .${alertClasses.colorWarning}`]: {
+            backgroundColor: 'rgba(255, 152, 0, 0.2)'
+          },
+          [`& .${alertClasses.colorInfo}`]: {
+            backgroundColor: 'rgba(33, 150, 243, 0.2)'
+          },
+          [`& .${alertClasses.colorSuccess}`]: {
+            backgroundColor: 'rgba(76, 175, 80, 0.2)'
+          }
+        }
+      }
+    },
+    MuiSpeedDialAction: {
+      styleOverrides: {
+        fab: ({ theme }) => ({
+          color: alpha(theme.palette.info.contrastText, 0.54),
+          background: alpha('#fff', getOverlayAlpha(6))
+        }),
+        staticTooltipLabel: {
+          boxShadow: 'none',
+          background: alpha('#fff', getOverlayAlpha(6))
         }
       }
     }
