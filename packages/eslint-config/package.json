@@ -13,7 +13,8 @@
   "files": [
     "library.js",
     "react.js",
-    "storybook.js"
+    "storybook.js",
+    "base.js"
   ],
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "8.x",

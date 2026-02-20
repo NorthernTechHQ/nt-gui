@@ -1,53 +1,28 @@
-import js from '@eslint/js';
-import eslintConfigPrettier from 'eslint-config-prettier/flat';
-import importPlugin from 'eslint-plugin-import';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
-import sonarjsPlugin from 'eslint-plugin-sonarjs';
 import { defineConfig } from 'eslint/config';
-import globals from 'globals';
-import { resolve } from 'node:path';
-import ts from 'typescript-eslint';
+
+import { baseConfig } from './base.js';
 
 /**
  * Flat config version of the React ESLint configuration.
+ * Extends the shared base logic.
  */
 export default defineConfig([
-  {
-    ignores: ['**/node_modules/**', '**/dist/**', '.eslintrc.js', '**/*.css']
-  },
-  js.configs.recommended,
-  ts.configs.recommended,
+  ...baseConfig,
+
   reactPlugin.configs.flat.recommended,
   reactPlugin.configs.flat['jsx-runtime'],
   reactHooksPlugin.configs.flat['recommended'],
-  eslintConfigPrettier,
+
   {
     files: ['**/*.{js,mjs,cjs,ts,tsx}'],
     languageOptions: {
-      ecmaVersion: 2020,
-      sourceType: 'module',
       globals: {
-        ...globals.browser,
         JSX: true
-      },
-      parser: ts.parser,
-      parserOptions: {
-        tsconfigRootDir: resolve(process.cwd())
       }
     },
-    plugins: {
-      import: importPlugin,
-      sonarjs: sonarjsPlugin
-    },
     rules: {
-      'arrow-body-style': ['error', 'as-needed'],
-      'consistent-this': ['error', 'self'],
-      'import/no-named-as-default': 'off',
-      'no-console': 'off',
-      'no-prototype-builtins': 'off',
-      'no-unused-vars': 'off',
-      quotes: ['error', 'single', { allowTemplateLiterals: true }],
       'react/forbid-dom-props': 'error',
       'react/jsx-no-target-blank': 'error',
       'react/jsx-pascal-case': 'error',
@@ -67,18 +42,7 @@ export default defineConfig([
       'react/static-property-placement': 'error',
       'react/style-prop-object': 'error',
       'react/void-dom-elements-no-children': 'error',
-      'sonarjs/cognitive-complexity': ['error', 17],
-      '@typescript-eslint/member-ordering': [
-        'error',
-        {
-          default: {
-            order: 'alphabetically-case-insensitive'
-          }
-        }
-      ],
-      '@typescript-eslint/ban-ts-comment': 'off',
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': 'error',
+
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
       'react-hooks/set-state-in-effect': 'warn'
