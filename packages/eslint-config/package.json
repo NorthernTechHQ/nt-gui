@@ -35,6 +35,8 @@
   },
   "type": "module",
   "scripts": {
+    "test": "vitest eslint.test.js",
+    "test-ci": "vitest eslint.test.js",
     "build": "tsup library.js react.js storybook.js",
     "publish": "npm publish",
     "pre-publish": "npm publish --tag next"
