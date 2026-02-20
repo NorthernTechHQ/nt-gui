@@ -37,6 +37,9 @@
     "lint": {
       "cache": true
     },
+    "format:check": {
+      "cache": true
+    },
     "dev": {
       "cache": false,
       "persistent": true

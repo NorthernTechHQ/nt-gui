@@ -9,8 +9,8 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite dev",
-    "lint": "turbo run lint",
-    "format:check": "prettier --check \"packages/**/*.{js,ts,jsx,tsx,less}\"",
+    "lint": "turbo run lint --continue --log-order=grouped",
+    "format:check": "turbo run format:check --continue --log-order=grouped",
     "test": "turbo run test-ci",
     "dev-storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build --docs",
