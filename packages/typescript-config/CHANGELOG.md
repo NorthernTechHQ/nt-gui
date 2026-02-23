@@ -1,5 +1,5 @@
 ---
-## @northern.tech/typescript-config-0.2.0 - 2025-08-13
+## @northern.tech/typescript-config-0.2.0 - 2026-02-28
 
 
 ### Bug fixes
@@ -13,6 +13,8 @@
 - *(typescript-config)* Default to esnext modules for library usage
 
  ([dbbf1fc](https://github.com/NorthernTechHQ/nt-gui/commit/dbbf1fc299b643c63f25339fff2ea3c21b86f3f4))  by @mzedel
+
+
 
 
 
@@ -33,6 +35,8 @@
 - *(typescript-config)* Skip storybooks from building
 
  ([7b05a8d](https://github.com/NorthernTechHQ/nt-gui/commit/7b05a8d6b77220b123a80d7591b1d759fc4fcdad))  by @aleksandrychev
+
+
 
 
 
