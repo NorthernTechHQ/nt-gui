@@ -1,4 +1,11 @@
 ---
+## @northern.tech/utils-0.7.3 - 2026-02-28
+
+
+### Security
+
+
+
 ## @northern.tech/utils-0.7.2 - 2025-11-04
 
 
@@ -10,6 +17,8 @@
 - *(utils)* Increased compatibility w/ vitest hooks as they require named functions
 
  ([918defd](https://github.com/NorthernTechHQ/nt-gui/commit/918defdcc00dd9276b318f7d141b4cc7b1613d52))  by @mzedel
+
+
 
 
 
@@ -36,6 +45,8 @@
 
 
 
+
+
 ## @northern.tech/utils-0.7.0 - 2025-10-16
 
 
@@ -47,6 +58,8 @@
 - *(utils)* Let utils rely on newer backend type definitions
 
  ([2ac5f87](https://github.com/NorthernTechHQ/nt-gui/commit/2ac5f879c0032d3b8c9e5f92aaf5e571da770cb2))  by @mzedel
+
+
 
 
 
@@ -67,6 +80,8 @@
 - *(utils)* Unified api url access for multi api version services
 
  ([457c23a](https://github.com/NorthernTechHQ/nt-gui/commit/457c23a08515be4e5a80c02153bd5465e90d8e17))  by @mzedel
+
+
 
 
 
@@ -95,6 +110,10 @@
 
 
 
+
+
+
+
 ### Security
 
 
@@ -110,6 +129,8 @@
 - *(utils)* Fixed an issue that would prevent (not) finding software in an artifact without newer style software
 
  ([dfd5aca](https://github.com/NorthernTechHQ/nt-gui/commit/dfd5aca9372299a9e4f456e151d4ed0ddec8d194))  by @mzedel
+
+
 
 
 
@@ -132,6 +153,8 @@
 
 
 
+
+
 ### Features
 
 #### Utils
@@ -140,6 +163,8 @@
 - *(utils)* Added more types & enabled type checking
 
  ([6f8c272](https://github.com/NorthernTechHQ/nt-gui/commit/6f8c2724d695e94dfc92bac67be66cfffb400299))  by @mzedel
+
+
 
 
 
@@ -162,6 +187,8 @@
 
 
 
+
+
 ### Security
 
 
@@ -178,9 +205,13 @@
 
  ([28e3b2d](https://github.com/NorthernTechHQ/nt-gui/commit/28e3b2dbfe8ad42bc4b373b1f47ecbb147b6b9b6))  by @aleksandrychev
 
+
+
 - *(utils)* Set explicit extension on dayjs utc plugin import
 
  ([382ceb1](https://github.com/NorthernTechHQ/nt-gui/commit/382ceb1bd9a1bbeff85d9af3aaf77dd1c86798ce))  by @aleksandrychev
+
+
 
 
 
@@ -198,6 +229,8 @@
 - *(utils)* Added dateRangeToUnix function to helpers
 
  ([651ddb9](https://github.com/NorthernTechHQ/nt-gui/commit/651ddb92080e1ef02e3a7da69b3d8919c1547936))  by @aleksandrychev
+
+
 
 
 
@@ -246,6 +279,8 @@
 - *(utils)* Marked utils as public package to allow npmjs publishing
 
  ([ba94fa5](https://github.com/NorthernTechHQ/nt-gui/commit/ba94fa5e6cb483f3d6d4b6885817b3ea544fc677))  by @mzedel
+
+
 
 
 
