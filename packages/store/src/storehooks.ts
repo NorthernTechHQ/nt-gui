@@ -71,6 +71,7 @@ const featureFlags = [
   'hasDeviceConnect',
   'hasFeedbackEnabled',
   'hasReporting',
+  'hasManifestsEnabled',
   'hasMonitor',
   'hasMCUEnabled',
   'isEnterprise'
