@@ -256,6 +256,11 @@ export const components: Components<Theme> = {
       })
     }
   },
+  MuiMenuItem: {
+    defaultProps: {
+      dense: true
+    }
+  },
   MuiOutlinedInput: {
     defaultProps: {
       size: 'small'
