@@ -296,6 +296,13 @@ export const components: Components<Theme> = {
       }
     }
   },
+  MuiToggleButton: {
+    styleOverrides: {
+      root: {
+        textTransform: 'none'
+      }
+    }
+  },
   MuiSpeedDialAction: {
     styleOverrides: {
       fab: ({ theme }) => ({
