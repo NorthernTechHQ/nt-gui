@@ -222,6 +222,7 @@ export const verifyEmailStart = createAppAsyncThunk(`${sliceName}/verifyEmailSta
 
 export const verifyEmailComplete = createAppAsyncThunk(`${sliceName}/verifyEmailComplete`, (secret_hash: string, { dispatch }) =>
   GeneralApi.post(`${useradmApiUrl}/auth/verify-email/complete`, { secret_hash })
+    .then(() => dispatch(actions.receivedActivationCode('')))
     .catch(err => commonErrorHandler(err, 'An error occured completing the email verification process:', dispatch))
     .finally(() => Promise.resolve(dispatch(getUser(OWN_USER_ID))))
 );
