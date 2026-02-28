@@ -1,5 +1,5 @@
 ---
-## @northern.tech/themes-0.11.0 - 2026-02-19
+## @northern.tech/themes-0.11.0 - 2026-02-28
 
 
 ### Bug fixes
@@ -54,6 +54,21 @@
   .align-items-end { align-items: end; }
   .justify-self-start { justify-self: start; }
   ```
+
+
+
+
+
+### Refactor
+
+#### Themes
+
+
+- *(themes)* Turned prior "next" theme into default mender theme
+
+ ([03e3943](https://github.com/NorthernTechHQ/nt-gui/commit/03e3943937fd6819f0a9c8c18528c3c732a2afc5))  by @mzedel
+
+
 
 
 
