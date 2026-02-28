@@ -1,5 +1,5 @@
 ---
-## @northern.tech/types-0.5.1 - 2026-02-19
+## @northern.tech/types-0.5.1 - 2026-02-28
 
 
 ### Bug fixes
