@@ -256,6 +256,11 @@ export const components: Components<Theme> = {
       })
     }
   },
+  MuiMenuItem: {
+    defaultProps: {
+      dense: true
+    }
+  },
   MuiOutlinedInput: {
     defaultProps: {
       size: 'small'
@@ -293,6 +298,13 @@ export const components: Components<Theme> = {
     styleOverrides: {
       root: {
         minWidth: 220
+      }
+    }
+  },
+  MuiToggleButton: {
+    styleOverrides: {
+      root: {
+        textTransform: 'none'
       }
     }
   },
