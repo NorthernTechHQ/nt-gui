@@ -46,7 +46,7 @@
     "@northern.tech/eslint-config": "*",
     "@northern.tech/typescript-config": "*",
     "eslint": "^9.39.1",
-    "jsdom": "^27.4.0",
+    "jsdom": "^28.1.0",
     "tsup": "8.5.1",
     "vitest": "^4.0.18"
   },
