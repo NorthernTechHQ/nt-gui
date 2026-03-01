@@ -130,7 +130,7 @@
     "@vitejs/plugin-react": "^5.1.2",
     "eslint": "^9.39.1",
     "jsdom": "^27.4.0",
-    "msw": "^2.12.7",
+    "msw": "^2.12.10",
     "tsup": "8.5.1",
     "vitest": "^4.0.18"
   },
@@ -142,7 +142,7 @@
     "@northern.tech/utils": "*",
     "@mui/icons-material": "^7.x",
     "@reduxjs/toolkit": "^2.x",
-    "@sentry/react": "^10.38.0",
+    "@sentry/react": "^10.40.0",
     "axios": "^1.x",
     "dayjs": "^1.x",
     "jwt-decode": "^4.x",
