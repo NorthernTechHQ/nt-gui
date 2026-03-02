@@ -1,5 +1,47 @@
 ---
-## @northern.tech/store-1.0.0 - 2026-02-18
+## @northern.tech/store-0.23.0 - 2026-03-02
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Ensured successful email activation is cleaned up after
+
+([MEN-9419](https://northerntech.atlassian.net/browse/MEN-9419)) ([6562bdf](https://github.com/NorthernTechHQ/nt-gui/commit/6562bdf0896c254e10e91e5736b7713ac2f1a0a5))  by @mzedel
+
+
+
+
+
+  - this prevents duplicate verification attempts which cause confusing errors in the UI
+
+
+
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added support for orchestrator manifests feature flag
+
+([MEN-9399](https://northerntech.atlassian.net/browse/MEN-9399)) ([c084fce](https://github.com/NorthernTechHQ/nt-gui/commit/c084fce1b0acf947ad88ee33779a8184a324f821))  by @mzedel
+
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/store-0.22.0 - 2026-02-18
 
 
 ### Bug fixes
