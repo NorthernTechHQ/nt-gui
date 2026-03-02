@@ -21,6 +21,7 @@ variables:
   GITHUB_STATUS_API_URL:
     value: 'https://api.github.com/repos/NorthernTechHQ/$CI_PROJECT_NAME/statuses/$CI_COMMIT_SHA'
     description: 'Github endpoint to update CI pipeline progress'
+  NPM_CONFIG_CACHE: '$CI_PROJECT_DIR/.npm'
   HUSKY:
     value: "0"
     description: 'Disable pre-commit hooks in CI'
@@ -39,6 +40,12 @@ default:
     when:
       - runner_system_failure
       - stuck_or_timeout_failure
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
 
 image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/${NODE_IMAGE}
 

@@ -39,7 +39,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
       style="pointer-events: none;"
     >
       <form
-        class="margin-bottom relative margin-top css-gdg6z-filters "
+        class="margin-bottom relative margin-top css-1t68f82-filters "
         novalidate=""
       >
         <div
