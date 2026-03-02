@@ -25,8 +25,7 @@ import CopyToClipboard from './CopyToClipboard';
 const useStyles = makeStyles()(theme => ({
   button: { float: 'right', marginRight: theme.spacing(-2), marginTop: theme.spacing(-0.25) },
   code: {
-    // @ts-expect-error: lightgrey is only present in the old theme
-    backgroundColor: theme.palette.background.lightgrey ? theme.palette.background.lightgrey : theme.palette.grey[100],
+    backgroundColor: theme.palette.grey[100],
     fontFamily: 'monospace',
     borderRadius: theme.spacing(0.5),
     padding: theme.spacing(2),

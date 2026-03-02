@@ -24,7 +24,7 @@ import ExpandableAttribute from './ExpandableAttribute';
 
 const useStyles = makeStyles()(theme => ({
   notes: { display: 'block', whiteSpace: 'pre-wrap' },
-  // @ts-expect-error: type misalignment in styleOverride root type
+  // @ts-expect-error - styleOverrides.root is a union type, but we know it's an object here
   notesWrapper: { minWidth: theme.components?.MuiFormControl?.styleOverrides?.root?.minWidth }
 }));
 
