@@ -87,6 +87,28 @@ export const webhookEvents = [
     delivery_statuses: [{ integration_id: '1', success: true, status_code: 200 }]
   }
 ];
+
+export const spTenantLimits = {
+  max_devices: {
+    current_value: 0,
+    name: 'max_devices',
+    tenant_id: '699f07a3e783def54cf6201f',
+    value: 200
+  },
+  max_micro_devices: {
+    current_value: 0,
+    name: 'max_micro_devices',
+    tenant_id: '699f07a3e783def54cf6201f',
+    value: 280
+  },
+  max_system_devices: {
+    current_value: 0,
+    name: 'max_system_devices',
+    tenant_id: '699f07a3e783def54cf6201f',
+    value: 20
+  }
+};
+
 export const tenants = [
   {
     id: '671a0f1dd58c813118fe8622',
@@ -108,6 +130,26 @@ export const tenants = [
     max_child_tenants: 0,
     device_count: 0,
     device_limit: 100,
+    device_limits: {
+      max_devices: {
+        current_value: 0,
+        name: 'max_devices',
+        tenant_id: '699f07a3e783def54cf6201f',
+        value: 200
+      },
+      max_micro_devices: {
+        current_value: 0,
+        name: 'max_micro_devices',
+        tenant_id: '699f07a3e783def54cf6201f',
+        value: 280
+      },
+      max_system_devices: {
+        current_value: 0,
+        name: 'max_system_devices',
+        tenant_id: '699f07a3e783def54cf6201f',
+        value: 20
+      }
+    },
     binary_delta: true
   }
 ];
