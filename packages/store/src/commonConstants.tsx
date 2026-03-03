@@ -51,6 +51,8 @@ export interface IdAttribute {
 }
 export const defaultIdAttribute: Readonly<IdAttribute> = Object.freeze({ attribute: 'id', scope: ATTRIBUTE_SCOPES.identity });
 
+export const productOrder = ['micro', 'standard', 'system'];
+
 export const credentialTypes = {
   aws: 'aws',
   http: 'http',
