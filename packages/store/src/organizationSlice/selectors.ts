@@ -11,6 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { Tenant } from '@northern.tech/types/MenderTypes';
 import { createSelector } from '@reduxjs/toolkit';
 
 import { EXTERNAL_PROVIDER } from '../constants';
@@ -49,3 +50,46 @@ export const getAuditLogEntry = createSelector([getAuditLog, getAuditLogSelectio
   const [eventAction, eventTime] = atob(selectedId).split('|');
   return events.find(item => item.action === eventAction && item.time === eventTime);
 });
+
+const productOrder = ['micro', 'standard', 'system'];
+
+export const toDeviceLimitEntry = ([key, limit]) => {
+  const cleanName = key.replace(/max_|_?devices/g, '') || 'standard';
+  return [
+    cleanName,
+    {
+      id: cleanName,
+      backendId: key,
+      limit: limit.value,
+      current: limit.current_value,
+      name: cleanName,
+      quotaLeft: Math.max(limit.value - limit.current_value, 0),
+      limitReached: limit.value !== -1 && limit.value <= limit.current_value
+    }
+  ];
+};
+
+const formatLimits = (deviceLimits: Tenant['device_limits'], skipFilter = false) => {
+  if (!deviceLimits) return {};
+  const formattedLimits = Object.fromEntries(
+    Object.entries(deviceLimits)
+      .filter(([, limit]) => skipFilter || limit.value !== 0)
+      .map(toDeviceLimitEntry)
+  );
+  const presentOrder = productOrder.filter(key => key in formattedLimits);
+  return Object.fromEntries(presentOrder.map(key => [key, formattedLimits[key]]));
+};
+const disabledTiers = (deviceLimits: Tenant['device_limits']) =>
+  Object.entries(deviceLimits ?? {})
+    .filter(([, { value }]) => value === 0)
+    .map(entry => toDeviceLimitEntry(entry)[0]);
+
+export const getDisabledTiers = createSelector([getOrganization], ({ device_limits }) => disabledTiers(device_limits));
+export const getSpLimits = createSelector([getOrganization], ({ device_limits }) => formatLimits(device_limits));
+export const getTenantListWithLimits = createSelector([getTenantsList], tenantList => ({
+  ...tenantList,
+  tenants: tenantList.tenants.map(tenant => ({
+    ...tenant,
+    device_limits: formatLimits(tenant.device_limits, true)
+  }))
+}));

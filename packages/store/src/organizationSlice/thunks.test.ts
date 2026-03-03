@@ -39,7 +39,7 @@ import {
   deleteIntegration,
   deleteSsoConfig,
   downloadLicenseReport,
-  editTenantDeviceLimit,
+  editTenant,
   getAuditLogs,
   getAuditLogsCsvLink,
   getCurrentCard,
@@ -683,8 +683,8 @@ describe('organization actions', () => {
     });
     expect(store.getActions()).toHaveLength(0);
     const expectedActions = [
-      { type: editTenantDeviceLimit.pending.type },
-      { type: appActions.setSnackbar.type, payload: 'Device Limit was changed successfully' },
+      { type: editTenant.pending.type },
+      { type: appActions.setSnackbar.type, payload: 'Tenant was changed successfully' },
       { type: getUserOrganization.pending.type },
       { type: actions.setOrganization.type },
       { type: appActions.setAnnouncement.type, payload: tenantDataDivergedMessage },
@@ -692,9 +692,11 @@ describe('organization actions', () => {
       { type: getTenants.pending.type },
       { type: actions.setTenantListState.type },
       { type: getTenants.fulfilled.type },
-      { type: editTenantDeviceLimit.fulfilled.type }
+      { type: editTenant.fulfilled.type }
     ];
-    const request = store.dispatch(editTenantDeviceLimit({ id: '671a0f1dd58c813118fe8622', name: 'child2', newLimit: 2 }));
+    const request = store.dispatch(
+      editTenant({ id: '671a0f1dd58c813118fe8622', name: 'child2', device_limits: { max_devices: { Name: 'max_devices', value: 2 } } })
+    );
     await vi.advanceTimersByTime(1500);
     await vi.runOnlyPendingTimersAsync();
     await expect(request).resolves.toBeTruthy();
