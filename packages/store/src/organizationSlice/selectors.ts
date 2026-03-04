@@ -11,9 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { Tenant } from '@northern.tech/types/MenderTypes';
 import { createSelector } from '@reduxjs/toolkit';
 
-import { EXTERNAL_PROVIDER } from '../constants';
+import { EXTERNAL_PROVIDER, productOrder } from '../constants';
 import type { RootState } from '../store';
 
 export const getOrganization = (state: RootState) => state.organization.organization;
@@ -49,3 +50,39 @@ export const getAuditLogEntry = createSelector([getAuditLog, getAuditLogSelectio
   const [eventAction, eventTime] = atob(selectedId).split('|');
   return events.find(item => item.action === eventAction && item.time === eventTime);
 });
+
+const toTierName = (key: string) => key.replace(/max_|_?devices/g, '') || 'standard';
+const processDeviceLimits = (deviceLimits: Tenant['device_limits'], skipFilter = false) => {
+  const result = { limits: {}, disabled: [] };
+  if (!deviceLimits) return result;
+  const tiersByName = Object.fromEntries(Object.entries(deviceLimits).map(([key, limit]) => [toTierName(key), { key, limit }]));
+  return productOrder.reduce((accu, tierName) => {
+    const entry = tiersByName[tierName];
+    if (!entry) return accu;
+    const { key, limit } = entry;
+    if (limit.value === 0) {
+      accu.disabled.push(tierName);
+      if (!skipFilter) return accu;
+    }
+    accu.limits[tierName] = {
+      id: tierName,
+      backendId: key,
+      limit: limit.value,
+      current: limit.current_value,
+      name: tierName,
+      quotaLeft: Math.max(limit.value - limit.current_value, 0),
+      limitReached: limit.value !== -1 && limit.value <= limit.current_value
+    };
+    return accu;
+  }, result);
+};
+const getDeviceLimitsInfo = createSelector([getOrganization], ({ device_limits }) => processDeviceLimits(device_limits));
+export const getDisabledTiers = createSelector([getDeviceLimitsInfo], ({ disabled }) => disabled);
+export const getSpLimits = createSelector([getDeviceLimitsInfo], ({ limits }) => limits);
+export const getTenantListWithLimits = createSelector([getTenantsList], tenantList => ({
+  ...tenantList,
+  tenants: tenantList.tenants.map(tenant => ({
+    ...tenant,
+    device_limits: processDeviceLimits(tenant.device_limits, true).limits
+  }))
+}));

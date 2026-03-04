@@ -23,7 +23,8 @@ import type {
   PreviewRequest,
   Product,
   ProductInfo,
-  SupportRequest
+  SupportRequest,
+  UpdateChildTenant
 } from '@northern.tech/types/MenderTypes';
 import { dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
 import dayjs from 'dayjs';
@@ -349,7 +350,7 @@ export const addTenant = createAppAsyncThunk(`${sliceName}/createTenant`, (selec
 
 const tenantListRetrieval = async (config): Promise<[BackendTenant[], number]> => {
   const { page, perPage } = config;
-  const params = new URLSearchParams({ page, per_page: perPage }).toString();
+  const params = new URLSearchParams({ page, per_page: perPage, tiers: 'true' }).toString();
   const tenantList = await Api.get<BackendTenant[]>(`${tenantadmApiUrlv2}/tenants?${params}`);
   const totalCount = tenantList.headers[headerNames.total] || TENANT_LIST_DEFAULT.perPage;
   return [tenantList.data, Number(totalCount)];
@@ -376,17 +377,15 @@ export const setTenantsListState = createAppAsyncThunk(
   }
 );
 
-interface editTenantBody {
+type EditTenantArgs = UpdateChildTenant & {
   id: string;
-  name: string;
-  newLimit: number;
-}
-export const editTenantDeviceLimit = createAppAsyncThunk(`${sliceName}/editDeviceLimit`, ({ newLimit, id, name }: editTenantBody, { dispatch }) =>
-  Api.put(`${tenantadmApiUrlv2}/tenants/${id}/child`, { device_limit: newLimit, name })
+};
+export const editTenant = createAppAsyncThunk(`${sliceName}/editDeviceLimit`, ({ device_limits, id, name }: EditTenantArgs, { dispatch }) =>
+  Api.put(`${tenantadmApiUrlv2}/tenants/${id}/child`, { device_limits, name })
     .catch(err => commonErrorHandler(err, `Device Limit cannot be changed`, dispatch))
     .then(() =>
       Promise.all([
-        dispatch(setSnackbar('Device Limit was changed successfully')),
+        dispatch(setSnackbar('Tenant was changed successfully')),
         dispatch(getUserOrganization()),
         new Promise(resolve => setTimeout(() => resolve(dispatch(getTenants())), TIMEOUTS.oneSecond))
       ])
@@ -419,7 +418,7 @@ export const removeTenant = createAppAsyncThunk(`${sliceName}/editDeviceLimit`, 
     )
 );
 export const getUserOrganization = createAppAsyncThunk(`${sliceName}/getUserOrganization`, (_, { dispatch, getState }) =>
-  Api.get<Tenant>(`${tenantadmApiUrlv1}/user/tenant`).then(res => {
+  Api.get<Tenant>(`${tenantadmApiUrlv1}/user/tenant?tiers=true`).then(res => {
     const tasks: ReturnType<AppDispatch>[] = [dispatch(actions.setOrganization(res.data))];
     const { addons, plan, trial } = res.data;
     const { token } = getCurrentSession(getState()) as UserSession;
