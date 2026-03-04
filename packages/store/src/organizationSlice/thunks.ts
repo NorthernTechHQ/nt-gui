@@ -337,7 +337,7 @@ export const setAuditlogsState = createAppAsyncThunk(
 */
 export const tenantDataDivergedMessage = 'The system detected there is a change in your plan or purchased add-ons. Please log out and log in again';
 
-export const addTenant = createAppAsyncThunk(`${sliceName}/createTenant`, (selectionState: NewTenant, { dispatch }) =>
+export const addTenant = createAppAsyncThunk(`${sliceName}/createTenant`, (selectionState: NewTenant & UpdateChildTenant, { dispatch }) =>
   Api.post(`${tenantadmApiUrlv2}/tenants`, selectionState)
     .then(() =>
       Promise.all([
