@@ -166,6 +166,8 @@ release:npmjs:
       when: manual
     - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH
       when: manual
+  tags:
+    - k8s
   needs:
     - job: changelog
   script:
