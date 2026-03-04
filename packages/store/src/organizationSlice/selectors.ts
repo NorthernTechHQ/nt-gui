@@ -53,7 +53,7 @@ export const getAuditLogEntry = createSelector([getAuditLog, getAuditLogSelectio
 
 const toTierName = (key: string) => key.replace(/max_|_?devices/g, '') || 'standard';
 const processDeviceLimits = (deviceLimits: Tenant['device_limits'], skipFilter = false) => {
-  const result = { limits: {}, disabled: [] };
+  const result: { disabled: string[]; limits: Record<string, object> } = { limits: {}, disabled: [] };
   if (!deviceLimits) return result;
   const tiersByName = Object.fromEntries(Object.entries(deviceLimits).map(([key, limit]) => [toTierName(key), { key, limit }]));
   return productOrder.reduce((accu, tierName) => {

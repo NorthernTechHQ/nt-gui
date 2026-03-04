@@ -33,13 +33,8 @@ stages:
   - release
 
 default:
-  tags:
-    - k8s
-  retry:
-    max: 2
-    when:
-      - runner_system_failure
-      - stuck_or_timeout_failure
+  tags: !reference [.qa-common-default-runner, tags]
+  retry: !reference [.qa-common-default-retry, retry]
   cache:
     key:
       files:
@@ -54,6 +49,8 @@ include:
   - project: 'Northern.tech/Mender/mendertesting'
     file:
       - '.gitlab-ci-github-status-updates.yml'
+      - qa-common/runner.yml
+      - qa-common/retry.yml
 
 lint:
   stage: test
@@ -72,6 +69,8 @@ format:
 test:
   stage: test
   needs: []
+  tags:
+    - k8s
   script:
     - npm ci
     - npm run test
@@ -79,6 +78,8 @@ test:
 build:
   stage: build
   needs: []
+  tags:
+    - k8s
   script:
     - npm ci
     - npm run release
