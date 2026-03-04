@@ -14,6 +14,7 @@
 import { config } from '@northern.tech/typescript-config/tsup-config.js';
 import { defineConfig } from 'tsup';
 
+// @ts-ignore
 export default defineConfig(options => ({
   ...config,
   ...options

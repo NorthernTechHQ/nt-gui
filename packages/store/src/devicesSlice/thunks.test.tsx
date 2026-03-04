@@ -631,6 +631,7 @@ describe('static grouping related actions', () => {
       { type: getGroups.fulfilled.type },
       { type: addStaticGroup.fulfilled.type }
     ];
+    // @ts-ignore
     await store.dispatch(addStaticGroup({ group: groupName, devices: [defaultState.devices.byId.a1] }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
@@ -1143,6 +1144,7 @@ describe('troubleshooting related actions', () => {
 const integrationMock: Integration = {
   ...EXTERNAL_PROVIDER['iot-hub'],
   provider: 'iot-hub',
+  // @ts-ignore
   credentials: {
     type: EXTERNAL_PROVIDER['iot-hub'].credentialsType as Credentials['type'],
     aws: {

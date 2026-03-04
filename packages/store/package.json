@@ -110,7 +110,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "NODE_OPTIONS='--max-old-space-size=4096' tsup",
+    "build": "tsup --no-dts && tsc src/**/* --emitDeclarationOnly --declaration --outDir dist",
     "dev": "tsup --watch --no-dts --onSuccess 'yalc publish --no-script --push'",
     "lint": "eslint --quiet .",
     "format:check": "prettier --check \"src/**/*.{js,ts,jsx,tsx,less}\"",

@@ -458,6 +458,7 @@ describe('organization actions', () => {
       { type: actions.receiveExternalDeviceIntegrations.type, payload: [] },
       { type: deleteIntegration.fulfilled.type }
     ];
+    // @ts-ignore
     const request = store.dispatch(deleteIntegration({ id: '1', provider: 'webhook', credentials: { type: 'http', connection_string: '' } }));
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {

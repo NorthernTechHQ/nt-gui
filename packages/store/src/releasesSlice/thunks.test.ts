@@ -224,6 +224,7 @@ describe('release actions', () => {
     ];
     await store.dispatch(
       createArtifact({
+        // @ts-ignore
         file: { name: 'createdRelease', some: 'thing', someList: ['test', 'more'], complex: { objectThing: 'yes' } },
         meta: { name: 'filethings', description: '' }
       })
