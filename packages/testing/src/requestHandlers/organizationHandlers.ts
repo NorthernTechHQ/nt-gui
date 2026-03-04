@@ -141,7 +141,7 @@ export const organizationHandlers = [
     return new HttpResponse(null, { status: 200 });
   }),
   http.post(`https://hosted.mender.io${tenantadmApiUrlv2}/tenants/trial`, signupHandler),
-  http.get(`${tenantadmApiUrlv2}/tenants`, () => new HttpResponse.json(tenants)),
+  http.get(`${tenantadmApiUrlv2}/tenants`, () => HttpResponse.json(tenants)),
   http.get(`${tenantadmApiUrlv2}/billing`, () => HttpResponse.json({ card: { last4: '7890', exp_month: 1, exp_year: 2024, brand: 'testCorp' } })),
   http.get(`${tenantadmApiUrlv2}/billing/profile`, () =>
     HttpResponse.json({
