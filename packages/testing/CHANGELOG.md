@@ -1,4 +1,23 @@
 ---
+## @northern.tech/testing-0.7.2 - 2026-03-04
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Added tiers support to sp tenant
+
+ ([70d19e8](https://github.com/NorthernTechHQ/nt-gui/commit/70d19e8f2fdbec3260768da010b8eadb2db84c0e))  by @mineralsfree
+
+
+
+
+
+
+
+
 ## @northern.tech/testing-0.7.1 - 2026-02-18
 
 
