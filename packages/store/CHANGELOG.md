@@ -1,4 +1,23 @@
 ---
+## @northern.tech/store-0.24.0 - 2026-03-05
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added tiers support to sp tenant
+
+ ([c4ee281](https://github.com/NorthernTechHQ/nt-gui/commit/c4ee28110f3bed770dc1c378295a074fc8b9964d))  by @mineralsfree
+
+
+
+
+
+
+
+
 ## @northern.tech/store-0.23.0 - 2026-03-02
 
 
