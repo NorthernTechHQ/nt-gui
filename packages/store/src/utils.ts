@@ -288,3 +288,13 @@ export const parseSubscriptionPreview = (lines: Line[]): Omit<PricePreview, 'tot
     }
     return acc;
   }, {});
+
+export const convertToBackendSPLimits = (limits, spLimits) =>
+  Object.fromEntries(
+    Object.entries(limits)
+      .filter(([key]) => !!spLimits[key])
+      .map(([key, limit]) => {
+        const { backendId } = spLimits[key];
+        return [backendId, { Name: backendId, value: Number(limit) || 0 }];
+      })
+  );
