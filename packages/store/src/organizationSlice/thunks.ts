@@ -53,12 +53,12 @@ import {
   tenantadmApiUrlv1,
   tenantadmApiUrlv2
 } from '../constants';
-import { getCurrentSession, getTenantCapabilities, getTenantsList } from '../selectors';
+import { getCurrentSession, getSpLimits, getTenantCapabilities, getTenantsList } from '../selectors';
 import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { getDeviceLimits, setFirstLoginAfterSignup } from '../thunks';
 import type { UserSession } from '../usersSlice';
-import { parseSubscriptionPreview } from '../utils';
+import { convertToBackendSPLimits, parseSubscriptionPreview } from '../utils';
 import { SSO_TYPES } from './constants';
 import { getAuditlogState, getOrganization } from './selectors';
 import type { AuditLogSelectionState, ProductConfig, ProductPlan, ProductTier, SSOConfig, Tenant, TenantList } from './types';
@@ -377,11 +377,15 @@ export const setTenantsListState = createAppAsyncThunk(
   }
 );
 
-type EditTenantArgs = UpdateChildTenant & {
+type EditTenantArgs = {
+  deviceLimits: Record<string, number>;
   id: string;
+  name: string;
 };
-export const editTenant = createAppAsyncThunk(`${sliceName}/editDeviceLimit`, ({ device_limits, id, name }: EditTenantArgs, { dispatch }) =>
-  Api.put(`${tenantadmApiUrlv2}/tenants/${id}/child`, { device_limits, name })
+export const editTenant = createAppAsyncThunk(`${sliceName}/editDeviceLimit`, ({ deviceLimits, id, name }: EditTenantArgs, { dispatch, getState }) => {
+  const spLimits = getSpLimits(getState());
+  const device_limits = convertToBackendSPLimits(deviceLimits, spLimits);
+  return Api.put(`${tenantadmApiUrlv2}/tenants/${id}/child`, { device_limits, name })
     .catch(err => commonErrorHandler(err, `Device Limit cannot be changed`, dispatch))
     .then(() =>
       Promise.all([
@@ -389,8 +393,8 @@ export const editTenant = createAppAsyncThunk(`${sliceName}/editDeviceLimit`, ({
         dispatch(getUserOrganization()),
         new Promise(resolve => setTimeout(() => resolve(dispatch(getTenants())), TIMEOUTS.oneSecond))
       ])
-    )
-);
+    );
+});
 export const editBillingProfile = createAppAsyncThunk(
   `${sliceName}/editBillingProfileEmail`,
   ({ billingProfile }: { billingProfile: BillingProfile }, { dispatch }) =>

@@ -696,9 +696,7 @@ describe('organization actions', () => {
       { type: getTenants.fulfilled.type },
       { type: editTenant.fulfilled.type }
     ];
-    const request = store.dispatch(
-      editTenant({ id: '671a0f1dd58c813118fe8622', name: 'child2', device_limits: { max_devices: { Name: 'max_devices', value: 2 } } })
-    );
+    const request = store.dispatch(editTenant({ id: '671a0f1dd58c813118fe8622', name: 'child2', deviceLimits: { standard: 2 } }));
     await vi.advanceTimersByTime(1500);
     await vi.runOnlyPendingTimersAsync();
     await expect(request).resolves.toBeTruthy();
