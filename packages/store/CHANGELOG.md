@@ -1,4 +1,11 @@
 ---
+## @northern.tech/store-0.24.1 - 2026-03-06
+
+
+### Bug fixes
+
+
+
 ## @northern.tech/store-0.24.0 - 2026-03-05
 
 
