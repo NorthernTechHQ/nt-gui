@@ -15036,6 +15036,10 @@ export type CompleteEmailVerificationErrors = {
    */
   400: Error;
   /**
+   * The resource is no longer available.
+   */
+  410: Error;
+  /**
    * Internal Server Error.
    */
   500: Error;
