@@ -1,3 +1,19 @@
+# Changelog
+
+## [0.6.0](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/common-0.5.0...@northern.tech/common-0.6.0) (2026-03-07)
+
+
+### Features
+
+* **store:** added app initialized flag to app slice ([d009d0f](https://github.com/NorthernTechHQ/nt-gui/commit/d009d0fae7d2784c8f32e600e07bfeeed6dbcb84))
+* **store:** added appInitialized flag to app slice ([02d0cf5](https://github.com/NorthernTechHQ/nt-gui/commit/02d0cf548b351f92e1f2eb643a9e0aaa9ea1899b))
+* **testing:** updated mock to include organization products ([893de26](https://github.com/NorthernTechHQ/nt-gui/commit/893de26f533427ab9fbf8779098ea7aaa2c8f29c))
+
+
+### Bug Fixes
+
+* **store:** aligned auditlogs hint visibility to correct plan ([285dd5a](https://github.com/NorthernTechHQ/nt-gui/commit/285dd5a18e64d82f17e3a6cd6e16311d712c88e6))
+
 ---
 ## @northern.tech/common-ui-0.8.1 - 2025-11-12
 
