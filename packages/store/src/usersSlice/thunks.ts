@@ -220,10 +220,9 @@ export const verifyEmailStart = createAppAsyncThunk(`${sliceName}/verifyEmailSta
     .finally(() => Promise.resolve(dispatch(getUser(OWN_USER_ID))))
 );
 
-export const verifyEmailComplete = createAppAsyncThunk(`${sliceName}/verifyEmailComplete`, (secret_hash: string, { dispatch }) =>
+export const verifyEmailComplete = createAppAsyncThunk(`${sliceName}/verifyEmailComplete`, (secret_hash: string, { dispatch, rejectWithValue }) =>
   GeneralApi.post(`${useradmApiUrl}/auth/verify-email/complete`, { secret_hash })
-    .then(() => dispatch(actions.receivedActivationCode('')))
-    .catch(err => commonErrorHandler(err, 'An error occured completing the email verification process:', dispatch))
+    .catch(err => rejectWithValue({ status: err.response?.status, data: err.response?.data }))
     .finally(() => Promise.resolve(dispatch(getUser(OWN_USER_ID))))
 );
 
