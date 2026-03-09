@@ -1,4 +1,23 @@
 ---
+## @northern.tech/store-0.25.0 - 2026-03-09
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Allowed deployments search to find devices using configured id attribute too
+
+ ([e79e858](https://github.com/NorthernTechHQ/nt-gui/commit/e79e85863d563ca72a292bcdf114eddca7e2fff1))  by @mzedel
+
+
+
+
+
+
+
+
 ## @northern.tech/store-0.24.1 - 2026-03-06
 
 
