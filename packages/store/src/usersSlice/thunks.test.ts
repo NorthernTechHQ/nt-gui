@@ -181,7 +181,6 @@ describe('user actions', () => {
     vi.clearAllMocks();
     const expectedActions = [
       { type: verifyEmailComplete.pending.type },
-      { type: actions.receivedActivationCode.type, payload: '' },
       { type: getUser.pending.type },
       { type: actions.receivedUser.type, payload: defaultState.users.byId[userId] },
       ...commonUserRetrievalActions,
