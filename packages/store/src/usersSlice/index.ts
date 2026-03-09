@@ -79,7 +79,6 @@ export type UserSettings = {
 };
 
 export type UserSliceType = {
-  activationCode?: string;
   byId: Record<string, User>;
   currentSession?: UserSession | object;
   currentUser: string | null;
@@ -101,7 +100,6 @@ export type UserSliceType = {
 };
 
 export const initialState: UserSliceType = {
-  activationCode: undefined,
   byId: {},
   currentUser: null,
   currentSession: {
@@ -152,9 +150,6 @@ export const usersSlice = createSlice({
     },
     receivedUserList: (state, action: PayloadAction<Record<string, User>>) => {
       state.byId = action.payload;
-    },
-    receivedActivationCode: (state, action: PayloadAction<string>) => {
-      state.activationCode = action.payload;
     },
     receivedUser: (state, action: PayloadAction<User>) => {
       state.byId[action.payload.id] = action.payload;
