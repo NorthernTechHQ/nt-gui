@@ -1,4 +1,24 @@
 ---
+## @northern.tech/store-0.26.0 - 2026-03-09
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Propagated the email verification error to UI
+
+([MEN-9260](https://northerntech.atlassian.net/browse/MEN-9260)) ([01cd656](https://github.com/NorthernTechHQ/nt-gui/commit/01cd656c12c65cd6ae0ad7bcc8c6741d77aa3953))  by @mineralsfree
+
+
+
+
+
+
+
+
+
 ## @northern.tech/store-0.25.0 - 2026-03-09
 
 
