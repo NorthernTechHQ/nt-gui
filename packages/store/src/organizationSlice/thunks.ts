@@ -337,15 +337,21 @@ export const setAuditlogsState = createAppAsyncThunk(
 */
 export const tenantDataDivergedMessage = 'The system detected there is a change in your plan or purchased add-ons. Please log out and log in again';
 
-export const addTenant = createAppAsyncThunk(`${sliceName}/createTenant`, (selectionState: NewTenant & UpdateChildTenant, { dispatch }) =>
-  Api.post(`${tenantadmApiUrlv2}/tenants`, selectionState)
-    .then(() =>
-      Promise.all([
-        dispatch(setSnackbar('Tenant was created successfully.')),
-        new Promise(resolve => setTimeout(() => resolve(dispatch(getTenants())), TIMEOUTS.oneSecond))
-      ])
-    )
-    .catch(err => commonErrorHandler(err, 'There was an error creating tenant', dispatch, commonErrorFallback))
+export const addTenant = createAppAsyncThunk(
+  `${sliceName}/createTenant`,
+  (selectionState: NewTenant & UpdateChildTenant & { deviceLimits: Record<string, string> }, { dispatch, getState }) => {
+    const spLimits = getSpLimits(getState());
+    const { deviceLimits, ...rest } = selectionState;
+    const device_limits = convertToBackendSPLimits(deviceLimits, spLimits);
+    return Api.post(`${tenantadmApiUrlv2}/tenants`, { ...rest, device_limits })
+      .then(() =>
+        Promise.all([
+          dispatch(setSnackbar('Tenant was created successfully.')),
+          new Promise(resolve => setTimeout(() => resolve(dispatch(getTenants())), TIMEOUTS.oneSecond))
+        ])
+      )
+      .catch(err => commonErrorHandler(err, 'There was an error creating tenant', dispatch, commonErrorFallback));
+  }
 );
 
 const tenantListRetrieval = async (config): Promise<[BackendTenant[], number]> => {
