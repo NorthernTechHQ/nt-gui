@@ -656,9 +656,7 @@ describe('organization actions', () => {
       { type: getTenants.fulfilled.type },
       { type: addTenant.fulfilled.type }
     ];
-    const request = store.dispatch(
-      addTenant({ name: 'Mikita', users: [{ email: 'some@example.com' }], device_limits: tenants[0].device_limits, binary_delta: true })
-    );
+    const request = store.dispatch(addTenant({ name: 'Mikita', users: [{ email: 'some@example.com' }], deviceLimits: { standard: 2 }, binary_delta: true }));
     vi.advanceTimersByTime(TIMEOUTS.oneSecond);
     await vi.runOnlyPendingTimersAsync();
     await expect(request).resolves.toBeTruthy();
