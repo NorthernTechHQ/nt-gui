@@ -1,4 +1,24 @@
 ---
+## @northern.tech/store-0.26.1 - 2026-03-10
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Fixed tenant creation endpoint
+
+([MEN-8880](https://northerntech.atlassian.net/browse/MEN-8880)) ([2b722f7](https://github.com/NorthernTechHQ/nt-gui/commit/2b722f78b66dcda4ea7c3515fa08c6efc21974aa))  by @mineralsfree
+
+
+
+
+
+
+
+
+
 ## @northern.tech/store-0.26.0 - 2026-03-09
 
 
