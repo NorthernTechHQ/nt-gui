@@ -290,9 +290,13 @@ export const getRelevantRoles = createSelector([getOrganization, getRolesList], 
 export const getShowSecurityAlert = createSelector(
   [getCurrentUser, getHas2FA, getFeatures, getIsEnterprise, getUserSettingsInitialized, getSecurityAlertDismissedTimestamp],
   (currentUser, has2FA, features, isEnterprise, settingsInitialized, dismissedTimestamp) => {
+    const isOAuth2 = !!currentUser?.sso?.length;
+    const userVerified = !!currentUser.verified;
+
     const isHosted = features?.isHosted;
     const canHave2FA = isEnterprise || isHosted;
-    if (!currentUser || !settingsInitialized || has2FA || !canHave2FA) {
+    const secureOAuthUser = isOAuth2 && userVerified;
+    if (!currentUser || !settingsInitialized || has2FA || !canHave2FA || secureOAuthUser) {
       return false;
     }
 
