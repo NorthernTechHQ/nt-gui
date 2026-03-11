@@ -25,6 +25,7 @@ export const deploymentSubstates = {
   failure: 'failure',
   installing: 'installing',
   noartifact: 'noartifact',
+  artifact_too_big: 'artifact_too_big',
   pause_before_committing: 'pause_before_committing',
   pause_before_installing: 'pause_before_installing',
   pause_before_rebooting: 'pause_before_rebooting',
@@ -38,13 +39,19 @@ export const deploymentStatesToSubstates = {
   inprogress: [deploymentSubstates.downloading, deploymentSubstates.installing, deploymentSubstates.rebooting],
   paused: [deploymentSubstates.pause_before_installing, deploymentSubstates.pause_before_rebooting, deploymentSubstates.pause_before_committing],
   pending: [deploymentSubstates.pending],
-  successes: [deploymentSubstates.success, deploymentSubstates.alreadyInstalled, deploymentSubstates.noartifact]
+  successes: [deploymentSubstates.success, deploymentSubstates.alreadyInstalled, deploymentSubstates.noartifact, deploymentSubstates.artifact_too_big]
 };
 
 export const deploymentStatesToSubstatesWithSkipped = {
   ...deploymentStatesToSubstates,
   failures: [deploymentSubstates.failure],
-  skipped: [deploymentSubstates.aborted, deploymentSubstates.noartifact, deploymentSubstates.alreadyInstalled, deploymentSubstates.decommissioned],
+  skipped: [
+    deploymentSubstates.aborted,
+    deploymentSubstates.noartifact,
+    deploymentSubstates.artifact_too_big,
+    deploymentSubstates.alreadyInstalled,
+    deploymentSubstates.decommissioned
+  ],
   successes: [deploymentSubstates.success]
 };
 export const installationSubstatesMap = {
