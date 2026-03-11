@@ -7126,6 +7126,20 @@ export type DeploymentsV2ListDeploymentsData = {
      *
      */
     sort?: 'asc' | 'desc';
+    /**
+     * Device identity or inventory attribute name to use for a fallback device lookup
+     * when no deployments match the given name filter. When set, the server resolves the
+     * first name value against the device inventory/identity and returns deployments
+     * targeting the matched device.
+     *
+     */
+    id_attribute?: string;
+    /**
+     * Scope for the id_attribute parameter. Defaults to "identity", unless id_attribute
+     * is "name" in which case it defaults to "inventory".
+     *
+     */
+    id_scope?: 'identity' | 'inventory';
   };
   url: '/api/management/v2/deployments/deployments';
 };
