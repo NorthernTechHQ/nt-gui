@@ -399,4 +399,26 @@ describe('release actions', () => {
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
+  it('should clear selection when page or sort changes', async () => {
+    const store = mockStore({
+      ...defaultState,
+      releases: { ...defaultState.releases, releasesList: { ...defaultState.releases.releasesList, selection: [0, 1, 2] } }
+    });
+    await store.dispatch(setReleasesListState({ page: 2 }));
+    const storeActions = store.getActions();
+    expect(storeActions).toContainEqual(
+      expect.objectContaining({ type: actions.setReleaseListState.type, payload: expect.objectContaining({ selection: [] }) })
+    );
+  });
+  it('should not clear selection when searchOnly is true', async () => {
+    const store = mockStore({
+      ...defaultState,
+      releases: { ...defaultState.releases, releasesList: { ...defaultState.releases.releasesList, selection: [0, 1] } }
+    });
+    await store.dispatch(setReleasesListState({ page: 2, searchOnly: true }));
+    const storeActions = store.getActions();
+    expect(storeActions).toContainEqual(
+      expect.objectContaining({ type: actions.setReleaseListState.type, payload: expect.objectContaining({ selection: [0, 1] }) })
+    );
+  });
 });

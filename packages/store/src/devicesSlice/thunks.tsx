@@ -594,6 +594,14 @@ export const setDeviceListState = createAppAsyncThunk(
           .catch(() => Promise.resolve({ isLoading: false }))
       );
     }
+    if (
+      currentState.page !== nextState.page ||
+      currentState.perPage > nextState.perPage ||
+      currentState.state !== nextState.state ||
+      !deepCompare(currentState.sort, nextState.sort)
+    ) {
+      nextState.selection = [];
+    }
     tasks.push(dispatch(actions.setDeviceListState(nextState)));
     return Promise.all(tasks);
   }

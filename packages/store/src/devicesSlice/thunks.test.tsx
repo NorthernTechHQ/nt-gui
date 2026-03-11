@@ -194,6 +194,17 @@ describe('selecting things', () => {
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
+  it('should clear selection when page or sort changes', async () => {
+    const store = mockStore({
+      ...defaultState,
+      devices: { ...defaultState.devices, deviceList: { ...defaultState.devices.deviceList, selection: [0, 1, 2] } }
+    });
+    await store.dispatch(setDeviceListState({ page: 2 }));
+    const storeActions = store.getActions();
+    expect(storeActions).toContainEqual(
+      expect.objectContaining({ type: actions.setDeviceListState.type, payload: expect.objectContaining({ selection: [] }) })
+    );
+  });
   it('should allow static group selection', async () => {
     const store = mockStore({ ...defaultState });
     const groupName = 'testGroup';
