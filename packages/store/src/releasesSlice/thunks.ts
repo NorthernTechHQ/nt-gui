@@ -345,6 +345,12 @@ export const setReleasesListState = createAppAsyncThunk(
       nextState.isLoading = true;
       tasks.push(dispatch(getReleases(nextState)).finally(() => dispatch(setReleasesListState({ isLoading: false }))));
     }
+    if (
+      !nextState.searchOnly &&
+      (currentState.page !== nextState.page || currentState.perPage > nextState.perPage || !deepCompare(currentState.sort, nextState.sort))
+    ) {
+      nextState.selection = [];
+    }
     tasks.push(dispatch(actions.setReleaseListState(nextState)));
     return Promise.all(tasks);
   }
