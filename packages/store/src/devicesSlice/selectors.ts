@@ -136,15 +136,17 @@ export const getAttributesList = createSelector(
   ({ identityAttributes = [], inventoryAttributes = [] }, { identity = [], inventory = [] }) =>
     [...identityAttributes, ...inventoryAttributes, ...identity, ...inventory].filter(duplicateFilter)
 );
-export const getDeviceLimitStats = createSelector([getDeviceLimits, getAcceptedDevices], (limits, accepted) => {
+const getEnabledTierLimits = createSelector([getDeviceLimits], limits => Object.entries(limits).filter(([, limit]) => limit !== 0));
+
+export const getEnabledTiers = createSelector([getEnabledTierLimits], enabledTierLimits => enabledTierLimits.map(([type]) => type));
+
+export const getDeviceLimitStats = createSelector([getEnabledTierLimits, getAcceptedDevices], (enabledTierLimits, accepted) => {
   const { counts } = accepted;
-  return Object.entries(limits)
-    .filter(([, limit]) => limit !== 0)
-    .map(([type, limit]) => ({
-      type,
-      limit,
-      total: counts[type] || 0
-    }));
+  return enabledTierLimits.map(([type, limit]) => ({
+    type,
+    limit,
+    total: counts[type] || 0
+  }));
 });
 
 export const getDeviceTypes = createSelector([getAcceptedDevices, getDevicesById], ({ deviceIds = [] }, devicesById) =>
