@@ -1,4 +1,24 @@
 ---
+## @northern.tech/store-0.28.0 - 2026-03-12
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added a selector for enabled tiers
+
+([MEN-9465](https://northerntech.atlassian.net/browse/MEN-9465)) ([24cc1d6](https://github.com/NorthernTechHQ/nt-gui/commit/24cc1d614174b013f07a1fb009d3be0a07a9c11e))  by @mineralsfree
+
+
+
+
+
+
+
+
+
 ## @northern.tech/store-0.27.0 - 2026-03-12
 
 
