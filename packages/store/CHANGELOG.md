@@ -1,4 +1,47 @@
 ---
+## @northern.tech/store-0.27.0 - 2026-03-12
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Fixed a 2fa nudge issue for oauth users
+
+([MEN-9417](https://northerntech.atlassian.net/browse/MEN-9417)) ([e48797b](https://github.com/NorthernTechHQ/nt-gui/commit/e48797b3e0e561700e9a9b3b15f79b37cb768513))  by @mineralsfree
+
+
+
+
+
+
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Let device/release selections no longer persist when navigating to a new page
+
+([MEN-9293](https://northerntech.atlassian.net/browse/MEN-9293)) ([212aa7d](https://github.com/NorthernTechHQ/nt-gui/commit/212aa7dc74cffa601aadb7537fbfd703bd2dd76e))  by @mzedel
+
+
+
+
+- *(store)* Added `artifact_too_big` to deployment substates
+
+([MEN-9456](https://northerntech.atlassian.net/browse/MEN-9456)) ([2655bd1](https://github.com/NorthernTechHQ/nt-gui/commit/2655bd193338852d51d733da94aa9f6daf295731))  by @frodeha
+
+
+
+
+
+
+
+
+
 ## @northern.tech/store-0.26.1 - 2026-03-10
 
 
