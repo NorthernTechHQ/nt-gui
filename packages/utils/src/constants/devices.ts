@@ -13,6 +13,9 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { Scope } from '@northern.tech/types/MenderTypes';
+import { Scope as AttributeScope } from '@northern.tech/types/MenderTypes';
+
 export const DEVICE_STATES = {
   accepted: 'accepted',
   pending: 'pending',
@@ -87,11 +90,11 @@ export const DEVICE_FILTERING_OPTIONS = {
 } as const;
 
 export const ATTRIBUTE_SCOPES = {
-  inventory: 'inventory',
-  identity: 'identity',
-  monitor: 'monitor',
-  system: 'system',
-  tags: 'tags'
+  inventory: AttributeScope.INVENTORY,
+  identity: AttributeScope.IDENTITY,
+  monitor: AttributeScope.MONITOR,
+  system: AttributeScope.SYSTEM,
+  tags: AttributeScope.TAGS
 } as const;
 
 export const ALL_DEVICES = 'All devices';
@@ -99,7 +102,7 @@ export const ALL_DEVICES = 'All devices';
 export type FilterRule = {
   key: string;
   operator: keyof typeof DEVICE_FILTERING_OPTIONS;
-  scope: typeof ATTRIBUTE_SCOPES;
+  scope: Scope;
   value: () => string | string | boolean | number;
 };
 
