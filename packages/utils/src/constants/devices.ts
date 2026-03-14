@@ -1,5 +1,4 @@
 'use strict';
-
 // Copyright 2015 Northern.tech AS
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +12,9 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { Scope } from '@northern.tech/types/MenderTypes';
+import { Scope as AttributeScope } from '@northern.tech/types/MenderTypes';
+
 export const DEVICE_STATES = {
   accepted: 'accepted',
   pending: 'pending',
@@ -21,7 +23,17 @@ export const DEVICE_STATES = {
 };
 export const ALL_DEVICE_STATES = 'any';
 
-export const DEVICE_FILTERING_OPTIONS = {
+type FilterOperator = '$eq' | '$ne' | '$gt' | '$gte' | '$lt' | '$lte' | '$ltne' | '$in' | '$nin' | '$exists' | '$nexists' | '$regex';
+
+type FilterOption = {
+  help?: string;
+  key: FilterOperator;
+  shortform: string;
+  title: string;
+  value?: boolean;
+};
+
+export const DEVICE_FILTERING_OPTIONS: Record<FilterOperator, FilterOption> = {
   $eq: { key: '$eq', title: 'equals', shortform: '=' },
   $ne: { key: '$ne', title: 'not equal', shortform: '!=' },
   $gt: {
@@ -31,6 +43,7 @@ export const DEVICE_FILTERING_OPTIONS = {
     help: 'The "greater than" operator can work both on numbers and strings. In the latter case, the operator applies the lexicographical order to the value strings.'
   },
   $gte: {
+    key: '$gte',
     title: '>=',
     shortform: '>=',
     help: 'The "greater than or equal" operator can work both on numbers and strings. In the latter case, the operator applies the lexicographical order to the value strings.'
@@ -42,6 +55,7 @@ export const DEVICE_FILTERING_OPTIONS = {
     help: 'The "lesser than" operator can work both on numbers and strings. In the latter case, the operator applies the lexicographical order to the value strings.'
   },
   $lte: {
+    key: '$lte',
     title: '<=',
     shortform: '<=',
     help: 'The "lesser than or equal" operator can work both on numbers and strings. In the latter case, the operator applies the lexicographical order to the value strings.'
@@ -87,11 +101,11 @@ export const DEVICE_FILTERING_OPTIONS = {
 } as const;
 
 export const ATTRIBUTE_SCOPES = {
-  inventory: 'inventory',
-  identity: 'identity',
-  monitor: 'monitor',
-  system: 'system',
-  tags: 'tags'
+  inventory: AttributeScope.INVENTORY,
+  identity: AttributeScope.IDENTITY,
+  monitor: AttributeScope.MONITOR,
+  system: AttributeScope.SYSTEM,
+  tags: AttributeScope.TAGS
 } as const;
 
 export const ALL_DEVICES = 'All devices';
@@ -99,7 +113,7 @@ export const ALL_DEVICES = 'All devices';
 export type FilterRule = {
   key: string;
   operator: keyof typeof DEVICE_FILTERING_OPTIONS;
-  scope: typeof ATTRIBUTE_SCOPES;
+  scope: Scope;
   value: () => string | string | boolean | number;
 };
 
