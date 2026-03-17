@@ -414,7 +414,7 @@ export interface FormatReleasesParams {
     type?: string;
   };
 }
-const releasesRoot = '/releases';
+const releasesRoot = '/software';
 export const formatReleases = ({ pageState: { id, searchTerm, selectedTags = [], tab, type } }: FormatReleasesParams) =>
   Object.entries({ name: searchTerm, tab, type, id })
     .reduce(

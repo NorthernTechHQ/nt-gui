@@ -309,7 +309,7 @@ describe('locationutils', () => {
       const pageState = { tab: 'flump', selectedRelease: 'testId', selectedTags: ['123', '456'] };
       const pathname = generateReleasesPath({ pageState });
       const search = formatReleases({ pageState });
-      expect(pathname).toEqual('/releases/testId');
+      expect(pathname).toEqual('/software/testId');
       expect(search).toEqual('tag=123&tag=456&tab=flump');
     });
   });
