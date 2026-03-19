@@ -160,7 +160,11 @@ describe('organization actions', () => {
   });
 
   it('should handle organization retrieval', async () => {
-    const store = mockStore({ ...defaultState, users: { ...defaultState.users, currentSession: getSessionInfo() } });
+    const store = mockStore({
+      ...defaultState,
+      organization: { ...defaultState.organization, organization: { ...defaultState.organization.organization, addons: ['foo'] } },
+      users: { ...defaultState.users, currentSession: getSessionInfo() }
+    });
     expect(store.getActions()).toHaveLength(0);
     const expectedActions = [
       { type: getUserOrganization.pending.type },
@@ -250,7 +254,11 @@ describe('organization actions', () => {
 
   it('should handle account upgrade completion', async () => {
     const { getDeviceLimits } = await import('../thunks');
-    const store = mockStore({ ...defaultState, users: { ...defaultState.users, currentSession: getSessionInfo() } });
+    const store = mockStore({
+      ...defaultState,
+      organization: { ...defaultState.organization, organization: { ...defaultState.organization.organization, plan: 'professional' } },
+      users: { ...defaultState.users, currentSession: getSessionInfo() }
+    });
     expect(store.getActions()).toHaveLength(0);
     const expectedActions = [
       { type: completeUpgrade.pending.type },
@@ -687,7 +695,6 @@ describe('organization actions', () => {
       { type: appActions.setSnackbar.type, payload: 'Tenant was changed successfully' },
       { type: getUserOrganization.pending.type },
       { type: actions.setOrganization.type },
-      { type: appActions.setAnnouncement.type, payload: tenantDataDivergedMessage },
       { type: getUserOrganization.fulfilled.type },
       { type: getTenants.pending.type },
       { type: actions.setTenantListState.type },
@@ -695,7 +702,7 @@ describe('organization actions', () => {
       { type: editTenant.fulfilled.type }
     ];
     const request = store.dispatch(editTenant({ id: '671a0f1dd58c813118fe8622', name: 'child2', deviceLimits: { standard: 2 } }));
-    await vi.advanceTimersByTime(1500);
+    await vi.advanceTimersByTime(TIMEOUTS.oneSecond + TIMEOUTS.halfASecond);
     await vi.runOnlyPendingTimersAsync();
     await expect(request).resolves.toBeTruthy();
     const storeActions = store.getActions();
