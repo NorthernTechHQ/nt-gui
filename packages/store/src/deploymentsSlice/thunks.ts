@@ -477,7 +477,7 @@ export const saveDeltaDeploymentsConfig = createAppAsyncThunk(
 export const generateDeploymentLogAnalysis = createAppAsyncThunk(
   `${sliceName}/generateDeploymentLogAnalysis`,
   ({ deploymentId, deviceId }: { deploymentId: string; deviceId: string }, { dispatch, rejectWithValue }) =>
-    GeneralApi.get(`${apiRoot}/v1alpha1/deployments/deployments/${deploymentId}/devices/${deviceId}/log/explain`)
+    GeneralApi.get(`${apiRoot}/v1alpha1/deployments/deployments/${deploymentId}/devices/${deviceId}/log/explain`, { timeout: 60 * TIMEOUTS.oneSecond })
       .then(({ data: result }) => Promise.resolve(result))
       .catch(err => {
         if (err.response.status === 429) {
