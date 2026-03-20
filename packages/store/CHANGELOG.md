@@ -1,4 +1,54 @@
 ---
+## @northern.tech/store-0.29.0 - 2026-03-20
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Added ai log analysis timeout override to support slow analysis
+
+ ([5e48da4](https://github.com/NorthernTechHQ/nt-gui/commit/5e48da426d9bdfd4c0a92e19c2b6f5190d2ca2d1))  by @mzedel
+
+
+
+
+
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Let artifacts, releases & manifests share an understandable path
+
+([MEN-9413](https://northerntech.atlassian.net/browse/MEN-9413)) ([de7b474](https://github.com/NorthernTechHQ/nt-gui/commit/de7b474d9103847e1a94df4a6b61f8330ce1f272))  by @mzedel
+
+
+
+
+
+
+
+
+### Refactor
+
+#### Store
+
+
+- *(store)* Removed reliance on jwt content to detect potential session token info deviation
+
+ ([8226e79](https://github.com/NorthernTechHQ/nt-gui/commit/8226e7919322dd02d6e5d90955c2903ab43557fa))  by @mzedel
+
+
+
+
+
+
+
+
 ## @northern.tech/store-0.28.0 - 2026-03-12
 
 

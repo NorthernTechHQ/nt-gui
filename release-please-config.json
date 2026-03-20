@@ -3,6 +3,7 @@
   "include-component-in-tag": true,
   "include-v-in-tag": false,
   "last-release-sha": "de803da9e41ee18222ed2d95bfd764cdc26bfab8",
+  "monorepo-tags": true,
   "separate-pull-requests": true,
   "signoff": "mender-test-bot <mender@northern.tech>",
   "packages": {
