@@ -29,7 +29,6 @@ import type {
 import { dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
-import { jwtDecode } from 'jwt-decode';
 import hashString from 'md5';
 import Cookies from 'universal-cookie';
 
@@ -53,11 +52,10 @@ import {
   tenantadmApiUrlv1,
   tenantadmApiUrlv2
 } from '../constants';
-import { getCurrentSession, getSpLimits, getTenantCapabilities, getTenantsList } from '../selectors';
+import { getCurrentUser, getSpLimits, getTenantCapabilities, getTenantsList } from '../selectors';
 import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { getDeviceLimits, setFirstLoginAfterSignup } from '../thunks';
-import type { UserSession } from '../usersSlice';
 import { convertToBackendSPLimits, parseSubscriptionPreview } from '../utils';
 import { SSO_TYPES } from './constants';
 import { getAuditlogState, getOrganization } from './selectors';
@@ -429,14 +427,13 @@ export const removeTenant = createAppAsyncThunk(`${sliceName}/editDeviceLimit`, 
 );
 export const getUserOrganization = createAppAsyncThunk(`${sliceName}/getUserOrganization`, (_, { dispatch, getState }) =>
   Api.get<Tenant>(`${tenantadmApiUrlv1}/user/tenant?tiers=true`).then(res => {
-    const tasks: ReturnType<AppDispatch>[] = [dispatch(actions.setOrganization(res.data))];
     const { addons, plan, trial } = res.data;
-    const { token } = getCurrentSession(getState()) as UserSession;
-    const jwt = jwtDecode(token);
-    const jwtData = { addons: jwt['mender.addons'], plan: jwt['mender.plan'], trial: jwt['mender.trial'] };
-    if (!deepCompare({ addons, plan, trial }, jwtData)) {
+    const { addons: currentAddons, id: currentId, plan: currentPlan, trial: currentTrial } = getOrganization(getState());
+    const tasks: ReturnType<AppDispatch>[] = [dispatch(actions.setOrganization(res.data))];
+    if (currentId && !deepCompare({ addons, plan, trial }, { addons: currentAddons, plan: currentPlan, trial: currentTrial })) {
       const hash = hashString(tenantDataDivergedMessage);
-      cookies.remove(`${jwt.sub}${hash}`);
+      const { id: currentUserId } = getCurrentUser(getState());
+      cookies.remove(`${currentUserId}${hash}`);
       tasks.push(dispatch(setAnnouncement(tenantDataDivergedMessage)));
     }
     return Promise.all(tasks);

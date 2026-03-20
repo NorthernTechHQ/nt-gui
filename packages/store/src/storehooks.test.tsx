@@ -31,7 +31,7 @@ import { DEVICE_STATES } from './constants';
 import { expectedOnboardingActions } from './onboardingSlice/thunks.test';
 import { actions as organizationActions } from './organizationSlice';
 import { useAppInit } from './storehooks';
-import { getUserOrganization, tenantDataDivergedMessage } from './thunks';
+import { getUserOrganization } from './thunks';
 import { actions as userActions } from './usersSlice';
 
 const middlewares = [thunk];
@@ -106,7 +106,6 @@ const appInitActions = [
     }
   },
   { type: organizationActions.setOrganization.type, payload: defaultState.organization.organization },
-  { type: appActions.setAnnouncement.type, payload: tenantDataDivergedMessage },
   { type: appActions.setOfflineThreshold.type, payload: '2019-01-12T13:00:00.950Z' },
   {
     type: organizationActions.receiveExternalDeviceIntegrations.type,

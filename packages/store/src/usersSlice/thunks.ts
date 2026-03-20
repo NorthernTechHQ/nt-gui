@@ -61,7 +61,7 @@ import {
   useradmApiUrl,
   useradmApiUrlv2
 } from '../constants';
-import { getOnboardingState, getOrganization, getTooltipsState, getUserSettings as getUserSettingsSelector } from '../selectors';
+import { getHostedAnnouncement, getOnboardingState, getOrganization, getTooltipsState, getUserSettings as getUserSettingsSelector } from '../selectors';
 import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { setOfflineThreshold } from '../thunks';
@@ -848,7 +848,8 @@ export const setHideAnnouncement = createAppAsyncThunk<void, { shouldHide: boole
   `${sliceName}/setHideAnnouncement`,
   ({ shouldHide, userId }, { dispatch, getState }) => {
     const currentUserId = userId || getCurrentUser(getState()).id;
-    const hash = getState().app.hostedAnnouncement ? hashString(getState().app.hostedAnnouncement) : '';
+    const announcement = getHostedAnnouncement(getState());
+    const hash = announcement ? hashString(announcement) : '';
     const announceCookie = cookies.get(`${currentUserId}${hash}`);
     if (shouldHide || (hash.length && typeof announceCookie !== 'undefined')) {
       cookies.set(`${currentUserId}${hash}`, true, { maxAge: 604800 });
