@@ -3856,16 +3856,6 @@ export type UserNew = {
    * Password.
    */
   password?: string;
-  /**
-   * Alternative login schemes
-   */
-  login?: {
-    [key: string]: unknown;
-  };
-  /**
-   * SSO login schemes
-   */
-  sso?: Array<SsoObject>;
 };
 
 /**
