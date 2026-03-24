@@ -686,7 +686,6 @@ export const permissionSets = [
     description: 'Set of permissions which allows user to view devices',
     permissions: [
       { action: 'http', object: { type: 'POST', value: '^/api/management/v2/inventory/filters/search' } },
-      { action: 'http', object: { type: 'POST', value: '^/api/management/v1/reporting/devices/search' } },
       { action: 'http', object: { type: 'GET', value: '^/api/management/(v[1-9])/(deployments|devauth|inventory|deviceconfig|devicemonitor)/' } },
       { action: 'http', object: { type: 'GET', value: '^/api/management/(v[1-9]|0.1.0)/deviceconnect/devices/[^/]+$' } }
     ],
