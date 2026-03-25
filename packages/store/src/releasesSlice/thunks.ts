@@ -21,10 +21,18 @@ import type { Artifact, Release, ReleaseSliceType, ReleasesList } from '.';
 import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import GeneralApi from '../api/general-api';
-import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TIMEOUTS, deploymentsApiUrl, deploymentsApiUrlV2, emptyFilter, headerNames } from '../constants';
+import {
+  DEVICE_LIST_DEFAULTS,
+  SORTING_OPTIONS,
+  TIMEOUTS,
+  deploymentsApiUrl,
+  deploymentsApiUrlV2,
+  emptyFilter,
+  headerNames,
+  inventoryApiUrlV2
+} from '../constants';
 import type { SortOptions } from '../constants';
 import { formatReleases } from '../locationutils';
-import { getSearchEndpoint } from '../selectors';
 import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { convertDeviceListStateToFilters, progress } from '../utils';
@@ -88,7 +96,7 @@ export const getArtifactInstallCount = createAppAsyncThunk(`${sliceName}/getArti
   const { filterTerms } = convertDeviceListStateToFilters({
     filters: [{ ...emptyFilter, key: attribute, value: version!, scope: 'inventory' }]
   });
-  return GeneralApi.post(getSearchEndpoint(getState()), {
+  return GeneralApi.post(`${inventoryApiUrlV2}/filters/search`, {
     page: 1,
     per_page: 1,
     filters: filterTerms,

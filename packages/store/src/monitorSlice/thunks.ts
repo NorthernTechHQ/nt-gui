@@ -18,8 +18,8 @@ import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import Api from '../api/general-api';
 import type { AlertChannelKey, DeviceIssueOptionKey } from '../constants';
-import { DEVICE_LIST_DEFAULTS, TIMEOUTS, alertChannels, headerNames, monitorApiUrlv1 } from '../constants';
-import { getDeviceFilters, getSearchEndpoint } from '../selectors';
+import { DEVICE_LIST_DEFAULTS, TIMEOUTS, alertChannels, headerNames, inventoryApiUrlV2, monitorApiUrlv1 } from '../constants';
+import { getDeviceFilters } from '../selectors';
 import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { convertDeviceListStateToFilters } from '../utils';
@@ -84,7 +84,7 @@ export const getIssueCountsByType = createAppAsyncThunk(
       selectedIssues: [type],
       status
     });
-    return Api.post(getSearchEndpoint(getState()), {
+    return Api.post(`${inventoryApiUrlV2}/filters/search`, {
       page: 1,
       per_page: 1,
       filters: filterTerms,
