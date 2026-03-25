@@ -1040,6 +1040,7 @@ export type NewDeploymentTypeManagement = {
    */
   force_installation?: boolean;
   phases?: Array<NewDeploymentPhaseTypeManagement>;
+  uniform_phases?: DeploymentUniformPhase;
   /**
    * The number of times a device can retry the deployment in case of failure, defaults to 0
    */
@@ -1135,6 +1136,7 @@ export type DeploymentV1 = {
    * An array of deployments phases (if any were defined for the deployment).
    */
   phases?: Array<DeploymentPhase>;
+  uniform_phases?: DeploymentUniformPhase;
   /**
    * The number of times a device can retry the deployment in case of failure, defaults to 0
    */
@@ -1458,19 +1460,29 @@ export type GenerateArtifactRequest = {
   file: Blob | File;
 };
 
-export type DeploymentPhase = {
+/**
+ * Deployments phases define a starting point and a batch size of devices
+ * to which the deployment applies.
+ *
+ * A single phase allows scheduling a deployment to start at a specific
+ * time.
+ *
+ * Multiple phases split the deployment into smaller batches of devices
+ * at the time giving a higher level of control of the rate devices are
+ * updated.
+ *
+ * *NOTE*: Professional plan is only allowed to specify a single phase to
+ * schedule deployments, this feature is not available for Starter plan.
+ *
+ */
+export type DeploymentPhaseSpec = {
   /**
    * Phase identifier.
    */
   id?: string;
   /**
-   * Percentage of devices to update in the phase.
-   *
-   */
-  batch_size?: number;
-  /**
    * Start date of a phase.
-   * May be undefined for the first phase of a deployment.
+   * Can be skipped for the first phase of a new deployment definition ('start immediately').
    *
    */
   start_ts?: string;
@@ -1480,6 +1492,52 @@ export type DeploymentPhase = {
    */
   device_count?: number;
 };
+
+export type DeploymentBatchSizeSpec = {
+  /**
+   * Exact number of devices to update in this phase.
+   * This field is optional for the last phase, which will contain the remaining devices.
+   *
+   */
+  batch_size_devices?: number;
+  /**
+   * Percentage of devices to update in the phase.
+   * This field is optional for the last phase.
+   * The last phase will contain the rest of the devices.
+   * Note that if the percentage of devices entered does not
+   * add up to a whole number of devices it is rounded down,
+   * and in the case it is rounded down to zero, a 400 error
+   * will be returned. This is mostly a concern when the deployment
+   * consists of a low number of devices, like say 5 percent of 11
+   * devices will round to zero, and an error is returned by the server.
+   *
+   */
+  batch_size?: number;
+};
+
+export type DeploymentPhase = DeploymentPhaseSpec & DeploymentBatchSizeSpec;
+
+/**
+ * Uniform phases configuration describing the rollout pattern
+ * where `batch_size_devices` number of devices are scheduled for update
+ * every `time_interval`.
+ *
+ */
+export type DeploymentUniformPhaseSpec = {
+  /**
+   * Start time stamp for the deploment of the first phase.
+   * If unset, the deployment starts immediately.
+   *
+   */
+  start_ts?: string;
+  /**
+   * The time between successive phases to start.
+   *
+   */
+  time_interval?: string;
+};
+
+export type DeploymentUniformPhase = DeploymentUniformPhaseSpec & DeploymentBatchSizeSpec;
 
 export type Statistics = {
   /**
@@ -1765,6 +1823,7 @@ export type DeploymentV2 = {
    * An array of deployments phases (if any were defined for the deployment).
    */
   phases?: Array<DeploymentPhase>;
+  uniform_phases?: DeploymentUniformPhase;
   /**
    * The number of times a device can retry the deployment in case of failure, defaults to 0
    */
@@ -1820,6 +1879,7 @@ export type NewDeploymentV2TypeManagement = {
    *
    */
   phases?: Array<NewDeploymentPhaseTypeManagement>;
+  uniform_phases?: DeploymentUniformPhase;
   /**
    * The number of times a device can retry the deployment in case of failure, defaults to 0
    */
