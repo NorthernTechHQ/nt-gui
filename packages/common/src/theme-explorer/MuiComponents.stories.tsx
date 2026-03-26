@@ -97,6 +97,9 @@ const MuiComponents = () => {
   const [ratingValue, setRatingValue] = useState(4);
   const [selectValue, setSelectValue] = useState('option1');
 
+  const buttonVariants = ['contained', 'outlined', 'text'];
+  const buttonColors = ['primary', 'secondary', 'error', 'warning', 'info'];
+
   return (
     <Stack spacing={4} sx={{ p: 3, maxWidth: '100%', overflow: 'auto' }}>
       <Typography variant="h3" component="h1" gutterBottom>
@@ -130,26 +133,28 @@ const MuiComponents = () => {
           Buttons
         </Typography>
         <Stack spacing={2}>
-          <Stack direction="row" spacing={2} flexWrap="wrap">
-            <Button variant="contained">Contained</Button>
-            <Button variant="outlined">Outlined</Button>
-            <Button variant="text">Text</Button>
-            <Button variant="contained" color="secondary">
-              Secondary
-            </Button>
-            <Button variant="contained" color="error">
-              Error
-            </Button>
-            <Button variant="contained" color="warning">
-              Warning
-            </Button>
-            <Button variant="contained" color="info">
-              Info
-            </Button>
-            <Button variant="contained" color="success">
-              Success
-            </Button>
-          </Stack>
+          <Grid container>
+            <Grid item>
+              <Stack direction="column" spacing={2} marginRight={2}>
+                {buttonColors.map(color => (
+                  <Typography className="capitalized-start" key={color} p={0.75}>
+                    {color}:
+                  </Typography>
+                ))}
+              </Stack>
+            </Grid>
+            {buttonVariants.map(variant => (
+              <Grid item xs={12} sm={6} spacing={2} key={variant}>
+                <Stack direction="column" spacing={2} marginRight={2}>
+                  {buttonColors.map(color => (
+                    <Button color={color} key={color} variant={variant}>
+                      <span className="capitalized-start">{variant}</span>
+                    </Button>
+                  ))}
+                </Stack>
+              </Grid>
+            ))}
+          </Grid>
           <Stack direction="row" spacing={2} flexWrap="wrap">
             <Button variant="contained" size="small">
               Small
