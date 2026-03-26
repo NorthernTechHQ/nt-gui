@@ -71,10 +71,10 @@ exports[`EnterpriseNotification Component > renders correctly 1`] = `
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   cursor: pointer;
-  background-color: #f7fafb;
+  background-color: #f5f5f5;
   color: rgba(0, 0, 0, 0.38);
   text-transform: uppercase;
-  background-color: #f7fafb;
+  background-color: #f5f5f5;
   color: rgba(0, 0, 0, 0.38);
   text-transform: uppercase;
 }
@@ -216,7 +216,7 @@ exports[`EnterpriseNotification Component > works as expected 1`] = `
   padding: 16px;
   font-size: small;
   max-width: 600px;
-  background-color: #f7fafb;
+  background-color: #f5f5f5;
   max-width: 300px;
 }
 
@@ -259,7 +259,7 @@ exports[`EnterpriseNotification Component > works as expected 1`] = `
   box-sizing: border-box;
   color: rgba(97, 97, 97, 0.9);
   color: #fff;
-  color: #f7fafb;
+  color: #f5f5f5;
 }
 
 .emotion-1::before {

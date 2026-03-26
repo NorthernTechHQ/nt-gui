@@ -11,14 +11,8 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
-import React from 'react';
-import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router-dom';
+import { createTheme } from '@mui/material/styles';
 
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-
-import { render } from '@testing-library/react';
 import { act, queryByRole, waitFor, within } from '@testing-library/react';
 import { expect } from 'vitest';
 
@@ -40,15 +34,3 @@ export const selectMaterialUiSelectOption = async (element, optionText, user) =>
 };
 
 export const theme = createTheme(light);
-
-export const renderWithRouter = (ui: React.ReactElement, { route = '/', preloadedState } = {}) => {
-  const store = getConfiguredStore({ preloadedState });
-  const Wrapper = ({ children }) => (
-    <ThemeProvider theme={theme}>
-      <MemoryRouter initialEntries={[route]}>
-        <Provider store={store}>{children}</Provider>
-      </MemoryRouter>
-    </ThemeProvider>
-  );
-  return { store, ...render(ui, { wrapper: Wrapper }) };
-};

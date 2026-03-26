@@ -1,4 +1,4 @@
-// Copyright 2022 Northern.tech AS
+// Copyright 2026 Northern.tech AS
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -11,18 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { ThemeOptions } from '@mui/material';
-import { PaletteOptions } from '@mui/material/styles';
+import { PaletteOptions as MuiPaletteOptions } from '@mui/material';
 
-const palette: PaletteOptions = {
-  border: {
-    main: '#e3e3e3'
-  },
-  background: {
-    default: '#fff'
+declare module '@mui/material' {
+  interface PaletteOptions extends MuiPaletteOptions {
+    border?: {
+      main: string;
+    };
   }
-};
-
-export const light: ThemeOptions = {
-  palette
-};
+}
