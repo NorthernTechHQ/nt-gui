@@ -29,9 +29,15 @@ export const SORTING_OPTIONS = {
 export interface SortOptions {
   direction: keyof typeof SORTING_OPTIONS;
   key?: string;
+  scope?: string;
 }
 
-export const DEVICE_LIST_DEFAULTS: { page: number; perPage: number } = {
+export interface PaginationOptions {
+  page: number;
+  perPage: number;
+}
+
+export const DEVICE_LIST_DEFAULTS: PaginationOptions = {
   page: 1,
   perPage: 20
 };
