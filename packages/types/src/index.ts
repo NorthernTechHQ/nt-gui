@@ -1766,11 +1766,6 @@ export {
   type WorkflowsCheckLivelinessErrors,
   type WorkflowsCheckLivelinessResponse,
   type WorkflowsCheckLivelinessResponses,
-  type WorkflowStatusData,
-  type WorkflowStatusError,
-  type WorkflowStatusErrors,
-  type WorkflowStatusResponse,
-  type WorkflowStatusResponses,
   type XDeltaArgs,
   type XDeltaArgsLimits
 } from './types.gen';

@@ -17170,40 +17170,6 @@ export type StartBatchWorkflowsResponses = {
 
 export type StartBatchWorkflowsResponse = StartBatchWorkflowsResponses[keyof StartBatchWorkflowsResponses];
 
-export type WorkflowStatusData = {
-  body?: never;
-  path: {
-    /**
-     * Workflow identifier.
-     */
-    name: string;
-    /**
-     * Job identifier
-     */
-    id: string;
-  };
-  query?: never;
-  url: '/api/v1/workflow/{name}/{id}';
-};
-
-export type WorkflowStatusErrors = {
-  /**
-   * Not Found.
-   */
-  404: Error;
-};
-
-export type WorkflowStatusError = WorkflowStatusErrors[keyof WorkflowStatusErrors];
-
-export type WorkflowStatusResponses = {
-  /**
-   * Successful query
-   */
-  200: JobStatus;
-};
-
-export type WorkflowStatusResponse = WorkflowStatusResponses[keyof WorkflowStatusResponses];
-
 export type ListWorkflowsData = {
   body?: never;
   path?: never;
