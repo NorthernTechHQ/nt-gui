@@ -11,14 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import {
-  PaletteOptions,
-  ThemeOptions,
-  alertClasses,
-  outlinedInputClasses,
-  alpha,
-  getOverlayAlpha
-} from '@mui/material';
+import { PaletteOptions, ThemeOptions, alertClasses, alpha, getOverlayAlpha, outlinedInputClasses } from '@mui/material';
 import { common, red } from '@mui/material/colors';
 
 import { components as baseComponents, colors, typography } from './common';
@@ -77,23 +70,21 @@ export const dark: ThemeOptions = {
     },
     MuiAlert: {
       ...baseComponents.MuiAlert,
-      styleOverrides: {
-        ...baseComponents.MuiAlert?.styleOverrides,
-        root: {
-          [`& .${alertClasses.colorError}`]: {
-            backgroundColor: 'rgba(244, 67, 54, 0.2)'
-          },
-          [`& .${alertClasses.colorWarning}`]: {
-            backgroundColor: 'rgba(255, 152, 0, 0.2)'
-          },
-          [`& .${alertClasses.colorInfo}`]: {
-            backgroundColor: 'rgba(33, 150, 243, 0.2)'
-          },
-          [`& .${alertClasses.colorSuccess}`]: {
-            backgroundColor: 'rgba(76, 175, 80, 0.2)'
+      variants: [
+        { props: { severity: 'error' }, style: { backgroundColor: 'rgba(244, 67, 54, 0.2)' } },
+        { props: { severity: 'warning' }, style: { backgroundColor: 'rgba(255, 152, 0, 0.2)' } },
+        {
+          props: { severity: 'info' },
+          style: {
+            backgroundColor: 'rgba(33, 150, 243, 0.2)',
+            color: 'rgb(184, 231, 251)',
+            [`& .${alertClasses.icon}`]: {
+              color: 'rgb(184, 231, 251)'
+            }
           }
-        }
-      }
+        },
+        { props: { severity: 'success' }, style: { backgroundColor: 'rgba(76, 175, 80, 0.2)' } }
+      ]
     },
     MuiSpeedDialAction: {
       styleOverrides: {
