@@ -17,7 +17,7 @@ import { common } from '@mui/material/colors';
 import { components as baseComponents, colors, typography } from './common';
 
 const info = {
-  main: colors.grey[500],
+  main: colors.grey[400],
   dark: colors.grey[700],
   light: colors.grey[200],
   contrastText: common.black
