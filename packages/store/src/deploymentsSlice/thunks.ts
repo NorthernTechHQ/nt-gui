@@ -15,6 +15,7 @@
 import type {
   DeploymentV1 as BackendDeploymentV1,
   DeploymentV2 as BackendDeploymentV2,
+  ConfigurationTenant,
   DeviceWithImage,
   NewDeploymentTypeManagement as NewDeployment,
   NewDeploymentForGroup,
@@ -41,7 +42,6 @@ import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TIMEOUTS, apiRoot, deploymentsAp
 import type { SortOptions } from '../constants';
 import { getDevicesById, getGlobalSettings, getIdAttribute, getOrganization, getUserCapabilities } from '../selectors';
 import { commonErrorHandler, createAppAsyncThunk } from '../store';
-import type { AppDispatch } from '../store';
 import { getDeviceAuth, getDeviceById, saveGlobalSettings } from '../thunks';
 import { mapTermsToFilters } from '../utils';
 import { DEPLOYMENT_ROUTES, DEPLOYMENT_STATES, DEPLOYMENT_TYPES, deploymentPrototype } from './constants';
@@ -101,26 +101,27 @@ export const getDeploymentsByStatus = createAppAsyncThunk(
     ).then(res => {
       const { deployments, deploymentIds } = transformDeployments(res.data, getState().deployments.byId);
       const total = Number(res.headers[headerNames.total]);
-      let tasks: ReturnType<AppDispatch> = [
-        dispatch(actions.receivedDeployments(deployments)),
-        dispatch(
-          actions.receivedDeploymentsForStatus({
-            deploymentIds,
-            status,
-            total: !(startDate || endDate || group || type) ? total : getState().deployments.byStatus[status].total
-          })
+      const tasks: Promise<unknown>[] = [
+        Promise.resolve(dispatch(actions.receivedDeployments(deployments))),
+        Promise.resolve(
+          dispatch(
+            actions.receivedDeploymentsForStatus({
+              deploymentIds,
+              status,
+              total: !(startDate || endDate || group || type) ? total : getState().deployments.byStatus[status].total
+            })
+          )
         )
       ];
-      tasks = deploymentIds.reduce((accu, deploymentId) => {
+      deploymentIds.forEach(deploymentId => {
         if (deployments[deploymentId].type === DEPLOYMENT_TYPES.configuration) {
-          accu.push(dispatch(getSingleDeployment(deploymentId)));
+          tasks.push(dispatch(getSingleDeployment(deploymentId)).unwrap());
         }
-        return accu;
-      }, tasks);
+      });
       if (shouldSelect) {
-        tasks.push(dispatch(actions.selectDeploymentsForStatus({ deploymentIds, status, total })));
+        tasks.push(Promise.resolve(dispatch(actions.selectDeploymentsForStatus({ deploymentIds, status, total }))));
       }
-      tasks.push({ deploymentIds, total });
+      tasks.push(Promise.resolve({ deploymentIds, total }));
       return Promise.all(tasks);
     });
   }
@@ -183,11 +184,11 @@ export const createDeployment = createAppAsyncThunk(
           devices: 'devices' in newDeployment && newDeployment.devices ? newDeployment.devices.map(id => ({ id, status: 'pending' })) : [],
           statistics: { status: {} }
         };
-        const tasks = [
-          dispatch(actions.createdDeployment(deployment)),
+        const tasks: Promise<unknown>[] = [
+          Promise.resolve(dispatch(actions.createdDeployment(deployment))),
           dispatch(getSingleDeployment(deploymentId)),
-          dispatch(setSnackbar({ message: 'Deployment created successfully', autoHideDuration: TIMEOUTS.fiveSeconds }))
-        ] as ReturnType<AppDispatch>;
+          Promise.resolve(dispatch(setSnackbar({ message: 'Deployment created successfully', autoHideDuration: TIMEOUTS.fiveSeconds })))
+        ];
         // track in GA
         trackDeploymentCreation(totalDeploymentCount, hasDeployments, trial_expiration);
         const { canManageUsers } = getUserCapabilities(getState());
@@ -225,14 +226,16 @@ export const getDeploymentDevices = createAppAsyncThunk(
         return accu;
       }, {});
       const selectedDeviceIds = Object.keys(devices);
-      let tasks: ReturnType<AppDispatch> = [
-        dispatch(
-          actions.receivedDeploymentDevices({
-            id,
-            devices,
-            selectedDeviceIds,
-            totalDeviceCount: Number(response.headers[headerNames.total])
-          })
+      const tasks: Promise<unknown>[] = [
+        Promise.resolve(
+          dispatch(
+            actions.receivedDeploymentDevices({
+              id,
+              devices,
+              selectedDeviceIds,
+              totalDeviceCount: Number(response.headers[headerNames.total])
+            })
+          )
         )
       ];
       const devicesById = getDevicesById(getState());
@@ -245,7 +248,9 @@ export const getDeploymentDevices = createAppAsyncThunk(
         return accu;
       }, []);
       // get device artifact, inventory and identity details not listed in schedule data
-      tasks = lackingData.reduce((accu, deviceId) => [...accu, dispatch(getDeviceById(deviceId)), dispatch(getDeviceAuth(deviceId))], tasks);
+      lackingData.forEach(deviceId => {
+        tasks.push(dispatch(getDeviceById(deviceId)).unwrap(), dispatch(getDeviceAuth(deviceId)).unwrap());
+      });
       return Promise.all(tasks);
     });
   }
@@ -304,7 +309,7 @@ export const resetDeviceDeployments = createAppAsyncThunk(`${sliceName}/resetDev
 );
 
 export const getSingleDeployment = createAppAsyncThunk(`${sliceName}/getSingleDeployment`, (id: string, { dispatch, getState }) =>
-  GeneralApi.get(`${deploymentsApiUrl}/deployments/${id}`).then(({ data }) => {
+  GeneralApi.get<BackendDeploymentV1>(`${deploymentsApiUrl}/deployments/${id}`).then(({ data }) => {
     const { deployments } = transformDeployments([data], getState().deployments.byId);
     return Promise.resolve(dispatch(actions.receivedDeployment(deployments[id])));
   })
@@ -382,7 +387,7 @@ export const setDeploymentsState = createAppAsyncThunk(`${sliceName}/setDeployme
       ...selectionState.general
     }
   } as SelectionState;
-  const tasks: ReturnType<AppDispatch> = [dispatch(actions.setDeploymentsState(nextState))];
+  const tasks: Promise<unknown>[] = [Promise.resolve(dispatch(actions.setDeploymentsState(nextState)))];
   if (nextState.selectedId && currentState.selectedId !== nextState.selectedId) {
     tasks.push(dispatch(getSingleDeployment(nextState.selectedId)));
   }
@@ -408,7 +413,7 @@ const mapExternalDeltaConfig = (config = {}) =>
   }, {});
 
 export const getDeploymentsConfig = createAppAsyncThunk(`${sliceName}/getDeploymentsConfig`, (_, { dispatch, getState }) =>
-  GeneralApi.get(`${deploymentsApiUrl}/config`).then(({ data }) => {
+  GeneralApi.get<ConfigurationTenant>(`${deploymentsApiUrl}/config`).then(({ data }) => {
     const oldConfig = getState().deployments.config;
     const { delta = {} } = data;
     const { binary_delta = {}, binary_delta_limits = {} } = delta;
@@ -477,7 +482,7 @@ export const saveDeltaDeploymentsConfig = createAppAsyncThunk(
 export const generateDeploymentLogAnalysis = createAppAsyncThunk(
   `${sliceName}/generateDeploymentLogAnalysis`,
   ({ deploymentId, deviceId }: { deploymentId: string; deviceId: string }, { dispatch, rejectWithValue }) =>
-    GeneralApi.get(`${apiRoot}/v1alpha1/deployments/deployments/${deploymentId}/devices/${deviceId}/log/explain`, { timeout: 60 * TIMEOUTS.oneSecond })
+    GeneralApi.get<string>(`${apiRoot}/v1alpha1/deployments/deployments/${deploymentId}/devices/${deviceId}/log/explain`, { timeout: 60 * TIMEOUTS.oneSecond })
       .then(({ data: result }) => Promise.resolve(result))
       .catch(err => {
         if (err.response.status === 429) {

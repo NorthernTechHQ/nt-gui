@@ -224,7 +224,7 @@ describe('release actions', () => {
     ];
     await store.dispatch(
       createArtifact({
-        file: { name: 'createdRelease', some: 'thing', someList: ['test', 'more'], complex: { objectThing: 'yes' } },
+        file: { name: 'createdRelease', some: 'thing', someList: ['test', 'more'], complex: { objectThing: 'yes' } } as unknown as File,
         meta: { name: 'filethings', description: '' }
       })
     );

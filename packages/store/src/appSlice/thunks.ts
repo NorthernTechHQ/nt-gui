@@ -38,7 +38,7 @@ const dateFunctionMap = {
   getDays: 'getDate',
   setDays: 'setDate'
 };
-export const setOfflineThreshold = createAppAsyncThunk(`${sliceName}/setOfflineThreshold`, (_, { dispatch, getState }) => {
+export const setOfflineThreshold = createAppAsyncThunk(`${sliceName}/setOfflineThreshold`, (_, { dispatch, getState }): Promise<ReturnType<AppDispatch>> => {
   const { interval, intervalUnit } = getOfflineThresholdSettings(getState());
   const today = new Date();
   const intervalName = `${intervalUnit.charAt(0).toUpperCase()}${intervalUnit.substring(1)}`;
@@ -51,7 +51,7 @@ export const setOfflineThreshold = createAppAsyncThunk(`${sliceName}/setOfflineT
   } catch {
     return Promise.resolve(dispatch(actions.setSnackbar('There was an error saving the offline threshold, please check your settings.')));
   }
-  return Promise.resolve(dispatch(actions.setOfflineThreshold(value))) as ReturnType<AppDispatch>;
+  return Promise.resolve(dispatch(actions.setOfflineThreshold(value)));
 });
 
 const versionRegex = new RegExp(/\d+\.\d+/);
@@ -74,46 +74,49 @@ const deductSaasState = (latestRelease: VersionRelease, guiTags: TagData): strin
   return latestGuiTag ? latestGuiTag : latestRelease.release;
 };
 
-export const getLatestReleaseInfo = createAppAsyncThunk(`${sliceName}/getLatestReleaseInfo`, (_, { dispatch, getState }) => {
-  if (!getFeatures(getState()).isHosted) {
-    return Promise.resolve();
-  }
-  return Promise.all([GeneralApi.get<ReleaseData>('/versions.json'), GeneralApi.get<TagData>('/tags.json')])
-    .catch(err => {
-      console.log('init error:', extractErrorMessage(err));
-      return Promise.resolve([{ data: {} }, { data: [] }]) as any;
-    })
-    .then(([{ data }, { data: guiTags }]) => {
-      if (!guiTags.length) {
-        return Promise.resolve();
-      }
-      const { releases } = data;
-      const latestRelease = getLatestRelease(getLatestRelease(releases));
-      const { latestRepos, latestVersions } = latestRelease.repos!.reduce(
-        (accu, item) => {
-          if (repoKeyMap[item.name]) {
-            accu.latestVersions[repoKeyMap[item.name]] = getComparisonCompatibleVersion(item.version);
-          }
-          accu.latestRepos[item.name] = getComparisonCompatibleVersion(item.version);
-          return accu;
-        },
-        { latestVersions: { ...getState().app.versionInformation }, latestRepos: {} }
-      );
-      const info = deductSaasState(latestRelease, guiTags);
-      return Promise.resolve(
-        dispatch(
-          actions.setVersionInformation({
-            ...latestVersions,
-            Server: info,
-            latestRelease: {
-              releaseDate: latestRelease.release_date!,
-              repos: latestRepos
+export const getLatestReleaseInfo = createAppAsyncThunk(
+  `${sliceName}/getLatestReleaseInfo`,
+  (_, { dispatch, getState }): Promise<ReturnType<AppDispatch> | unknown> => {
+    if (!getFeatures(getState()).isHosted) {
+      return Promise.resolve();
+    }
+    return Promise.all([GeneralApi.get<ReleaseData>('/versions.json'), GeneralApi.get<TagData>('/tags.json')])
+      .catch(err => {
+        console.log('init error:', extractErrorMessage(err));
+        return Promise.resolve([{ data: {} }, { data: [] }]) as any;
+      })
+      .then(([{ data }, { data: guiTags }]): Promise<ReturnType<AppDispatch> | unknown> => {
+        if (!guiTags.length) {
+          return Promise.resolve();
+        }
+        const { releases } = data;
+        const latestRelease = getLatestRelease(getLatestRelease(releases));
+        const { latestRepos, latestVersions } = latestRelease.repos!.reduce(
+          (accu, item) => {
+            if (repoKeyMap[item.name]) {
+              accu.latestVersions[repoKeyMap[item.name]] = getComparisonCompatibleVersion(item.version);
             }
-          })
-        )
-      ) as ReturnType<AppDispatch>;
-    });
-});
+            accu.latestRepos[item.name] = getComparisonCompatibleVersion(item.version);
+            return accu;
+          },
+          { latestVersions: { ...getState().app.versionInformation }, latestRepos: {} }
+        );
+        const info = deductSaasState(latestRelease, guiTags);
+        return Promise.resolve(
+          dispatch(
+            actions.setVersionInformation({
+              ...latestVersions,
+              Server: info,
+              latestRelease: {
+                releaseDate: latestRelease.release_date!,
+                repos: latestRepos
+              }
+            })
+          )
+        );
+      });
+  }
+);
 
 export const setSearchState = createAppAsyncThunk(`${sliceName}/setSearchState`, (searchState: Partial<SearchState>, { dispatch, getState }) => {
   const currentState = getSearchState(getState());
@@ -125,7 +128,7 @@ export const setSearchState = createAppAsyncThunk(`${sliceName}/setSearchState`,
       ...searchState.sort
     }
   };
-  const tasks: ReturnType<AppDispatch>[] = [];
+  const tasks: Promise<ReturnType<AppDispatch> | unknown>[] = [];
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { isSearching: currentSearching, deviceIds: currentDevices, searchTotal: currentTotal, ...currentRequestState } = currentState;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -142,6 +145,6 @@ export const setSearchState = createAppAsyncThunk(`${sliceName}/setSearchState`,
         .catch(() => dispatch(actions.setSearchState({ isSearching: false, searchTotal: 0 })))
     );
   }
-  tasks.push(dispatch(actions.setSearchState(nextState)));
+  tasks.push(Promise.resolve(dispatch(actions.setSearchState(nextState))));
   return Promise.all(tasks);
 });

@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
+import type { AxiosError, AxiosProgressEvent, AxiosRequestConfig, GenericAbortSignal, InternalAxiosRequestConfig } from 'axios';
 import axios, { isCancel } from 'axios';
 import Cookies from 'universal-cookie';
 
@@ -20,7 +20,7 @@ import { TIMEOUTS } from '../constants';
 
 const cookies = new Cookies();
 
-const unauthorizedRedirect = error => {
+const unauthorizedRedirect = (error: AxiosError): Promise<never> => {
   if (!isCancel(error) && error.response?.status === 401 && getToken() && !window.location.pathname.endsWith('/subscription')) {
     // a new jwt might have been set by sso while the current request was in-flight with an old token
     //   => reload instead of logging out
@@ -34,31 +34,35 @@ const unauthorizedRedirect = error => {
   return Promise.reject(error);
 };
 
-export const commonRequestConfig = { timeout: TIMEOUTS.refreshDefault, headers: { 'Content-Type': 'application/json' } };
+export const commonRequestConfig: AxiosRequestConfig = { timeout: TIMEOUTS.refreshDefault, headers: { 'Content-Type': 'application/json' } };
 
 export const authenticatedRequest = axios.create(commonRequestConfig);
 authenticatedRequest.interceptors.response.use(res => res, unauthorizedRedirect);
 authenticatedRequest.interceptors.request.use(
-  config => ({ ...config, headers: { ...config.headers, Authorization: `Bearer ${getToken()}` } }),
-  error => Promise.reject(error)
+  (config: InternalAxiosRequestConfig) => {
+    config.headers.Authorization = `Bearer ${getToken()}`;
+    return config;
+  },
+  (error: AxiosError) => Promise.reject(error)
 );
 
 const Api = {
   get: authenticatedRequest.get,
-  delete: (url, data?) => authenticatedRequest.request({ method: 'delete', url, data }),
+  delete: <T = unknown, D = unknown>(url: string, data?: D) => authenticatedRequest.request<T>({ method: 'delete', url, data }),
   patch: authenticatedRequest.patch,
   post: authenticatedRequest.post,
-  postUnauthorized: (url, data, config = {}) => axios.post(url, data, { ...commonRequestConfig, ...config }),
+  postUnauthorized: <T = unknown, D = unknown>(url: string, data?: D, config: AxiosRequestConfig = {}) =>
+    axios.post<T>(url, data, { ...commonRequestConfig, ...config }),
   put: authenticatedRequest.put,
-  upload: (url, formData, progress, cancelSignal) =>
-    authenticatedRequest.post(url, formData, {
+  upload: <T = unknown>(url: string, formData: FormData, progress: (event: AxiosProgressEvent) => void, cancelSignal: GenericAbortSignal) =>
+    authenticatedRequest.post<T>(url, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
       onUploadProgress: progress,
       timeout: 0,
       signal: cancelSignal
     }),
-  uploadPut: (url, formData, progress, cancelSignal) =>
-    authenticatedRequest.put(url, formData, {
+  uploadPut: <T = unknown>(url: string, formData: FormData, progress: (event: AxiosProgressEvent) => void, cancelSignal: GenericAbortSignal) =>
+    authenticatedRequest.put<T>(url, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
       onUploadProgress: progress,
       timeout: 0,

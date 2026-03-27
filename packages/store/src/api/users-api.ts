@@ -11,27 +11,27 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { LoginOptions } from '@northern.tech/types/MenderTypes';
 import axios from 'axios';
 
 import { getToken } from '../auth';
 import { commonRequestConfig } from './general-api';
 
-type PostLoginBody = {
+type PostLoginBody = LoginOptions & {
   email: string;
-  no_expiry?: boolean;
   password?: string;
-  token2fa?: string;
 };
 
+type VerifyTFAData = Pick<LoginOptions, 'token2fa'>;
+
 const Api = {
-  postLogin: (url: string, { email: username, password, ...body }: PostLoginBody) =>
+  postLogin: (url: string, { email: username, password = '', ...body }: PostLoginBody) =>
     axios
-      // @ts-ignore
       .post(url, body, { ...commonRequestConfig, auth: { username, password } })
-      .then(res => ({ text: res.data, code: res.status, contentType: res.headers?.['content-type'] })),
-  putVerifyTFA: (url, userData) => {
-    let body = {};
-    if (userData.hasOwnProperty('token2fa')) {
+      .then(res => ({ text: res.data as string, code: res.status, contentType: res.headers?.['content-type'] as string | undefined })),
+  putVerifyTFA: (url: string, userData: VerifyTFAData) => {
+    let body: VerifyTFAData = {};
+    if (Object.hasOwn(userData, 'token2fa')) {
       body = { token2fa: userData.token2fa };
     }
     return axios.put(url, body, { ...commonRequestConfig, headers: { ...commonRequestConfig.headers, Authorization: `Bearer ${getToken()}` } });

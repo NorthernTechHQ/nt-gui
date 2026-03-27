@@ -13,7 +13,7 @@
 //    limitations under the License.
 import { defaultState } from '@/testUtils';
 import { mockApiResponses, tenants, webhookEvents } from '@northern.tech/testing/mockData';
-import type { ProductInfo } from '@northern.tech/types/MenderTypes';
+import type { Credentials, ProductInfo } from '@northern.tech/types/MenderTypes';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { describe, expect, it, vi } from 'vitest';
@@ -21,7 +21,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { actions } from '.';
 import { actions as appActions } from '../appSlice';
 import { getSessionInfo } from '../auth';
-import { EXTERNAL_PROVIDER, TIMEOUTS, locations } from '../constants';
+import { EXTERNAL_PROVIDER, SORTING_OPTIONS, TIMEOUTS, locations } from '../constants';
 import { actions as deviceActions } from '../devicesSlice';
 import { setFirstLoginAfterSignup } from '../thunks';
 import { SSO_TYPES } from './constants';
@@ -337,7 +337,7 @@ describe('organization actions', () => {
       },
       { type: getAuditLogs.fulfilled.type }
     ];
-    const request = store.dispatch(getAuditLogs({ page: 1, perPage: 20, sort: { direction: 'asc' } }));
+    const request = store.dispatch(getAuditLogs({ page: 1, perPage: 20, sort: { direction: SORTING_OPTIONS.asc } }));
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
@@ -466,7 +466,7 @@ describe('organization actions', () => {
       { type: actions.receiveExternalDeviceIntegrations.type, payload: [] },
       { type: deleteIntegration.fulfilled.type }
     ];
-    const request = store.dispatch(deleteIntegration({ id: '1', provider: 'webhook', credentials: { type: 'http', connection_string: '' } }));
+    const request = store.dispatch(deleteIntegration({ id: '1', provider: 'webhook', credentials: { type: 'http', http: { url: '' } } as Credentials }));
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
@@ -664,7 +664,7 @@ describe('organization actions', () => {
       { type: getTenants.fulfilled.type },
       { type: addTenant.fulfilled.type }
     ];
-    const request = store.dispatch(addTenant({ name: 'Mikita', users: [{ email: 'some@example.com' }], deviceLimits: { standard: 2 }, binary_delta: true }));
+    const request = store.dispatch(addTenant({ name: 'Mikita', users: [{ email: 'some@example.com' }], deviceLimits: { standard: '2' }, binary_delta: true }));
     vi.advanceTimersByTime(TIMEOUTS.oneSecond);
     await vi.runOnlyPendingTimersAsync();
     await expect(request).resolves.toBeTruthy();

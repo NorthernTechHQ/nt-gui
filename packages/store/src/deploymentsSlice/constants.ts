@@ -34,7 +34,16 @@ export const deploymentSubstates = {
   success: 'success'
 };
 
-export const deploymentStatesToSubstates = {
+export type DeploymentSubstateMapping = {
+  failures: string[];
+  inprogress: string[];
+  paused: string[];
+  pending: string[];
+  skipped?: string[];
+  successes: string[];
+};
+
+export const deploymentStatesToSubstates: DeploymentSubstateMapping = {
   failures: [deploymentSubstates.failure, deploymentSubstates.aborted, deploymentSubstates.decommissioned],
   inprogress: [deploymentSubstates.downloading, deploymentSubstates.installing, deploymentSubstates.rebooting],
   paused: [deploymentSubstates.pause_before_installing, deploymentSubstates.pause_before_rebooting, deploymentSubstates.pause_before_committing],
@@ -42,7 +51,7 @@ export const deploymentStatesToSubstates = {
   successes: [deploymentSubstates.success, deploymentSubstates.alreadyInstalled, deploymentSubstates.noartifact, deploymentSubstates.artifact_too_big]
 };
 
-export const deploymentStatesToSubstatesWithSkipped = {
+export const deploymentStatesToSubstatesWithSkipped: DeploymentSubstateMapping = {
   ...deploymentStatesToSubstates,
   failures: [deploymentSubstates.failure],
   skipped: [

@@ -18,6 +18,7 @@ import type {
   DeviceState,
   DeviceTierLimits,
   MonitorConfiguration,
+  Scope,
   SortCriteria,
   Status
 } from '@northern.tech/types/MenderTypes';
@@ -93,7 +94,7 @@ export type Device = BackendDeviceAuth &
 export type DeviceFilter = {
   key: string;
   operator: FilterOperator;
-  scope: string;
+  scope: Scope;
   value: string | string[];
 };
 type FilteringAttributes = {

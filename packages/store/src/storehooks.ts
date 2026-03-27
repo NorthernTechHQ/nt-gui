@@ -11,11 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { extractErrorMessage } from '@northern.tech/utils/helpers';
+import type { ThunkAction, UnknownAction } from '@reduxjs/toolkit';
 import dayjs from 'dayjs';
 import durationDayJs from 'dayjs/plugin/duration.js';
 import Cookies from 'universal-cookie';
@@ -23,6 +22,7 @@ import Cookies from 'universal-cookie';
 import storeActions from './actions';
 import { getSessionInfo } from './auth';
 import { DEPLOYMENT_STATES, DEVICE_STATES, TIMEOUTS, timeUnits } from './constants';
+import type { DeviceSliceType } from './devicesSlice';
 import {
   getDevicesByStatus as getDevicesByStatusSelector,
   getFeatures,
@@ -35,6 +35,8 @@ import {
   getUserCapabilities,
   getUserSettings as getUserSettingsSelector
 } from './selectors';
+import { useAppDispatch, useAppSelector } from './store';
+import type { AppDispatch, RootState } from './store';
 import {
   getAllDeviceCounts,
   getDeploymentsByStatus,
@@ -74,9 +76,23 @@ const featureFlags = [
   'hasMonitor',
   'hasMCUEnabled',
   'isEnterprise'
-];
+] as const;
 
-const environmentDatas = ['commit', 'feedbackProbability', 'hostAddress', 'hostedAnnouncement', 'recaptchaSiteKey', 'sentry', 'stripeAPIKey', 'trackerCode'];
+const environmentDatas = [
+  'commit',
+  'feedbackProbability',
+  'hostAddress',
+  'hostedAnnouncement',
+  'recaptchaSiteKey',
+  'sentry',
+  'stripeAPIKey',
+  'trackerCode'
+] as const;
+
+type VersionInfo = {
+  docs?: string;
+  remainder?: Record<string, string>;
+};
 
 export const parseEnvironmentInfo = () => (dispatch, getState) => {
   const state = getState();
@@ -130,16 +146,16 @@ const maybeAddOnboardingTasks = ({ devicesByStatus, dispatch, onboardingState, t
 export const useAppInit = userId => {
   const dispatch = useDispatch();
   const [coreInitDone, setCoreInitDone] = useState(false);
-  const isEnterprise = useSelector(getIsEnterprise);
-  const { hasMultitenancy, isHosted } = useSelector(getFeatures);
-  const devicesByStatus = useSelector(getDevicesByStatusSelector);
-  const onboardingState = useSelector(getOnboardingStateSelector);
-  const { columnSelection = [], trackingConsentGiven: hasTrackingEnabled, tooltips = {} } = useSelector(getUserSettingsSelector);
-  const { canManageUsers } = useSelector(getUserCapabilities);
-  const { interval, intervalUnit } = useSelector(getOfflineThresholdSettings);
-  const { id_attribute } = useSelector(getGlobalSettingsSelector);
-  const { identityAttributes } = useSelector(getSortedFilteringAttributes);
-  const isServiceProvider = useSelector(getIsServiceProvider);
+  const isEnterprise = useAppSelector(getIsEnterprise);
+  const { hasMultitenancy, isHosted } = useAppSelector(getFeatures);
+  const devicesByStatus = useAppSelector(getDevicesByStatusSelector);
+  const onboardingState = useAppSelector(getOnboardingStateSelector);
+  const { columnSelection = [], trackingConsentGiven: hasTrackingEnabled, tooltips = {} } = useAppSelector(getUserSettingsSelector);
+  const { canManageUsers } = useAppSelector(getUserCapabilities);
+  const { interval, intervalUnit } = useAppSelector(getOfflineThresholdSettings);
+  const { id_attribute } = useAppSelector(getGlobalSettingsSelector);
+  const { identityAttributes } = useAppSelector(getSortedFilteringAttributes);
+  const isServiceProvider = useAppSelector(getIsServiceProvider);
   const coreInitRunning = useRef(false);
   const fullInitRunning = useRef(false);
 
@@ -196,7 +212,7 @@ export const useAppInit = userId => {
     tasks = maybeAddOnboardingTasks({ devicesByStatus, dispatch, tasks, onboardingState });
 
     if (canManageUsers && intervalUnit && intervalUnit !== timeUnits.days) {
-      const duration = dayjs.duration(interval, intervalUnit);
+      const duration = dayjs.duration(interval, intervalUnit as keyof typeof timeUnits);
       const days = duration.asDays();
       if (days < 1) {
         tasks.push(Promise.resolve(setTimeout(() => dispatch(setShowStartupNotification(true)), TIMEOUTS.fiveSeconds)));
@@ -213,7 +229,8 @@ export const useAppInit = userId => {
     if (!id_attribute && identityOptions.length) {
       tasks.push(dispatch(saveGlobalSettings({ id_attribute: { attribute: identityOptions[0], scope: 'identity' } })));
     } else if (typeof id_attribute === 'string') {
-      let attribute = id_attribute;
+      // Legacy migration path: id_attribute used to be a plain string
+      let attribute: string = id_attribute;
       if (attribute === 'Device ID') {
         attribute = 'id';
       }

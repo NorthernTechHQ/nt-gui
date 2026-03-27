@@ -68,8 +68,8 @@ export type UserSettings = {
     approach: 'physical' | 'virtual' | 'mcu' | null;
     complete: boolean;
     demoArtifactPort: number;
-    deviceType: string[] | string;
-    progress: string;
+    deviceType: string[] | string | null;
+    progress: string | null;
     showTips: null | boolean;
     showTipsDialog: boolean;
   }>;

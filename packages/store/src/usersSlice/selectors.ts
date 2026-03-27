@@ -38,7 +38,7 @@ export const getUserSettings = (state: RootState) => state.users.userSettings;
 export const getSelectedDeviceAttribute = createSelector([getUserSettings], ({ columnSelection }) =>
   columnSelection.map(attribute => ({ attribute: attribute.key, scope: attribute.scope }))
 );
-export const getIsDarkMode = createSelector([getUserSettings], ({ mode }) => isDarkMode(mode));
+export const getIsDarkMode = createSelector([getUserSettings], ({ mode }) => isDarkMode(mode ?? ''));
 
 export const getReadAllHelptips = createSelector([getTooltipsById], tooltips =>
   Object.values(tooltips).every(({ readState }) => readState === READ_STATES.read)

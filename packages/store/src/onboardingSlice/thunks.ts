@@ -119,7 +119,7 @@ export const setOnboardingApproach = createAppAsyncThunk(`${sliceName}/setOnboar
 );
 
 export const setOnboardingComplete = createAppAsyncThunk(`${sliceName}/setOnboardingComplete`, (value: boolean, { dispatch }) => {
-  const tasks: ReturnType<AppDispatch>[] = [Promise.resolve(dispatch(actions.setOnboardingComplete(value)))];
+  const tasks: Promise<ReturnType<AppDispatch> | unknown>[] = [Promise.resolve(dispatch(actions.setOnboardingComplete(value)))];
   if (value) {
     tasks.push(Promise.resolve(dispatch(actions.setShowOnboardingHelp(false))));
     tasks.push(Promise.resolve(dispatch(advanceOnboarding(onboardingStepNames.DEPLOYMENTS_PAST_COMPLETED))));

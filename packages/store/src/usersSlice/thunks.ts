@@ -133,8 +133,8 @@ export const loginUser = createAppAsyncThunk(`${sliceName}/loginUser`, ({ stayLo
     .then(({ text: token, contentType }) => {
       // If the content type is application/json then backend returned SSO configuration.
       // user should be redirected to the start sso url to finish login process.
-      if (contentType.includes(APPLICATION_JSON_CONTENT_TYPE)) {
-        const { id, kind } = token;
+      if (contentType?.includes(APPLICATION_JSON_CONTENT_TYPE)) {
+        const { id, kind } = token as unknown as { id: string; kind: string };
         const type = kind.split('/')[1];
         const ssoLoginUrl = SSO_TYPES[type].getStartUrl(id);
         window.location.replace(ssoLoginUrl);
@@ -354,7 +354,7 @@ export const editUser = createAppAsyncThunk(`${sliceName}/editUser`, ({ id, ...u
 );
 
 export const checkEmailExists = createAppAsyncThunk(`${sliceName}/checkEmailExists`, async (email: string) => {
-  const response = await GeneralApi.get(`${useradmApiUrl}/users/exists?email=${encodeURIComponent(email)}`);
+  const response = await GeneralApi.get<{ exists?: boolean }>(`${useradmApiUrl}/users/exists?email=${encodeURIComponent(email)}`);
   return response.data.exists;
 });
 
@@ -397,7 +397,7 @@ const mapHttpPermission = (permission: RolePermissionObject) =>
         if (Array.isArray(accu[area])) {
           accu[area] = [...accu[area], ...collector].filter(duplicateFilter);
         } else {
-          accu[area] = mergePermissions(accu[area], { [scopedPermissionAreas[area].excessiveAccessSelector]: collector });
+          accu[area] = mergePermissions(accu[area], { [scopedPermissionAreas[area].excessiveAccessSelector]: collector } as typeof emptyUiPermissions);
         }
       }
       return accu;
@@ -495,7 +495,7 @@ const parseRolePermissions = ({ permission_sets_with_scope = [], permissions = [
       return {
         ...accu,
         isCustom: accu.isCustom || processor.isCustom,
-        uiPermissions: mergePermissions(accu.uiPermissions, processor.result)
+        uiPermissions: mergePermissions(accu.uiPermissions, processor.result as typeof emptyUiPermissions)
       };
     },
     { isCustom: false, uiPermissions: { ...emptyUiPermissions, groups: {}, releases: {} } }
@@ -573,23 +573,29 @@ export const getPermissionSets = createAppAsyncThunk(`${sliceName}/getPermission
         },
         { ...getState().users.permissionSetsById }
       );
-      return Promise.all([dispatch(actions.receivedPermissionSets(permissionSets)), permissionSets]) as ReturnType<AppDispatch>;
+      return Promise.all([
+        Promise.resolve(dispatch(actions.receivedPermissionSets(permissionSets))) as Promise<ReturnType<AppDispatch>>,
+        Promise.resolve(permissionSets)
+      ]);
     })
     .catch(() => console.log('Permission set retrieval failed - likely accessing a non-RBAC backend'))
 );
 
-export const getRoles = createAppAsyncThunk(`${sliceName}/getRoles`, (_, { dispatch, getState }) =>
-  Promise.all([GeneralApi.get<Role[]>(`${useradmApiUrlv2}/roles?per_page=500`), dispatch(getPermissionSets())])
-    .then(results => {
-      if (!results) {
-        return Promise.resolve() as any;
-      }
-      const [{ data: roles }, { payload: permissionSetTasks }] = results;
-      const rolesById = normalizeRbacRoles(roles, getRolesById(getState()), permissionSetTasks[permissionSetTasks.length - 1] as ThunkPermissionSet);
-      return Promise.resolve(dispatch(actions.receivedRoles(rolesById)));
-    })
-    .catch(() => console.log('Role retrieval failed - likely accessing a non-RBAC backend'))
-    .finally(() => Promise.resolve(dispatch(actions.finishedRoleInitialization(true))))
+export const getRoles = createAppAsyncThunk(
+  `${sliceName}/getRoles`,
+  (_, { dispatch, getState }): Promise<ReturnType<AppDispatch> | unknown> =>
+    Promise.all([GeneralApi.get<Role[]>(`${useradmApiUrlv2}/roles?per_page=500`), dispatch(getPermissionSets())])
+      .then(results => {
+        if (!results) {
+          return Promise.resolve(undefined);
+        }
+        const [{ data: roles }, permissionSetResult] = results;
+        const permissionSetTasks = permissionSetResult.payload as [unknown, unknown];
+        const rolesById = normalizeRbacRoles(roles, getRolesById(getState()), permissionSetTasks[permissionSetTasks.length - 1] as ThunkPermissionSet);
+        return Promise.resolve(dispatch(actions.receivedRoles(rolesById)));
+      })
+      .catch(() => console.log('Role retrieval failed - likely accessing a non-RBAC backend'))
+      .finally(() => Promise.resolve(dispatch(actions.finishedRoleInitialization(true))))
 );
 
 const deriveImpliedAreaPermissions = (
@@ -782,12 +788,12 @@ export const saveGlobalSettings = createAppAsyncThunk(
         } else {
           delete updatedSettings['2fa'];
         }
-        const tasks: ReturnType<AppDispatch> = [dispatch(actions.setGlobalSettings(updatedSettings))];
+        const tasks: Promise<ReturnType<AppDispatch> | unknown>[] = [Promise.resolve(dispatch(actions.setGlobalSettings(updatedSettings)))];
         const headers = result[result.length - 1] ? { 'If-Match': result[result.length - 1] } : {};
         return GeneralApi.post(`${useradmApiUrl}/settings`, updatedSettings, { headers })
           .then(() => {
             if (notify) {
-              tasks.push(dispatch(setSnackbar('Settings saved successfully')));
+              tasks.push(Promise.resolve(dispatch(setSnackbar('Settings saved successfully'))));
             }
             return Promise.all(tasks);
           })
@@ -859,7 +865,7 @@ export const setHideAnnouncement = createAppAsyncThunk<void, { shouldHide: boole
 );
 
 export const getTokens = createAppAsyncThunk(`${sliceName}/getTokens`, (_, { dispatch, getState }) =>
-  GeneralApi.get(`${useradmApiUrl}/settings/tokens`).then(({ data: tokens }) => {
+  GeneralApi.get<PersonalAccessToken[]>(`${useradmApiUrl}/settings/tokens`).then(({ data: tokens }) => {
     const user = getCurrentUser(getState());
     const updatedUser = {
       ...user,
