@@ -2604,6 +2604,23 @@ export type SelectAttribute = {
 };
 
 /**
+ * Number of devices per tier
+ */
+export type DeviceCountByTier = {
+  standard: number;
+  micro: number;
+  system: number;
+};
+
+/**
+ * Device statistics grouped by device status
+ */
+export type DeviceStatusStatistics = {
+  accepted: DeviceCountByTier;
+  pending: DeviceCountByTier;
+};
+
+/**
  * Attribute filter predicate
  */
 export type FilterPredicate = {
@@ -2792,23 +2809,6 @@ export type FilterDefinition = {
    * List of filter predicates, chained with boolean AND operators to build the search condition definition.
    */
   terms?: Array<FilterPredicate>;
-};
-
-/**
- * Device statistics grouped by device status
- */
-export type DeviceStatusStatistics = {
-  accepted: DeviceCountByTier;
-  pending: DeviceCountByTier;
-};
-
-/**
- * Number of devices per tier
- */
-export type DeviceCountByTier = {
-  standard: number;
-  micro: number;
-  system: number;
 };
 
 export type NewDeviceInternalProvisionTypeInternal = {
@@ -7132,6 +7132,99 @@ export type UpdateBinaryDeltaConfigurationResponses = {
 
 export type UpdateBinaryDeltaConfigurationResponse = UpdateBinaryDeltaConfigurationResponses[keyof UpdateBinaryDeltaConfigurationResponses];
 
+export type GetDeploymentLogForDeviceV1Alpha1Data = {
+  body?: never;
+  path: {
+    /**
+     * Deployment identifier.
+     */
+    deployment_id: string;
+    /**
+     * Device identifier.
+     */
+    device_id: string;
+  };
+  query?: {
+    /**
+     * Log output format (allows redacting sensitive information)
+     */
+    format?: 'text' | 'text-redacted';
+  };
+  url: '/api/management/v1alpha1/deployments/deployments/{deployment_id}/devices/{device_id}/log';
+};
+
+export type GetDeploymentLogForDeviceV1Alpha1Errors = {
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * Not Found.
+   */
+  404: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type GetDeploymentLogForDeviceV1Alpha1Error = GetDeploymentLogForDeviceV1Alpha1Errors[keyof GetDeploymentLogForDeviceV1Alpha1Errors];
+
+export type GetDeploymentLogForDeviceV1Alpha1Responses = {
+  /**
+   * Successful response, including the logs in text/plain format.
+   */
+  200: string;
+};
+
+export type GetDeploymentLogForDeviceV1Alpha1Response = GetDeploymentLogForDeviceV1Alpha1Responses[keyof GetDeploymentLogForDeviceV1Alpha1Responses];
+
+export type ExplainDeploymentLogForDeviceData = {
+  body?: never;
+  path: {
+    /**
+     * Deployment identifier.
+     */
+    deployment_id: string;
+    /**
+     * Device identifier.
+     */
+    device_id: string;
+  };
+  query?: never;
+  url: '/api/management/v1alpha1/deployments/deployments/{deployment_id}/devices/{device_id}/log/explain';
+};
+
+export type ExplainDeploymentLogForDeviceErrors = {
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * The endpoint requires a paid plan.
+   */
+  402: Error;
+  /**
+   * Not Found.
+   */
+  404: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type ExplainDeploymentLogForDeviceError = ExplainDeploymentLogForDeviceErrors[keyof ExplainDeploymentLogForDeviceErrors];
+
+export type ExplainDeploymentLogForDeviceResponses = {
+  /**
+   * Successful response with an AI-generated explanation of the deployment log.
+   */
+  200: string;
+};
+
+export type ExplainDeploymentLogForDeviceResponse = ExplainDeploymentLogForDeviceResponses[keyof ExplainDeploymentLogForDeviceResponses];
+
 export type DeploymentsV2ListDeploymentsData = {
   body?: never;
   path?: never;
@@ -11009,6 +11102,38 @@ export type StartReIndexingResponses = {
    */
   200: unknown;
 };
+
+export type GetStatisticsInternalData = {
+  body?: never;
+  path: {
+    /**
+     * Tenant ID.
+     */
+    tenant_id: string;
+  };
+  query?: never;
+  url: '/api/internal/v2/inventory/tenants/{tenant_id}/statistics';
+};
+
+export type GetStatisticsInternalErrors = {
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type GetStatisticsInternalError = GetStatisticsInternalErrors[keyof GetStatisticsInternalErrors];
+
+export type GetStatisticsInternalResponses = {
+  /**
+   * Successful response.
+   */
+  200: {
+    devices_by_status: DeviceStatusStatistics;
+  };
+};
+
+export type GetStatisticsInternalResponse = GetStatisticsInternalResponses[keyof GetStatisticsInternalResponses];
 
 export type InventoryInternalV2SearchDeviceInventoriesData = {
   /**
