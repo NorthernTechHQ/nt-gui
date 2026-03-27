@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { PaletteOptions, ThemeOptions, outlinedInputClasses } from '@mui/material';
+import { PaletteOptions, ThemeOptions, alertClasses, outlinedInputClasses } from '@mui/material';
 import { common } from '@mui/material/colors';
 
 import { components as baseComponents, colors, typography } from './common';
@@ -50,6 +50,21 @@ export const light: ThemeOptions = {
   typography,
   components: {
     ...baseComponents,
+    MuiAlert: {
+      ...baseComponents.MuiAlert,
+      variants: [
+        {
+          props: { severity: 'info' },
+          style: {
+            backgroundColor: 'rgb(229, 246, 253)',
+            color: 'rgb(1, 67, 97)',
+            [`& .${alertClasses.icon}`]: {
+              color: 'rgb(1, 67, 97)'
+            }
+          }
+        }
+      ]
+    },
     MuiOutlinedInput: {
       ...baseComponents.MuiOutlinedInput,
       styleOverrides: {
