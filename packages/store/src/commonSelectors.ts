@@ -19,17 +19,7 @@ import dayjs from 'dayjs';
 import { ADDONS, PLANS, defaultReports } from './appSlice/constants';
 import { getFeatures, getSearchedDevices } from './appSlice/selectors';
 import { DEVICE_LIST_MAXIMUM_LENGTH, UNGROUPED_GROUP } from './commonConstants';
-import {
-  ALL_DEVICES,
-  ATTRIBUTE_SCOPES,
-  DEVICE_ISSUE_OPTIONS,
-  inventoryApiUrlV2,
-  reportingApiUrl,
-  rolesById,
-  rolesByName,
-  serviceProviderRolesById,
-  uiPermissionsById
-} from './constants';
+import { ALL_DEVICES, ATTRIBUTE_SCOPES, DEVICE_ISSUE_OPTIONS, rolesById, rolesByName, serviceProviderRolesById, uiPermissionsById } from './constants';
 import { getDeploymentsById, getDeploymentsSelectionState, getSelectedDeploymentDeviceIds } from './deploymentsSlice/selectors';
 import { getDeviceById, getDevicesById, getFilteringAttributes, getGroupsById, getListedDevices } from './devicesSlice/selectors';
 import { getIssueCountsByType } from './monitorSlice/selectors';
@@ -52,13 +42,6 @@ import { listItemMapper, mapUserRolesToUiPermissions } from './utils';
 export const getIsEnterprise = createSelector(
   [getOrganization, getFeatures],
   ({ plan = PLANS.os.id }, { isEnterprise, isHosted }) => isEnterprise || (isHosted && plan === PLANS.enterprise.id)
-);
-
-export const getAttrsEndpoint = createSelector([getFeatures], ({ hasReporting }) =>
-  hasReporting ? `${reportingApiUrl}/devices/search/attributes` : `${inventoryApiUrlV2}/filters/attributes`
-);
-export const getSearchEndpoint = createSelector([getFeatures], ({ hasReporting }) =>
-  hasReporting ? `${reportingApiUrl}/devices/search` : `${inventoryApiUrlV2}/filters/search`
 );
 
 export const getUserRoles = createSelector([getCurrentUser, getRolesById, getIsEnterprise], (currentUser, rolesById, isEnterprise) => {
@@ -215,16 +198,14 @@ export const getSelectedDeploymentData = createSelector(
   }
 );
 
-export const getAvailableIssueOptionsByType = createSelector(
-  [getFeatures, getTenantCapabilities, getIssueCountsByType],
-  ({ hasReporting }, { hasFullFiltering, hasMonitor }, issueCounts) =>
-    Object.values(DEVICE_ISSUE_OPTIONS).reduce((accu, { isCategory, key, needsFullFiltering, needsMonitor, needsReporting, title }) => {
-      if (isCategory || (needsReporting && !hasReporting) || (needsFullFiltering && !hasFullFiltering) || (needsMonitor && !hasMonitor)) {
-        return accu;
-      }
-      accu[key] = { count: issueCounts[key].filtered, key, title };
+export const getAvailableIssueOptionsByType = createSelector([getTenantCapabilities, getIssueCountsByType], ({ hasFullFiltering, hasMonitor }, issueCounts) =>
+  Object.values(DEVICE_ISSUE_OPTIONS).reduce((accu, { isCategory, key, needsFullFiltering, needsMonitor, title }) => {
+    if (isCategory || (needsFullFiltering && !hasFullFiltering) || (needsMonitor && !hasMonitor)) {
       return accu;
-    }, {})
+    }
+    accu[key] = { count: issueCounts[key].filtered, key, title };
+    return accu;
+  }, {})
 );
 
 export const getGroupNames = createSelector([getGroupsById, getUserRoles], (groupsById, { uiPermissions }) => {

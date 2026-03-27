@@ -30,7 +30,6 @@ export const inventoryApiUrlV1 = inventoryApiUrl;
 export const inventoryApiUrlV2 = `${apiUrl.v2}/inventory`;
 export const iotManagerBaseURL = `${apiUrl.v1}/iot-manager`;
 export const monitorApiUrlv1 = `${apiUrl.v1}/devicemonitor`;
-export const reportingApiUrl = `${apiUrl.v1}/reporting`;
 export const ssoIdpApiUrlv1 = `${apiUrl.v1}/useradm/sso/idp/metadata`;
 export const tenantadmApiUrlv1 = `${apiUrl.v1}/tenantadm`;
 export const tenantadmApiUrlv2 = `${apiUrl.v2}/tenantadm`;

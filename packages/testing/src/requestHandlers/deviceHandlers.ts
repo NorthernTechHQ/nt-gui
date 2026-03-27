@@ -21,8 +21,7 @@ import {
   headerNames,
   inventoryApiUrl,
   inventoryApiUrlV2,
-  iotManagerBaseURL,
-  reportingApiUrl
+  iotManagerBaseURL
 } from '@northern.tech/utils/constants';
 import { HttpResponse, http } from 'msw';
 
@@ -193,20 +192,6 @@ export const deviceHandlers = [
     return HttpResponse.json(groups);
   }),
   http.get(`${inventoryApiUrlV2}/filters/attributes`, () => HttpResponse.json(deviceAttributes)),
-  http.get(`${reportingApiUrl}/devices/attributes`, () => HttpResponse.json({ attributes: deviceAttributes, count: deviceAttributes.length, limit: 100 })),
-  http.get(`${reportingApiUrl}/devices/search/attributes`, () => HttpResponse.json(deviceAttributes)),
-  http.post(`${reportingApiUrl}/devices/aggregate`, () =>
-    HttpResponse.json([
-      {
-        name: '*',
-        items: [
-          { key: 'test', count: 6 },
-          { key: 'original', count: 1 }
-        ],
-        other_count: 42
-      }
-    ])
-  ),
   http.get(`${inventoryApiUrlV2}/filters`, () =>
     HttpResponse.json([
       {
@@ -239,7 +224,6 @@ export const deviceHandlers = [
     return new HttpResponse(null, { status: 200 });
   }),
   http.post(`${inventoryApiUrlV2}/filters/search`, searchHandler),
-  http.post(`${reportingApiUrl}/filters/search`, searchHandler),
   http.post(`${inventoryApiUrlV2}/filters`, async ({ request }) => {
     const { name, terms } = await request.json();
     if (

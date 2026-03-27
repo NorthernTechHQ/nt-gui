@@ -62,13 +62,11 @@ import {
 import type { DeviceAuthState, DeviceIssueOptionKey } from '../constants';
 import {
   getAcceptedDevices,
-  getAttrsEndpoint,
   getDeviceReports,
   getDeviceReportsForUser,
   getDeviceTwinIntegrations,
   getGlobalSettings,
   getIdAttribute,
-  getSearchEndpoint,
   getSelectedDeviceAttribute,
   getTenantCapabilities,
   getUserCapabilities,
@@ -436,7 +434,7 @@ export const getAllGroupDevices = createAppAsyncThunk(
       status: DEVICE_STATES.accepted
     });
     const getAllDevices = (perPage = MAX_PAGE_SIZE, page = defaultPage, devices: string[] = []) =>
-      GeneralApi.post(getSearchEndpoint(getState()), {
+      GeneralApi.post(`${inventoryApiUrlV2}/filters/search`, {
         page,
         per_page: perPage,
         filters: filterTerms,
@@ -467,18 +465,21 @@ export const getAllDynamicGroupDevices = createAppAsyncThunk(
       status: DEVICE_STATES.accepted
     });
     const getAllDevices = (perPage = MAX_PAGE_SIZE, page = defaultPage, devices: string[] = []) =>
-      GeneralApi.post(getSearchEndpoint(getState()), { page, per_page: perPage, filters, attributes: [...attributes, { scope: 'inventory', attribute }] }).then(
-        res => {
-          const state = getState();
-          const deviceAccu = reduceReceivedDevices(res.data, devices, state);
-          dispatch(actions.receivedDevices(deviceAccu.devicesById));
-          const total = Number(res.headers[headerNames.total]);
-          if (total > deviceAccu.ids.length) {
-            return getAllDevices(perPage, page + 1, deviceAccu.ids);
-          }
-          return Promise.resolve(dispatch(actions.addGroup({ group: { deviceIds: deviceAccu.ids, total }, groupName: group })));
+      GeneralApi.post(`${inventoryApiUrlV2}/filters/search`, {
+        page,
+        per_page: perPage,
+        filters,
+        attributes: [...attributes, { scope: 'inventory', attribute }]
+      }).then(res => {
+        const state = getState();
+        const deviceAccu = reduceReceivedDevices(res.data, devices, state);
+        dispatch(actions.receivedDevices(deviceAccu.devicesById));
+        const total = Number(res.headers[headerNames.total]);
+        if (total > deviceAccu.ids.length) {
+          return getAllDevices(perPage, page + 1, deviceAccu.ids);
         }
-      );
+        return Promise.resolve(dispatch(actions.addGroup({ group: { deviceIds: deviceAccu.ids, total }, groupName: group })));
+      });
     return getAllDevices();
   }
 );
@@ -643,7 +644,7 @@ export const getDevicesByStatus = createAppAsyncThunk(
       status
     });
     const attributes = [...defaultAttributes, getIdAttribute(getState()), ...selectedAttributes];
-    return GeneralApi.post(getSearchEndpoint(getState()), {
+    return GeneralApi.post(`${inventoryApiUrlV2}/filters/search`, {
       page,
       per_page: perPage,
       filters: filterTerms,
@@ -678,7 +679,7 @@ export const getAllDevicesByStatus = createAppAsyncThunk(
   ({ status, attribute }: { attribute: string; status: DeviceAuthState }, { dispatch, getState }) => {
     const attributes = [...defaultAttributes, getIdAttribute(getState())];
     const getAllDevices = (perPage = MAX_PAGE_SIZE, page = 1, devices: string[] = []) =>
-      GeneralApi.post(getSearchEndpoint(getState()), {
+      GeneralApi.post(`${inventoryApiUrlV2}/filters/search`, {
         page,
         per_page: perPage,
         filters: mapFiltersToTerms([{ key: 'status', value: status, operator: DEVICE_FILTERING_OPTIONS.$eq.key, scope: 'identity' }]),
@@ -708,7 +709,7 @@ export const searchDevices = createAppAsyncThunk(`${sliceName}/searchDevices`, (
   const { columnSelection = [] } = getUserSettings(state);
   const selectedAttributes = columnSelection.map(column => ({ attribute: column.key, scope: column.scope }));
   const attributes = attributeDuplicateFilter([...defaultAttributes, getIdAttribute(state), ...selectedAttributes], 'attribute');
-  return GeneralApi.post(getSearchEndpoint(getState()), {
+  return GeneralApi.post(`${inventoryApiUrlV2}/filters/search`, {
     page,
     per_page: 10,
     filters: [],
@@ -739,8 +740,8 @@ const attributeReducer = (attributes: AttributeV2[] = []) =>
     { identity: [], inventory: [], system: [], tags: [] }
   );
 
-export const getDeviceAttributes = createAppAsyncThunk(`${sliceName}/getDeviceAttributes`, (_, { dispatch, getState }) =>
-  GeneralApi.get(getAttrsEndpoint(getState())).then(({ data }) => {
+export const getDeviceAttributes = createAppAsyncThunk(`${sliceName}/getDeviceAttributes`, (_, { dispatch }) =>
+  GeneralApi.get(`${inventoryApiUrlV2}/filters/attributes`).then(({ data }) => {
     // TODO: remove the array fallback once the inventory attributes endpoint is fixed
     const { identity: identityAttributes, inventory: inventoryAttributes, system: systemAttributes, tags: tagAttributes } = attributeReducer(data || []);
     return dispatch(actions.setFilterAttributes({ identityAttributes, inventoryAttributes, systemAttributes, tagAttributes }));
@@ -1124,7 +1125,7 @@ export const getSystemDevices = createAppAsyncThunk(`${sliceName}/getSystemDevic
     { ...emptyFilter, key: 'mender_gateway_system_id', value: mender_gateway_system_id, scope: 'inventory' }
   ];
   const { attributes, filterTerms } = prepareSearchArguments({ filters, state });
-  return GeneralApi.post(getSearchEndpoint(getState()), {
+  return GeneralApi.post(`${inventoryApiUrlV2}/filters/search`, {
     page,
     per_page: perPage,
     filters: filterTerms,
@@ -1154,7 +1155,7 @@ export const getGatewayDevices = createAppAsyncThunk(`${sliceName}/getGatewayDev
     { ...emptyFilter, key: 'mender_gateway_system_id', value: mender_gateway_system_id, scope: 'inventory' }
   ];
   const { attributes: attributeSelection, filterTerms } = prepareSearchArguments({ filters, state });
-  return GeneralApi.post(getSearchEndpoint(getState()), {
+  return GeneralApi.post(`${inventoryApiUrlV2}/filters/search`, {
     page: 1,
     per_page: MAX_PAGE_SIZE,
     filters: filterTerms,

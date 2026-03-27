@@ -123,7 +123,6 @@ export type DeviceIssueOption = {
   key: string;
   needsFullFiltering?: boolean;
   needsMonitor?: boolean;
-  needsReporting?: boolean;
   title: string;
 };
 
@@ -139,7 +138,6 @@ export const DEVICE_ISSUE_OPTIONS = {
     key: 'offline',
     needsFullFiltering: true,
     needsMonitor: false,
-    needsReporting: false,
     filterRule: {
       scope: 'system',
       key: 'check_in_time',
@@ -147,15 +145,6 @@ export const DEVICE_ISSUE_OPTIONS = {
       value: ({ offlineThreshold }) => offlineThreshold
     },
     title: 'Offline devices'
-  },
-  failedLastUpdate: {
-    issueCategory: 'issues',
-    key: 'failedLastUpdate',
-    needsFullFiltering: false,
-    needsMonitor: false,
-    needsReporting: true,
-    filterRule: { scope: 'monitor', key: 'failed_last_update', operator: DEVICE_FILTERING_OPTIONS.$eq.key, value: true },
-    title: 'Deployment failed'
   },
   monitoring: {
     issueCategory: 'issues',
@@ -165,22 +154,6 @@ export const DEVICE_ISSUE_OPTIONS = {
     needsReporting: false,
     filterRule: { scope: 'monitor', key: 'alerts', operator: DEVICE_FILTERING_OPTIONS.$eq.key, value: true },
     title: 'Monitoring alert'
-  },
-  authRequests: {
-    key: 'authRequests',
-    needsFullFiltering: false,
-    needsMonitor: false,
-    needsReporting: true,
-    filterRule: { scope: 'monitor', key: 'auth_requests', operator: DEVICE_FILTERING_OPTIONS.$gt.key, value: 1 },
-    title: 'Devices with new authentication requests'
-  },
-  gatewayDevices: {
-    key: 'gatewayDevices',
-    needsFullFiltering: false,
-    needsMonitor: false,
-    needsReporting: true,
-    filterRule: { scope: 'inventory', key: 'mender_is_gateway', operator: DEVICE_FILTERING_OPTIONS.$eq.key, value: 'true' },
-    title: 'Gateway devices'
   }
 } as const;
 export type DeviceIssueOptionKey = keyof typeof DEVICE_ISSUE_OPTIONS;
