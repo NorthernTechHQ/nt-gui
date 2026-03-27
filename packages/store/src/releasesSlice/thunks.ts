@@ -138,7 +138,7 @@ export const getArtifactUrl = createAppAsyncThunk(`${sliceName}/getArtifactUrl`,
       ...release,
       artifacts: releaseArtifacts
     };
-    return dispatch(actions.receiveRelease(release));
+    return Promise.all([Promise.resolve(dispatch(actions.receiveRelease(release))), Promise.resolve(response.data.uri)]);
   })
 );
 
