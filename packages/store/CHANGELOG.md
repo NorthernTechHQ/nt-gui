@@ -1,4 +1,23 @@
 ---
+## 0.30.0 - 2026-03-30
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Allow easier caller access of retrieved artifact url w/o relying on store processing
+
+ ([3b6a2de](https://github.com/NorthernTechHQ/nt-gui/commit/3b6a2dec496e878b2172eb9396835095c4564aac))  by @mzedel
+
+
+
+
+
+
+
+
 ## @northern.tech/store-0.29.0 - 2026-03-20
 
 
