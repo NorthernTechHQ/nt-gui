@@ -177,6 +177,8 @@ release:npmjs:
     - k8s
   needs:
     - job: changelog
+  before_script:
+    - apt-get update && apt-get install -y jq
   script:
     - npm ci
     - echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
