@@ -1,5 +1,12 @@
 ---
-## @northern.tech/eslint-config-0.6.3 - 2026-02-23
+## 0.8.0 - 2026-04-01
+
+
+### Security
+
+
+
+## @northern.tech/eslint-config-0.7.0 - 2026-02-23
 
 
 ### Bug fixes
