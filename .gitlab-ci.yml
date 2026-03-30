@@ -127,7 +127,7 @@ changelog:
         gh pr checkout --force $RELEASE_PLEASE_PR;
         COMPONENT_VERSION=$(jq -r ".\"${component}\"" .release-please-manifest.json);
         cd $component;
-          echo "INFO - generating git cliff for $component_name version COMPONENT_VERSION"
+          echo "INFO - generating git cliff for $component_name version $COMPONENT_VERSION"
           wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml.scoped;
           git cliff --tag ${COMPONENT_VERSION} --output ./CHANGELOG.md --repository "../../" --include-path "${component}/**/*" --github-repo ${GITHUB_REPO_URL} --tag-pattern "@northern.tech/${component_name}-.*";
           cat CHANGELOG.md;
@@ -180,10 +180,19 @@ release:npmjs:
   script:
     - npm ci
     - echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
-    - npm run publish-packages
-  allow_failure:
-    exit_codes:
-      - 1
+    - |
+      for component in $(jq -r 'keys[] | select(. != ".")' .release-please-manifest.json); do
+        cd $component;
+        PKG_NAME=$(jq -r '.name' package.json);
+        PKG_VERSION=$(jq -r '.version' package.json);
+        if npm view "${PKG_NAME}@${PKG_VERSION}" version 2>/dev/null; then
+          echo "INFO - ${PKG_NAME}@${PKG_VERSION} already published, skipping";
+        else
+          echo "INFO - publishing ${PKG_NAME}@${PKG_VERSION}";
+          npm publish;
+        fi
+        cd ../..;
+      done
 
 pages:
   stage: release
