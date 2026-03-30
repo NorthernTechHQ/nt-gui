@@ -1,5 +1,30 @@
 ---
-## @northern.tech/themes-0.11.0 - 2026-03-02
+## 0.15.1 - 2026-03-30
+
+
+### Bug fixes
+
+#### Themes
+
+
+- *(themes)* Set info & neutral base color to one closer to the figma desired one
+
+ ([ef00425](https://github.com/NorthernTechHQ/nt-gui/commit/ef00425d6d26fb7f482f73886ca80beaf6854286))  by @mzedel
+
+
+
+- *(themes)* Aligned alert coloring for light info alerts & all severities in dark mode
+
+ ([f9014d2](https://github.com/NorthernTechHQ/nt-gui/commit/f9014d2fe8f852dd02c74e1cb171b2461a19d15e))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/themes-0.15.0 - 2026-03-02
 
 
 ### Bug fixes
@@ -17,6 +42,12 @@
 - *(themes)* Decoupled table styling from deployments to reflect shared usage
 
  ([51eda9c](https://github.com/NorthernTechHQ/nt-gui/commit/51eda9c4feb7e4d4dfe9a69279f670c10e0285a7))  by @mzedel
+
+
+
+- *(themes)* Aligned menu sizing closer w/ updated design
+
+ ([c77a08b](https://github.com/NorthernTechHQ/nt-gui/commit/c77a08bcdfaa34f42f5f62c6317e1c73b6b0788b))  by @mzedel
 
 
 
