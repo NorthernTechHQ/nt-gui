@@ -125,14 +125,16 @@ changelog:
           continue;
         fi
         gh pr checkout --force $RELEASE_PLEASE_PR;
+        COMPONENT_VERSION=$(jq -r ".\"${component}\"" .release-please-manifest.json);
         cd $component;
+          echo "INFO - generating git cliff for $component_name version COMPONENT_VERSION"
           wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml.scoped;
-          git cliff --bump --output ./CHANGELOG.md --repository "../../" --include-path "${component}/**/*" --github-repo ${GITHUB_REPO_URL} --tag-pattern "@northern.tech/${component_name}-.*";
+          git cliff --tag ${COMPONENT_VERSION} --output ./CHANGELOG.md --repository "../../" --include-path "${component}/**/*" --github-repo ${GITHUB_REPO_URL} --tag-pattern "@northern.tech/${component_name}-.*";
           cat CHANGELOG.md;
           git add CHANGELOG.md;
           git commit --amend -s --no-edit;
           git push github-${CI_JOB_ID} --force;
-          git cliff --unreleased --bump -o tmp_pr_body.md --repository "../../" --include-path "${component}/**/*" --github-repo ${GITHUB_REPO_URL} --tag-pattern "@northern.tech/${component_name}-.*";
+          git cliff --unreleased --tag ${COMPONENT_VERSION} -o tmp_pr_body.md --repository "../../" --include-path "${component}/**/*" --github-repo ${GITHUB_REPO_URL} --tag-pattern "@northern.tech/${component_name}-.*";
           gh pr edit $RELEASE_PLEASE_PR --body-file tmp_pr_body.md;
           rm tmp_pr_body.md;
         cd ../..;
