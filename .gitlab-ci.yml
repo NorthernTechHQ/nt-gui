@@ -131,6 +131,11 @@ changelog:
           wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml.scoped;
           git cliff --tag ${COMPONENT_VERSION} --output ./CHANGELOG.md --repository "../../" --include-path "${component}/**/*" --github-repo ${GITHUB_REPO_URL} --tag-pattern "@northern.tech/${component_name}-.*";
           cat CHANGELOG.md;
+          if git diff --quiet CHANGELOG.md; then
+            echo "INFO - no CHANGELOG changes for @northern.tech/$component_name, skipping";
+            cd ../..;
+            continue;
+          fi
           git add CHANGELOG.md;
           git commit --amend -s --no-edit;
           git push github-${CI_JOB_ID} --force;
