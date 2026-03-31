@@ -1,5 +1,24 @@
 ---
-## @northern.tech/utils-0.7.3 - 2026-03-14
+## 0.8.1 - 2026-03-31
+
+
+### Bug fixes
+
+#### Utils
+
+
+- *(utils)* Removed leftover reporting reference that could disturb gui selectors
+
+ ([5385db0](https://github.com/NorthernTechHQ/nt-gui/commit/5385db04fd18c43c64215a6567383badbdb86282))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/utils-0.8.0 - 2026-03-14
 
 
 ### Bug fixes
