@@ -44,7 +44,6 @@ const oldWindowSessionStorage = window.sessionStorage;
 vi.mock('uuid', () => ({ v4: () => 'mock-uuid' }));
 
 const storage = {};
-
 global.HTMLCanvasElement.prototype.getContext = vi.fn();
 
 export const beforeAll = async () => {
