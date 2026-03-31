@@ -1,5 +1,24 @@
 ---
-## 0.8.1 - 2026-03-31
+## 0.8.2 - 2026-03-31
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Ensured package content
+
+ ([8df53da](https://github.com/NorthernTechHQ/nt-gui/commit/8df53da18c36b1940cf4ee19bc7cd5e4024ca79d))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/testing-0.8.1 - 2026-03-31
 
 
 ### Bug fixes
