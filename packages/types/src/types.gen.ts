@@ -76,18 +76,7 @@ export type TenantNew = {
  * Device identity attributes, in the form of a JSON structure. The attributes are completely vendor-specific, the provided ones are just an example. In reference implementation structure contains vendor-selected fields, such as MACs, serial numbers, etc.
  */
 export type IdentityData = {
-  /**
-   * MAC address.
-   */
-  mac?: string;
-  /**
-   * Stock keeping unit.
-   */
-  sku?: string;
-  /**
-   * Serial number.
-   */
-  sn?: string;
+  [key: string]: unknown;
 };
 
 /**
@@ -14479,6 +14468,12 @@ export type UseradmInternalDeleteTenantDataResponse = UseradmInternalDeleteTenan
 
 export type ListUsersInternalData = {
   body?: never;
+  headers?: {
+    /**
+     * Sets the amount of records on one page.
+     */
+    per_page?: number;
+  };
   path: {
     /**
      * Tenant ID.
@@ -14490,12 +14485,12 @@ export type ListUsersInternalData = {
      * Limit result by user ID, can be repeated to include multiple users in the query.
      *
      */
-    id?: string;
+    id?: Array<string>;
     /**
      * Limit result by user email, can be repeated to include multiple users in the query.
      *
      */
-    email?: string;
+    email?: Array<string>;
     /**
      * Filter users created after timestamp (UNIX timestamp).
      *
