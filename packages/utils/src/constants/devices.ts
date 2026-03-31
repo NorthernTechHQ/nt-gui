@@ -151,7 +151,6 @@ export const DEVICE_ISSUE_OPTIONS = {
     key: 'monitoring',
     needsFullFiltering: false,
     needsMonitor: true,
-    needsReporting: false,
     filterRule: { scope: 'monitor', key: 'alerts', operator: DEVICE_FILTERING_OPTIONS.$eq.key, value: true },
     title: 'Monitoring alert'
   }
