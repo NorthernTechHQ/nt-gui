@@ -155,5 +155,4 @@ export const DEVICE_ISSUE_OPTIONS = {
     title: 'Monitoring alert'
   }
 } as const;
-
 export type DeviceIssueOptionKey = keyof typeof DEVICE_ISSUE_OPTIONS;
