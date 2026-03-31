@@ -17,8 +17,6 @@
     "preview-storybook": "serve storybook-static",
     "clean": "turbo run clean && rm -rf node_modules",
     "release": "turbo run build",
-    "publish-packages": "turbo publish --continue",
-    "publish-packages-next": "turbo pre-publish --continue",
     "yalc:publish": "npm run release && npm exec --workspaces -- yalc publish --no-script --push",
     "prepare": "husky"
   },

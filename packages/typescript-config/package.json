@@ -21,8 +21,6 @@
     "tsup": "8.5.1"
   },
   "scripts": {
-    "build": "tsup base.json react-app.json react-library.json tsup-config.js",
-    "publish": "npm publish",
-    "pre-publish": "npm publish --tag next"
+    "build": "tsup base.json react-app.json react-library.json tsup-config.js"
   }
 }
