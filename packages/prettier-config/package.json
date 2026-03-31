@@ -22,8 +22,6 @@
     "tsup": "8.5.1"
   },
   "scripts": {
-    "build": "tsup base.js react.js",
-    "publish": "npm publish",
-    "pre-publish": "npm publish --tag next"
+    "build": "tsup base.js react.js"
   }
 }
