@@ -24,6 +24,7 @@ import {
 } from '@northern.tech/utils/constants';
 
 export const undefineds = /undefined|\[object Object\]/;
+
 export const menderEnvironment = {
   features: {
     hasMultitenancy: true
