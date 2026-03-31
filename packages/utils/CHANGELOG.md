@@ -1,5 +1,24 @@
 ---
-## 0.8.1 - 2026-03-31
+## 0.8.2 - 2026-03-31
+
+
+### Bug fixes
+
+#### Utils
+
+
+- *(utils)* Ensured package content
+
+ ([4e9890c](https://github.com/NorthernTechHQ/nt-gui/commit/4e9890c9bc1e75f8811076a44c3de0925f228dc1))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/utils-0.8.1 - 2026-03-31
 
 
 ### Bug fixes
