@@ -1,5 +1,24 @@
 ---
-## @northern.tech/testing-0.7.2 - 2026-03-04
+## 0.8.1 - 2026-03-31
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Ensured non-reporting utils package gets used in testing package
+
+ ([c1aaf99](https://github.com/NorthernTechHQ/nt-gui/commit/c1aaf99f7a0f23f97b2c169431034ef2a77e0d26))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/testing-0.8.0 - 2026-03-05
 
 
 ### Bug fixes
