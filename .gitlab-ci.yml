@@ -190,6 +190,7 @@ release:npmjs:
         if npm view "${PKG_NAME}@${PKG_VERSION}" version 2>/dev/null; then
           echo "INFO - ${PKG_NAME}@${PKG_VERSION} already published, skipping";
         else
+          npm run build;
           echo "INFO - publishing ${PKG_NAME}@${PKG_VERSION}";
           npm publish;
         fi
