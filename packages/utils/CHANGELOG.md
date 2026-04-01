@@ -1,5 +1,25 @@
 ---
-## 0.8.2 - 2026-03-31
+## 0.8.3 - 2026-04-01
+
+
+### Bug fixes
+
+#### Utils
+
+
+- *(utils)* Ensure package content
+
+([QA-1039](https://northerntech.atlassian.net/browse/QA-1039)) ([5129ee3](https://github.com/NorthernTechHQ/nt-gui/commit/5129ee3548da023942ae5a3c8bf53a5161e07b45))  by @mineralsfree
+
+
+
+
+
+
+
+
+
+## @northern.tech/utils-0.8.2 - 2026-03-31
 
 
 ### Bug fixes
