@@ -50,7 +50,7 @@
     "msw": "^2.x",
     "react": "19.x",
     "react-redux": "^9.x",
-    "react-router-dom": "^7.x",
+    "react-router-dom": "^7.13.1",
     "vitest": "^4.x"
   }
 }
