@@ -147,42 +147,25 @@ changelog:
   after_script:
     - git remote remove github-${CI_JOB_ID}
 
-release:github:
-  stage: .post
+release:
+  stage: release
   image: 'registry.gitlab.com/northern.tech/mender/mender-test-containers:release-please-v1-master'
   rules:
-    - if: $CI_COMMIT_BRANCH =~ "/^\d+\.\d+\.x$/" # Release from maintenance branches
-      when: manual
     - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH
-      when: manual
   needs:
     - job: changelog
+  before_script:
+    - apt-get update && apt-get install -y jq
+    - echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
   script:
     - npm ci
+    - npm run release
     - release-please github-release
       --token=${GITHUB_BOT_TOKEN_REPO_FULL}
       --repo-url=${GITHUB_REPO_URL}
       --target-branch=${CI_COMMIT_REF_NAME}
       --config-file=release-please-config.json
       --manifest-file=.release-please-manifest.json
-
-release:npmjs:
-  stage: .post
-  rules:
-    - if: $CI_COMMIT_BRANCH =~ "/^\d+\.\d+\.x$/" # Release from maintenance branches
-      when: manual
-    - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH
-      when: manual
-  tags:
-    - k8s
-  needs:
-    - job: changelog
-  before_script:
-    - apt-get update && apt-get install -y jq
-  script:
-    - npm ci
-    - npm run release
-    - echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
     - |
       for component in $(jq -r 'keys[] | select(. != ".")' .release-please-manifest.json); do
         cd $component;
