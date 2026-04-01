@@ -17,18 +17,18 @@
     "base.js"
   ],
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "8.x",
-    "@typescript-eslint/parser": "8.x",
+    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "@typescript-eslint/parser": "^8.56.1",
     "eslint-config-prettier": "^10.x",
     "eslint-import-resolver-typescript": "4.x",
     "eslint-plugin-import": "2.x",
     "eslint-plugin-mdx": "^3.x",
     "eslint-plugin-react": "7.x",
     "eslint-plugin-react-hooks": "7.x",
-    "eslint-plugin-sonarjs": "4.x",
-    "eslint-plugin-storybook": "^10.x",
+    "eslint-plugin-sonarjs": "^4.0.0",
+    "eslint-plugin-storybook": "^10.3.3",
     "globals": "17.x",
-    "typescript-eslint": "8.x"
+    "typescript-eslint": "^8.56.1"
   },
   "devDependencies": {
     "tsup": "8.5.1"
