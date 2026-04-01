@@ -82,8 +82,8 @@
   },
   "dependencies": {
     "@mdi/js": "^7.x",
-    "@mui/icons-material": "^7.x",
-    "@mui/material": "^7.x",
+    "@mui/icons-material": "^7.3.9",
+    "@mui/material": "^7.3.9",
     "@mui/x-date-pickers": "^8.x",
     "@northern.tech/store": "*",
     "@northern.tech/utils": "*",

@@ -50,9 +50,9 @@
     "vitest": "^4.0.18"
   },
   "dependencies": {
-    "@mui/icons-material": "^7.x",
+    "@mui/icons-material": "^7.3.9",
+    "@mui/material": "^7.3.9",
     "@mui/x-tree-view": "^8.x",
-    "@mui/material": "^7.x",
     "@northern.tech/common-ui": "*",
     "@northern.tech/store": "*",
     "@northern.tech/themes": "*",
