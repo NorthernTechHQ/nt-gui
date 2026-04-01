@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@emotion/jest": "^11.x",
-    "@mui/material": "^7.x",
+    "@mui/material": "^7.3.9",
     "@northern.tech/utils": "*",
     "@reduxjs/toolkit": "^2.x",
     "@testing-library/react": "^16.x",
