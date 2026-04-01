@@ -1,5 +1,25 @@
 ---
-## 0.8.2 - 2026-03-31
+## 0.8.3 - 2026-04-01
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Ensure package content
+
+([QA-1039](https://northerntech.atlassian.net/browse/QA-1039)) ([de4cb9a](https://github.com/NorthernTechHQ/nt-gui/commit/de4cb9a162fccbc4de575a25358b2b9e746e951d))  by @mineralsfree
+
+
+
+
+
+
+
+
+
+## @northern.tech/testing-0.8.2 - 2026-03-31
 
 
 ### Bug fixes
