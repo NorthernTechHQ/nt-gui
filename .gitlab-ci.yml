@@ -181,6 +181,7 @@ release:npmjs:
     - apt-get update && apt-get install -y jq
   script:
     - npm ci
+    - npm run release
     - echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
     - |
       for component in $(jq -r 'keys[] | select(. != ".")' .release-please-manifest.json); do
@@ -190,7 +191,6 @@ release:npmjs:
         if npm view "${PKG_NAME}@${PKG_VERSION}" version 2>/dev/null; then
           echo "INFO - ${PKG_NAME}@${PKG_VERSION} already published, skipping";
         else
-          npm run build;
           echo "INFO - publishing ${PKG_NAME}@${PKG_VERSION}";
           npm publish;
         fi
