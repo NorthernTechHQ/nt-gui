@@ -7,7 +7,7 @@ export type ClientOptions = {
 /**
  * Error descriptor.
  */
-export type Error = {
+export type _Error = {
   /**
    * Description of the error.
    */
@@ -76,7 +76,18 @@ export type TenantNew = {
  * Device identity attributes, in the form of a JSON structure. The attributes are completely vendor-specific, the provided ones are just an example. In reference implementation structure contains vendor-selected fields, such as MACs, serial numbers, etc.
  */
 export type IdentityData = {
-  [key: string]: unknown;
+  /**
+   * MAC address.
+   */
+  mac?: string;
+  /**
+   * Stock keeping unit.
+   */
+  sku?: string;
+  /**
+   * Serial number.
+   */
+  sn?: string;
 };
 
 /**
@@ -118,15 +129,6 @@ export type ProvisionDevice = {
 };
 
 /**
- * Tenant account limit.
- */
-export type TenantLimit = {
-  tenant_id: string;
-  current_value: number;
-  limit: number;
-};
-
-/**
  * The scope of the attribute.
  *
  * Scope is a string and acts as namespace for the attribute name.
@@ -159,24 +161,6 @@ export const Scope = {
  *
  */
 export type Scope = (typeof Scope)[keyof typeof Scope];
-
-/**
- * Tenant device limits per tier.
- */
-export type DeviceLimitTenant = {
-  name: string;
-  tenant_id?: string;
-  current_value: number;
-  value: number;
-};
-
-/**
- * Device limit.
- */
-export type DeviceLimitTenantPut = {
-  name: string;
-  value: number;
-};
 
 /**
  * The actor may be a user or device.
@@ -268,7 +252,7 @@ export type AuditlogsDevice = {
  * Depending on the type of object different information will be available.
  *
  */
-export type Object = {
+export type _Object = {
   /**
    * A unique identifier of the object.
    *
@@ -308,7 +292,7 @@ export type AuditLog = {
     | 'set_configuration'
     | 'deploy_configuration'
     | 'upload';
-  object: Object;
+  object: _Object;
   change?: string;
 };
 
@@ -622,6 +606,22 @@ export type StorageSettings = {
   account_key?: string;
 };
 
+/**
+ * Tenant account storage limit and storage usage.
+ */
+export type StorageUsage = {
+  /**
+   * Storage limit in bytes. If set to 0 - there is no limit for storage.
+   *
+   */
+  limit: number;
+  /**
+   * Current storage usage in bytes.
+   *
+   */
+  usage: number;
+};
+
 export type DeploymentV1Internal = {
   created: string;
   name: string;
@@ -733,13 +733,22 @@ export type DeviceGroups = {
 };
 
 /**
- * Limit definition
+ * Tenant account storage limit and storage usage.
  */
-export type TenantLimitValue = {
+export type StorageLimit = {
+  /**
+   * Storage limit in bytes. If set to 0 - there is no limit for storage.
+   *
+   */
   limit: number;
+  /**
+   * Current storage usage in bytes.
+   *
+   */
+  usage: number;
 };
 
-export const DeploymentDeviceStatus = {
+export const DeviceStatus = {
   FAILURE: 'failure',
   ABORTED: 'aborted',
   PAUSE_BEFORE_INSTALLING: 'pause_before_installing',
@@ -756,7 +765,7 @@ export const DeploymentDeviceStatus = {
   DECOMMISSIONED: 'decommissioned'
 } as const;
 
-export type DeploymentDeviceStatus = (typeof DeploymentDeviceStatus)[keyof typeof DeploymentDeviceStatus];
+export type DeviceStatus = (typeof DeviceStatus)[keyof typeof DeviceStatus];
 
 export type DeviceWithImageImageMeta = {
   /**
@@ -823,7 +832,7 @@ export type DeviceWithImage = {
    * Device identifier.
    */
   id: string;
-  status: DeploymentDeviceStatus;
+  status: DeviceStatus;
   created?: string;
   started?: string;
   finished?: string;
@@ -845,10 +854,6 @@ export type DeviceWithImage = {
    * Number of deployment attempts for this device
    */
   attempts?: number;
-  /**
-   * Deployment phase identifier
-   */
-  phase_id?: string;
   image?: DeviceWithImageImage;
 };
 
@@ -1005,7 +1010,7 @@ export type ErrorExt = {
   };
 };
 
-export type NewDeploymentTypeManagement = {
+export type NewDeployment = {
   /**
    * Name of the deployment
    */
@@ -1028,8 +1033,7 @@ export type NewDeploymentTypeManagement = {
    * Force the installation of the Artifact disabling the `already-installed` check.
    */
   force_installation?: boolean;
-  phases?: Array<NewDeploymentPhaseTypeManagement>;
-  uniform_phases?: DeploymentUniformPhase;
+  phases?: Array<NewDeploymentPhase>;
   /**
    * The number of times a device can retry the deployment in case of failure, defaults to 0
    */
@@ -1062,7 +1066,7 @@ export type NewDeploymentForGroup = {
    * Force the installation of the Artifact disabling the `already-installed` check.
    */
   force_installation?: boolean;
-  phases?: Array<NewDeploymentPhaseTypeManagement>;
+  phases?: Array<NewDeploymentPhase>;
   /**
    * The number of times a device can retry the deployment in case of failure, defaults to 0
    */
@@ -1125,7 +1129,6 @@ export type DeploymentV1 = {
    * An array of deployments phases (if any were defined for the deployment).
    */
   phases?: Array<DeploymentPhase>;
-  uniform_phases?: DeploymentUniformPhase;
   /**
    * The number of times a device can retry the deployment in case of failure, defaults to 0
    */
@@ -1184,7 +1187,7 @@ export type DeploymentV1 = {
  * schedule deployments, this feature is not available for Starter plan.
  *
  */
-export type NewDeploymentPhaseTypeManagement = {
+export type NewDeploymentPhase = {
   /**
    * Percentage of devices to update in the phase.
    * This field is optional for the last phase.
@@ -1198,13 +1201,6 @@ export type NewDeploymentPhaseTypeManagement = {
    *
    */
   batch_size?: number;
-  /**
-   * Exact number of devices to update in this phase.
-   * This field is optional for the last phase, which will contain the remaining devices.
-   * Note that you can only specify either `batch_size` or `batch_size_devices`, not both for all phases in a deployment.
-   *
-   */
-  batch_size_devices?: number;
   /**
    * Start date of a phase.
    * Can be skipped for the first phase of a new deployment definition ('start immediately').
@@ -1449,29 +1445,19 @@ export type GenerateArtifactRequest = {
   file: Blob | File;
 };
 
-/**
- * Deployments phases define a starting point and a batch size of devices
- * to which the deployment applies.
- *
- * A single phase allows scheduling a deployment to start at a specific
- * time.
- *
- * Multiple phases split the deployment into smaller batches of devices
- * at the time giving a higher level of control of the rate devices are
- * updated.
- *
- * *NOTE*: Professional plan is only allowed to specify a single phase to
- * schedule deployments, this feature is not available for Starter plan.
- *
- */
-export type DeploymentPhaseSpec = {
+export type DeploymentPhase = {
   /**
    * Phase identifier.
    */
   id?: string;
   /**
+   * Percentage of devices to update in the phase.
+   *
+   */
+  batch_size?: number;
+  /**
    * Start date of a phase.
-   * Can be skipped for the first phase of a new deployment definition ('start immediately').
+   * May be undefined for the first phase of a deployment.
    *
    */
   start_ts?: string;
@@ -1481,52 +1467,6 @@ export type DeploymentPhaseSpec = {
    */
   device_count?: number;
 };
-
-export type DeploymentBatchSizeSpec = {
-  /**
-   * Exact number of devices to update in this phase.
-   * This field is optional for the last phase, which will contain the remaining devices.
-   *
-   */
-  batch_size_devices?: number;
-  /**
-   * Percentage of devices to update in the phase.
-   * This field is optional for the last phase.
-   * The last phase will contain the rest of the devices.
-   * Note that if the percentage of devices entered does not
-   * add up to a whole number of devices it is rounded down,
-   * and in the case it is rounded down to zero, a 400 error
-   * will be returned. This is mostly a concern when the deployment
-   * consists of a low number of devices, like say 5 percent of 11
-   * devices will round to zero, and an error is returned by the server.
-   *
-   */
-  batch_size?: number;
-};
-
-export type DeploymentPhase = DeploymentPhaseSpec & DeploymentBatchSizeSpec;
-
-/**
- * Uniform phases configuration describing the rollout pattern
- * where `batch_size_devices` number of devices are scheduled for update
- * every `time_interval`.
- *
- */
-export type DeploymentUniformPhaseSpec = {
-  /**
-   * Start time stamp for the deploment of the first phase.
-   * If unset, the deployment starts immediately.
-   *
-   */
-  start_ts?: string;
-  /**
-   * The time between successive phases to start.
-   *
-   */
-  time_interval?: string;
-};
-
-export type DeploymentUniformPhase = DeploymentUniformPhaseSpec & DeploymentBatchSizeSpec;
 
 export type Statistics = {
   /**
@@ -1616,31 +1556,7 @@ export type AttributeFilterPredicate = {
    * Mixed arrays are not allowed.
    *
    */
-  value: string | number | Array<string> | Array<number>;
-};
-
-export const DeploymentDeviceStatusGet = {
-  PAUSE: 'pause',
-  ACTIVE: 'active',
-  FINISHED: 'finished'
-} as const;
-
-export type DeploymentDeviceStatusGet = (typeof DeploymentDeviceStatusGet)[keyof typeof DeploymentDeviceStatusGet];
-
-/**
- * Tenant account storage limit and storage usage.
- */
-export type StorageLimit = {
-  /**
-   * Storage limit in bytes. If set to -1 - there is no limit for storage.
-   *
-   */
-  limit: number;
-  /**
-   * Current storage usage in bytes.
-   *
-   */
-  usage: number;
+  value: string;
 };
 
 /**
@@ -1812,7 +1728,6 @@ export type DeploymentV2 = {
    * An array of deployments phases (if any were defined for the deployment).
    */
   phases?: Array<DeploymentPhase>;
-  uniform_phases?: DeploymentUniformPhase;
   /**
    * The number of times a device can retry the deployment in case of failure, defaults to 0
    */
@@ -1856,7 +1771,7 @@ export type DeploymentV2 = {
   statistics?: DeploymentStatistics;
 };
 
-export type NewDeploymentV2TypeManagement = {
+export type NewDeploymentV2 = {
   name: string;
   artifact_name: string;
   /**
@@ -1867,8 +1782,7 @@ export type NewDeploymentV2TypeManagement = {
    * Phased rollout feature is available only to Enterprise users.
    *
    */
-  phases?: Array<NewDeploymentPhaseTypeManagement>;
-  uniform_phases?: DeploymentUniformPhase;
+  phases?: Array<NewDeploymentPhase>;
   /**
    * The number of times a device can retry the deployment in case of failure, defaults to 0
    */
@@ -2031,6 +1945,33 @@ export type AuthRequest = {
 };
 
 /**
+ * Device limit.
+ */
+export type DeviceTenantLimit = {
+  Name: string;
+  current_value: number;
+  value: number;
+  tenant_id: string;
+};
+
+/**
+ * Device limit.
+ */
+export type DeviceTenantLimitPut = {
+  Name: string;
+  value: number;
+};
+
+/**
+ * Tenant account limit.
+ */
+export type TenantLimit = {
+  tenant_id: string;
+  current_value: number;
+  limit: number;
+};
+
+/**
  * External device descriptor
  */
 export type ExternalDevice = {
@@ -2106,7 +2047,6 @@ export type Device = {
    */
   decommissioning?: boolean;
   external_id?: ExternalIdentity;
-  tier?: 'standard' | 'micro' | 'system';
 };
 
 /**
@@ -2125,7 +2065,7 @@ export type Count = {
 export type DeviceTierLimits = {
   /**
    * The number of standard tier devices that can be accepted by the tenant.
-   * A value of -1 means that an unlimited amount of standard tier devices can be accepted.
+   * A value of 0 or -1 means that an unlimited amount of standard tier devices can be accepted.
    *
    */
   standard: number;
@@ -2384,7 +2324,7 @@ export type MonitorConfiguration = {
  *
  */
 export type LogSubsystem = {
-  log?: {
+  log: {
     /**
      * Log pattern
      *
@@ -2408,7 +2348,7 @@ export type LogSubsystem = {
  *
  */
 export type ServiceSubsystem = {
-  service?: {
+  service: {
     /**
      * Service name
      *
@@ -2427,7 +2367,7 @@ export type ServiceSubsystem = {
  *
  */
 export type DBusSubsystem = {
-  dbus?: {
+  dbus: {
     /**
      * Check name.
      *
@@ -2473,7 +2413,7 @@ export type Attribute = {
    * Mixed type arrays are not allowed.
    *
    */
-  value: string | number | Array<string> | Array<number>;
+  value: string;
 };
 
 export type DeviceNew = {
@@ -2526,32 +2466,6 @@ export type DevicesInGroupsReq = {
   groups: Array<string>;
 };
 
-/**
- * Attribute descriptor with scope (v2 APIs).
- */
-export type AttributeV2 = {
-  /**
-   * A human readable, unique attribute ID, e.g. 'device_type', 'ip_addr', 'cpu_load', etc.
-   *
-   */
-  name: string;
-  scope: Scope;
-  /**
-   * Attribute description.
-   */
-  description?: string;
-  /**
-   * The current value of the attribute.
-   *
-   * Attribute type is implicit, inferred from the JSON type.
-   *
-   * Supported types: number, string, array of numbers, array of strings.
-   * Mixed arrays are not allowed.
-   *
-   */
-  value: string | number | Array<string> | Array<number>;
-};
-
 export type DeviceInventory = {
   /**
    * Mender-assigned unique ID.
@@ -2590,23 +2504,6 @@ export type SelectAttribute = {
    */
   attribute: string;
   scope: Scope;
-};
-
-/**
- * Number of devices per tier
- */
-export type DeviceCountByTier = {
-  standard: number;
-  micro: number;
-  system: number;
-};
-
-/**
- * Device statistics grouped by device status
- */
-export type DeviceStatusStatistics = {
-  accepted: DeviceCountByTier;
-  pending: DeviceCountByTier;
 };
 
 /**
@@ -2670,6 +2567,32 @@ export type SortCriteria = {
 };
 
 /**
+ * Attribute descriptor with scope (v2 APIs).
+ */
+export type AttributeV2 = {
+  /**
+   * A human readable, unique attribute ID, e.g. 'device_type', 'ip_addr', 'cpu_load', etc.
+   *
+   */
+  name: string;
+  scope: Scope;
+  /**
+   * Attribute description.
+   */
+  description?: string;
+  /**
+   * The current value of the attribute.
+   *
+   * Attribute type is implicit, inferred from the JSON type.
+   *
+   * Supported types: number, string, array of numbers, array of strings.
+   * Mixed arrays are not allowed.
+   *
+   */
+  value: string;
+};
+
+/**
  * Filter definition
  */
 export type Filter = {
@@ -2715,7 +2638,7 @@ export type AttributeV1 = {
    * Mixed type arrays are not allowed.
    *
    */
-  value: string | number | Array<string> | Array<number>;
+  value: string;
   /**
    * The date and time of last tag update in RFC3339 format.
    *
@@ -2800,7 +2723,7 @@ export type FilterDefinition = {
   terms?: Array<FilterPredicate>;
 };
 
-export type NewDeviceInternalProvisionTypeInternal = {
+export type NewDevice = {
   /**
    * ID of the new device.
    */
@@ -2836,25 +2759,17 @@ export type Integration = {
   scopes?: Array<'deviceauth' | 'inventory'>;
 };
 
-export type Credentials =
-  | ({
-      type: 'aws';
-    } & AwsCredentials)
-  | ({
-      type: 'sas';
-    } & AzureSharedAccessSecret)
-  | ({
-      type: 'http';
-    } & Http);
+export type Credentials = {
+  /**
+   * The credential type
+   */
+  type: 'aws' | 'sas' | 'http';
+} & (AwsCredentials | AzureSharedAccessSecret | Http);
 
 /**
  * AWS credentials in the form of access key id and secret access key, a region and a device policy name.
  */
 export type AwsCredentials = {
-  /**
-   * The credential type
-   */
-  type: 'aws';
   aws: {
     access_key_id: string;
     secret_access_key: string;
@@ -2867,10 +2782,6 @@ export type AwsCredentials = {
  * Shared Access Secret is an authentication mechanism in the form of a connection string for Azure IoT Hub.
  */
 export type AzureSharedAccessSecret = {
-  /**
-   * The credential type
-   */
-  type: 'sas';
   connection_string: string;
 };
 
@@ -2889,10 +2800,6 @@ export type DeviceState = {
  * HTTP Webhook configuration.
  */
 export type Http = {
-  /**
-   * The credential type
-   */
-  type: 'http';
   http: {
     /**
      * The destination URL for the webhook. The webhook will send POST requests with event details to this target URL.
@@ -3021,9 +2928,6 @@ export type TenantUpdateInternal = {
    * Planned suspention date and time, in ISO8601 format.
    */
   suspend_at?: string;
-  customer_id?: string;
-  subscription_id?: string;
-  subscription_type?: string;
 };
 
 /**
@@ -3169,17 +3073,12 @@ export type Tenant = {
    * Device limit for the tenant.
    */
   device_limit?: number;
-  device_limits?: {
-    max_devices?: DeviceLimitTenant;
-    max_micro_devices?: DeviceLimitTenant;
-    max_system_devices?: DeviceLimitTenant;
-  };
 };
 
 /**
  * Status of a tenant account.
  */
-export type TenantStatusTypeManagement = {
+export type TenantStatus = {
   status: 'active' | 'suspended';
 };
 
@@ -3243,35 +3142,6 @@ export type CardData = {
  */
 export type SubscriptionData = {
   [key: string]: unknown;
-};
-
-export type ProductInfo = {
-  name: ProductName & unknown;
-  billing_unit: string;
-  prices: Array<PriceInfo>;
-  addons?: Array<AddonInfo>;
-};
-
-export type AddonInfo = {
-  name?: string;
-  prices?: Array<PriceInfo>;
-};
-
-export type PriceInfo = {
-  /**
-   * Plan name.
-   */
-  plan: string;
-  constraints?: ConstraintsInfo;
-};
-
-/**
- * Min/max values for units.
- */
-export type ConstraintsInfo = {
-  min?: number;
-  max?: number;
-  div?: number;
 };
 
 /**
@@ -3409,7 +3279,10 @@ export type InvoiceLineItem = {
    * The currency of amount.
    */
   currency: string;
-  product?: ProductName & unknown;
+  /**
+   * The name of the product for this item.
+   */
+  product?: string;
   /**
    * The name of the addon for this item if this is an addon.
    */
@@ -3436,42 +3309,32 @@ export type Subscription = SubscriptionRequest & {
 };
 
 export type SubscriptionRequest = {
-  plan?: TenantPlanTypeManagement;
+  plan?: TenantPlan;
   /**
    * The requested product and additional properties like quantity and addons
    */
   products?: Array<Product>;
 };
 
-/**
- * The name of the product.
- */
-export const ProductName = { MENDER_STANDARD: 'mender_standard' } as const;
-
-/**
- * The name of the product.
- */
-export type ProductName = (typeof ProductName)[keyof typeof ProductName];
-
 export type Product = {
-  name?: ProductName;
+  name?: 'mender_standard';
   quantity: number;
   addons?: Array<Addon>;
 };
 
 /**
- * Plan / access scope for the tenant account.
+ * Plan assigned to the tenant account.
  */
-export const TenantPlanTypeManagement = {
+export const TenantPlan = {
   OS: 'os',
   PROFESSIONAL: 'professional',
   ENTERPRISE: 'enterprise'
 } as const;
 
 /**
- * Plan / access scope for the tenant account.
+ * Plan assigned to the tenant account.
  */
-export type TenantPlanTypeManagement = (typeof TenantPlanTypeManagement)[keyof typeof TenantPlanTypeManagement];
+export type TenantPlan = (typeof TenantPlan)[keyof typeof TenantPlan];
 
 /**
  * Checkout data.
@@ -3500,7 +3363,7 @@ export type SupportRequest = {
 /**
  * New Tenant
  */
-export type NewTenantTypeManagement = {
+export type NewTenant = {
   /**
    * Name of the tenant.
    */
@@ -3566,20 +3429,10 @@ export type UpdateChildTenant = {
    * Name of the tenant.
    */
   name?: string;
+  /**
+   * Device limit for the tenant.
+   */
   device_limit?: number;
-  device_limits?: {
-    max_devices?: DeviceLimitPut;
-    max_micro_devices?: DeviceLimitPut;
-    max_system_devices?: DeviceLimitPut;
-  };
-};
-
-/**
- * Device limit.
- */
-export type DeviceLimitPut = {
-  Name: string;
-  value: number;
 };
 
 /**
@@ -3591,87 +3444,6 @@ export type PlanChangeRequest = {
   current_addons?: string;
   requested_addons?: string;
   user_message?: string;
-};
-
-/**
- * Role permission
- */
-export type RolePermission = {
-  /**
-   * Action
-   */
-  action: 'any' | 'http' | 'CREATE_DEPLOYMENT' | 'MANAGE_DEVICE' | 'REMOTE_TERMINAL' | 'VIEW_DEVICE';
-  object: RolePermissionObject;
-};
-
-/**
- * Role permission object
- */
-export type RolePermissionObject = {
-  /**
-   * Type
-   */
-  type: string;
-  /**
-   * Value
-   */
-  value: string;
-};
-
-export type PermissionSetWithScope = {
-  /**
-   * Permission set name.
-   */
-  name?: string;
-  scope?: PermissionSetScope;
-};
-
-export type PermissionSetScope = {
-  /**
-   * Scope type.
-   */
-  type?: string;
-  /**
-   * Scope value.
-   */
-  value?: Array<string>;
-};
-
-export type Permission = {
-  /**
-   * Action
-   */
-  action: 'any' | 'http';
-  object: PermissionObject;
-};
-
-export type PermissionObject = {
-  /**
-   * Type
-   */
-  type: string;
-  /**
-   * Value
-   */
-  value: string;
-};
-
-/**
- * Single Sign On descriptor.
- */
-export type SsoObject = {
-  /**
-   * An id of the identity provider.
-   */
-  id: string;
-  /**
-   * Single Sign On provider kind.
-   */
-  kind: string;
-  /**
-   * Single Sign On subject.
-   */
-  subject?: string;
 };
 
 /**
@@ -3717,18 +3489,6 @@ export type User = {
    * Flag indicating wether to trigger password reset on user creation.
    */
   send_reset_password?: boolean;
-  /**
-   * SSO login schemes.
-   */
-  sso?: Array<SsoObject>;
-  /**
-   * Tenant identifier of a tenant, user will log in to by default.
-   */
-  tenant_id?: string;
-  /**
-   * List of tenant Ids user can login to.
-   */
-  tenant_ids?: Array<string>;
 };
 
 export type TenantInfo = {
@@ -3905,6 +3665,34 @@ export type UserNew = {
    * Password.
    */
   password?: string;
+  /**
+   * Alternative login schemes
+   */
+  login?: {
+    [key: string]: unknown;
+  };
+  /**
+   * SSO login schemes
+   */
+  sso?: Array<SsoObject>;
+};
+
+/**
+ * Single Sign On descriptor.
+ */
+export type SsoObject = {
+  /**
+   * An id of the identity provider.
+   */
+  id: string;
+  /**
+   * Single Sign On provider kind.
+   */
+  kind: string;
+  /**
+   * Single Sign On subject.
+   */
+  subject?: string;
 };
 
 /**
@@ -4042,7 +3830,7 @@ export type EmailVerificationCompletion = {
   /**
    * Secret hash received by email by the user
    */
-  secret_hash: string;
+  secret: string;
 };
 
 /**
@@ -4075,8 +3863,26 @@ export type RoleV1 = {
    * Description of the role, as shown in the UI.
    */
   description?: string;
-  permissions?: Array<RolePermission>;
   permission_sets_with_scope?: Array<PermissionSetWithScope>;
+};
+
+/**
+ * Permission set with optional scope.
+ */
+export type PermissionSetWithScope = {
+  /**
+   * Unique permission set name.
+   */
+  name: string;
+  scope?: PermissionSetScope;
+};
+
+export type PermissionSetScope = {
+  /**
+   * Type of the scope.
+   */
+  type: 'DeviceGroups' | 'ReleaseTags';
+  value: Array<string>;
 };
 
 /**
@@ -4092,10 +3898,31 @@ export type Role = {
    */
   description?: string;
   permissions?: Array<RolePermission>;
+};
+
+/**
+ * Role permission
+ */
+export type RolePermission = {
   /**
-   * A list of permission sets with optional scope restrictions.
+   * Action
    */
-  permission_sets_with_scope?: Array<PermissionSetWithScope>;
+  action: 'any' | 'http' | 'CREATE_DEPLOYMENT' | 'MANAGE_DEVICE' | 'REMOTE_TERMINAL' | 'VIEW_DEVICE';
+  object: RolePermissionObject;
+};
+
+/**
+ * Role permission object
+ */
+export type RolePermissionObject = {
+  /**
+   * Type
+   */
+  type: string;
+  /**
+   * Value
+   */
+  value: string;
 };
 
 /**
@@ -4114,6 +3941,25 @@ export type PermissionSet = {
   description?: string;
   permissions: Array<Permission>;
   supported_scope_types?: Array<string>;
+};
+
+export type Permission = {
+  /**
+   * Action
+   */
+  action: 'any' | 'http';
+  object: PermissionObject;
+};
+
+export type PermissionObject = {
+  /**
+   * Type
+   */
+  type: string;
+  /**
+   * Value
+   */
+  value: string;
 };
 
 /**
@@ -4228,7 +4074,7 @@ export type PingErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type PingError = PingErrors[keyof PingErrors];
@@ -4253,11 +4099,11 @@ export type AuditlogsInternalCheckHealthErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
   /**
    * Service unavailable
    */
-  503: Error;
+  503: _Error;
 };
 
 export type AuditlogsInternalCheckHealthError = AuditlogsInternalCheckHealthErrors[keyof AuditlogsInternalCheckHealthErrors];
@@ -4287,7 +4133,7 @@ export type DeleteAuditLogsErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeleteAuditLogsError = DeleteAuditLogsErrors[keyof DeleteAuditLogsErrors];
@@ -4364,7 +4210,7 @@ export type GetAuditLogsInternalErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetAuditLogsInternalError = GetAuditLogsInternalErrors[keyof GetAuditLogsInternalErrors];
@@ -4396,7 +4242,7 @@ export type SaveAuditLogErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type SaveAuditLogError = SaveAuditLogErrors[keyof SaveAuditLogErrors];
@@ -4466,16 +4312,16 @@ export type GetAuditLogsErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The user has sent too many requests in a given amount of time.
    *
    */
-  429: Error;
+  429: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetAuditLogsError = GetAuditLogsErrors[keyof GetAuditLogsErrors];
@@ -4555,16 +4401,16 @@ export type ExportAuditLogsErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The user has sent too many requests in a given amount of time.
    *
    */
-  429: Error;
+  429: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ExportAuditLogsError = ExportAuditLogsErrors[keyof ExportAuditLogsErrors];
@@ -4601,19 +4447,19 @@ export type DeviceListArtifactsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceListArtifactsError = DeviceListArtifactsErrors[keyof DeviceListArtifactsErrors];
@@ -4643,19 +4489,19 @@ export type DeviceShowArtifactErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceShowArtifactError = DeviceShowArtifactErrors[keyof DeviceShowArtifactErrors];
@@ -4685,19 +4531,19 @@ export type DevicesDownloadArtifactErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DevicesDownloadArtifactError = DevicesDownloadArtifactErrors[keyof DevicesDownloadArtifactErrors];
@@ -4731,23 +4577,23 @@ export type DeviceCheckUpdateErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Conflict.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceCheckUpdateError = DeviceCheckUpdateErrors[keyof DeviceCheckUpdateErrors];
@@ -4782,15 +4628,15 @@ export type CheckUpdateDependsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Conflict.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CheckUpdateDependsError = CheckUpdateDependsErrors[keyof CheckUpdateDependsErrors];
@@ -4827,15 +4673,15 @@ export type UpdateDeploymentStatusErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Status already set to aborted.
    */
@@ -4843,7 +4689,7 @@ export type UpdateDeploymentStatusErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateDeploymentStatusError = UpdateDeploymentStatusErrors[keyof UpdateDeploymentStatusErrors];
@@ -4876,19 +4722,19 @@ export type ReportDeploymentLogErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ReportDeploymentLogError = ReportDeploymentLogErrors[keyof ReportDeploymentLogErrors];
@@ -4939,11 +4785,11 @@ export type FetchConfigurationErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The download link has expired or the signature is invalid.
    */
@@ -4951,7 +4797,7 @@ export type FetchConfigurationErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type FetchConfigurationError = FetchConfigurationErrors[keyof FetchConfigurationErrors];
@@ -4980,15 +4826,15 @@ export type CheckUpdateErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Conflict.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CheckUpdateError = CheckUpdateErrors[keyof CheckUpdateErrors];
@@ -5022,17 +4868,17 @@ export type GetUpdateControlMapErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Device deployment with given ID does not exist
    * or has been finished.
    *
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetUpdateControlMapError = GetUpdateControlMapErrors[keyof GetUpdateControlMapErrors];
@@ -5057,12 +4903,12 @@ export type DeploymentsInternalCheckHealthErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
   /**
    * Service unhealthy / not ready to accept traffic. At least one dependency is not running.
    *
    */
-  503: Error;
+  503: _Error;
 };
 
 export type DeploymentsInternalCheckHealthError = DeploymentsInternalCheckHealthErrors[keyof DeploymentsInternalCheckHealthErrors];
@@ -5088,7 +4934,7 @@ export type DeploymentsInternalCheckLivelinessErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeploymentsInternalCheckLivelinessError = DeploymentsInternalCheckLivelinessErrors[keyof DeploymentsInternalCheckLivelinessErrors];
@@ -5113,7 +4959,7 @@ export type GetBinaryDeltaConfigurationsErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetBinaryDeltaConfigurationsError = GetBinaryDeltaConfigurationsErrors[keyof GetBinaryDeltaConfigurationsErrors];
@@ -5143,7 +4989,7 @@ export type GetStorageSettingsErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetStorageSettingsError = GetStorageSettingsErrors[keyof GetStorageSettingsErrors];
@@ -5177,11 +5023,11 @@ export type SetStorageSettingsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type SetStorageSettingsError = SetStorageSettingsErrors[keyof SetStorageSettingsErrors];
@@ -5195,77 +5041,69 @@ export type SetStorageSettingsResponses = {
 
 export type SetStorageSettingsResponse = SetStorageSettingsResponses[keyof SetStorageSettingsResponses];
 
-export type DeploymentsInternalGetTenantLimitData = {
+export type DeploymentsInternalGetStorageUsageData = {
   body?: never;
   path: {
     /**
      * Tenant ID
      */
     id: string;
-    /**
-     * Name
-     */
-    name: 'storage' | 'max_artifact_size_micro_device_tier';
   };
   query?: never;
-  url: '/api/internal/v1/deployments/tenants/{id}/limits/{name}';
+  url: '/api/internal/v1/deployments/tenants/{id}/limits/storage';
 };
 
-export type DeploymentsInternalGetTenantLimitErrors = {
+export type DeploymentsInternalGetStorageUsageErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
-export type DeploymentsInternalGetTenantLimitError = DeploymentsInternalGetTenantLimitErrors[keyof DeploymentsInternalGetTenantLimitErrors];
+export type DeploymentsInternalGetStorageUsageError = DeploymentsInternalGetStorageUsageErrors[keyof DeploymentsInternalGetStorageUsageErrors];
 
-export type DeploymentsInternalGetTenantLimitResponses = {
+export type DeploymentsInternalGetStorageUsageResponses = {
   /**
    * Successful response.
    */
-  200: TenantLimit;
+  200: StorageUsage;
 };
 
-export type DeploymentsInternalGetTenantLimitResponse = DeploymentsInternalGetTenantLimitResponses[keyof DeploymentsInternalGetTenantLimitResponses];
+export type DeploymentsInternalGetStorageUsageResponse = DeploymentsInternalGetStorageUsageResponses[keyof DeploymentsInternalGetStorageUsageResponses];
 
-export type SetTenantLimitData = {
-  body: TenantLimitValue;
+export type SetStorageLimitData = {
+  body: StorageLimit;
   path: {
     /**
      * Tenant ID
      */
     id: string;
-    /**
-     * Name
-     */
-    name: 'storage' | 'max_artifact_size_micro_device_tier';
   };
   query?: never;
-  url: '/api/internal/v1/deployments/tenants/{id}/limits/{name}';
+  url: '/api/internal/v1/deployments/tenants/{id}/limits/storage';
 };
 
-export type SetTenantLimitErrors = {
+export type SetStorageLimitErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
-export type SetTenantLimitError = SetTenantLimitErrors[keyof SetTenantLimitErrors];
+export type SetStorageLimitError = SetStorageLimitErrors[keyof SetStorageLimitErrors];
 
-export type SetTenantLimitResponses = {
+export type SetStorageLimitResponses = {
   /**
    * Limit information updated.
    */
   204: void;
 };
 
-export type SetTenantLimitResponse = SetTenantLimitResponses[keyof SetTenantLimitResponses];
+export type SetStorageLimitResponse = SetStorageLimitResponses[keyof SetStorageLimitResponses];
 
 export type DeploymentsInternalCreateTenantData = {
   /**
@@ -5281,11 +5119,11 @@ export type DeploymentsInternalCreateTenantErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeploymentsInternalCreateTenantError = DeploymentsInternalCreateTenantErrors[keyof DeploymentsInternalCreateTenantErrors];
@@ -5339,7 +5177,7 @@ export type GetDeploymentsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
 };
 
 export type GetDeploymentsError = GetDeploymentsErrors[keyof GetDeploymentsErrors];
@@ -5373,11 +5211,11 @@ export type GetDeploymentGroupsErrors = {
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetDeploymentGroupsError = GetDeploymentGroupsErrors[keyof GetDeploymentGroupsErrors];
@@ -5391,7 +5229,7 @@ export type GetDeploymentGroupsResponses = {
 
 export type GetDeploymentGroupsResponse = GetDeploymentGroupsResponses[keyof GetDeploymentGroupsResponses];
 
-export type DeleteTenantInternalDeploymentsData = {
+export type DeleteTenantData = {
   body?: never;
   path: {
     /**
@@ -5403,23 +5241,23 @@ export type DeleteTenantInternalDeploymentsData = {
   url: '/api/internal/v1/deployments/tenants/{id}';
 };
 
-export type DeleteTenantInternalDeploymentsErrors = {
+export type DeleteTenantErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
-export type DeleteTenantInternalDeploymentsError = DeleteTenantInternalDeploymentsErrors[keyof DeleteTenantInternalDeploymentsErrors];
+export type DeleteTenantError = DeleteTenantErrors[keyof DeleteTenantErrors];
 
-export type DeleteTenantInternalDeploymentsResponses = {
+export type DeleteTenantResponses = {
   /**
    * Successful removal.
    */
   204: void;
 };
 
-export type DeleteTenantInternalDeploymentsResponse = DeleteTenantInternalDeploymentsResponses[keyof DeleteTenantInternalDeploymentsResponses];
+export type DeleteTenantResponse = DeleteTenantResponses[keyof DeleteTenantResponses];
 
 export type ListDeviceDeploymentsEntriesData = {
   body?: never;
@@ -5442,11 +5280,11 @@ export type ListDeviceDeploymentsEntriesErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListDeviceDeploymentsEntriesError = ListDeviceDeploymentsEntriesErrors[keyof ListDeviceDeploymentsEntriesErrors];
@@ -5480,7 +5318,7 @@ export type RemoveDeviceFromDeploymentsErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type RemoveDeviceFromDeploymentsError = RemoveDeviceFromDeploymentsErrors[keyof RemoveDeviceFromDeploymentsErrors];
@@ -5544,7 +5382,7 @@ export type DeploymentsInternalListDeploymentsForADeviceErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeploymentsInternalListDeploymentsForADeviceError =
@@ -5560,7 +5398,7 @@ export type DeploymentsInternalListDeploymentsForADeviceResponses = {
 export type DeploymentsInternalListDeploymentsForADeviceResponse =
   DeploymentsInternalListDeploymentsForADeviceResponses[keyof DeploymentsInternalListDeploymentsForADeviceResponses];
 
-export type DeploymentsInternalUploadArtifactData = {
+export type UploadArtifactData = {
   body: UploadArtifactRequest;
   path: {
     /**
@@ -5572,20 +5410,20 @@ export type DeploymentsInternalUploadArtifactData = {
   url: '/api/internal/v1/deployments/tenants/{id}/artifacts';
 };
 
-export type DeploymentsInternalUploadArtifactErrors = {
+export type UploadArtifactErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
-export type DeploymentsInternalUploadArtifactError = DeploymentsInternalUploadArtifactErrors[keyof DeploymentsInternalUploadArtifactErrors];
+export type UploadArtifactError = UploadArtifactErrors[keyof UploadArtifactErrors];
 
-export type DeploymentsInternalUploadArtifactResponses = {
+export type UploadArtifactResponses = {
   /**
    * Artifact uploaded.
    */
@@ -5619,15 +5457,15 @@ export type DeploymentsInternalCreateDeploymentErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Conflict.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeploymentsInternalCreateDeploymentError = DeploymentsInternalCreateDeploymentErrors[keyof DeploymentsInternalCreateDeploymentErrors];
@@ -5655,11 +5493,11 @@ export type GetTenantConfigurationErrors = {
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetTenantConfigurationError = GetTenantConfigurationErrors[keyof GetTenantConfigurationErrors];
@@ -5698,11 +5536,11 @@ export type UpdateTenantConfigurationErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Document with a matching ETag does not exist.
    */
@@ -5710,7 +5548,7 @@ export type UpdateTenantConfigurationErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateTenantConfigurationError = UpdateTenantConfigurationErrors[keyof UpdateTenantConfigurationErrors];
@@ -5747,11 +5585,11 @@ export type UpdateDeltaJobStatusErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateDeltaJobStatusError = UpdateDeltaJobStatusErrors[keyof UpdateDeltaJobStatusErrors];
@@ -5781,11 +5619,11 @@ export type GetLastDeviceDeploymentStatusErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetLastDeviceDeploymentStatusError = GetLastDeviceDeploymentStatusErrors[keyof GetLastDeviceDeploymentStatusErrors];
@@ -5845,15 +5683,15 @@ export type DeploymentsV1ListDeploymentsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeploymentsV1ListDeploymentsError = DeploymentsV1ListDeploymentsErrors[keyof DeploymentsV1ListDeploymentsErrors];
@@ -5871,7 +5709,7 @@ export type DeploymentsCreateDeploymentData = {
   /**
    * New deployment that needs to be created.
    */
-  body: NewDeploymentTypeManagement;
+  body: NewDeployment;
   path?: never;
   query?: never;
   url: '/api/management/v1/deployments/deployments';
@@ -5881,23 +5719,23 @@ export type DeploymentsCreateDeploymentErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * An active deployment with the same parameters already exists.
    */
-  409: Error;
+  409: _Error;
   /**
    * Unprocessable Entity.
    */
-  422: Error;
+  422: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeploymentsCreateDeploymentError = DeploymentsCreateDeploymentErrors[keyof DeploymentsCreateDeploymentErrors];
@@ -5920,19 +5758,19 @@ export type DeploymentStatusStatisticsListErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeploymentStatusStatisticsListError = DeploymentStatusStatisticsListErrors[keyof DeploymentStatusStatisticsListErrors];
@@ -5965,23 +5803,23 @@ export type CreateDeploymentForAGroupOfDevicesErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * An active deployment with the same parameters already exists.
    */
-  409: Error;
+  409: _Error;
   /**
    * Unprocessable Entity.
    */
-  422: Error;
+  422: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CreateDeploymentForAGroupOfDevicesError = CreateDeploymentForAGroupOfDevicesErrors[keyof CreateDeploymentForAGroupOfDevicesErrors];
@@ -6009,15 +5847,15 @@ export type ShowDeploymentErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ShowDeploymentError = ShowDeploymentErrors[keyof ShowDeploymentErrors];
@@ -6050,23 +5888,23 @@ export type PatchDeploymentControlMapErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * An active deployment with the same parameters already exists.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type PatchDeploymentControlMapError = PatchDeploymentControlMapErrors[keyof PatchDeploymentControlMapErrors];
@@ -6099,23 +5937,23 @@ export type AbortDeploymentErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Unprocessable Entity.
    */
-  422: Error;
+  422: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type AbortDeploymentError = AbortDeploymentErrors[keyof AbortDeploymentErrors];
@@ -6145,15 +5983,15 @@ export type DeploymentStatusStatisticsErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeploymentStatusStatisticsError = DeploymentStatusStatisticsErrors[keyof DeploymentStatusStatisticsErrors];
@@ -6183,15 +6021,15 @@ export type ListAllDevicesInDeploymentErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListAllDevicesInDeploymentError = ListAllDevicesInDeploymentErrors[keyof ListAllDevicesInDeploymentErrors];
@@ -6217,7 +6055,24 @@ export type ListDevicesInDeploymentData = {
     /**
      * Filter devices by status within deployment.
      */
-    status?: DeploymentDeviceStatus | DeploymentDeviceStatusGet;
+    status?:
+      | 'failure'
+      | 'aborted'
+      | 'pause_before_installing'
+      | 'pause_before_committing'
+      | 'pause_before_rebooting'
+      | 'downloading'
+      | 'installing'
+      | 'rebooting'
+      | 'pending'
+      | 'success'
+      | 'noartifact'
+      | 'artifact_too_big'
+      | 'already-installed'
+      | 'decommissioned'
+      | 'pause'
+      | 'active'
+      | 'finished';
     /**
      * Starting page.
      */
@@ -6234,15 +6089,15 @@ export type ListDevicesInDeploymentErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListDevicesInDeploymentError = ListDevicesInDeploymentErrors[keyof ListDevicesInDeploymentErrors];
@@ -6272,19 +6127,19 @@ export type ListDeviceIdsInDeploymentErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListDeviceIdsInDeploymentError = ListDeviceIdsInDeploymentErrors[keyof ListDeviceIdsInDeploymentErrors];
@@ -6318,15 +6173,15 @@ export type GetDeploymentLogForDeviceErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetDeploymentLogForDeviceError = GetDeploymentLogForDeviceErrors[keyof GetDeploymentLogForDeviceErrors];
@@ -6360,15 +6215,15 @@ export type GetDeltaGenerationStatusErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetDeltaGenerationStatusError = GetDeltaGenerationStatusErrors[keyof GetDeltaGenerationStatusErrors];
@@ -6398,11 +6253,11 @@ export type AbortDeploymentsForADeviceErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type AbortDeploymentsForADeviceError = AbortDeploymentsForADeviceErrors[keyof AbortDeploymentsForADeviceErrors];
@@ -6428,7 +6283,24 @@ export type DeploymentsListDeploymentsForADeviceData = {
     /**
      * Filter deployments by status for the given device.
      */
-    status?: DeploymentDeviceStatus;
+    status?:
+      | 'failure'
+      | 'aborted'
+      | 'pause_before_installing'
+      | 'pause_before_committing'
+      | 'pause_before_rebooting'
+      | 'downloading'
+      | 'installing'
+      | 'rebooting'
+      | 'pending'
+      | 'success'
+      | 'noartifact'
+      | 'artifact_too_big'
+      | 'already-installed'
+      | 'decommissioned'
+      | 'pause'
+      | 'active'
+      | 'finished';
     /**
      * Starting page.
      */
@@ -6445,11 +6317,11 @@ export type DeploymentsListDeploymentsForADeviceErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeploymentsListDeploymentsForADeviceError = DeploymentsListDeploymentsForADeviceErrors[keyof DeploymentsListDeploymentsForADeviceErrors];
@@ -6479,11 +6351,11 @@ export type ResetDeviceDeploymentsHistoryErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ResetDeviceDeploymentsHistoryError = ResetDeviceDeploymentsHistoryErrors[keyof ResetDeviceDeploymentsHistoryErrors];
@@ -6525,11 +6397,11 @@ export type ListReleasesErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListReleasesError = ListReleasesErrors[keyof ListReleasesErrors];
@@ -6584,11 +6456,11 @@ export type DeploymentsV1ListReleasesWithPaginationErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeploymentsV1ListReleasesWithPaginationError = DeploymentsV1ListReleasesWithPaginationErrors[keyof DeploymentsV1ListReleasesWithPaginationErrors];
@@ -6627,11 +6499,11 @@ export type ListArtifactsErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListArtifactsError = ListArtifactsErrors[keyof ListArtifactsErrors];
@@ -6645,22 +6517,22 @@ export type ListArtifactsResponses = {
 
 export type ListArtifactsResponse = ListArtifactsResponses[keyof ListArtifactsResponses];
 
-export type UploadArtifactDeploymentsManagementData = {
+export type UploadArtifact2Data = {
   body: UploadArtifactRequest2;
   path?: never;
   query?: never;
   url: '/api/management/v1/deployments/artifacts';
 };
 
-export type UploadArtifactDeploymentsManagementErrors = {
+export type UploadArtifact2Errors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * An artifact with the same name and matching dependency requirements already exists.
    *
@@ -6669,12 +6541,12 @@ export type UploadArtifactDeploymentsManagementErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
-export type UploadArtifactDeploymentsManagementError = UploadArtifactDeploymentsManagementErrors[keyof UploadArtifactDeploymentsManagementErrors];
+export type UploadArtifact2Error = UploadArtifact2Errors[keyof UploadArtifact2Errors];
 
-export type UploadArtifactDeploymentsManagementResponses = {
+export type UploadArtifact2Responses = {
   /**
    * Artifact uploaded.
    */
@@ -6718,11 +6590,11 @@ export type DeploymentsV1ListArtifactsWithPaginationErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeploymentsV1ListArtifactsWithPaginationError =
@@ -6749,11 +6621,11 @@ export type RequestDirectUploadErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type RequestDirectUploadError = RequestDirectUploadErrors[keyof RequestDirectUploadErrors];
@@ -6786,7 +6658,7 @@ export type CompleteDirectUploadErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * A pending direct upload with the given ID was not found.
    */
@@ -6794,7 +6666,7 @@ export type CompleteDirectUploadErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CompleteDirectUploadError = CompleteDirectUploadErrors[keyof CompleteDirectUploadErrors];
@@ -6817,15 +6689,15 @@ export type GenerateArtifactErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GenerateArtifactError = GenerateArtifactErrors[keyof GenerateArtifactErrors];
@@ -6853,19 +6725,19 @@ export type DeleteArtifactErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Artifact used by active deployment.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeleteArtifactError = DeleteArtifactErrors[keyof DeleteArtifactErrors];
@@ -6895,19 +6767,19 @@ export type ShowArtifactErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ShowArtifactError = ShowArtifactErrors[keyof ShowArtifactErrors];
@@ -6937,23 +6809,23 @@ export type UpdateArtifactInfoErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Unprocessable Entity.
    */
-  422: Error;
+  422: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateArtifactInfoError = UpdateArtifactInfoErrors[keyof UpdateArtifactInfoErrors];
@@ -6983,19 +6855,19 @@ export type DownloadArtifactErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DownloadArtifactError = DownloadArtifactErrors[keyof DownloadArtifactErrors];
@@ -7020,11 +6892,11 @@ export type DeploymentsGetStorageUsageErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeploymentsGetStorageUsageError = DeploymentsGetStorageUsageErrors[keyof DeploymentsGetStorageUsageErrors];
@@ -7049,11 +6921,11 @@ export type GetConfigurationErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetConfigurationError = GetConfigurationErrors[keyof GetConfigurationErrors];
@@ -7087,27 +6959,27 @@ export type UpdateBinaryDeltaConfigurationErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Delta generation is disabled.
    */
-  409: Error;
+  409: _Error;
   /**
    * Document with a matching ETag does not exist.
    */
-  412: Error;
+  412: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateBinaryDeltaConfigurationError = UpdateBinaryDeltaConfigurationErrors[keyof UpdateBinaryDeltaConfigurationErrors];
@@ -7120,99 +6992,6 @@ export type UpdateBinaryDeltaConfigurationResponses = {
 };
 
 export type UpdateBinaryDeltaConfigurationResponse = UpdateBinaryDeltaConfigurationResponses[keyof UpdateBinaryDeltaConfigurationResponses];
-
-export type GetDeploymentLogForDeviceV1Alpha1Data = {
-  body?: never;
-  path: {
-    /**
-     * Deployment identifier.
-     */
-    deployment_id: string;
-    /**
-     * Device identifier.
-     */
-    device_id: string;
-  };
-  query?: {
-    /**
-     * Log output format (allows redacting sensitive information)
-     */
-    format?: 'text' | 'text-redacted';
-  };
-  url: '/api/management/v1alpha1/deployments/deployments/{deployment_id}/devices/{device_id}/log';
-};
-
-export type GetDeploymentLogForDeviceV1Alpha1Errors = {
-  /**
-   * Unauthorized.
-   */
-  401: Error;
-  /**
-   * Not Found.
-   */
-  404: Error;
-  /**
-   * Internal Server Error.
-   */
-  500: Error;
-};
-
-export type GetDeploymentLogForDeviceV1Alpha1Error = GetDeploymentLogForDeviceV1Alpha1Errors[keyof GetDeploymentLogForDeviceV1Alpha1Errors];
-
-export type GetDeploymentLogForDeviceV1Alpha1Responses = {
-  /**
-   * Successful response, including the logs in text/plain format.
-   */
-  200: string;
-};
-
-export type GetDeploymentLogForDeviceV1Alpha1Response = GetDeploymentLogForDeviceV1Alpha1Responses[keyof GetDeploymentLogForDeviceV1Alpha1Responses];
-
-export type ExplainDeploymentLogForDeviceData = {
-  body?: never;
-  path: {
-    /**
-     * Deployment identifier.
-     */
-    deployment_id: string;
-    /**
-     * Device identifier.
-     */
-    device_id: string;
-  };
-  query?: never;
-  url: '/api/management/v1alpha1/deployments/deployments/{deployment_id}/devices/{device_id}/log/explain';
-};
-
-export type ExplainDeploymentLogForDeviceErrors = {
-  /**
-   * Unauthorized.
-   */
-  401: Error;
-  /**
-   * The endpoint requires a paid plan.
-   */
-  402: Error;
-  /**
-   * Not Found.
-   */
-  404: Error;
-  /**
-   * Internal Server Error.
-   */
-  500: Error;
-};
-
-export type ExplainDeploymentLogForDeviceError = ExplainDeploymentLogForDeviceErrors[keyof ExplainDeploymentLogForDeviceErrors];
-
-export type ExplainDeploymentLogForDeviceResponses = {
-  /**
-   * Successful response with an AI-generated explanation of the deployment log.
-   */
-  200: string;
-};
-
-export type ExplainDeploymentLogForDeviceResponse = ExplainDeploymentLogForDeviceResponses[keyof ExplainDeploymentLogForDeviceResponses];
 
 export type DeploymentsV2ListDeploymentsData = {
   body?: never;
@@ -7258,20 +7037,6 @@ export type DeploymentsV2ListDeploymentsData = {
      *
      */
     sort?: 'asc' | 'desc';
-    /**
-     * Device identity or inventory attribute name to use for a fallback device lookup
-     * when no deployments match the given name filter. When set, the server resolves the
-     * first name value against the device inventory/identity and returns deployments
-     * targeting the matched device.
-     *
-     */
-    id_attribute?: string;
-    /**
-     * Scope for the id_attribute parameter. Defaults to "identity", unless id_attribute
-     * is "name" in which case it defaults to "inventory".
-     *
-     */
-    id_scope?: 'identity' | 'inventory';
   };
   url: '/api/management/v2/deployments/deployments';
 };
@@ -7280,15 +7045,15 @@ export type DeploymentsV2ListDeploymentsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeploymentsV2ListDeploymentsError = DeploymentsV2ListDeploymentsErrors[keyof DeploymentsV2ListDeploymentsErrors];
@@ -7306,7 +7071,7 @@ export type CreateDeploymentData = {
   /**
    * New deployment that needs to be created.
    */
-  body: NewDeploymentV2TypeManagement;
+  body: NewDeploymentV2;
   path?: never;
   query?: never;
   url: '/api/management/v2/deployments/deployments';
@@ -7316,19 +7081,19 @@ export type CreateDeploymentErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * An active deployment with the same parameters already exists.
    */
-  409: Error;
+  409: _Error;
   /**
    * Unprocessable Entity.
    */
-  422: Error;
+  422: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CreateDeploymentError = CreateDeploymentErrors[keyof CreateDeploymentErrors];
@@ -7356,11 +7121,11 @@ export type DeleteReleasesErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Conflict.
    */
@@ -7368,7 +7133,7 @@ export type DeleteReleasesErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeleteReleasesError = DeleteReleasesErrors[keyof DeleteReleasesErrors];
@@ -7419,11 +7184,11 @@ export type DeploymentsV2ListReleasesWithPaginationErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeploymentsV2ListReleasesWithPaginationError = DeploymentsV2ListReleasesWithPaginationErrors[keyof DeploymentsV2ListReleasesWithPaginationErrors];
@@ -7454,15 +7219,15 @@ export type GetReleaseWithGivenNameErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetReleaseWithGivenNameError = GetReleaseWithGivenNameErrors[keyof GetReleaseWithGivenNameErrors];
@@ -7492,15 +7257,15 @@ export type UpdateReleaseInformationErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateReleaseInformationError = UpdateReleaseInformationErrors[keyof UpdateReleaseInformationErrors];
@@ -7530,19 +7295,19 @@ export type AssignReleaseTagsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Too many unique tag keys in use.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type AssignReleaseTagsError = AssignReleaseTagsErrors[keyof AssignReleaseTagsErrors];
@@ -7567,19 +7332,19 @@ export type ListReleaseTagsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Too many unique tag keys in use.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListReleaseTagsError = ListReleaseTagsErrors[keyof ListReleaseTagsErrors];
@@ -7604,15 +7369,15 @@ export type ListReleaseTypesErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListReleaseTypesError = ListReleaseTypesErrors[keyof ListReleaseTypesErrors];
@@ -7667,11 +7432,11 @@ export type DeploymentsV2ListArtifactsWithPaginationErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeploymentsV2ListArtifactsWithPaginationError =
@@ -7712,15 +7477,15 @@ export type ListServerSideBinaryDeltaGenerationJobsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListServerSideBinaryDeltaGenerationJobsError = ListServerSideBinaryDeltaGenerationJobsErrors[keyof ListServerSideBinaryDeltaGenerationJobsErrors];
@@ -7752,15 +7517,15 @@ export type GetServerSideBinaryDeltaGenerationJobDetailsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetServerSideBinaryDeltaGenerationJobDetailsError =
@@ -7805,23 +7570,19 @@ export type DeviceAuthAuthenticateDeviceErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The device authentication is forbidden. See the error message for details.
    */
-  403: Error;
+  403: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
-  /**
-   * Service is unavailable.
-   */
-  503: Error;
+  500: _Error;
 };
 
 export type DeviceAuthAuthenticateDeviceError = DeviceAuthAuthenticateDeviceErrors[keyof DeviceAuthAuthenticateDeviceErrors];
@@ -7846,7 +7607,7 @@ export type DeviceAuthInternalCheckLivelinessErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthInternalCheckLivelinessError = DeviceAuthInternalCheckLivelinessErrors[keyof DeviceAuthInternalCheckLivelinessErrors];
@@ -7871,11 +7632,11 @@ export type DeviceAuthInternalCheckHealthErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
   /**
    * Service unhealthy / not ready to accept traffic. At least one dependency is not running.
    */
-  503: Error;
+  503: _Error;
 };
 
 export type DeviceAuthInternalCheckHealthError = DeviceAuthInternalCheckHealthErrors[keyof DeviceAuthInternalCheckHealthErrors];
@@ -7906,23 +7667,19 @@ export type DeviceAuthInternalVerifyJwtErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The user is not permitted to access the resource.
    */
-  403: Error;
+  403: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
-  /**
-   * Service is unavailable.
-   */
-  503: Error;
+  500: _Error;
 };
 
 export type DeviceAuthInternalVerifyJwtError = DeviceAuthInternalVerifyJwtErrors[keyof DeviceAuthInternalVerifyJwtErrors];
@@ -7948,15 +7705,11 @@ export type DeviceAuthInternalRevokeDeviceTokensErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
-  /**
-   * Service is unavailable.
-   */
-  503: Error;
+  500: _Error;
 };
 
 export type DeviceAuthInternalRevokeDeviceTokensError = DeviceAuthInternalRevokeDeviceTokensErrors[keyof DeviceAuthInternalRevokeDeviceTokensErrors];
@@ -7991,11 +7744,11 @@ export type GetDeviceLimitsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetDeviceLimitsError = GetDeviceLimitsErrors[keyof GetDeviceLimitsErrors];
@@ -8025,11 +7778,11 @@ export type GetAllDeviceLimitsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetAllDeviceLimitsError = GetAllDeviceLimitsErrors[keyof GetAllDeviceLimitsErrors];
@@ -8038,7 +7791,7 @@ export type GetAllDeviceLimitsResponses = {
   /**
    * Successful response.
    */
-  200: Array<DeviceLimitTenant>;
+  200: Array<DeviceTenantLimit>;
 };
 
 export type GetAllDeviceLimitsResponse = GetAllDeviceLimitsResponses[keyof GetAllDeviceLimitsResponses];
@@ -8063,7 +7816,7 @@ export type DeviceAuthInternalClearDeviceLimitErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthInternalClearDeviceLimitError = DeviceAuthInternalClearDeviceLimitErrors[keyof DeviceAuthInternalClearDeviceLimitErrors];
@@ -8097,11 +7850,11 @@ export type DeviceAuthInternalGetDeviceLimitErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthInternalGetDeviceLimitError = DeviceAuthInternalGetDeviceLimitErrors[keyof DeviceAuthInternalGetDeviceLimitErrors];
@@ -8135,11 +7888,11 @@ export type DeviceAuthInternalUpdateDeviceLimitErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthInternalUpdateDeviceLimitError = DeviceAuthInternalUpdateDeviceLimitErrors[keyof DeviceAuthInternalUpdateDeviceLimitErrors];
@@ -8164,11 +7917,11 @@ export type DeviceAuthInternalCreateTenantErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthInternalCreateTenantError = DeviceAuthInternalCreateTenantErrors[keyof DeviceAuthInternalCreateTenantErrors];
@@ -8204,15 +7957,11 @@ export type DeviceAuthInternalDeleteDeviceErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
-  /**
-   * Service is unavailable.
-   */
-  503: Error;
+  500: _Error;
 };
 
 export type DeviceAuthInternalDeleteDeviceError = DeviceAuthInternalDeleteDeviceErrors[keyof DeviceAuthInternalDeleteDeviceErrors];
@@ -8244,11 +7993,11 @@ export type DeviceAuthInternalSetExternalIdentityErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthInternalSetExternalIdentityError = DeviceAuthInternalSetExternalIdentityErrors[keyof DeviceAuthInternalSetExternalIdentityErrors];
@@ -8263,7 +8012,7 @@ export type DeviceAuthInternalSetExternalIdentityResponses = {
 export type DeviceAuthInternalSetExternalIdentityResponse =
   DeviceAuthInternalSetExternalIdentityResponses[keyof DeviceAuthInternalSetExternalIdentityResponses];
 
-export type DeleteTenantInternalDeviceauthData = {
+export type DeleteTenant2Data = {
   body?: never;
   path: {
     /**
@@ -8275,23 +8024,23 @@ export type DeleteTenantInternalDeviceauthData = {
   url: '/api/internal/v1/devauth/tenants/{tid}';
 };
 
-export type DeleteTenantInternalDeviceauthErrors = {
+export type DeleteTenant2Errors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
-export type DeleteTenantInternalDeviceauthError = DeleteTenantInternalDeviceauthErrors[keyof DeleteTenantInternalDeviceauthErrors];
+export type DeleteTenant2Error = DeleteTenant2Errors[keyof DeleteTenant2Errors];
 
-export type DeleteTenantInternalDeviceauthResponses = {
+export type DeleteTenant2Responses = {
   /**
    * All the tenant data have been successfully deleted.
    */
   204: void;
 };
 
-export type DeleteTenantInternalDeviceauthResponse = DeleteTenantInternalDeviceauthResponses[keyof DeleteTenantInternalDeviceauthResponses];
+export type DeleteTenant2Response = DeleteTenant2Responses[keyof DeleteTenant2Responses];
 
 export type DeviceAuthInternalDeviceStatusData = {
   body?: never;
@@ -8313,15 +8062,15 @@ export type DeviceAuthInternalDeviceStatusErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthInternalDeviceStatusError = DeviceAuthInternalDeviceStatusErrors[keyof DeviceAuthInternalDeviceStatusErrors];
@@ -8368,11 +8117,11 @@ export type DeviceAuthInternalListDevicesErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthInternalListDevicesError = DeviceAuthInternalListDevicesErrors[keyof DeviceAuthInternalListDevicesErrors];
@@ -8407,11 +8156,11 @@ export type DeviceAuthInternalCountDevicesErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthInternalCountDevicesError = DeviceAuthInternalCountDevicesErrors[keyof DeviceAuthInternalCountDevicesErrors];
@@ -8441,11 +8190,11 @@ export type DeviceAuthInternalDeleteAllLimitsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthInternalDeleteAllLimitsError = DeviceAuthInternalDeleteAllLimitsErrors[keyof DeviceAuthInternalDeleteAllLimitsErrors];
@@ -8473,11 +8222,11 @@ export type DeviceAuthInternalGetAllLimitsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthInternalGetAllLimitsError = DeviceAuthInternalGetAllLimitsErrors[keyof DeviceAuthInternalGetAllLimitsErrors];
@@ -8486,13 +8235,13 @@ export type DeviceAuthInternalGetAllLimitsResponses = {
   /**
    * Device limits.
    */
-  200: Array<DeviceLimitTenant>;
+  200: Array<DeviceTenantLimit>;
 };
 
 export type DeviceAuthInternalGetAllLimitsResponse = DeviceAuthInternalGetAllLimitsResponses[keyof DeviceAuthInternalGetAllLimitsResponses];
 
 export type DeviceAuthInternalPutAllLimitsData = {
-  body: Array<DeviceLimitTenantPut>;
+  body: Array<DeviceTenantLimitPut>;
   path: {
     /**
      * Tenant identifier.
@@ -8507,11 +8256,11 @@ export type DeviceAuthInternalPutAllLimitsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthInternalPutAllLimitsError = DeviceAuthInternalPutAllLimitsErrors[keyof DeviceAuthInternalPutAllLimitsErrors];
@@ -8563,11 +8312,11 @@ export type DeviceAuthManagementListDevicesErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthManagementListDevicesError = DeviceAuthManagementListDevicesErrors[keyof DeviceAuthManagementListDevicesErrors];
@@ -8598,7 +8347,7 @@ export type DeviceAuthManagementPreauthorizeErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Device already exists. Response contains conflicting device.
    */
@@ -8606,7 +8355,7 @@ export type DeviceAuthManagementPreauthorizeErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthManagementPreauthorizeError = DeviceAuthManagementPreauthorizeErrors[keyof DeviceAuthManagementPreauthorizeErrors];
@@ -8656,11 +8405,11 @@ export type DeviceAuthManagementSearchDevicesErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthManagementSearchDevicesError = DeviceAuthManagementSearchDevicesErrors[keyof DeviceAuthManagementSearchDevicesErrors];
@@ -8700,15 +8449,11 @@ export type DeviceAuthManagementDecommissionDeviceErrors = {
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
-  /**
-   * Service is unavailable.
-   */
-  503: Error;
+  500: _Error;
 };
 
 export type DeviceAuthManagementDecommissionDeviceError = DeviceAuthManagementDecommissionDeviceErrors[keyof DeviceAuthManagementDecommissionDeviceErrors];
@@ -8749,11 +8494,11 @@ export type DeviceAuthManagementGetDeviceErrors = {
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthManagementGetDeviceError = DeviceAuthManagementGetDeviceErrors[keyof DeviceAuthManagementGetDeviceErrors];
@@ -8797,15 +8542,11 @@ export type DeviceAuthManagementRemoveAuthenticationErrors = {
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
-  /**
-   * Service is unavailable.
-   */
-  503: Error;
+  500: _Error;
 };
 
 export type DeviceAuthManagementRemoveAuthenticationError =
@@ -8847,11 +8588,11 @@ export type DeviceAuthManagementGetAuthenticationStatusErrors = {
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthManagementGetAuthenticationStatusError =
@@ -8897,23 +8638,19 @@ export type DeviceAuthManagementSetAuthenticationStatusErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Request cannot be fulfilled e.g. due to exceeded limit on maximum accepted devices (see error message).
    */
-  422: Error;
+  422: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
-  /**
-   * Service is unavailable.
-   */
-  503: Error;
+  500: _Error;
 };
 
 export type DeviceAuthManagementSetAuthenticationStatusError =
@@ -8951,11 +8688,11 @@ export type DeviceAuthManagementCountDevicesErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthManagementCountDevicesError = DeviceAuthManagementCountDevicesErrors[keyof DeviceAuthManagementCountDevicesErrors];
@@ -8991,15 +8728,11 @@ export type DeviceAuthManagementRevokeApiTokenErrors = {
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
-  /**
-   * Service is unavailable.
-   */
-  503: Error;
+  500: _Error;
 };
 
 export type DeviceAuthManagementRevokeApiTokenError = DeviceAuthManagementRevokeApiTokenErrors[keyof DeviceAuthManagementRevokeApiTokenErrors];
@@ -9035,7 +8768,7 @@ export type DeviceAuthManagementGetDeviceLimitErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAuthManagementGetDeviceLimitError = DeviceAuthManagementGetDeviceLimitErrors[keyof DeviceAuthManagementGetDeviceLimitErrors];
@@ -9066,11 +8799,7 @@ export type GetDeviceLimitsPerTierErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
-  /**
-   * Service is unavailable.
-   */
-  503: Error;
+  500: _Error;
 };
 
 export type GetDeviceLimitsPerTierError = GetDeviceLimitsPerTierErrors[keyof GetDeviceLimitsPerTierErrors];
@@ -9101,7 +8830,7 @@ export type GetDeviceLicenseErrors = {
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
 };
 
 export type GetDeviceLicenseError = GetDeviceLicenseErrors[keyof GetDeviceLicenseErrors];
@@ -9148,19 +8877,15 @@ export type AutomaticallyAuthenticateDeviceErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
-  /**
-   * Service is unavailable.
-   */
-  503: Error;
+  500: _Error;
 };
 
 export type AutomaticallyAuthenticateDeviceError = AutomaticallyAuthenticateDeviceErrors[keyof AutomaticallyAuthenticateDeviceErrors];
@@ -9185,15 +8910,15 @@ export type DeviceConfigGetDeviceConfigurationErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConfigGetDeviceConfigurationError = DeviceConfigGetDeviceConfigurationErrors[keyof DeviceConfigGetDeviceConfigurationErrors];
@@ -9218,11 +8943,11 @@ export type DeviceConfigReportDeviceConfigurationErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConfigReportDeviceConfigurationError = DeviceConfigReportDeviceConfigurationErrors[keyof DeviceConfigReportDeviceConfigurationErrors];
@@ -9248,11 +8973,11 @@ export type DeviceConfigInternalCheckHealthErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConfigInternalCheckHealthError = DeviceConfigInternalCheckHealthErrors[keyof DeviceConfigInternalCheckHealthErrors];
@@ -9277,7 +9002,7 @@ export type DeviceConfigInternalCheckLivelinessErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConfigInternalCheckLivelinessError = DeviceConfigInternalCheckLivelinessErrors[keyof DeviceConfigInternalCheckLivelinessErrors];
@@ -9302,11 +9027,11 @@ export type DeviceConfigInternalProvisionTenantErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConfigInternalProvisionTenantError = DeviceConfigInternalProvisionTenantErrors[keyof DeviceConfigInternalProvisionTenantErrors];
@@ -9334,7 +9059,7 @@ export type DeviceConfigInternalDeleteTenantErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConfigInternalDeleteTenantError = DeviceConfigInternalDeleteTenantErrors[keyof DeviceConfigInternalDeleteTenantErrors];
@@ -9364,11 +9089,11 @@ export type DeviceConfigInternalProvisionDeviceErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConfigInternalProvisionDeviceError = DeviceConfigInternalProvisionDeviceErrors[keyof DeviceConfigInternalProvisionDeviceErrors];
@@ -9400,7 +9125,7 @@ export type DeviceConfigInternalDecommissionDeviceErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConfigInternalDecommissionDeviceError = DeviceConfigInternalDecommissionDeviceErrors[keyof DeviceConfigInternalDecommissionDeviceErrors];
@@ -9435,15 +9160,15 @@ export type DeviceConfigInternalDeployDeviceConfigurationErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConfigInternalDeployDeviceConfigurationError =
@@ -9475,15 +9200,15 @@ export type DeviceConfigManagementGetDeviceConfigurationErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConfigManagementGetDeviceConfigurationError =
@@ -9515,11 +9240,11 @@ export type DeviceConfigManagementSetDeviceConfigurationErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConfigManagementSetDeviceConfigurationError =
@@ -9551,15 +9276,15 @@ export type DeviceConfigManagementDeployDeviceConfigurationErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConfigManagementDeployDeviceConfigurationError =
@@ -9604,11 +9329,11 @@ export type DeviceConnectConnectErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConnectConnectError = DeviceConnectConnectErrors[keyof DeviceConnectConnectErrors];
@@ -9624,11 +9349,11 @@ export type DeviceConnectInternalCheckHealthErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConnectInternalCheckHealthError = DeviceConnectInternalCheckHealthErrors[keyof DeviceConnectInternalCheckHealthErrors];
@@ -9653,7 +9378,7 @@ export type DeviceConnectInternalCheckLivelinessErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConnectInternalCheckLivelinessError = DeviceConnectInternalCheckLivelinessErrors[keyof DeviceConnectInternalCheckLivelinessErrors];
@@ -9678,7 +9403,7 @@ export type DeviceConnectInternalShutdownErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConnectInternalShutdownError = DeviceConnectInternalShutdownErrors[keyof DeviceConnectInternalShutdownErrors];
@@ -9706,7 +9431,7 @@ export type DeleteTenantDataErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeleteTenantDataError = DeleteTenantDataErrors[keyof DeleteTenantDataErrors];
@@ -9736,11 +9461,11 @@ export type DeviceConnectInternalProvisionDeviceErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConnectInternalProvisionDeviceError = DeviceConnectInternalProvisionDeviceErrors[keyof DeviceConnectInternalProvisionDeviceErrors];
@@ -9772,7 +9497,7 @@ export type DeviceConnectInternalDecomissionDeviceErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConnectInternalDecomissionDeviceError = DeviceConnectInternalDecomissionDeviceErrors[keyof DeviceConnectInternalDecomissionDeviceErrors];
@@ -9804,19 +9529,19 @@ export type DeviceConnectInternalCheckUpdateErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Conflict.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConnectInternalCheckUpdateError = DeviceConnectInternalCheckUpdateErrors[keyof DeviceConnectInternalCheckUpdateErrors];
@@ -9848,19 +9573,19 @@ export type DeviceConnectInternalSendInventoryErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Conflict.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConnectInternalSendInventoryError = DeviceConnectInternalSendInventoryErrors[keyof DeviceConnectInternalSendInventoryErrors];
@@ -9888,15 +9613,15 @@ export type DeviceConnectManagementGetDeviceErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConnectManagementGetDeviceError = DeviceConnectManagementGetDeviceErrors[keyof DeviceConnectManagementGetDeviceErrors];
@@ -9926,19 +9651,19 @@ export type DeviceConnectManagementCheckUpdateErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Conflict.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConnectManagementCheckUpdateError = DeviceConnectManagementCheckUpdateErrors[keyof DeviceConnectManagementCheckUpdateErrors];
@@ -9984,15 +9709,15 @@ export type DeviceConnectManagementConnectErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConnectManagementConnectError = DeviceConnectManagementConnectErrors[keyof DeviceConnectManagementConnectErrors];
@@ -10018,19 +9743,19 @@ export type DeviceConnectManagementDownloadErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Conflict.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConnectManagementDownloadError = DeviceConnectManagementDownloadErrors[keyof DeviceConnectManagementDownloadErrors];
@@ -10060,19 +9785,19 @@ export type DeviceConnectManagementSendInventoryErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Conflict.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConnectManagementSendInventoryError = DeviceConnectManagementSendInventoryErrors[keyof DeviceConnectManagementSendInventoryErrors];
@@ -10123,15 +9848,15 @@ export type DeviceConnectManagementPlaybackErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConnectManagementPlaybackError = DeviceConnectManagementPlaybackErrors[keyof DeviceConnectManagementPlaybackErrors];
@@ -10152,19 +9877,19 @@ export type DeviceConnectManagementUploadErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Conflict.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceConnectManagementUploadError = DeviceConnectManagementUploadErrors[keyof DeviceConnectManagementUploadErrors];
@@ -10187,11 +9912,11 @@ export type DeviceAlertPostErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceAlertPostError = DeviceAlertPostErrors[keyof DeviceAlertPostErrors];
@@ -10217,11 +9942,11 @@ export type SetMonitorConfigurationErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type SetMonitorConfigurationError = SetMonitorConfigurationErrors[keyof SetMonitorConfigurationErrors];
@@ -10252,7 +9977,7 @@ export type DeviceMonitorInternalDeleteTenantErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceMonitorInternalDeleteTenantError = DeviceMonitorInternalDeleteTenantErrors[keyof DeviceMonitorInternalDeleteTenantErrors];
@@ -10295,11 +10020,11 @@ export type ListDevicesAndTheirLatestAlertsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListDevicesAndTheirLatestAlertsError = ListDevicesAndTheirLatestAlertsErrors[keyof ListDevicesAndTheirLatestAlertsErrors];
@@ -10333,7 +10058,7 @@ export type DeleteTenantDeviceErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeleteTenantDeviceError = DeleteTenantDeviceErrors[keyof DeleteTenantDeviceErrors];
@@ -10372,11 +10097,11 @@ export type DeviceMonitorInternalListLatestAlertsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeviceMonitorInternalListLatestAlertsError = DeviceMonitorInternalListLatestAlertsErrors[keyof DeviceMonitorInternalListLatestAlertsErrors];
@@ -10428,11 +10153,11 @@ export type ListAlertsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListAlertsError = ListAlertsErrors[keyof ListAlertsErrors];
@@ -10483,11 +10208,11 @@ export type ListLatestAlertsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListLatestAlertsError = ListLatestAlertsErrors[keyof ListLatestAlertsErrors];
@@ -10519,11 +10244,11 @@ export type MonitorChecksConfigurationErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type MonitorChecksConfigurationError = MonitorChecksConfigurationErrors[keyof MonitorChecksConfigurationErrors];
@@ -10558,11 +10283,11 @@ export type ToggleChannelMuteErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ToggleChannelMuteError = ToggleChannelMuteErrors[keyof ToggleChannelMuteErrors];
@@ -10592,15 +10317,15 @@ export type AssignAttributesErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type AssignAttributesError = AssignAttributesErrors[keyof AssignAttributesErrors];
@@ -10628,15 +10353,15 @@ export type ReplaceAttributesErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ReplaceAttributesError = ReplaceAttributesErrors[keyof ReplaceAttributesErrors];
@@ -10659,7 +10384,7 @@ export type InventoryInternalCheckHealthErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
   /**
    * Service unhealthy / not ready to accept traffic. At least one dependency is not running.
    *
@@ -10690,7 +10415,7 @@ export type InventoryInternalCheckLivelinessErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type InventoryInternalCheckLivelinessError = InventoryInternalCheckLivelinessErrors[keyof InventoryInternalCheckLivelinessErrors];
@@ -10715,11 +10440,11 @@ export type InventoryInternalCreateTenantErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type InventoryInternalCreateTenantError = InventoryInternalCreateTenantErrors[keyof InventoryInternalCreateTenantErrors];
@@ -10747,11 +10472,11 @@ export type InitializeDeviceErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type InitializeDeviceError = InitializeDeviceErrors[keyof InitializeDeviceErrors];
@@ -10779,7 +10504,7 @@ export type DeleteTenantSpecificDataErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeleteTenantSpecificDataError = DeleteTenantSpecificDataErrors[keyof DeleteTenantSpecificDataErrors];
@@ -10813,11 +10538,11 @@ export type DeleteDeviceErrors = {
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeleteDeviceError = DeleteDeviceErrors[keyof DeleteDeviceErrors];
@@ -10854,15 +10579,15 @@ export type UpdateStatusOfDevicesErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Conflict.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateStatusOfDevicesError = UpdateStatusOfDevicesErrors[keyof UpdateStatusOfDevicesErrors];
@@ -10907,69 +10632,20 @@ export type UpdateInventoryForADeviceErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Precondition failed: If-Unmodified-Since condition not met
    */
-  412: Error;
+  412: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateInventoryForADeviceError = UpdateInventoryForADeviceErrors[keyof UpdateInventoryForADeviceErrors];
 
 export type UpdateInventoryForADeviceResponses = {
-  /**
-   * Device inventory successfully updated.
-   */
-  200: unknown;
-};
-
-export type UpdateInventoryForADeviceScopeWiseData = {
-  /**
-   * A list of attribute descriptors.
-   */
-  body: Array<AttributeV2>;
-  headers?: {
-    /**
-     * Skips updating the device if modified after the given RFC1123 timestamp.
-     */
-    'If-Unmodified-Since'?: string;
-  };
-  path: {
-    /**
-     * ID of given tenant.
-     */
-    tenant_id: string;
-    /**
-     * ID of given device.
-     */
-    device_id: string;
-  };
-  query?: never;
-  url: '/api/internal/v1/inventory/tenants/{tenant_id}/device/{device_id}/attributes';
-};
-
-export type UpdateInventoryForADeviceScopeWiseErrors = {
-  /**
-   * Invalid Request.
-   */
-  400: Error;
-  /**
-   * Precondition failed: If-Unmodified-Since condition not met
-   */
-  412: Error;
-  /**
-   * Internal Server Error.
-   */
-  500: Error;
-};
-
-export type UpdateInventoryForADeviceScopeWiseError = UpdateInventoryForADeviceScopeWiseErrors[keyof UpdateInventoryForADeviceScopeWiseErrors];
-
-export type UpdateInventoryForADeviceScopeWiseResponses = {
   /**
    * Device inventory successfully updated.
    */
@@ -10996,15 +10672,15 @@ export type GetDeviceGroupsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetDeviceGroupsError = GetDeviceGroupsErrors[keyof GetDeviceGroupsErrors];
@@ -11035,11 +10711,11 @@ export type CheckIfDevicesBelongsToGivenGroupsErrors = {
   /**
    * Not all the devices belong to given groups.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CheckIfDevicesBelongsToGivenGroupsError = CheckIfDevicesBelongsToGivenGroupsErrors[keyof CheckIfDevicesBelongsToGivenGroupsErrors];
@@ -11076,11 +10752,11 @@ export type StartReIndexingErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type StartReIndexingError = StartReIndexingErrors[keyof StartReIndexingErrors];
@@ -11091,38 +10767,6 @@ export type StartReIndexingResponses = {
    */
   200: unknown;
 };
-
-export type GetStatisticsInternalData = {
-  body?: never;
-  path: {
-    /**
-     * Tenant ID.
-     */
-    tenant_id: string;
-  };
-  query?: never;
-  url: '/api/internal/v2/inventory/tenants/{tenant_id}/statistics';
-};
-
-export type GetStatisticsInternalErrors = {
-  /**
-   * Internal Server Error.
-   */
-  500: Error;
-};
-
-export type GetStatisticsInternalError = GetStatisticsInternalErrors[keyof GetStatisticsInternalErrors];
-
-export type GetStatisticsInternalResponses = {
-  /**
-   * Successful response.
-   */
-  200: {
-    devices_by_status: DeviceStatusStatistics;
-  };
-};
-
-export type GetStatisticsInternalResponse = GetStatisticsInternalResponses[keyof GetStatisticsInternalResponses];
 
 export type InventoryInternalV2SearchDeviceInventoriesData = {
   /**
@@ -11172,11 +10816,11 @@ export type InventoryInternalV2SearchDeviceInventoriesErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type InventoryInternalV2SearchDeviceInventoriesError =
@@ -11214,7 +10858,7 @@ export type InternalV2ShowFilterErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * The filter was not found.
    */
@@ -11222,7 +10866,7 @@ export type InternalV2ShowFilterErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type InternalV2ShowFilterError = InternalV2ShowFilterErrors[keyof InternalV2ShowFilterErrors];
@@ -11278,11 +10922,11 @@ export type ListDeviceInventoriesErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListDeviceInventoriesError = ListDeviceInventoriesErrors[keyof ListDeviceInventoriesErrors];
@@ -11314,7 +10958,7 @@ export type DeleteDeviceInventoryErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeleteDeviceInventoryError = DeleteDeviceInventoryErrors[keyof DeleteDeviceInventoryErrors];
@@ -11344,11 +10988,11 @@ export type GetDeviceInventoryErrors = {
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetDeviceInventoryError = GetDeviceInventoryErrors[keyof GetDeviceInventoryErrors];
@@ -11389,11 +11033,11 @@ export type AddTagsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * ETag doesn't match.
    */
@@ -11401,7 +11045,7 @@ export type AddTagsErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type AddTagsError = AddTagsErrors[keyof AddTagsErrors];
@@ -11440,11 +11084,11 @@ export type AssignTagsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * ETag doesn't match.
    */
@@ -11452,7 +11096,7 @@ export type AssignTagsErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type AssignTagsError = AssignTagsErrors[keyof AssignTagsErrors];
@@ -11480,15 +11124,15 @@ export type GetDeviceGroupErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetDeviceGroupError = GetDeviceGroupErrors[keyof GetDeviceGroupErrors];
@@ -11522,15 +11166,15 @@ export type AssignGroupErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type AssignGroupError = AssignGroupErrors[keyof AssignGroupErrors];
@@ -11564,11 +11208,11 @@ export type ClearGroupErrors = {
   /**
    * The device was not found or doesn't belong to the group.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ClearGroupError = ClearGroupErrors[keyof ClearGroupErrors];
@@ -11598,7 +11242,7 @@ export type ListGroupsErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListGroupsError = ListGroupsErrors[keyof ListGroupsErrors];
@@ -11628,15 +11272,15 @@ export type RemoveAGroupErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type RemoveAGroupError = RemoveAGroupErrors[keyof RemoveAGroupErrors];
@@ -11676,15 +11320,15 @@ export type RemoveDevicesFromGroupErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type RemoveDevicesFromGroupError = RemoveDevicesFromGroupErrors[keyof RemoveDevicesFromGroupErrors];
@@ -11730,15 +11374,15 @@ export type GetDevicesInGroupErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetDevicesInGroupError = GetDevicesInGroupErrors[keyof GetDevicesInGroupErrors];
@@ -11773,15 +11417,15 @@ export type AddDevicesToGroupErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type AddDevicesToGroupError = AddDevicesToGroupErrors[keyof AddDevicesToGroupErrors];
@@ -11818,7 +11462,7 @@ export type GetFilterableAttributesErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetFilterableAttributesError = GetFilterableAttributesErrors[keyof GetFilterableAttributesErrors];
@@ -11873,11 +11517,11 @@ export type InventoryV2SearchDeviceInventoriesErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type InventoryV2SearchDeviceInventoriesError = InventoryV2SearchDeviceInventoriesErrors[keyof InventoryV2SearchDeviceInventoriesErrors];
@@ -11913,11 +11557,11 @@ export type ListFiltersErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListFiltersError = ListFiltersErrors[keyof ListFiltersErrors];
@@ -11947,15 +11591,15 @@ export type CreateFilterErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * A filter with the same name already exists.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CreateFilterError = CreateFilterErrors[keyof CreateFilterErrors];
@@ -11983,11 +11627,11 @@ export type DeleteFilterErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeleteFilterError = DeleteFilterErrors[keyof DeleteFilterErrors];
@@ -12017,11 +11661,11 @@ export type ShowFilterErrors = {
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ShowFilterError = ShowFilterErrors[keyof ShowFilterErrors];
@@ -12054,11 +11698,11 @@ export type UpdateFilterErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateFilterError = UpdateFilterErrors[keyof UpdateFilterErrors];
@@ -12097,15 +11741,15 @@ export type ExecuteFilterErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ExecuteFilterError = ExecuteFilterErrors[keyof ExecuteFilterErrors];
@@ -12121,33 +11765,6 @@ export type ExecuteFilterResponses = {
 
 export type ExecuteFilterResponse = ExecuteFilterResponses[keyof ExecuteFilterResponses];
 
-export type GetStatisticsData = {
-  body?: never;
-  path?: never;
-  query?: never;
-  url: '/api/management/v2/inventory/statistics';
-};
-
-export type GetStatisticsErrors = {
-  /**
-   * Internal Server Error.
-   */
-  500: Error;
-};
-
-export type GetStatisticsError = GetStatisticsErrors[keyof GetStatisticsErrors];
-
-export type GetStatisticsResponses = {
-  /**
-   * Successful response.
-   */
-  200: {
-    devices_by_status: DeviceStatusStatistics;
-  };
-};
-
-export type GetStatisticsResponse = GetStatisticsResponses[keyof GetStatisticsResponses];
-
 export type IoTManagerInternalCheckHealthData = {
   body?: never;
   path?: never;
@@ -12159,11 +11776,11 @@ export type IoTManagerInternalCheckHealthErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type IoTManagerInternalCheckHealthError = IoTManagerInternalCheckHealthErrors[keyof IoTManagerInternalCheckHealthErrors];
@@ -12188,7 +11805,7 @@ export type IoTManagerInternalCheckLivelinessErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type IoTManagerInternalCheckLivelinessError = IoTManagerInternalCheckLivelinessErrors[keyof IoTManagerInternalCheckLivelinessErrors];
@@ -12203,7 +11820,7 @@ export type IoTManagerInternalCheckLivelinessResponses = {
 export type IoTManagerInternalCheckLivelinessResponse = IoTManagerInternalCheckLivelinessResponses[keyof IoTManagerInternalCheckLivelinessResponses];
 
 export type IoTManagerInternalProvisionDeviceData = {
-  body: NewDeviceInternalProvisionTypeInternal;
+  body: NewDevice;
   path: {
     /**
      * ID of tenant the device belongs to.
@@ -12218,15 +11835,15 @@ export type IoTManagerInternalProvisionDeviceErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * A device with the same ID already exists in Iot Hub.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type IoTManagerInternalProvisionDeviceError = IoTManagerInternalProvisionDeviceErrors[keyof IoTManagerInternalProvisionDeviceErrors];
@@ -12254,7 +11871,7 @@ export type IoTManagerInternalDeleteTenantErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type IoTManagerInternalDeleteTenantError = IoTManagerInternalDeleteTenantErrors[keyof IoTManagerInternalDeleteTenantErrors];
@@ -12288,7 +11905,7 @@ export type IoTManagerInternalDecommissionDeviceErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type IoTManagerInternalDecommissionDeviceError = IoTManagerInternalDecommissionDeviceErrors[keyof IoTManagerInternalDecommissionDeviceErrors];
@@ -12328,11 +11945,11 @@ export type IoTManagerInternalUpdateDeviceStatusesErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type IoTManagerInternalUpdateDeviceStatusesError = IoTManagerInternalUpdateDeviceStatusesErrors[keyof IoTManagerInternalUpdateDeviceStatusesErrors];
@@ -12364,19 +11981,19 @@ export type IoTManagerManagementListIntegrationsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The user is not permitted to access the resource.
    */
-  403: Error;
+  403: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type IoTManagerManagementListIntegrationsError = IoTManagerManagementListIntegrationsErrors[keyof IoTManagerManagementListIntegrationsErrors];
@@ -12401,19 +12018,19 @@ export type IoTManagerManagementRegisterIntegrationErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The user is not permitted to access the resource.
    */
-  403: Error;
+  403: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type IoTManagerManagementRegisterIntegrationError = IoTManagerManagementRegisterIntegrationErrors[keyof IoTManagerManagementRegisterIntegrationErrors];
@@ -12441,19 +12058,19 @@ export type IoTManagerManagementRemoveIntegrationErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The user is not permitted to access the resource.
    */
-  403: Error;
+  403: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type IoTManagerManagementRemoveIntegrationError = IoTManagerManagementRemoveIntegrationErrors[keyof IoTManagerManagementRemoveIntegrationErrors];
@@ -12484,23 +12101,23 @@ export type IoTManagerManagementSetIntegrationCredentialsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The user is not permitted to access the resource.
    */
-  403: Error;
+  403: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type IoTManagerManagementSetIntegrationCredentialsError =
@@ -12532,19 +12149,19 @@ export type IoTManagerManagementUnregisterDeviceIntegrationsErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The user is not permitted to access the resource.
    */
-  403: Error;
+  403: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type IoTManagerManagementUnregisterDeviceIntegrationsError =
@@ -12576,19 +12193,19 @@ export type IoTManagerManagementGetDeviceStatesErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The user is not permitted to access the resource.
    */
-  403: Error;
+  403: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type IoTManagerManagementGetDeviceStatesError = IoTManagerManagementGetDeviceStatesErrors[keyof IoTManagerManagementGetDeviceStatesErrors];
@@ -12624,19 +12241,19 @@ export type IoTManagerManagementGetDeviceStateErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The user is not permitted to access the resource.
    */
-  403: Error;
+  403: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type IoTManagerManagementGetDeviceStateError = IoTManagerManagementGetDeviceStateErrors[keyof IoTManagerManagementGetDeviceStateErrors];
@@ -12670,23 +12287,23 @@ export type IoTManagerManagementReplaceStateErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The user is not permitted to access the resource.
    */
-  403: Error;
+  403: _Error;
   /**
    * Conflict.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type IoTManagerManagementReplaceStateError = IoTManagerManagementReplaceStateErrors[keyof IoTManagerManagementReplaceStateErrors];
@@ -12724,19 +12341,19 @@ export type IoTManagerManagementListEventsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The user is not permitted to access the resource.
    */
-  403: Error;
+  403: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type IoTManagerManagementListEventsError = IoTManagerManagementListEventsErrors[keyof IoTManagerManagementListEventsErrors];
@@ -12761,7 +12378,7 @@ export type CheckLivelinessErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CheckLivelinessError = CheckLivelinessErrors[keyof CheckLivelinessErrors];
@@ -12787,12 +12404,12 @@ export type TenantadmInternalCheckHealthErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
   /**
    * Service unhealthy / not ready to accept traffic. At least one dependency is not running.
    *
    */
-  503: Error;
+  503: _Error;
 };
 
 export type TenantadmInternalCheckHealthError = TenantadmInternalCheckHealthErrors[keyof TenantadmInternalCheckHealthErrors];
@@ -12858,11 +12475,11 @@ export type ListTenantsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListTenantsError = ListTenantsErrors[keyof ListTenantsErrors];
@@ -12899,7 +12516,7 @@ export type VerifyTenantTokenErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type VerifyTenantTokenError = VerifyTenantTokenErrors[keyof VerifyTenantTokenErrors];
@@ -12917,7 +12534,7 @@ export type SetAccountStatusData = {
   /**
    * Target suspension status
    */
-  body: TenantStatusTypeManagement;
+  body: TenantStatus;
   path: {
     /**
      * Tenant ID.
@@ -12932,15 +12549,15 @@ export type SetAccountStatusErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type SetAccountStatusError = SetAccountStatusErrors[keyof SetAccountStatusErrors];
@@ -12969,7 +12586,7 @@ export type TenantadmInternalDeleteTenantErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type TenantadmInternalDeleteTenantError = TenantadmInternalDeleteTenantErrors[keyof TenantadmInternalDeleteTenantErrors];
@@ -13004,11 +12621,11 @@ export type ShowTenantErrors = {
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ShowTenantError = ShowTenantErrors[keyof ShowTenantErrors];
@@ -13041,20 +12658,20 @@ export type UpdateTenantErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * The tenant cannot be updated becaues of a conflict.
    *
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateTenantError = UpdateTenantErrors[keyof UpdateTenantErrors];
@@ -13063,8 +12680,10 @@ export type UpdateTenantResponses = {
   /**
    * Tenant information updated.
    */
-  202: unknown;
+  204: void;
 };
+
+export type UpdateTenantResponse = UpdateTenantResponses[keyof UpdateTenantResponses];
 
 export type DeleteTenantChildrenData = {
   body?: never;
@@ -13083,11 +12702,11 @@ export type DeleteTenantChildrenErrors = {
    * The specified tenant is not a Service Provider.
    *
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeleteTenantChildrenError = DeleteTenantChildrenErrors[keyof DeleteTenantChildrenErrors];
@@ -13122,20 +12741,20 @@ export type AssignTenantsToServiceProviderErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * The specified tenant is not a Service Provider.
    *
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type AssignTenantsToServiceProviderError = AssignTenantsToServiceProviderErrors[keyof AssignTenantsToServiceProviderErrors];
@@ -13169,11 +12788,11 @@ export type DeleteParentReferenceErrors = {
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeleteParentReferenceError = DeleteParentReferenceErrors[keyof DeleteParentReferenceErrors];
@@ -13190,12 +12809,7 @@ export type DeleteParentReferenceResponse = DeleteParentReferenceResponses[keyof
 export type TenantInfoData = {
   body?: never;
   path?: never;
-  query?: {
-    /**
-     * Flag to include per-tiers limits in the response.
-     */
-    tiers?: boolean;
-  };
+  query?: never;
   url: '/api/management/v1/tenantadm/user/tenant';
 };
 
@@ -13207,11 +12821,11 @@ export type TenantInfoErrors = {
   /**
    * User is not a part of any tenant organization.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type TenantInfoError = TenantInfoErrors[keyof TenantInfoErrors];
@@ -13225,39 +12839,6 @@ export type TenantInfoResponses = {
 
 export type TenantInfoResponse = TenantInfoResponses[keyof TenantInfoResponses];
 
-export type GetBillingProductInformationData = {
-  body?: never;
-  path?: never;
-  query?: never;
-  url: '/api/management/v2/tenantadm/billing/products';
-};
-
-export type GetBillingProductInformationErrors = {
-  /**
-   * Unauthorized.
-   */
-  401: Error;
-  /**
-   * Not Found.
-   */
-  404: Error;
-  /**
-   * Internal Server Error.
-   */
-  500: Error;
-};
-
-export type GetBillingProductInformationError = GetBillingProductInformationErrors[keyof GetBillingProductInformationErrors];
-
-export type GetBillingProductInformationResponses = {
-  /**
-   * Successful response.
-   */
-  200: ProductInfo;
-};
-
-export type GetBillingProductInformationResponse = GetBillingProductInformationResponses[keyof GetBillingProductInformationResponses];
-
 export type GetBillingInformationData = {
   body?: never;
   path?: never;
@@ -13269,7 +12850,7 @@ export type GetBillingInformationErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetBillingInformationError = GetBillingInformationErrors[keyof GetBillingInformationErrors];
@@ -13294,15 +12875,15 @@ export type InitCardUpdateErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Tenant is in invalid state; see error for details.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type InitCardUpdateError = InitCardUpdateErrors[keyof InitCardUpdateErrors];
@@ -13332,19 +12913,19 @@ export type ConfirmCardUpdateErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Setup intent is in invalid state; see error for details.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ConfirmCardUpdateError = ConfirmCardUpdateErrors[keyof ConfirmCardUpdateErrors];
@@ -13369,15 +12950,15 @@ export type GetBillingProfileErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetBillingProfileError = GetBillingProfileErrors[keyof GetBillingProfileErrors];
@@ -13405,23 +12986,23 @@ export type UpdateBillingProfileErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Payload too large
    */
-  413: Error;
+  413: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateBillingProfileError = UpdateBillingProfileErrors[keyof UpdateBillingProfileErrors];
@@ -13449,19 +13030,19 @@ export type RegisterBillingProfileErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Payload too large
    */
-  413: Error;
+  413: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type RegisterBillingProfileError = RegisterBillingProfileErrors[keyof RegisterBillingProfileErrors];
@@ -13486,23 +13067,23 @@ export type ShowSubscriptionErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Forbidden
    */
-  403: Error;
+  403: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ShowSubscriptionError = ShowSubscriptionErrors[keyof ShowSubscriptionErrors];
@@ -13530,11 +13111,11 @@ export type ChangeSubscriptionErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Forbidden
    */
@@ -13542,15 +13123,15 @@ export type ChangeSubscriptionErrors = {
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * billing for your account is not self-managed: please contact support
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ChangeSubscriptionError = ChangeSubscriptionErrors[keyof ChangeSubscriptionErrors];
@@ -13576,27 +13157,27 @@ export type PreviewInvoiceErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Forbidden
    */
-  403: Error;
+  403: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * No invoice could be generated
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type PreviewInvoiceError = PreviewInvoiceErrors[keyof PreviewInvoiceErrors];
@@ -13621,7 +13202,7 @@ export type GetStripeSecretErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetStripeSecretError = GetStripeSecretErrors[keyof GetStripeSecretErrors];
@@ -13649,15 +13230,15 @@ export type ContactSupportErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ContactSupportError = ContactSupportErrors[keyof ContactSupportErrors];
@@ -13674,10 +13255,6 @@ export type ListTenantsV2Data = {
   path?: never;
   query?: {
     /**
-     * Flag to include tiers in the response.
-     */
-    tiers?: string;
-    /**
      * Starting page.
      */
     page?: number;
@@ -13693,7 +13270,7 @@ export type ListTenantsV2Errors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListTenantsV2Error = ListTenantsV2Errors[keyof ListTenantsV2Errors];
@@ -13713,7 +13290,7 @@ export type CreateNewTenantData = {
   /**
    * New Tenant
    */
-  body: NewTenantTypeManagement;
+  body: NewTenant;
   path?: never;
   query?: never;
   url: '/api/management/v2/tenantadm/tenants';
@@ -13723,26 +13300,26 @@ export type CreateNewTenantErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Forbidden because the current tenant is not a service provider.
    *
    */
-  403: Error;
+  403: _Error;
   /**
    * Tenant or admin user is duplicated.
    *
    */
-  409: Error;
+  409: _Error;
   /**
    * Tenant limit for max child tenants exhausted.
    *
    */
-  422: Error;
+  422: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CreateNewTenantError = CreateNewTenantErrors[keyof CreateNewTenantErrors];
@@ -13800,26 +13377,26 @@ export type SignUpErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Recaptcha verififaction failed.
    *
    */
-  401: Error;
+  401: _Error;
   /**
    * Endpoint disabled.
    *
    */
-  405: Error;
+  405: _Error;
   /**
    * Email is duplicated.
    *
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type SignUpError = SignUpErrors[keyof SignUpErrors];
@@ -13875,26 +13452,26 @@ export type CreateTrialAccountErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Recaptcha verififaction failed.
    *
    */
-  401: Error;
+  401: _Error;
   /**
    * Endpoint disabled.
    *
    */
-  405: Error;
+  405: _Error;
   /**
    * Email is duplicated.
    *
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CreateTrialAccountError = CreateTrialAccountErrors[keyof CreateTrialAccountErrors];
@@ -13923,17 +13500,17 @@ export type DeleteInactiveAccountErrors = {
    * User token does not provide access to tenant with given Id.
    *
    */
-  403: Error;
+  403: _Error;
   /**
    * The tenant cannot be removed.
    * Only inactive tenant can be removed.
    *
    */
-  405: Error;
+  405: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeleteInactiveAccountError = DeleteInactiveAccountErrors[keyof DeleteInactiveAccountErrors];
@@ -13966,24 +13543,24 @@ export type CancelAccountErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * User token does not provide access to tenant with given Id.
    *
    */
-  403: Error;
+  403: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * The tenant is not active.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CancelAccountError = CancelAccountErrors[keyof CancelAccountErrors];
@@ -14016,16 +13593,16 @@ export type UpdateChildTenantErrors = {
    * User token does not provide access to tenant with given Id.
    *
    */
-  403: Error;
+  403: _Error;
   /**
    * Device limit for children tenants exhausted.
    *
    */
-  422: Error;
+  422: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateChildTenantError = UpdateChildTenantErrors[keyof UpdateChildTenantErrors];
@@ -14058,24 +13635,24 @@ export type UpdatePlanErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * User token does not provide access to tenant with given Id.
    *
    */
-  403: Error;
+  403: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * The tenant is not active.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdatePlanError = UpdatePlanErrors[keyof UpdatePlanErrors];
@@ -14104,16 +13681,16 @@ export type InitTenantRemovalErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * User token does not provide access to tenant with given Id.
    *
    */
-  403: Error;
+  403: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type InitTenantRemovalError = InitTenantRemovalErrors[keyof InitTenantRemovalErrors];
@@ -14129,7 +13706,7 @@ export type ActivateAccountData = {
   /**
    * Target suspension status
    */
-  body: TenantStatusTypeManagement;
+  body: TenantStatus;
   path: {
     /**
      * Tenant ID.
@@ -14144,24 +13721,24 @@ export type ActivateAccountErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * User token does not provide access to tenant with given Id.
    *
    */
-  403: Error;
+  403: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * The tenant was suspended.
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ActivateAccountError = ActivateAccountErrors[keyof ActivateAccountErrors];
@@ -14185,12 +13762,12 @@ export type UseradmCheckHealthErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
   /**
    * Service unhealthy / not ready to accept traffic. At least one dependency is not running.
    *
    */
-  503: Error;
+  503: _Error;
 };
 
 export type UseradmCheckHealthError = UseradmCheckHealthErrors[keyof UseradmCheckHealthErrors];
@@ -14216,7 +13793,7 @@ export type UseradmCheckLivelinessErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UseradmCheckLivelinessError = UseradmCheckLivelinessErrors[keyof UseradmCheckLivelinessErrors];
@@ -14257,19 +13834,19 @@ export type VerifyJwtErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Verification failed, authentication should not be granted.
    */
-  401: Error;
+  401: _Error;
   /**
    * Token has expired - apply for a new one.
    */
-  403: Error;
+  403: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type VerifyJwtError = VerifyJwtErrors[keyof VerifyJwtErrors];
@@ -14346,11 +13923,11 @@ export type ListAllUsersErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListAllUsersError = ListAllUsersErrors[keyof ListAllUsersErrors];
@@ -14377,11 +13954,11 @@ export type UseradmCreateTenantErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UseradmCreateTenantError = UseradmCreateTenantErrors[keyof UseradmCreateTenantErrors];
@@ -14412,15 +13989,15 @@ export type AssignTenantSsoErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type AssignTenantSsoError = AssignTenantSsoErrors[keyof AssignTenantSsoErrors];
@@ -14452,7 +14029,7 @@ export type UseradmInternalDeleteTenantDataErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UseradmInternalDeleteTenantDataError = UseradmInternalDeleteTenantDataErrors[keyof UseradmInternalDeleteTenantDataErrors];
@@ -14468,12 +14045,6 @@ export type UseradmInternalDeleteTenantDataResponse = UseradmInternalDeleteTenan
 
 export type ListUsersInternalData = {
   body?: never;
-  headers?: {
-    /**
-     * Sets the amount of records on one page.
-     */
-    per_page?: number;
-  };
   path: {
     /**
      * Tenant ID.
@@ -14485,12 +14056,12 @@ export type ListUsersInternalData = {
      * Limit result by user ID, can be repeated to include multiple users in the query.
      *
      */
-    id?: Array<string>;
+    id?: string;
     /**
      * Limit result by user email, can be repeated to include multiple users in the query.
      *
      */
-    email?: Array<string>;
+    email?: string;
     /**
      * Filter users created after timestamp (UNIX timestamp).
      *
@@ -14519,11 +14090,11 @@ export type ListUsersInternalErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListUsersInternalError = ListUsersInternalErrors[keyof ListUsersInternalErrors];
@@ -14558,20 +14129,20 @@ export type CreateUserInternalErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * User name or ID is duplicated, or limit on maximum number of users has been exceeded.
    *
    */
-  422: Error;
+  422: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CreateUserInternalError = CreateUserInternalErrors[keyof CreateUserInternalErrors];
@@ -14604,11 +14175,11 @@ export type ListUsersEmailAddressesErrors = {
    * Device id not provided.
    *
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListUsersEmailAddressesError = ListUsersEmailAddressesErrors[keyof ListUsersEmailAddressesErrors];
@@ -14642,11 +14213,11 @@ export type DeleteUserInternalErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeleteUserInternalError = DeleteUserInternalErrors[keyof DeleteUserInternalErrors];
@@ -14680,15 +14251,11 @@ export type RevokeUserTokensErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
-  /**
-   * Service is unavailable.
-   */
-  503: Error;
+  500: _Error;
 };
 
 export type RevokeUserTokensError = RevokeUserTokensErrors[keyof RevokeUserTokensErrors];
@@ -14718,7 +14285,7 @@ export type ClearTenantLimitsErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ClearTenantLimitsError = ClearTenantLimitsErrors[keyof ClearTenantLimitsErrors];
@@ -14748,11 +14315,11 @@ export type GetTenantLimitsInternalErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetTenantLimitsInternalError = GetTenantLimitsInternalErrors[keyof GetTenantLimitsInternalErrors];
@@ -14782,11 +14349,11 @@ export type UpdateTenantLimitsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateTenantLimitsError = UpdateTenantLimitsErrors[keyof UpdateTenantLimitsErrors];
@@ -14816,11 +14383,11 @@ export type ShowTenantPlanAndLimitsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ShowTenantPlanAndLimitsError = ShowTenantPlanAndLimitsErrors[keyof ShowTenantPlanAndLimitsErrors];
@@ -14850,11 +14417,11 @@ export type UpdateTenantPlanAndLimitsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateTenantPlanAndLimitsError = UpdateTenantPlanAndLimitsErrors[keyof UpdateTenantPlanAndLimitsErrors];
@@ -14887,15 +14454,15 @@ export type AssignTenantsInternalErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type AssignTenantsInternalError = AssignTenantsInternalErrors[keyof AssignTenantsInternalErrors];
@@ -14921,26 +14488,22 @@ export type LoginErrors = {
   /**
    * Bad request, see error message for details.
    */
-  400: Error;
+  400: _Error;
   /**
    * The user is not authorized. There are two possible scenarios for that:
    * * username/password do not match
    * * token for two factor authentication (if enabled) was not correct
    *
    */
-  401: Error;
+  401: _Error;
   /**
    * Feature not available in your Plan.
    */
-  403: Error;
+  403: _Error;
   /**
    * Internal server error.
    */
-  500: Error;
-  /**
-   * Service is unavailable.
-   */
-  503: Error;
+  500: _Error;
 };
 
 export type LoginError = LoginErrors[keyof LoginErrors];
@@ -14982,15 +14545,11 @@ export type LoginUsingAMagicLinkErrors = {
    * * the tenant may not have been initialized successfully
    *
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
-  /**
-   * Service is unavailable.
-   */
-  503: Error;
+  500: _Error;
 };
 
 export type LoginUsingAMagicLinkError = LoginUsingAMagicLinkErrors[keyof LoginUsingAMagicLinkErrors];
@@ -15014,34 +14573,30 @@ export type SubmitAssertionDataErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Request forbidden, possibly due to the feature not being available in the current Mender plan.
    *
    */
-  403: Error;
+  403: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Endpoint does not support the provided Content-Type.
    *
    */
-  415: Error;
+  415: _Error;
   /**
    * The metadata has not been uploaded yet.
    *
    */
-  422: Error;
+  422: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
-  /**
-   * Service is unavailable.
-   */
-  503: Error;
+  500: _Error;
 };
 
 export type SubmitAssertionDataError = SubmitAssertionDataErrors[keyof SubmitAssertionDataErrors];
@@ -15059,12 +14614,12 @@ export type LoginViaGivenIdentityProviderErrors = {
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * The metadata has not been uploaded yet.
    *
    */
-  422: Error;
+  422: _Error;
 };
 
 export type LoginViaGivenIdentityProviderError = LoginViaGivenIdentityProviderErrors[keyof LoginViaGivenIdentityProviderErrors];
@@ -15080,19 +14635,15 @@ export type LogoutErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
-  /**
-   * Service is unavailable.
-   */
-  503: Error;
+  500: _Error;
 };
 
 export type LogoutError = LogoutErrors[keyof LogoutErrors];
@@ -15120,16 +14671,16 @@ export type InitiatePasswordResetRequestErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Too many requests.
    *
    */
-  429: Error;
+  429: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type InitiatePasswordResetRequestError = InitiatePasswordResetRequestErrors[keyof InitiatePasswordResetRequestErrors];
@@ -15156,11 +14707,11 @@ export type CompletePasswordResetRequestErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CompletePasswordResetRequestError = CompletePasswordResetRequestErrors[keyof CompletePasswordResetRequestErrors];
@@ -15187,11 +14738,11 @@ export type InitiateEmailVerificationRequestErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type InitiateEmailVerificationRequestError = InitiateEmailVerificationRequestErrors[keyof InitiateEmailVerificationRequestErrors];
@@ -15218,15 +14769,11 @@ export type CompleteEmailVerificationErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
-  /**
-   * The resource is no longer available.
-   */
-  410: Error;
+  400: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CompleteEmailVerificationError = CompleteEmailVerificationErrors[keyof CompleteEmailVerificationErrors];
@@ -15263,15 +14810,15 @@ export type VerifyPlanErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The required minimal plan doesn't match the user plan
    */
-  403: Error;
+  403: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type VerifyPlanError = VerifyPlanErrors[keyof VerifyPlanErrors];
@@ -15299,11 +14846,11 @@ export type LoginOAuth20Errors = {
   /**
    * The required OAuth 2.0 provider is not available.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type LoginOAuth20Error = LoginOAuth20Errors[keyof LoginOAuth20Errors];
@@ -15350,11 +14897,11 @@ export type ListUsersManagementErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListUsersManagementError = ListUsersManagementErrors[keyof ListUsersManagementErrors];
@@ -15384,11 +14931,11 @@ export type CreateUserManagementErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The email address is duplicated, password is too short, current password doesn't match or limit on maximum number of users has been exceeded.
    * It is possible that the user with the given email address exists
@@ -15397,11 +14944,11 @@ export type CreateUserManagementErrors = {
    * across all organizations.
    *
    */
-  422: Error;
+  422: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CreateUserManagementError = CreateUserManagementErrors[keyof CreateUserManagementErrors];
@@ -15429,19 +14976,19 @@ export type CheckUserExistenceErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Forbidden.
    */
-  403: Error;
+  403: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CheckUserExistenceError = CheckUserExistenceErrors[keyof CheckUserExistenceErrors];
@@ -15476,11 +15023,11 @@ export type RemoveUserErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type RemoveUserError = RemoveUserErrors[keyof RemoveUserErrors];
@@ -15510,15 +15057,15 @@ export type ShowUserErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ShowUserError = ShowUserErrors[keyof ShowUserErrors];
@@ -15551,25 +15098,25 @@ export type UpdateUserErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * The email address is duplicated, the password is too short
    * or the user is trying to modify another user's password.
    *
    */
-  422: Error;
+  422: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateUserError = UpdateUserErrors[keyof UpdateUserErrors];
@@ -15594,15 +15141,15 @@ export type ShowOwnUserDataErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ShowOwnUserDataError = ShowOwnUserDataErrors[keyof ShowOwnUserDataErrors];
@@ -15630,24 +15177,24 @@ export type UpdateOwnUserDataErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * The email address is duplicated or the password is too short.
    *
    */
-  422: Error;
+  422: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateOwnUserDataError = UpdateOwnUserDataErrors[keyof UpdateOwnUserDataErrors];
@@ -15678,23 +15225,23 @@ export type Enable2FaErrors = {
    * Operation is invalid, see error message.
    *
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Forbidden.
    */
-  403: Error;
+  403: _Error;
   /**
    * The user was not found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type Enable2FaError = Enable2FaErrors[keyof Enable2FaErrors];
@@ -15722,23 +15269,23 @@ export type Disable2FaErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Forbidden.
    */
-  403: Error;
+  403: _Error;
   /**
    * The user was not found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type Disable2FaError = Disable2FaErrors[keyof Disable2FaErrors];
@@ -15769,23 +15316,23 @@ export type AssignTenantsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Forbidden.
    */
-  403: Error;
+  403: _Error;
   /**
    * The user was not found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type AssignTenantsError = AssignTenantsErrors[keyof AssignTenantsErrors];
@@ -15808,11 +15355,11 @@ export type ListRolesV1Errors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListRolesV1Error = ListRolesV1Errors[keyof ListRolesV1Errors];
@@ -15842,15 +15389,15 @@ export type CreateRoleV1Errors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CreateRoleV1Error = CreateRoleV1Errors[keyof CreateRoleV1Errors];
@@ -15878,11 +15425,11 @@ export type DeleteRoleV1Errors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeleteRoleV1Error = DeleteRoleV1Errors[keyof DeleteRoleV1Errors];
@@ -15912,15 +15459,15 @@ export type ShowRoleV1Errors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The role was not found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ShowRoleV1Error = ShowRoleV1Errors[keyof ShowRoleV1Errors];
@@ -15953,20 +15500,20 @@ export type UpdateRoleV1Errors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The role does not exist.
    *
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateRoleV1Error = UpdateRoleV1Errors[keyof UpdateRoleV1Errors];
@@ -15989,11 +15536,11 @@ export type ShowUserSettingsErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ShowUserSettingsError = ShowUserSettingsErrors[keyof ShowUserSettingsErrors];
@@ -16027,16 +15574,16 @@ export type UpdateUserSettingsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The user has no access to authentication settings because of unverified email address.
    *
    */
-  403: Error;
+  403: _Error;
   /**
    * ETag doesn't match.
    */
@@ -16044,7 +15591,7 @@ export type UpdateUserSettingsErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateUserSettingsError = UpdateUserSettingsErrors[keyof UpdateUserSettingsErrors];
@@ -16067,11 +15614,11 @@ export type ShowMyUserSettingsErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ShowMyUserSettingsError = ShowMyUserSettingsErrors[keyof ShowMyUserSettingsErrors];
@@ -16105,11 +15652,11 @@ export type UpdateMyUserSettingsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * ETag doesn't match.
    */
@@ -16117,7 +15664,7 @@ export type UpdateMyUserSettingsErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateMyUserSettingsError = UpdateMyUserSettingsErrors[keyof UpdateMyUserSettingsErrors];
@@ -16140,11 +15687,11 @@ export type Get2FaQrCodeErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type Get2FaQrCodeError = Get2FaQrCodeErrors[keyof Get2FaQrCodeErrors];
@@ -16182,15 +15729,15 @@ export type VerifyThe2FaTokenErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * The verification failed.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type VerifyThe2FaTokenError = VerifyThe2FaTokenErrors[keyof VerifyThe2FaTokenErrors];
@@ -16213,11 +15760,11 @@ export type ListUserPersonalAccessTokensErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListUserPersonalAccessTokensError = ListUserPersonalAccessTokensErrors[keyof ListUserPersonalAccessTokensErrors];
@@ -16248,25 +15795,25 @@ export type CreatePersonalAccessTokenErrors = {
    * The request body is malformed or expiration time is too big.
    *
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Personal Access Token with the same name already exists.
    *
    */
-  409: Error;
+  409: _Error;
   /**
    * Maximum number of Personal Acess Tokens reached for this user.
    *
    */
-  422: Error;
+  422: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CreatePersonalAccessTokenError = CreatePersonalAccessTokenErrors[keyof CreatePersonalAccessTokenErrors];
@@ -16296,11 +15843,11 @@ export type RevokePersonalAccessTokenErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type RevokePersonalAccessTokenError = RevokePersonalAccessTokenErrors[keyof RevokePersonalAccessTokenErrors];
@@ -16325,19 +15872,24 @@ export type DeleteSamlOrOpenIdConnectMetadataData = {
 
 export type DeleteSamlOrOpenIdConnectMetadataErrors = {
   /**
-   * Request forbidden, possibly due to feature not being available in current Mender plan or read-only permission.
+   * Request forbidden, possibly due to feature not being available in current Mender plan.
    *
    */
-  403: Error;
+  403: _Error;
   /**
    * Metadata with the given id was not found.
    *
    */
-  404: Error;
+  404: _Error;
+  /**
+   * The tenant is managed by a Service Provider and the configuration cannot be changed.
+   *
+   */
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeleteSamlOrOpenIdConnectMetadataError = DeleteSamlOrOpenIdConnectMetadataErrors[keyof DeleteSamlOrOpenIdConnectMetadataErrors];
@@ -16365,16 +15917,16 @@ export type GetIdpSamlOrOpenIdConnectMetadataForTheTenantErrors = {
    * Request forbidden, possibly due to feature not being available in current Mender plan.
    *
    */
-  403: Error;
+  403: _Error;
   /**
    * There is nothing to return under the given id
    *
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetIdpSamlOrOpenIdConnectMetadataForTheTenantError =
@@ -16405,26 +15957,31 @@ export type UpdateSamlMetadataErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
-   * Request forbidden, possibly due to feature not being available in current Mender plan or read-only permission.
+   * Request forbidden, possibly due to feature not being available in current Mender plan.
    *
    */
-  403: Error;
+  403: _Error;
   /**
    * Given id was not associated with any Metadata object.
    *
    */
-  404: Error;
+  404: _Error;
+  /**
+   * The tenant is managed by a Service Provider and the configuration cannot be changed.
+   *
+   */
+  409: _Error;
   /**
    * Endpoint does not support the Content-Type provided.
    *
    */
-  415: Error;
+  415: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateSamlMetadataError = UpdateSamlMetadataErrors[keyof UpdateSamlMetadataErrors];
@@ -16450,11 +16007,11 @@ export type GetSamlOrOpenIdConnectMetadataForTheTenantErrors = {
    * Request forbidden, possibly due to feature not being available in current Mender plan.
    *
    */
-  403: Error;
+  403: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetSamlOrOpenIdConnectMetadataForTheTenantError =
@@ -16483,31 +16040,31 @@ export type PostSamlOpenIdConnectMetadataOrUrlPointToThemErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Request forbidden, possibly due to feature not being available in current Mender plan.
    *
    */
-  403: Error;
+  403: _Error;
   /**
    * The tenant is managed by a Service Provider and the configuration cannot be changed.
    *
    */
-  409: Error;
+  409: _Error;
   /**
    * Entity was too large to process.
    *
    */
-  413: Error;
+  413: _Error;
   /**
    * Endpoint does not support the Content-Type provided.
    *
    */
-  415: Error;
+  415: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type PostSamlOpenIdConnectMetadataOrUrlPointToThemError =
@@ -16533,20 +16090,20 @@ export type GetServiceProviderMetadataByIdErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Request forbidden, possibly due to feature not being available in current Mender plan.
    *
    */
-  403: Error;
+  403: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetServiceProviderMetadataByIdError = GetServiceProviderMetadataByIdErrors[keyof GetServiceProviderMetadataByIdErrors];
@@ -16577,7 +16134,7 @@ export type GetTenantLimitsErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetTenantLimitsError = GetTenantLimitsErrors[keyof GetTenantLimitsErrors];
@@ -16611,11 +16168,11 @@ export type ListPlansErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListPlansError = ListPlansErrors[keyof ListPlansErrors];
@@ -16640,11 +16197,11 @@ export type ShowPlanAndLimitsErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ShowPlanAndLimitsError = ShowPlanAndLimitsErrors[keyof ShowPlanAndLimitsErrors];
@@ -16674,19 +16231,15 @@ export type IssueTokenErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
-  /**
-   * Service is unavailable.
-   */
-  503: Error;
+  500: _Error;
 };
 
 export type IssueTokenError = IssueTokenErrors[keyof IssueTokenErrors];
@@ -16720,11 +16273,11 @@ export type ListRolesErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListRolesError = ListRolesErrors[keyof ListRolesErrors];
@@ -16754,20 +16307,20 @@ export type CreateRoleErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The role with the same name already exists.
    *
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CreateRoleError = CreateRoleErrors[keyof CreateRoleErrors];
@@ -16795,11 +16348,11 @@ export type DeleteRoleErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeleteRoleError = DeleteRoleErrors[keyof DeleteRoleErrors];
@@ -16829,15 +16382,15 @@ export type ShowRoleErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ShowRoleError = ShowRoleErrors[keyof ShowRoleErrors];
@@ -16870,20 +16423,20 @@ export type UpdateRoleErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The role does not exist.
    *
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdateRoleError = UpdateRoleErrors[keyof UpdateRoleErrors];
@@ -16915,11 +16468,11 @@ export type ListPermissionSetsErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type ListPermissionSetsError = ListPermissionSetsErrors[keyof ListPermissionSetsErrors];
@@ -16949,15 +16502,15 @@ export type CreatePermissionSetErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The permission set with the same name already exists..
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type CreatePermissionSetError = CreatePermissionSetErrors[keyof CreatePermissionSetErrors];
@@ -16985,11 +16538,11 @@ export type DeletePermissionSetErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type DeletePermissionSetError = DeletePermissionSetErrors[keyof DeletePermissionSetErrors];
@@ -17019,15 +16572,15 @@ export type GetPermissionSetErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type GetPermissionSetError = GetPermissionSetErrors[keyof GetPermissionSetErrors];
@@ -17060,15 +16613,15 @@ export type UpdatePermissionSetErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * The permission set was not found.
    */
-  404: Error;
+  404: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UpdatePermissionSetError = UpdatePermissionSetErrors[keyof UpdatePermissionSetErrors];
@@ -17100,15 +16653,15 @@ export type UserFeedbackErrors = {
   /**
    * Unauthorized.
    */
-  401: Error;
+  401: _Error;
   /**
    * Response already recorded
    */
-  409: Error;
+  409: _Error;
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type UserFeedbackError = UserFeedbackErrors[keyof UserFeedbackErrors];
@@ -17133,7 +16686,7 @@ export type WorkflowsCheckLivelinessErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
 export type WorkflowsCheckLivelinessError = WorkflowsCheckLivelinessErrors[keyof WorkflowsCheckLivelinessErrors];
@@ -17154,18 +16707,18 @@ export type WorkflowsCheckHealthData = {
   body?: never;
   path?: never;
   query?: never;
-  url: '/api/v1/health';
+  url: '/health';
 };
 
 export type WorkflowsCheckHealthErrors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
   /**
    * Service is temporarily unavailable (currently unhealthy).
    */
-  502: Error;
+  502: _Error;
 };
 
 export type WorkflowsCheckHealthError = WorkflowsCheckHealthErrors[keyof WorkflowsCheckHealthErrors];
@@ -17179,7 +16732,7 @@ export type WorkflowsCheckHealthResponses = {
 
 export type WorkflowsCheckHealthResponse = WorkflowsCheckHealthResponses[keyof WorkflowsCheckHealthResponses];
 
-export type DeleteTenantDataInternalWorkflowsData = {
+export type DeleteTenantData2Data = {
   body?: never;
   path: {
     /**
@@ -17191,23 +16744,23 @@ export type DeleteTenantDataInternalWorkflowsData = {
   url: '/api/v1/tenants/{id}';
 };
 
-export type DeleteTenantDataInternalWorkflowsErrors = {
+export type DeleteTenantData2Errors = {
   /**
    * Internal Server Error.
    */
-  500: Error;
+  500: _Error;
 };
 
-export type DeleteTenantDataInternalWorkflowsError = DeleteTenantDataInternalWorkflowsErrors[keyof DeleteTenantDataInternalWorkflowsErrors];
+export type DeleteTenantData2Error = DeleteTenantData2Errors[keyof DeleteTenantData2Errors];
 
-export type DeleteTenantDataInternalWorkflowsResponses = {
+export type DeleteTenantData2Responses = {
   /**
    * Tenant data removed
    */
   204: void;
 };
 
-export type DeleteTenantDataInternalWorkflowsResponse = DeleteTenantDataInternalWorkflowsResponses[keyof DeleteTenantDataInternalWorkflowsResponses];
+export type DeleteTenantData2Response = DeleteTenantData2Responses[keyof DeleteTenantData2Responses];
 
 export type StartWorkflowData = {
   /**
@@ -17228,11 +16781,11 @@ export type StartWorkflowErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
 };
 
 export type StartWorkflowError = StartWorkflowErrors[keyof StartWorkflowErrors];
@@ -17268,11 +16821,11 @@ export type StartBatchWorkflowsErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
 };
 
 export type StartBatchWorkflowsError = StartBatchWorkflowsErrors[keyof StartBatchWorkflowsErrors];
@@ -17289,6 +16842,40 @@ export type StartBatchWorkflowsResponses = {
 };
 
 export type StartBatchWorkflowsResponse = StartBatchWorkflowsResponses[keyof StartBatchWorkflowsResponses];
+
+export type WorkflowStatusData = {
+  body?: never;
+  path: {
+    /**
+     * Workflow identifier.
+     */
+    name: string;
+    /**
+     * Job identifier
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/api/v1/workflow/{name}/{id}';
+};
+
+export type WorkflowStatusErrors = {
+  /**
+   * Not Found.
+   */
+  404: _Error;
+};
+
+export type WorkflowStatusError = WorkflowStatusErrors[keyof WorkflowStatusErrors];
+
+export type WorkflowStatusResponses = {
+  /**
+   * Successful query
+   */
+  200: JobStatus;
+};
+
+export type WorkflowStatusResponse = WorkflowStatusResponses[keyof WorkflowStatusResponses];
 
 export type ListWorkflowsData = {
   body?: never;
@@ -17320,11 +16907,11 @@ export type RegisterWorkflowErrors = {
   /**
    * Invalid Request.
    */
-  400: Error;
+  400: _Error;
   /**
    * Conflict.
    */
-  409: Error;
+  409: _Error;
 };
 
 export type RegisterWorkflowError = RegisterWorkflowErrors[keyof RegisterWorkflowErrors];
@@ -17352,7 +16939,7 @@ export type JobStructureErrors = {
   /**
    * Not Found.
    */
-  404: Error;
+  404: _Error;
 };
 
 export type JobStructureError = JobStructureErrors[keyof JobStructureErrors];
