@@ -44,15 +44,15 @@
     "@vitejs/plugin-react": "^5.1.4",
     "eslint": "9.39.1",
     "jsdom": "28.0.0",
-    "msw": "^2.12.10",
+    "msw": "^2.13.0",
     "tsup": "8.5.1",
     "typescript": "5.9.3",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.2"
   },
   "dependencies": {
     "@mui/icons-material": "^7.x",
-    "@mui/x-tree-view": "^8.x",
     "@mui/material": "^7.x",
+    "@mui/x-tree-view": "^8.x",
     "@northern.tech/common-ui": "*",
     "@northern.tech/store": "*",
     "@northern.tech/themes": "*",
@@ -64,6 +64,6 @@
     "react-redux": "^9.x",
     "react-router-dom": "^7.x",
     "tss-react": "^4.x",
-    "universal-cookie": "8.0.x"
+    "universal-cookie": "8.x"
   }
 }
