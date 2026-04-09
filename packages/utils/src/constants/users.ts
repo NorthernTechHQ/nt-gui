@@ -15,7 +15,9 @@
 //    limitations under the License.
 import type { PermissionSet as BackendPermissionSet, Role as BackendRole, RoleV1 as BackendRoleV1, RolePermission } from '@northern.tech/types/MenderTypes';
 
-import { ALL_DEVICES, ALL_RELEASES, useradmApiUrlv1 } from '.';
+import { useradmApiUrlv1 } from './api';
+import { ALL_DEVICES } from './devices';
+import { ALL_RELEASES } from './releases';
 
 export type ReadPermission = 'read';
 export type ManagePermission = 'manage';
