@@ -31,12 +31,12 @@
     "typescript-eslint": "^8.x"
   },
   "devDependencies": {
-    "tsup": "8.5.1"
+    "tsdown": "^0.21.7"
   },
   "type": "module",
   "scripts": {
     "test": "vitest eslint.test.js",
     "test-ci": "vitest eslint.test.js",
-    "build": "tsup library.js react.js storybook.js"
+    "build": "tsdown library.js react.js storybook.js"
   }
 }

@@ -19,9 +19,9 @@
     "@trivago/prettier-plugin-sort-imports": "6.x"
   },
   "devDependencies": {
-    "tsup": "8.5.1"
+    "tsdown": "^0.21.7"
   },
   "scripts": {
-    "build": "tsup base.js react.js"
+    "build": "tsdown base.js react.js"
   }
 }

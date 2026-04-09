@@ -21,12 +21,12 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup"
+    "build": "tsdown"
   },
   "type": "module",
   "sideEffects": false,
   "devDependencies": {
     "@northern.tech/typescript-config": "*",
-    "tsup": "8.5.1"
+    "tsdown": "^0.21.7"
   }
 }

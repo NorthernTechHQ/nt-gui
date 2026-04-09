@@ -26,8 +26,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch --no-dts --onSuccess 'yalc publish --no-script --push'",
+    "build": "tsdown",
+    "dev": "tsdown --watch --no-dts --onSuccess 'yalc publish --no-script --push'",
     "lint": "eslint --quiet .",
     "format:check": "prettier --check \"src/**/*.{js,ts,jsx,tsx,less}\"",
     "test": "vitest",
@@ -45,7 +45,7 @@
     "eslint": "9.39.1",
     "jsdom": "29.0.2",
     "msw": "^2.13.0",
-    "tsup": "8.5.1",
+    "tsdown": "^0.21.7",
     "typescript": "6.0.2",
     "vitest": "^4.1.2"
   },

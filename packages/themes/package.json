@@ -17,7 +17,7 @@
       "require": "./dist/Mender/index.cjs"
     },
     "./Mender/styles/main.css": {
-      "default": "./dist/Mender/styles/main.css"
+      "default": "./dist/style.css"
     },
     "./Alvaldi": {
       "types": "./dist/Alvaldi/index.d.ts",
@@ -34,8 +34,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch --no-dts --onSuccess 'yalc publish --no-script --push'",
+    "build": "tsdown",
+    "dev": "tsdown --watch --no-dts --onSuccess 'yalc publish --no-script --push'",
     "lint": "eslint src/**/*.{js,ts} *.{js,ts}"
   },
   "type": "module",
@@ -43,9 +43,12 @@
   "devDependencies": {
     "@northern.tech/eslint-config": "*",
     "@northern.tech/typescript-config": "*",
+    "@tsdown/css": "^0.21.7",
+    "@types/node": "25.5.2",
     "esbuild-plugin-less": "^1.3.37",
     "eslint": "^9.39.1",
-    "tsup": "8.5.1"
+    "less": "^4.6.4",
+    "tsdown": "^0.21.7"
   },
   "dependencies": {
     "@mui/material": "^7.x"
