@@ -3,7 +3,6 @@
   "exclude": ["dist", "build", "node_modules"],
   "compilerOptions": {
     "module": "ESNext",
-    "rootDir": ".",
-    "baseUrl": "."
+    "rootDir": "."
   }
 }
