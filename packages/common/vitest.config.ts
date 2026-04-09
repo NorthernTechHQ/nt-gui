@@ -28,12 +28,21 @@ export default defineConfig({
       {
         find: '@/testUtils',
         replacement: path.resolve(__dirname, 'testUtils')
+      },
+      {
+        find: /^dayjs(\/.*)?$/,
+        replacement: path.resolve(__dirname, 'node_modules/dayjs$1')
       }
     ],
     dedupe: ['react-router', 'react-router-dom']
   },
   test: {
     ...baseConfig.test,
-    setupFiles: path.resolve(__dirname, 'setupTests.ts')
+    setupFiles: path.resolve(__dirname, 'setupTests.ts'),
+    server: {
+      deps: {
+        inline: ['@mui/x-date-pickers']
+      }
+    }
   }
 });

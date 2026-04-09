@@ -46,7 +46,7 @@
     "eslint": "^9.39.1",
     "jsdom": "28.0.0",
     "tsup": "8.5.1",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.2"
   },
   "dependencies": {
     "@northern.tech/types": "*",
@@ -55,10 +55,10 @@
     "pluralize": "^8.x",
     "react": "^19.x",
     "react-dom": "^19.x",
-    "react-ga4": "^2.x",
+    "react-ga4": "^3.x",
     "react-redux": "^9.x",
     "react-router-dom": "^7.x",
-    "universal-cookie": "8.0.x",
+    "universal-cookie": "8.x",
     "validator": "^13.x"
   }
 }

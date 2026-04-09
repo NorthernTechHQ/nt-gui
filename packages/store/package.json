@@ -128,19 +128,19 @@
     "@vitejs/plugin-react": "^5.1.4",
     "eslint": "^9.39.1",
     "jsdom": "28.0.0",
-    "msw": "^2.12.10",
+    "msw": "^2.13.0",
     "tsup": "8.5.1",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.2"
   },
   "dependencies": {
     "@emotion/react": "^11.x",
     "@emotion/styled": "^11.x",
     "@mdi/js": "^7.x",
+    "@mui/icons-material": "^7.x",
     "@northern.tech/types": "*",
     "@northern.tech/utils": "*",
-    "@mui/icons-material": "^7.x",
     "@reduxjs/toolkit": "^2.x",
-    "@sentry/react": "^10.41.0",
+    "@sentry/react": "^10.x",
     "axios": "^1.x",
     "dayjs": "^1.x",
     "md5": "^2.x",
@@ -149,7 +149,7 @@
     "react-dom": "^19.x",
     "react-redux": "^9.x",
     "react-router-dom": "^7.x",
-    "universal-cookie": "8.0.x",
+    "universal-cookie": "8.x",
     "validator": "^13.x"
   }
 }
