@@ -26,14 +26,6 @@ import { saveUserSettings } from '../thunks';
 
 const cookies = new Cookies();
 
-const applyOnboardingFallbacks = progress => {
-  const step = onboardingSteps[progress] as any;
-  if (step && step.fallbackStep) {
-    return step.fallbackStep;
-  }
-  return progress;
-};
-
 const determineProgress = (acceptedDevices, pendingDevices, releases, pastDeployments) => {
   const steps = onboardingSteps;
   let progress = -1;
@@ -65,7 +57,7 @@ const deductOnboardingState = ({ devicesById, devicesByStatus, onboardingState, 
   } else if (deviceType.length) {
     approach = 'physical';
   }
-  const progress = applyOnboardingFallbacks(onboardingState.progress || determineProgress(acceptedDevices, pendingDevices, releases, pastDeployments));
+  const progress = onboardingState.progress || determineProgress(acceptedDevices, pendingDevices, releases, pastDeployments);
   return {
     ...onboardingState,
     complete: !!(
