@@ -623,7 +623,7 @@ describe('user actions', () => {
     const result = await store.dispatch(generateToken({ name: 'name' })).unwrap();
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
-    expect(result[result.length - 1]).toEqual('aNewToken');
+    expect(result).toEqual('aNewToken');
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
   it('should allow token removal', async () => {

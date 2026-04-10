@@ -180,36 +180,31 @@ type OrganizationTrialPayload = {
   tos: boolean;
   ts?: number;
 };
-export const createOrganizationTrial = createAppAsyncThunk(`${sliceName}/createOrganizationTrial`, (data: OrganizationTrialPayload, { dispatch }) => {
+export const createOrganizationTrial = createAppAsyncThunk(`${sliceName}/createOrganizationTrial`, async (data: OrganizationTrialPayload, { dispatch }) => {
   const { key } = locations[data.location];
   const targetLocation = getTargetLocation(key);
   const target = `${targetLocation}${tenantadmApiUrlv2}/tenants/trial`;
-  return (
-    Api.postUnauthorized(target, data)
-      .catch(err => {
-        if (err.response?.status >= 400 && err.response?.status < 500) {
-          dispatch(setSnackbar({ message: err.response.data.error, autoHideDuration: TIMEOUTS.fiveSeconds }));
-        } else {
-          // This handles "timeouts", "general connectivity" and "500 - Internal Server Error" errors
-          dispatch(setSnackbar({ message: 'There was an error creating your account', autoHideDuration: TIMEOUTS.fiveSeconds }));
-        }
-        return Promise.reject(err);
-      })
-      //TODO: resolve the case with no response more gracefully
-      //UPD: soon to be removed due to change to the subscription flow
-      // @ts-ignore
-      .then(({ headers }) => {
-        cookies.remove('oauth');
-        cookies.remove('externalID');
-        cookies.remove('email');
-        dispatch(setFirstLoginAfterSignup(true));
-        return new Promise<void>(resolve =>
-          setTimeout(() => {
-            window.location.assign(`${targetLocation}${headers.location || ''}`);
-            return resolve();
-          }, TIMEOUTS.fiveSeconds)
-        );
-      })
+  const response = await Api.postUnauthorized(target, data).catch(err => {
+    if (err.response?.status >= 400 && err.response?.status < 500) {
+      dispatch(setSnackbar({ message: err.response.data.error, autoHideDuration: TIMEOUTS.fiveSeconds }));
+    } else {
+      // This handles "timeouts", "general connectivity" and "500 - Internal Server Error" errors
+      dispatch(setSnackbar({ message: 'There was an error creating your account', autoHideDuration: TIMEOUTS.fiveSeconds }));
+    }
+    return Promise.reject(err);
+  });
+  //TODO: resolve the case with no response more gracefully
+  //UPD: soon to be removed due to change to the subscription flow
+  const { headers } = response;
+  cookies.remove('oauth');
+  cookies.remove('externalID');
+  cookies.remove('email');
+  dispatch(setFirstLoginAfterSignup(true));
+  return new Promise<void>(resolve =>
+    setTimeout(() => {
+      window.location.assign(`${targetLocation}${headers.location || ''}`);
+      return resolve();
+    }, TIMEOUTS.fiveSeconds)
   );
 });
 
@@ -292,23 +287,18 @@ const prepareAuditlogQuery = ({
 };
 
 type GetAuditLogPayload = PaginationOptions & AuditLogQuery;
-export const getAuditLogs = createAppAsyncThunk(
-  `${sliceName}/getAuditLogs`,
-  (selectionState: GetAuditLogPayload, { dispatch, getState }): Promise<ReturnType<AppDispatch> | unknown> => {
-    const { page, perPage } = selectionState;
-    const { hasAuditlogs } = getTenantCapabilities(getState());
-    if (!hasAuditlogs) {
-      return Promise.resolve();
-    }
-    return Api.get<AuditLog[]>(`${auditLogsApiUrl}/logs?page=${page}&per_page=${perPage}${prepareAuditlogQuery(selectionState)}`)
-      .then(({ data, headers }: AxiosResponse<GetAuditLogsResponse>) => {
-        let total = headers[headerNames.total];
-        total = Number(total || data.length);
-        return Promise.resolve(dispatch(actions.receiveAuditLogs({ events: data, total })));
-      })
-      .catch(err => commonErrorHandler(err, `There was an error retrieving audit logs:`, dispatch));
+export const getAuditLogs = createAppAsyncThunk(`${sliceName}/getAuditLogs`, async (selectionState: GetAuditLogPayload, { dispatch, getState }) => {
+  const { page, perPage } = selectionState;
+  const { hasAuditlogs } = getTenantCapabilities(getState());
+  if (!hasAuditlogs) {
+    return;
   }
-);
+  const { data, headers } = await Api.get<GetAuditLogsResponse>(
+    `${auditLogsApiUrl}/logs?page=${page}&per_page=${perPage}${prepareAuditlogQuery(selectionState)}`
+  ).catch(err => commonErrorHandler(err, `There was an error retrieving audit logs:`, dispatch));
+  const total = Number(headers[headerNames.total] || data.length);
+  return dispatch(actions.receiveAuditLogs({ events: data, total }));
+});
 
 export const getAuditLogsCsvLink = createAppAsyncThunk(`${sliceName}/getAuditLogsCsvLink`, (_, { getState }) =>
   Promise.resolve(`${window.location.origin}${auditLogsApiUrl}/logs/export?limit=20000${prepareAuditlogQuery(getAuditlogState(getState()))}`)

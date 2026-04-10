@@ -72,7 +72,7 @@ interface GetIssueCountsByTypePayload {
 }
 export const getIssueCountsByType = createAppAsyncThunk(
   `${sliceName}/getIssueCountsByType`,
-  ({ type, options = {} }: GetIssueCountsByTypePayload, { dispatch, getState }) => {
+  async ({ type, options = {} }: GetIssueCountsByTypePayload, { dispatch, getState }) => {
     const state = getState();
     const { filters = getDeviceFilters(state), group, status, ...remainder } = options;
     const { applicableFilters: nonMonitorFilters, filterTerms } = convertDeviceListStateToFilters({
@@ -83,21 +83,18 @@ export const getIssueCountsByType = createAppAsyncThunk(
       selectedIssues: [type],
       status
     });
-    return Api.post(`${inventoryApiUrlV2}/filters/search`, {
+    const res = await Api.post<DeviceInventory[]>(`${inventoryApiUrlV2}/filters/search`, {
       page: 1,
       per_page: 1,
       filters: filterTerms,
       attributes: [{ scope: 'identity', attribute: 'status' }]
-    })
-      .catch(err => commonErrorHandler(err, `Retrieving issue counts failed:`, dispatch, commonErrorFallback))
-      .then(res => {
-        const total = nonMonitorFilters.length ? state.monitor.issueCounts.byType[type].total : Number(res.headers[headerNames.total]);
-        const filtered = nonMonitorFilters.length ? Number(res.headers[headerNames.total]) : total;
-        if (total === state.monitor.issueCounts.byType[type].total && filtered === state.monitor.issueCounts.byType[type].filtered) {
-          return Promise.resolve();
-        }
-        return Promise.resolve(dispatch(actions.receiveDeviceIssueCounts({ counts: { filtered, total }, issueType: type }))) as ReturnType<AppDispatch>;
-      });
+    }).catch(err => commonErrorHandler(err, `Retrieving issue counts failed:`, dispatch, commonErrorFallback));
+    const total = nonMonitorFilters.length ? state.monitor.issueCounts.byType[type].total : Number(res.headers[headerNames.total]);
+    const filtered = nonMonitorFilters.length ? Number(res.headers[headerNames.total]) : total;
+    if (total === state.monitor.issueCounts.byType[type].total && filtered === state.monitor.issueCounts.byType[type].filtered) {
+      return;
+    }
+    return dispatch(actions.receiveDeviceIssueCounts({ counts: { filtered, total }, issueType: type }));
   }
 );
 

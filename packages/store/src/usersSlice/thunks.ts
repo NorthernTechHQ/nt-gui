@@ -581,22 +581,21 @@ export const getPermissionSets = createAppAsyncThunk(`${sliceName}/getPermission
     .catch(() => console.log('Permission set retrieval failed - likely accessing a non-RBAC backend'))
 );
 
-export const getRoles = createAppAsyncThunk(
-  `${sliceName}/getRoles`,
-  (_, { dispatch, getState }): Promise<ReturnType<AppDispatch> | unknown> =>
-    Promise.all([GeneralApi.get<Role[]>(`${useradmApiUrlv2}/roles?per_page=500`), dispatch(getPermissionSets())])
-      .then(results => {
-        if (!results) {
-          return Promise.resolve(undefined);
-        }
-        const [{ data: roles }, permissionSetResult] = results;
-        const permissionSetTasks = permissionSetResult.payload as [unknown, unknown];
-        const rolesById = normalizeRbacRoles(roles, getRolesById(getState()), permissionSetTasks[permissionSetTasks.length - 1] as ThunkPermissionSet);
-        return Promise.resolve(dispatch(actions.receivedRoles(rolesById)));
-      })
-      .catch(() => console.log('Role retrieval failed - likely accessing a non-RBAC backend'))
-      .finally(() => Promise.resolve(dispatch(actions.finishedRoleInitialization(true))))
-);
+export const getRoles = createAppAsyncThunk(`${sliceName}/getRoles`, async (_, { dispatch, getState }) => {
+  try {
+    const [{ data: roles }, permissionSetResult] = await Promise.all([
+      GeneralApi.get<Role[]>(`${useradmApiUrlv2}/roles?per_page=500`),
+      dispatch(getPermissionSets())
+    ]);
+    const permissionSetTasks = permissionSetResult.payload as [unknown, unknown];
+    const rolesById = normalizeRbacRoles(roles, getRolesById(getState()), permissionSetTasks[permissionSetTasks.length - 1] as ThunkPermissionSet);
+    return dispatch(actions.receivedRoles(rolesById));
+  } catch {
+    console.log('Role retrieval failed - likely accessing a non-RBAC backend');
+  } finally {
+    dispatch(actions.finishedRoleInitialization(true));
+  }
+});
 
 const deriveImpliedAreaPermissions = (
   area: UiPermissionsByAreaKey,
@@ -766,12 +765,15 @@ export const removeRole = createAppAsyncThunk(`${sliceName}/removeRole`, (roleId
 /*
   Global settings
 */
-export const getGlobalSettings = createAppAsyncThunk(`${sliceName}/getGlobalSettings`, (_, { dispatch }) =>
-  GeneralApi.get<GlobalSettings>(`${useradmApiUrl}/settings`).then(({ data: settings, headers: { etag } }) => {
-    window.sessionStorage.setItem(settingsKeys.initialized, 'true');
-    return Promise.all([dispatch(actions.setGlobalSettings(settings)), dispatch(setOfflineThreshold()), etag]);
-  })
-);
+export const getGlobalSettings = createAppAsyncThunk(`${sliceName}/getGlobalSettings`, async (_, { dispatch }) => {
+  const {
+    data: settings,
+    headers: { etag }
+  } = await GeneralApi.get<GlobalSettings>(`${useradmApiUrl}/settings`);
+  window.sessionStorage.setItem(settingsKeys.initialized, 'true');
+  await Promise.all([dispatch(actions.setGlobalSettings(settings)), dispatch(setOfflineThreshold())]);
+  return { etag };
+});
 
 export const saveGlobalSettings = createAppAsyncThunk(
   `${sliceName}/saveGlobalSettings`,
@@ -789,7 +791,7 @@ export const saveGlobalSettings = createAppAsyncThunk(
           delete updatedSettings['2fa'];
         }
         const tasks: Promise<ReturnType<AppDispatch> | unknown>[] = [Promise.resolve(dispatch(actions.setGlobalSettings(updatedSettings)))];
-        const headers = result[result.length - 1] ? { 'If-Match': result[result.length - 1] } : {};
+        const headers = result.etag ? { 'If-Match': result.etag } : {};
         return GeneralApi.post(`${useradmApiUrl}/settings`, updatedSettings, { headers })
           .then(() => {
             if (notify) {
@@ -799,7 +801,7 @@ export const saveGlobalSettings = createAppAsyncThunk(
           })
           .catch(err => {
             if (beOptimistic) {
-              return Promise.all([tasks]);
+              return Promise.all(tasks);
             }
             console.log(err);
             return commonErrorHandler(err, `The settings couldn't be saved.`, dispatch);
@@ -808,12 +810,15 @@ export const saveGlobalSettings = createAppAsyncThunk(
   }
 );
 
-export const getUserSettings = createAppAsyncThunk(`${sliceName}/getUserSettings`, (_, { dispatch }) =>
-  GeneralApi.get<UserSettings>(`${useradmApiUrl}/settings/me`).then(({ data: settings, headers: { etag } }) => {
-    window.sessionStorage.setItem(settingsKeys.initialized, 'true');
-    return Promise.all([dispatch(actions.setUserSettings(settings)), etag]);
-  })
-);
+export const getUserSettings = createAppAsyncThunk(`${sliceName}/getUserSettings`, async (_, { dispatch }) => {
+  const {
+    data: settings,
+    headers: { etag }
+  } = await GeneralApi.get<UserSettings>(`${useradmApiUrl}/settings/me`);
+  window.sessionStorage.setItem(settingsKeys.initialized, 'true');
+  dispatch(actions.setUserSettings(settings));
+  return { etag };
+});
 
 export const saveUserSettings = createAppAsyncThunk(
   `${sliceName}/saveUserSettings`,
@@ -837,7 +842,7 @@ export const saveUserSettings = createAppAsyncThunk(
           },
           tooltips: tooltipState
         };
-        const headers = result[result.length - 1] ? { 'If-Match': result[result.length - 1] } : {};
+        const headers = result.etag ? { 'If-Match': result.etag } : {};
         return Promise.all([
           Promise.resolve(dispatch(actions.setUserSettings(updatedSettings))),
           GeneralApi.post(`${useradmApiUrl}/settings/me`, updatedSettings, { headers })
@@ -879,10 +884,13 @@ const ONE_YEAR = 31536000;
 
 export const generateToken = createAppAsyncThunk(
   `${sliceName}/generateToken`,
-  ({ expiresIn = ONE_YEAR, name }: { expiresIn?: number; name: string }, { dispatch }) =>
-    GeneralApi.post(`${useradmApiUrl}/settings/tokens`, { name, expires_in: expiresIn })
-      .then(({ data: token }) => Promise.all([dispatch(getTokens()), token]))
-      .catch(err => commonErrorHandler(err, 'There was an error creating the token:', dispatch))
+  async ({ expiresIn = ONE_YEAR, name }: { expiresIn?: number; name: string }, { dispatch }) => {
+    const { data: token } = await GeneralApi.post<string>(`${useradmApiUrl}/settings/tokens`, { name, expires_in: expiresIn }).catch(err =>
+      commonErrorHandler(err, 'There was an error creating the token:', dispatch)
+    );
+    await dispatch(getTokens());
+    return token;
+  }
 );
 
 export const revokeToken = createAppAsyncThunk(`${sliceName}/revokeToken`, (token: PersonalAccessToken, { dispatch }) =>

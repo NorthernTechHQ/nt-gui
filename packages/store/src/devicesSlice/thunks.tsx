@@ -116,43 +116,35 @@ const defaultAttributes = [
   { scope: 'tags', attribute: 'name' }
 ];
 
-export const getGroups = createAppAsyncThunk(
-  `${sliceName}/getGroups`,
-  (_, { dispatch, getState }): Promise<ReturnType<AppDispatch> | unknown> =>
-    GeneralApi.get(`${inventoryApiUrl}/groups`).then(res => {
-      const state: Record<string, DeviceGroup> = getGroupsById(getState());
-      const dynamicGroups = Object.entries(state).reduce((accu, [id, group]) => {
-        if (group.id || (group.filters?.length && id !== UNGROUPED_GROUP.id)) {
-          accu[id] = group;
-        }
-        return accu;
-      }, {});
-      const groups = res.data.reduce((accu, group) => {
-        accu[group] = { deviceIds: [], filters: [], total: 0, ...state[group] };
-        return accu;
-      }, dynamicGroups);
-      const filters: DeviceFilter[] = [{ key: 'group', value: res.data, operator: DEVICE_FILTERING_OPTIONS.$nin.key, scope: 'system' }];
-      return Promise.all([
-        dispatch(actions.receivedGroups(groups)),
-        dispatch(getDevicesByStatus({ filterSelection: filters, group: '', page: 1, perPage: 1, status: undefined }))
-      ]).then((promises: any[]) => {
-        const devicesRetrieval = promises[promises.length - 1] || [];
-        const { payload } = devicesRetrieval || {};
-        const result = payload[payload.length - 1] || {};
-        if (!result.total) {
-          return;
-        }
-        return Promise.resolve(
-          dispatch(
-            actions.addGroup({
-              groupName: UNGROUPED_GROUP.id,
-              group: { filters: [{ key: 'group', value: res.data, operator: DEVICE_FILTERING_OPTIONS.$nin.key, scope: 'system' }] }
-            })
-          )
-        );
-      });
+export const getGroups = createAppAsyncThunk(`${sliceName}/getGroups`, async (_, { dispatch, getState }) => {
+  const res = await GeneralApi.get<string[]>(`${inventoryApiUrl}/groups`);
+  const state: Record<string, DeviceGroup> = getGroupsById(getState());
+  const dynamicGroups = Object.entries(state).reduce((accu, [id, group]) => {
+    if (group.id || (group.filters?.length && id !== UNGROUPED_GROUP.id)) {
+      accu[id] = group;
+    }
+    return accu;
+  }, {});
+  const groups = res.data.reduce((accu, group) => {
+    accu[group] = { deviceIds: [], filters: [], total: 0, ...state[group] };
+    return accu;
+  }, dynamicGroups);
+  const filters: DeviceFilter[] = [{ key: 'group', value: res.data, operator: DEVICE_FILTERING_OPTIONS.$nin.key, scope: 'system' }];
+  const [, devicesRetrieval] = await Promise.all([
+    dispatch(actions.receivedGroups(groups)),
+    dispatch(getDevicesByStatus({ filterSelection: filters, group: '', page: 1, perPage: 1, status: undefined }))
+  ]);
+  const { total } = (devicesRetrieval?.payload as { total?: number }) ?? {};
+  if (!total) {
+    return;
+  }
+  return dispatch(
+    actions.addGroup({
+      groupName: UNGROUPED_GROUP.id,
+      group: { filters: [{ key: 'group', value: res.data, operator: DEVICE_FILTERING_OPTIONS.$nin.key, scope: 'system' }] }
     })
-);
+  );
+});
 
 export const addDevicesToGroup = createAppAsyncThunk(
   `${sliceName}/addDevicesToGroup`,
@@ -386,46 +378,37 @@ type getGroupDevicesPayload = {
   perPage?: number;
   shouldIncludeAllStates: boolean;
 };
-export const getGroupDevices = createAppAsyncThunk(
-  `${sliceName}/getGroupDevices`,
-  (options: getGroupDevicesPayload, { dispatch, getState }): Promise<ReturnType<AppDispatch> | unknown> => {
-    const { group, shouldIncludeAllStates, ...remainder } = options;
-    const { cleanedFilters: filterSelection } = getGroupFilters(group, getState().devices.groups);
-    return dispatch(
-      getDevicesByStatus({
-        ...remainder,
-        filterSelection,
-        group,
-        status: shouldIncludeAllStates ? undefined : DEVICE_STATES.accepted
-      })
-    )
-      .unwrap()
-      .then((results: any[]): Promise<ReturnType<AppDispatch> | unknown> => {
-        if (!group) {
-          return Promise.resolve();
-        }
-        const { deviceAccu, total } = results[results.length - 1];
-        const stateGroup = getState().devices.groups.byId[group];
-        if (!stateGroup && !total && !deviceAccu.ids.length) {
-          return Promise.resolve();
-        }
-        return Promise.resolve(
-          dispatch(
-            actions.addGroup({
-              group: {
-                deviceIds:
-                  deviceAccu.ids.length === total || (stateGroup && stateGroup.deviceIds && deviceAccu.ids.length > stateGroup.deviceIds)
-                    ? deviceAccu.ids
-                    : stateGroup.deviceIds,
-                total
-              },
-              groupName: group
-            })
-          )
-        );
-      });
+export const getGroupDevices = createAppAsyncThunk(`${sliceName}/getGroupDevices`, async (options: getGroupDevicesPayload, { dispatch, getState }) => {
+  const { group, shouldIncludeAllStates, ...remainder } = options;
+  const { cleanedFilters: filterSelection } = getGroupFilters(group, getState().devices.groups);
+  const { deviceAccu, total } = await dispatch(
+    getDevicesByStatus({
+      ...remainder,
+      filterSelection,
+      group,
+      status: shouldIncludeAllStates ? undefined : DEVICE_STATES.accepted
+    })
+  ).unwrap();
+  if (!group) {
+    return;
   }
-);
+  const stateGroup = getState().devices.groups.byId[group];
+  if (!stateGroup && !total && !deviceAccu.ids.length) {
+    return;
+  }
+  return dispatch(
+    actions.addGroup({
+      group: {
+        deviceIds:
+          deviceAccu.ids.length === total || (stateGroup && stateGroup.deviceIds && deviceAccu.ids.length > stateGroup.deviceIds.length)
+            ? deviceAccu.ids
+            : stateGroup.deviceIds,
+        total
+      },
+      groupName: group
+    })
+  );
+});
 
 export const getAllGroupDevices = createAppAsyncThunk(
   `${sliceName}/getAllGroupDevices`,
@@ -579,7 +562,7 @@ export const setDeviceListState = createAppAsyncThunk(
       ...selectionState,
       sort: { ...currentState.sort, ...selectionState.sort }
     };
-    const tasks: Promise<ReturnType<AppDispatch> | unknown>[] = [];
+    const tasks: Promise<unknown>[] = [];
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { isLoading: currentLoading, deviceIds: currentDevices, selection: currentSelection, ...currentRequestState } = currentState;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -592,8 +575,7 @@ export const setDeviceListState = createAppAsyncThunk(
       tasks.push(
         dispatch(getDevicesByStatus({ ...nextState, status: applicableSelectedState as DeviceAuthState | undefined, sortOptions: sortBy, fetchAuth }))
           .unwrap()
-          .then((results: any[]) => {
-            const { deviceAccu, total } = results[results.length - 1];
+          .then(({ deviceAccu, total }) => {
             const devicesState: Partial<DeviceListState> = shouldSelectDevices ? { deviceIds: deviceAccu.ids, total, isLoading: false } : { isLoading: false };
             return Promise.resolve(dispatch(actions.setDeviceListState(devicesState)));
           })
@@ -609,7 +591,7 @@ export const setDeviceListState = createAppAsyncThunk(
     ) {
       nextState.selection = [];
     }
-    tasks.push(dispatch(actions.setDeviceListState(nextState)));
+    tasks.push(Promise.resolve(dispatch(actions.setDeviceListState(nextState))));
     return Promise.all(tasks);
   }
 );
@@ -628,7 +610,7 @@ type GetDevicesByStatusPayload = {
 // get devices from inventory
 export const getDevicesByStatus = createAppAsyncThunk(
   `${sliceName}/getDevicesByStatus`,
-  (options: Partial<GetDevicesByStatusPayload>, { dispatch, getState }) => {
+  async (options: Partial<GetDevicesByStatusPayload>, { dispatch, getState }) => {
     const {
       status,
       fetchAuth = true,
@@ -650,33 +632,30 @@ export const getDevicesByStatus = createAppAsyncThunk(
       status
     });
     const attributes = [...defaultAttributes, getIdAttribute(getState()), ...selectedAttributes];
-    return GeneralApi.post(`${inventoryApiUrlV2}/filters/search`, {
+    const response = await GeneralApi.post(`${inventoryApiUrlV2}/filters/search`, {
       page,
       per_page: perPage,
       filters: filterTerms,
       sort: sortOptions,
       attributes
-    })
-      .then(response => {
-        const state = getState();
-        const deviceAccu = reduceReceivedDevices(response.data, [], state, status);
-        let total = !applicableFilters.length ? Number(response.headers[headerNames.total]) : 0;
-        if (status && state.devices.byStatus[status].counts.total === deviceAccu.ids.length) {
-          total = deviceAccu.ids.length;
-        }
-        const tasks: Promise<ReturnType<AppDispatch> | unknown>[] = [Promise.resolve(dispatch(actions.receivedDevices(deviceAccu.devicesById)))];
-        if (status) {
-          tasks.push(Promise.resolve(dispatch(actions.setDevicesByStatus({ deviceIds: deviceAccu.ids, status, total }))));
-        }
-        // for each device, get device identity info
-        const receivedDevices: Device[] = Object.values(deviceAccu.devicesById);
-        if (receivedDevices.length && fetchAuth) {
-          tasks.push(dispatch(getDevicesWithAuth(receivedDevices as { id: string }[])));
-        }
-        tasks.push(Promise.resolve({ deviceAccu, total: Number(response.headers[headerNames.total]) }));
-        return Promise.all(tasks);
-      })
-      .catch(err => commonErrorHandler(err, `${status} devices couldn't be loaded.`, dispatch, commonErrorFallback));
+    }).catch(err => commonErrorHandler(err, `${status} devices couldn't be loaded.`, dispatch, commonErrorFallback));
+    const currentState = getState();
+    const deviceAccu = reduceReceivedDevices(response.data, [], currentState, status);
+    let total = !applicableFilters.length ? Number(response.headers[headerNames.total]) : 0;
+    if (status && currentState.devices.byStatus[status].counts.total === deviceAccu.ids.length) {
+      total = deviceAccu.ids.length;
+    }
+    const sideEffects: Promise<unknown>[] = [Promise.resolve(dispatch(actions.receivedDevices(deviceAccu.devicesById)))];
+    if (status) {
+      sideEffects.push(Promise.resolve(dispatch(actions.setDevicesByStatus({ deviceIds: deviceAccu.ids, status, total }))));
+    }
+    // for each device, get device identity info
+    const receivedDevices: Device[] = Object.values(deviceAccu.devicesById);
+    if (receivedDevices.length && fetchAuth) {
+      sideEffects.push(dispatch(getDevicesWithAuth(receivedDevices as { id: string }[])));
+    }
+    await Promise.all(sideEffects);
+    return { deviceAccu, total: Number(response.headers[headerNames.total]) };
   }
 );
 
@@ -708,30 +687,28 @@ export const getAllDevicesByStatus = createAppAsyncThunk(
 );
 
 type SearchDevicesPayload = SearchState & { sortOptions: SortCriteria[] };
-export const searchDevices = createAppAsyncThunk(`${sliceName}/searchDevices`, (passedOptions: Partial<SearchDevicesPayload> = {}, { dispatch, getState }) => {
-  const state = getState();
-  const options = { ...state.app.searchState, ...passedOptions };
-  const { page = defaultPage, searchTerm, sortOptions = [] } = options;
-  const { columnSelection = [] } = getUserSettings(state);
-  const selectedAttributes = columnSelection.map(column => ({ attribute: column.key, scope: column.scope }));
-  const attributes = attributeDuplicateFilter([...defaultAttributes, getIdAttribute(state), ...selectedAttributes], 'attribute');
-  return GeneralApi.post(`${inventoryApiUrlV2}/filters/search`, {
-    page,
-    per_page: 10,
-    filters: [],
-    sort: sortOptions,
-    text: searchTerm,
-    attributes
-  })
-    .then(response => {
-      const deviceAccu = reduceReceivedDevices(response.data, [], getState());
-      return Promise.all([
-        dispatch(actions.receivedDevices(deviceAccu.devicesById)),
-        Promise.resolve({ deviceIds: deviceAccu.ids, searchTotal: Number(response.headers[headerNames.total]) })
-      ]);
-    })
-    .catch(err => commonErrorHandler(err, `devices couldn't be searched.`, dispatch, commonErrorFallback));
-});
+export const searchDevices = createAppAsyncThunk(
+  `${sliceName}/searchDevices`,
+  async (passedOptions: Partial<SearchDevicesPayload> = {}, { dispatch, getState }) => {
+    const state = getState();
+    const options = { ...state.app.searchState, ...passedOptions };
+    const { page = defaultPage, searchTerm, sortOptions = [] } = options;
+    const { columnSelection = [] } = getUserSettings(state);
+    const selectedAttributes = columnSelection.map(column => ({ attribute: column.key, scope: column.scope }));
+    const attributes = attributeDuplicateFilter([...defaultAttributes, getIdAttribute(state), ...selectedAttributes], 'attribute');
+    const response = await GeneralApi.post(`${inventoryApiUrlV2}/filters/search`, {
+      page,
+      per_page: 10,
+      filters: [],
+      sort: sortOptions,
+      text: searchTerm,
+      attributes
+    }).catch(err => commonErrorHandler(err, `devices couldn't be searched.`, dispatch, commonErrorFallback));
+    const deviceAccu = reduceReceivedDevices(response.data, [], getState());
+    dispatch(actions.receivedDevices(deviceAccu.devicesById));
+    return { deviceIds: deviceAccu.ids, searchTotal: Number(response.headers[headerNames.total]) };
+  }
+);
 
 const ATTRIBUTE_LIST_CUTOFF = 100;
 const attributeReducer = (attributes: AttributeV2[] = []) =>
@@ -827,14 +804,14 @@ export const getDeviceConnect = createAppAsyncThunk(`${sliceName}/getDeviceConne
 );
 
 const updateTypeMap = { deploymentUpdate: 'check-update', inventoryUpdate: 'send-inventory' };
-export const triggerDeviceUpdate = createAppAsyncThunk(`${sliceName}/triggerDeviceUpdate`, ({ id, type }: { id: string; type: string }, { dispatch }) =>
-  GeneralApi.post(`${deviceConnect}/devices/${id}/${updateTypeMap[type] ?? updateTypeMap.deploymentUpdate}`)
-    .catch(err => commonErrorHandler(err, `The request couldn't be sent.`, dispatch))
-    .then(() => {
-      dispatch(setSnackbar('Request has been sent.'));
-      return new Promise(resolve => setTimeout(() => resolve(dispatch(getDeviceById(id))), TIMEOUTS.threeSeconds));
-    })
-);
+export const triggerDeviceUpdate = createAppAsyncThunk(`${sliceName}/triggerDeviceUpdate`, async ({ id, type }: { id: string; type: string }, { dispatch }) => {
+  await GeneralApi.post(`${deviceConnect}/devices/${id}/${updateTypeMap[type] ?? updateTypeMap.deploymentUpdate}`).catch(err =>
+    commonErrorHandler(err, `The request couldn't be sent.`, dispatch)
+  );
+  dispatch(setSnackbar('Request has been sent.'));
+  await new Promise(resolve => setTimeout(resolve, TIMEOUTS.threeSeconds));
+  return dispatch(getDeviceById(id));
+});
 
 type GetSessionDetailsPayload = { deviceId: string; endDate: string; sessionId: string; startDate: string; userId: string };
 export const getSessionDetails = createAppAsyncThunk(
@@ -897,29 +874,22 @@ export const deviceFileUpload = createAppAsyncThunk(
   }
 );
 
-export const getDeviceAuth = createAppAsyncThunk(`${sliceName}/getDeviceAuth`, (id: string, { dispatch }) =>
-  dispatch(getDevicesWithAuth([{ id }]))
-    .unwrap()
-    .then((results: any) => {
-      if (results[results.length - 1]) {
-        return Promise.resolve(results[results.length - 1][0]);
-      }
-      return Promise.resolve();
-    })
-);
+export const getDeviceAuth = createAppAsyncThunk(`${sliceName}/getDeviceAuth`, async (id: string, { dispatch }) => {
+  const receivedDevices = await dispatch(getDevicesWithAuth([{ id }])).unwrap();
+  return receivedDevices?.[0];
+});
 
-export const getDevicesWithAuth = createAppAsyncThunk<unknown, { id: string }[]>(
-  `${sliceName}/getDevicesWithAuth`,
-  (devices, { dispatch, getState }): Promise<ReturnType<AppDispatch> | unknown> =>
-    devices.length
-      ? GeneralApi.get(`${deviceAuthV2}/devices?id=${devices.map(device => device.id).join('&id=')}`)
-          .then(({ data: receivedDevices }) => {
-            const { devicesById } = reduceReceivedDevices(receivedDevices, [], getState());
-            return Promise.all([dispatch(actions.receivedDevices(devicesById)), Promise.resolve(receivedDevices)]);
-          })
-          .catch(err => commonErrorHandler(err, `Error: ${err}`, dispatch))
-      : Promise.resolve([[], []])
-);
+export const getDevicesWithAuth = createAppAsyncThunk(`${sliceName}/getDevicesWithAuth`, async (devices: { id: string }[], { dispatch, getState }) => {
+  if (!devices.length) {
+    return [] as ReceivedDevice[];
+  }
+  const { data: receivedDevices } = await GeneralApi.get(`${deviceAuthV2}/devices?id=${devices.map(device => device.id).join('&id=')}`).catch(err =>
+    commonErrorHandler(err, `Error: ${err}`, dispatch)
+  );
+  const { devicesById } = reduceReceivedDevices(receivedDevices, [], getState());
+  dispatch(actions.receivedDevices(devicesById));
+  return receivedDevices as ReceivedDevice[];
+});
 
 export const updateDeviceAuth = createAppAsyncThunk(
   `${sliceName}/updateDeviceAuth`,
