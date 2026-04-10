@@ -119,7 +119,7 @@ export const getConfiguredStore = (options = {}) => {
           ignoredPaths: ['app.uploadsById']
         },
         serializableCheck: {
-          ignoredActions: [organizationActions.receiveExternalDeviceIntegrations.name, uploadProgress.name],
+          ignoredActions: [organizationActions.receiveExternalDeviceIntegrations.type, uploadProgress.type],
           ignoredActionPaths: ['uploads', /payload\..*$/, 'meta.arg.file', 'meta.arg.integration.configHint'],
           ignoredPaths: ['app.uploadsById', 'organization.externalDeviceIntegrations']
         }
