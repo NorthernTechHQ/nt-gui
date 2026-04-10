@@ -130,6 +130,7 @@ export type {
   DeploymentPermission,
   DeviceIssueOptionKey,
   GroupsPermission,
+  PaginationOptions,
   PermissionObject,
   PermissionSet,
   PermissionSetId,
