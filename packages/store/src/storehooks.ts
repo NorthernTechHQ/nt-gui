@@ -14,7 +14,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { extractErrorMessage } from '@northern.tech/utils/helpers';
-import type { ThunkAction, UnknownAction } from '@reduxjs/toolkit';
 import dayjs from 'dayjs';
 import durationDayJs from 'dayjs/plugin/duration.js';
 import Cookies from 'universal-cookie';
@@ -35,8 +34,8 @@ import {
   getUserCapabilities,
   getUserSettings as getUserSettingsSelector
 } from './selectors';
-import { useAppDispatch, useAppSelector } from './store';
-import type { AppDispatch, RootState } from './store';
+import { createAppAsyncThunk, useAppDispatch, useAppSelector } from './store';
+import type { AppDispatch } from './store';
 import {
   getAllDeviceCounts,
   getDeploymentsByStatus,
@@ -57,6 +56,7 @@ import {
   saveGlobalSettings,
   saveUserSettings
 } from './thunks';
+import type { UserSettings, UserSliceType } from './usersSlice';
 import { getComparisonCompatibleVersion, stringToBoolean } from './utils';
 
 const cookies = new Cookies();
@@ -94,24 +94,28 @@ type VersionInfo = {
   remainder?: Record<string, string>;
 };
 
-export const parseEnvironmentInfo = () => (dispatch, getState) => {
+type FeatureFlagsState = Record<string, boolean>;
+
+export const parseEnvironmentInfo = createAppAsyncThunk(`app/parseEnvironmentInfo`, (_, { dispatch, getState }) => {
   const state = getState();
-  let onboardingComplete = state.onboarding.complete || !!JSON.parse(window.localStorage.getItem('onboardingComplete') ?? 'false');
+  let onboardingComplete = getOnboardingStateSelector(state).complete || !!JSON.parse(window.localStorage.getItem('onboardingComplete') ?? 'false');
   let demoArtifactPort = 85;
-  let environmentData = {};
-  let environmentFeatures = {};
-  let versionInfo = {};
+  let environmentData: Record<string, unknown> = {};
+  let environmentFeatures: FeatureFlagsState = {};
+  let versionInfo: VersionInfo = {};
+  const mender_environment = window.mender_environment;
   if (mender_environment) {
     const { features = {}, demoArtifactPort: port, disableOnboarding, integrationVersion, menderArtifactVersion, metaMenderVersion } = mender_environment;
-    demoArtifactPort = port || demoArtifactPort;
-    environmentData = environmentDatas.reduce((accu, flag) => ({ ...accu, [flag]: mender_environment[flag] || state.app[flag] }), {});
+    demoArtifactPort = Number(port) || demoArtifactPort;
+    const appState = state.app;
+    environmentData = environmentDatas.reduce((accu, flag) => ({ ...accu, [flag]: mender_environment[flag] || appState[flag as keyof typeof appState] }), {});
     environmentFeatures = {
-      ...featureFlags.reduce((accu, flag) => ({ ...accu, [flag]: stringToBoolean(features[flag]) }), {}),
+      ...featureFlags.reduce<FeatureFlagsState>((accu, flag) => ({ ...accu, [flag]: stringToBoolean(features[flag]) }), {}),
       isHosted: stringToBoolean(features.isHosted) || window.location.hostname.includes('hosted.mender.io')
     };
-    onboardingComplete = !stringToBoolean(environmentFeatures.isHosted) || stringToBoolean(disableOnboarding) || onboardingComplete;
+    onboardingComplete = !environmentFeatures.isHosted || stringToBoolean(disableOnboarding) || onboardingComplete;
     versionInfo = {
-      docs: isNaN(integrationVersion.charAt(0)) ? '' : integrationVersion.split('.').slice(0, 2).join('.'),
+      docs: isNaN(parseInt(integrationVersion.charAt(0))) ? '' : integrationVersion.split('.').slice(0, 2).join('.'),
       remainder: {
         Integration: getComparisonCompatibleVersion(integrationVersion),
         'Mender-Artifact': menderArtifactVersion,
@@ -124,27 +128,39 @@ export const parseEnvironmentInfo = () => (dispatch, getState) => {
     dispatch(storeActions.setOnboardingComplete(onboardingComplete)),
     dispatch(storeActions.setDemoArtifactPort(demoArtifactPort)),
     dispatch(storeActions.setFeatures(environmentFeatures)),
-    dispatch(storeActions.setVersionInformation({ ...versionInfo.remainder, docsVersion: versionInfo.docs })),
+    dispatch(storeActions.setVersionInformation({ ...(versionInfo.remainder ?? {}), docsVersion: versionInfo.docs })),
     dispatch(storeActions.setEnvironmentData(environmentData)),
     dispatch(getLatestReleaseInfo())
   ]);
+});
+
+type OnboardingState = {
+  complete?: boolean;
+  showTips?: boolean | null;
 };
 
-const maybeAddOnboardingTasks = ({ devicesByStatus, dispatch, onboardingState, tasks }) => {
+type MaybeAddOnboardingTasksParams = {
+  devicesByStatus: DeviceSliceType['byStatus'];
+  dispatch: AppDispatch;
+  onboardingState: OnboardingState;
+  tasks: Promise<unknown>[];
+};
+
+const maybeAddOnboardingTasks = ({ devicesByStatus, dispatch, onboardingState, tasks }: MaybeAddOnboardingTasksParams): Promise<unknown>[] => {
   if (!onboardingState.showTips || onboardingState.complete) {
     return tasks;
   }
   // try to retrieve full device details for onboarding devices to ensure ips etc. are available
   // we only load the first few/ 20 devices, as it is possible the onboarding is left dangling
   // and a lot of devices are present and we don't want to flood the backend for this
-  return devicesByStatus[DEVICE_STATES.accepted].deviceIds.reduce((accu, id) => {
+  return devicesByStatus[DEVICE_STATES.accepted].deviceIds.reduce<Promise<unknown>[]>((accu, id) => {
     accu.push(dispatch(getDeviceById(id)));
     return accu;
   }, tasks);
 };
 
-export const useAppInit = userId => {
-  const dispatch = useDispatch();
+export const useAppInit = (userId: string | undefined): { coreInitDone: boolean } => {
+  const dispatch = useAppDispatch();
   const [coreInitDone, setCoreInitDone] = useState(false);
   const isEnterprise = useAppSelector(getIsEnterprise);
   const { hasMultitenancy, isHosted } = useAppSelector(getFeatures);
@@ -159,25 +175,25 @@ export const useAppInit = userId => {
   const coreInitRunning = useRef(false);
   const fullInitRunning = useRef(false);
 
-  const retrieveCoreData = useCallback(() => {
-    const tasks = [
-      dispatch(parseEnvironmentInfo()),
-      dispatch(getUserSettings()),
-      dispatch(getGlobalSettings()),
-      dispatch(setFirstLoginAfterSignup(stringToBoolean(cookies.get('firstLoginAfterSignup'))))
+  const retrieveCoreData = useCallback((): Promise<unknown[]> => {
+    const tasks: Promise<unknown>[] = [
+      dispatch(parseEnvironmentInfo()).unwrap(),
+      dispatch(getUserSettings()).unwrap(),
+      dispatch(getGlobalSettings()).unwrap(),
+      Promise.resolve(dispatch(setFirstLoginAfterSignup(stringToBoolean(cookies.get('firstLoginAfterSignup')))))
     ];
     const multitenancy = hasMultitenancy || isHosted || isEnterprise;
     if (multitenancy) {
-      tasks.push(dispatch(getUserOrganization()));
+      tasks.push(dispatch(getUserOrganization()).unwrap());
     }
     return Promise.all(tasks);
   }, [dispatch, hasMultitenancy, isHosted, isEnterprise]);
 
-  const retrieveAppData = useCallback(() => {
+  const retrieveAppData = useCallback((): Promise<unknown[] | unknown> => {
     if (isServiceProvider) {
       return Promise.resolve(dispatch(getRoles()));
     }
-    const tasks = [
+    const tasks: Promise<unknown>[] = [
       dispatch(getDeviceAttributes()),
       dispatch(getDeploymentsByStatus({ status: DEPLOYMENT_STATES.finished, shouldSelect: false })),
       dispatch(getDeploymentsByStatus({ status: DEPLOYMENT_STATES.inprogress })),
@@ -198,15 +214,15 @@ export const useAppInit = userId => {
     return Promise.all(tasks);
   }, [dispatch, hasMultitenancy, isServiceProvider]);
 
-  const interpretAppData = useCallback(() => {
-    const settings = {};
+  const interpretAppData = useCallback((): Promise<unknown[]> => {
+    const settings: Partial<UserSettings> = {};
     if (cookies.get('_ga') && typeof hasTrackingEnabled === 'undefined') {
       settings.trackingConsentGiven = true;
     }
-    let tasks = [
-      dispatch(setDeviceListState({ selectedAttributes: columnSelection.map(column => ({ attribute: column.key, scope: column.scope })) })),
-      dispatch(setTooltipsState(tooltips)), // tooltips read state is primarily trusted from the redux store, except on app init - here user settings are the reference
-      dispatch(saveUserSettings(settings))
+    let tasks: Promise<unknown>[] = [
+      Promise.resolve(dispatch(setDeviceListState({ selectedAttributes: columnSelection.map(column => ({ attribute: column.key, scope: column.scope })) }))),
+      Promise.resolve(dispatch(setTooltipsState(tooltips as UserSliceType['tooltips']['byId']))), // tooltips read state is primarily trusted from the redux store, except on app init - here user settings are the reference
+      dispatch(saveUserSettings(settings)).unwrap()
     ];
     // checks if user id is set and if cookie for helptips exists for that user
     tasks = maybeAddOnboardingTasks({ devicesByStatus, dispatch, tasks, onboardingState });
@@ -236,7 +252,7 @@ export const useAppInit = userId => {
       }
       tasks.push(dispatch(saveGlobalSettings({ id_attribute: { attribute, scope: 'identity' } })));
     }
-    tasks.push(dispatch(storeActions.setAppInitDone()));
+    tasks.push(Promise.resolve(dispatch(storeActions.setAppInitDone())));
     return Promise.all(tasks);
   }, [
     columnSelection,
@@ -253,7 +269,7 @@ export const useAppInit = userId => {
   ]);
 
   const initializeAppData = useCallback(
-    () =>
+    (): Promise<unknown> =>
       retrieveAppData()
         .then(interpretAppData)
         // this is allowed to fail if no user information are available
