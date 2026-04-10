@@ -14,13 +14,12 @@
 export * from './api';
 export * from './app';
 export * from './devices';
+export * from './releases';
 export * from './users';
 
 export const alertChannels = { email: 'email' };
 
 export const limitDefault = { min: 5, max: 100, default: 10 };
-
-export const ALL_RELEASES = 'All releases';
 
 export const SORTING_OPTIONS = {
   asc: 'asc',

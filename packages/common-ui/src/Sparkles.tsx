@@ -15,7 +15,8 @@ import { keyframes } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
 import { mdiStarFourPointsOutline as StarOutlined } from '@mdi/js';
-import MaterialDesignIcon from '@northern.tech/common-ui/MaterialDesignIcon';
+
+import MaterialDesignIcon from './MaterialDesignIcon';
 
 const sparkle = keyframes`
   0%, 100% {

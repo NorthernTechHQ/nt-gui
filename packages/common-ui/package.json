@@ -11,8 +11,8 @@
     "url": "git+https://github.com/NorthernTechHQ/nt-gui.git"
   },
   "scripts": {
-    "build": "tsup-node",
-    "dev": "tsup --watch --no-dts --onSuccess 'yalc publish --no-script --push'",
+    "build": "tsdown",
+    "dev": "tsdown --watch --no-dts --onSuccess 'yalc publish --no-script --push'",
     "lint": "eslint --quiet .",
     "format:check": "prettier --check \"src/**/*.{js,ts,jsx,tsx,less}\"",
     "test": "vitest",
@@ -72,12 +72,12 @@
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "14.6.1",
-    "@vitejs/plugin-react": "^5.1.4",
+    "@vitejs/plugin-react": "^6.0.1",
     "eslint": "^9.39.1",
-    "jsdom": "28.0.0",
+    "jsdom": "29.0.2",
     "msw": "^2.13.0",
     "redux-mock-store": "1.5.5",
-    "tsup": "8.5.1",
+    "tsdown": "^0.21.7",
     "vitest": "^4.1.2"
   },
   "dependencies": {

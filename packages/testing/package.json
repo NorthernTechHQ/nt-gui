@@ -11,7 +11,7 @@
     "url": "git+https://github.com/NorthernTechHQ/nt-gui.git"
   },
   "exports": {
-    "./baseTestConfig.json": "./dist/baseTestConfig.json",
+    "./baseTestConfig.json": "./dist/public/baseTestConfig.json",
     "./**/*": {
       "types": "./dist/*.d.ts",
       "import": "./dist/*.js",
@@ -25,11 +25,11 @@
   },
   "files": [
     "dist",
-    "dist/baseTestConfig.json"
+    "dist/public/baseTestConfig.json"
   ],
   "scripts": {
-    "build": "tsup --publicDir",
-    "dev": "tsup --watch --no-dts --onSuccess 'yalc publish --no-script --push'",
+    "build": "tsdown",
+    "dev": "tsdown --watch --no-dts --onSuccess 'yalc publish --no-script --push'",
     "lint": "eslint --quiet .",
     "format:check": "prettier --check \"src/**/*.{js,ts,jsx,tsx,less}\""
   },
@@ -39,7 +39,7 @@
     "@northern.tech/eslint-config": "*",
     "@northern.tech/typescript-config": "*",
     "eslint": "^9.39.1",
-    "tsup": "8.5.1"
+    "tsdown": "^0.21.7"
   },
   "dependencies": {
     "@emotion/jest": "^11.x",

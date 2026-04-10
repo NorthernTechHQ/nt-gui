@@ -11,16 +11,19 @@
     "url": "git+https://github.com/NorthernTechHQ/nt-gui.git"
   },
   "type": "module",
+  "exports": {
+    "./base.json": "./base.json",
+    "./react-app.json": "./react-app.json",
+    "./react-library.json": "./react-library.json",
+    "./tsdown.config": "./tsdown.config.js"
+  },
   "files": [
     "base.json",
     "react-app.json",
     "react-library.json",
-    "tsup-config.js"
+    "tsdown.config.js"
   ],
   "devDependencies": {
-    "tsup": "8.5.1"
-  },
-  "scripts": {
-    "build": "tsup base.json react-app.json react-library.json tsup-config.js"
+    "tsdown": "^0.21.7"
   }
 }

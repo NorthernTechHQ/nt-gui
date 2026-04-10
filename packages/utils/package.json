@@ -31,8 +31,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch --no-dts --onSuccess 'yalc publish --no-script --push'",
+    "build": "tsdown",
+    "dev": "tsdown --watch --no-dts --onSuccess 'yalc publish --no-script --push'",
     "lint": "eslint --quiet .",
     "format:check": "prettier --check \"src/**/*.{js,ts,jsx,tsx,less}\"",
     "test": "vitest",
@@ -44,8 +44,8 @@
     "@northern.tech/eslint-config": "*",
     "@northern.tech/typescript-config": "*",
     "eslint": "^9.39.1",
-    "jsdom": "28.0.0",
-    "tsup": "8.5.1",
+    "jsdom": "29.0.2",
+    "tsdown": "^0.21.7",
     "vitest": "^4.1.2"
   },
   "dependencies": {
