@@ -2053,6 +2053,30 @@ export type ExternalDevice = {
 };
 
 /**
+ * Device limit per tier
+ */
+export type DeviceTierLimits = {
+  /**
+   * The number of standard tier devices that can be accepted by the tenant.
+   * A value of -1 means that an unlimited amount of standard tier devices can be accepted.
+   *
+   */
+  standard: number;
+  /**
+   * The number of micro tier devices that can be accepted by the tenant.
+   * A value of -1 means that an unlimited amount of micro tier devices can be accepted.
+   *
+   */
+  micro: number;
+  /**
+   * The number of system tier devices that can be accepted by the tenant.
+   * A value of -1 means that an unlimited amount of system tier devices can be accepted.
+   *
+   */
+  system: number;
+};
+
+/**
  * Limit definition
  */
 export type DeviceLimit = {
@@ -2117,30 +2141,6 @@ export type Count = {
    * The count of requested items.
    */
   count?: number;
-};
-
-/**
- * Device limit per tier
- */
-export type DeviceTierLimits = {
-  /**
-   * The number of standard tier devices that can be accepted by the tenant.
-   * A value of -1 means that an unlimited amount of standard tier devices can be accepted.
-   *
-   */
-  standard: number;
-  /**
-   * The number of micro tier devices that can be accepted by the tenant.
-   * A value of -1 means that an unlimited amount of micro tier devices can be accepted.
-   *
-   */
-  micro: number;
-  /**
-   * The number of system tier devices that can be accepted by the tenant.
-   * A value of -1 means that an unlimited amount of system tier devices can be accepted.
-   *
-   */
-  system: number;
 };
 
 export type PreAuthSet = {
@@ -7970,45 +7970,6 @@ export type DeviceAuthInternalRevokeDeviceTokensResponses = {
 
 export type DeviceAuthInternalRevokeDeviceTokensResponse = DeviceAuthInternalRevokeDeviceTokensResponses[keyof DeviceAuthInternalRevokeDeviceTokensResponses];
 
-export type GetDeviceLimitsData = {
-  body?: never;
-  path: {
-    /**
-     * Limit identifier.
-     */
-    name: 'max_devices' | 'max_micro_devices' | 'max_system_devices';
-  };
-  query: {
-    /**
-     * Tenant ID.
-     */
-    tenant_id: Array<string>;
-  };
-  url: '/api/internal/v1/devauth/tenant/limits/{name}';
-};
-
-export type GetDeviceLimitsErrors = {
-  /**
-   * Invalid Request.
-   */
-  400: Error;
-  /**
-   * Internal Server Error.
-   */
-  500: Error;
-};
-
-export type GetDeviceLimitsError = GetDeviceLimitsErrors[keyof GetDeviceLimitsErrors];
-
-export type GetDeviceLimitsResponses = {
-  /**
-   * Successful response.
-   */
-  200: Array<TenantLimit>;
-};
-
-export type GetDeviceLimitsResponse = GetDeviceLimitsResponses[keyof GetDeviceLimitsResponses];
-
 export type GetAllDeviceLimitsData = {
   body?: never;
   path?: never;
@@ -8036,9 +7997,11 @@ export type GetAllDeviceLimitsError = GetAllDeviceLimitsErrors[keyof GetAllDevic
 
 export type GetAllDeviceLimitsResponses = {
   /**
-   * Successful response.
+   * A dictionary mapping tenant_id to device limits
    */
-  200: Array<DeviceLimitTenant>;
+  200: {
+    [key: string]: DeviceTierLimits;
+  };
 };
 
 export type GetAllDeviceLimitsResponse = GetAllDeviceLimitsResponses[keyof GetAllDeviceLimitsResponses];
@@ -8486,7 +8449,7 @@ export type DeviceAuthInternalGetAllLimitsResponses = {
   /**
    * Device limits.
    */
-  200: Array<DeviceLimitTenant>;
+  200: DeviceTierLimits;
 };
 
 export type DeviceAuthInternalGetAllLimitsResponse = DeviceAuthInternalGetAllLimitsResponses[keyof DeviceAuthInternalGetAllLimitsResponses];
