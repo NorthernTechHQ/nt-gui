@@ -3238,6 +3238,54 @@ paths:
       summary: Set the Binary Delta server-side generation configuration
       tags:
         - Deployments_Management API
+  /api/management/v1alpha1/deployments/manifests:
+    post:
+      description: |
+        Upload Mender artifact. Multipart request with meta and artifact.
+        Only supports manifest type artifacts (v3).
+      operationId: Upload Deployment Manifest Artifact
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadManifestRequest'
+            encoding:
+              tags:
+                style: spaceDelimited
+        required: true
+      responses:
+        '201':
+          content: {}
+          description: Artifact uploaded.
+          headers:
+            Location:
+              description: URL of the newly uploaded artifact.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/InvalidRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '409':
+          content:
+            application/json:
+              example:
+                error: an artifact with the same name and depends already exists
+                request_id: e4dde7e9-9424-4311-8648-86e24b542410
+                metadata:
+                  conflict:
+                    want: cookies
+              schema:
+                $ref: '#/components/schemas/ErrorExt'
+          description: |
+            An artifact with the same name and matching dependency requirements already exists.
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - ManagementJWT: []
+      summary: Upload mender artifact
+      tags:
+        - Deployments_v1alpha1_Management API
   /api/management/v1alpha1/deployments/deployments/{deployment_id}/devices/{device_id}/log:
     get:
       description: |
@@ -9523,6 +9571,42 @@ paths:
                 $ref: '#/components/schemas/Error'
         '500':
           $ref: '#/components/responses/InternalServerError'
+  /api/management/v2/tenantadm/tenants/me:
+    get:
+      tags:
+        - Tenants_APIs_v2_Tenantadm Management v2
+      summary: Obtain information about my tenant
+      description: |
+        The returned tenant resolves to the owner of the subject claim (user unique ID) in the JWT token. Unlike the `/user/tenant` endpoint, this response omits the `tenant_token`.
+      operationId: My Tenant
+      parameters:
+        - name: tiers
+          in: query
+          description: Flag to include per-tiers limits in the response.
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: A tenant descriptor is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tenant'
+        '401':
+          description: Verification failed.
+          content: {}
+        '404':
+          description: User is not a part of any tenant organization.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - ManagementJWT: []
   /api/management/v2/tenantadm/tenants/{id}:
     delete:
       tags:
@@ -14213,26 +14297,6 @@ components:
         delta:
           $ref: '#/components/schemas/DeltaConfiguration'
       type: object
-    ErrorExt:
-      description: Error descriptor with additional metadata.
-      example:
-        error: error description
-        request_id: 11de4197-d8cf-4bd2-8a3a-29f88f238e7b
-        metadata:
-          additional: properties
-      properties:
-        error:
-          description: Description of the error.
-          type: string
-        request_id:
-          description: Request ID (same as in X-MEN-RequestID header).
-          type: string
-        metadata:
-          additionalProperties: true
-          type: object
-      required:
-        - error
-      type: object
     NewDeploymentTypeManagement:
       example:
         name: production
@@ -14918,23 +14982,6 @@ components:
       required:
         - status
       type: object
-    UploadArtifactRequest:
-      properties:
-        size:
-          description: |
-            Size of the artifact file in bytes.
-            DEPRECATED: _since Mon Apr 6 2020_ Size is determined from uploaded content.
-          format: long
-          type: integer
-        description:
-          type: string
-        artifact:
-          description: Artifact. It has to be the last part of request.
-          format: binary
-          type: string
-      required:
-        - artifact
-      type: object
     CompleteDirectUpload404Response:
       example:
         error: error
@@ -15201,6 +15248,44 @@ components:
         - active
         - finished
       type: string
+    UploadArtifactRequest:
+      properties:
+        size:
+          description: |
+            Size of the artifact file in bytes.
+            DEPRECATED: _since Mon Apr 6 2020_ Size is determined from uploaded content.
+          format: long
+          deprecated: true
+          type: integer
+        description:
+          type: string
+        artifact:
+          description: Artifact. It has to be the last part of request.
+          format: binary
+          type: string
+      required:
+        - artifact
+      type: object
+    ErrorExt:
+      description: Error descriptor with additional metadata.
+      example:
+        error: error description
+        request_id: 11de4197-d8cf-4bd2-8a3a-29f88f238e7b
+        metadata:
+          additional: properties
+      properties:
+        error:
+          description: Description of the error.
+          type: string
+        request_id:
+          description: Request ID (same as in X-MEN-RequestID header).
+          type: string
+        metadata:
+          additionalProperties: true
+          type: object
+      required:
+        - error
+      type: object
     StorageLimit:
       description: Tenant account storage limit and storage usage.
       example:
@@ -15219,6 +15304,16 @@ components:
         - limit
         - usage
       type: object
+    UploadManifestRequest:
+      allOf:
+        - properties:
+            tags:
+              description: |
+                List of tags for the manifest.
+              type: array
+              items:
+                type: string
+        - $ref: '#/components/schemas/UploadArtifactRequest'
     ArtifactV2:
       description: Detailed artifact.
       example:
@@ -17276,7 +17371,6 @@ components:
       required:
         - id
         - name
-        - tenant_token
       type: object
       properties:
         id:
@@ -17347,7 +17441,6 @@ components:
       example:
         id: 507f191e810c19729de860ea
         name: Acme
-        tenant_token: RAA2O7A854tyU/AGM4gLN+vs+oFo7pNW
         status: active
         plan: os
         api_limits:
