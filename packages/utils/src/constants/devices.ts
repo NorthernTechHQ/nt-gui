@@ -120,13 +120,14 @@ export type FilterRule = {
 export type DeviceIssueOption = {
   filterRule: FilterRule | object;
   isCategory?: boolean;
+  issueCategory?: string;
   key: string;
   needsFullFiltering?: boolean;
   needsMonitor?: boolean;
   title: string;
 };
 
-export const DEVICE_ISSUE_OPTIONS = {
+export const DEVICE_ISSUE_OPTIONS: Record<string, DeviceIssueOption> = {
   issues: {
     isCategory: true,
     key: 'issues',
@@ -154,5 +155,5 @@ export const DEVICE_ISSUE_OPTIONS = {
     filterRule: { scope: 'monitor', key: 'alerts', operator: DEVICE_FILTERING_OPTIONS.$eq.key, value: true },
     title: 'Monitoring alert'
   }
-} as const;
+};
 export type DeviceIssueOptionKey = keyof typeof DEVICE_ISSUE_OPTIONS;

@@ -642,7 +642,7 @@ describe('static grouping related actions', () => {
       { type: getGroups.fulfilled.type },
       { type: addStaticGroup.fulfilled.type }
     ];
-    await store.dispatch(addStaticGroup({ group: groupName, devices: [defaultState.devices.byId.a1] }));
+    await store.dispatch(addStaticGroup({ group: groupName, devices: [defaultState.devices.byId.a1] as any }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -882,8 +882,8 @@ describe('device retrieval ', () => {
       { type: actions.receivedDevices.type, payload: { [id]: { ...expectedDevice, id } } },
       { type: getDevicesWithAuth.fulfilled.type },
       { type: actions.receivedDevice.type, payload: { attributes, id } },
-      { type: getDeviceById.fulfilled.type },
       { type: getDeviceAuth.fulfilled.type },
+      { type: getDeviceById.fulfilled.type },
       { type: actions.receivedDevice.type, payload: { connect_status: 'connected', connect_updated_ts: updated_ts, id } },
       { type: getDeviceConnect.fulfilled.type },
       { type: actions.receivedDevice.type, payload: expectedDevice },
@@ -1155,14 +1155,9 @@ const integrationMock: Integration = {
   ...EXTERNAL_PROVIDER['iot-hub'],
   provider: 'iot-hub',
   credentials: {
-    type: EXTERNAL_PROVIDER['iot-hub'].credentialsType as Credentials['type'],
-    aws: {
-      access_key_id: 'string',
-      secret_access_key: 'string',
-      region: 'string',
-      device_policy_name: 'string'
-    }
-  }
+    type: EXTERNAL_PROVIDER['iot-hub'].credentialsType,
+    connection_string: 'string'
+  } as Credentials
 };
 
 describe('device twin related actions', () => {

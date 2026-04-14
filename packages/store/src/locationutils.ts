@@ -11,9 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
+import type { Scope } from '@northern.tech/types/MenderTypes';
 import { deepCompare, getISOStringBoundaries } from '@northern.tech/utils/helpers';
 
+import type { FilterOperator, PaginationOptions, SortOptions } from './constants';
 import {
   ALL_DEVICES,
   ATTRIBUTE_SCOPES,
@@ -26,19 +27,29 @@ import {
   UNGROUPED_GROUP,
   emptyFilter
 } from './constants';
+import type { DeviceFilter } from './devicesSlice';
 
 const SEPARATOR = ':';
 
-const defaultSelector = result => result[0];
+type FieldConfig = {
+  parse: ((val: string) => unknown) | undefined;
+  select: (values: unknown[]) => unknown;
+  target: string;
+};
 
-const commonFields = {
-  ...Object.keys(DEVICE_LIST_DEFAULTS).reduce((accu, key) => ({ ...accu, [key]: { parse: Number, select: defaultSelector, target: key } }), {}),
-  id: { parse: String, select: i => i, target: 'id' },
+const defaultSelector = <T>(result: T[]): T => result[0];
+
+const commonFields: Record<string, FieldConfig> = {
+  page: { parse: Number, select: defaultSelector, target: 'page' },
+  perPage: { parse: Number, select: defaultSelector, target: 'perPage' },
+  id: { parse: String, select: (i: unknown[]): unknown[] => i, target: 'id' },
   issues: { parse: undefined, select: defaultSelector, target: 'selectedIssues' },
   open: { parse: Boolean, select: defaultSelector, target: 'open' }
 };
 
-const scopes = {
+type ScopeConfig = { delimiter: string; filters: DeviceFilter[] };
+
+const scopes: Record<Scope, ScopeConfig> = {
   identity: { delimiter: 'identity', filters: [] },
   inventory: { delimiter: 'inventory', filters: [] },
   monitor: { delimiter: 'monitor', filters: [] },
@@ -46,9 +57,25 @@ const scopes = {
   tags: { delimiter: 'tags', filters: [] }
 };
 
-export const commonProcessor = searchParams => {
+export type PageState = Partial<PaginationOptions> & {
+  [key: string]: unknown;
+  detailsTab?: string;
+  id?: string[];
+  open?: boolean;
+  selectedId?: string;
+  selectedIssues?: string[];
+  state?: string;
+};
+
+export type CommonProcessorResult = {
+  pageState: PageState;
+  params: URLSearchParams;
+  sort: Partial<SortOptions> | undefined;
+};
+
+export const commonProcessor = (searchParams: string | URLSearchParams): CommonProcessorResult => {
   const params = new URLSearchParams(searchParams);
-  const pageState = Object.entries(commonFields).reduce((accu, [key, { parse, select, target }]) => {
+  const pageState = Object.entries(commonFields).reduce<PageState>((accu, [key, { parse, select, target }]) => {
     const values = params.getAll(key);
     if (!values.length) {
       return accu;
@@ -57,18 +84,18 @@ export const commonProcessor = searchParams => {
       accu[target] = values;
     } else {
       try {
-        accu[target] = select(values.map(parse));
+        accu[target] = select(values.map(parse) as unknown[]);
       } catch (error) {
         console.log('encountered faulty url param, continue...', error);
       }
     }
     return accu;
-  }, {});
-  Object.keys(commonFields).map(key => params.delete(key));
+  }, {} as PageState);
+  Object.keys(commonFields).forEach(key => params.delete(key));
   const sort = params.has('sort')
-    ? params.getAll('sort').reduce((sortAccu, scopedQuery) => {
+    ? params.getAll('sort').reduce<Partial<SortOptions>>((sortAccu, scopedQuery) => {
         const items = scopedQuery.split(SEPARATOR).reverse();
-        return ['direction', 'key', 'scope'].reduce((accu, key, index) => {
+        return (['direction', 'key', 'scope'] as const).reduce<Record<string, string>>((accu, key, index) => {
           if (items[index]) {
             accu[key] = items[index];
           }
@@ -80,35 +107,47 @@ export const commonProcessor = searchParams => {
   return { pageState, params, sort };
 };
 
-const legacyDeviceQueryParse = (searchParams, filteringAttributes) => {
+type FilteringAttributes = Record<string, string[]>;
+type ScopedFilters = Record<Scope, DeviceFilter[]>;
+
+const legacyDeviceQueryParse = (
+  searchParams: URLSearchParams,
+  filteringAttributes: FilteringAttributes
+): { filters: ScopedFilters; params: URLSearchParams } => {
   const params = new URLSearchParams(searchParams);
-  const result = Object.keys(scopes).reduce((accu, scope) => ({ ...accu, [scope]: [] }), {});
+  const result: ScopedFilters = Object.keys(scopes).reduce((accu, scope) => ({ ...accu, [scope]: [] }), {} as ScopedFilters);
   if (params.get('group')) {
-    result.inventory.push({ ...emptyFilter, key: 'group', scope: 'inventory', operator: DEVICE_FILTERING_OPTIONS.$eq.key, value: params.get('group') });
+    result.inventory.push({
+      ...emptyFilter,
+      key: 'group',
+      scope: ATTRIBUTE_SCOPES.inventory,
+      operator: DEVICE_FILTERING_OPTIONS.$eq.key,
+      value: params.get('group') as string
+    });
     params.delete('group');
   }
-  const filters = [...params.keys()].reduce(
+  const filters = [...params.keys()].reduce<Record<Scope, DeviceFilter[]>>(
     (accu, key) =>
       params.getAll(key).reduce((innerAccu, value) => {
         const scope =
-          Object.entries(filteringAttributes).reduce((foundScope, [currentScope, attributes]) => {
+          Object.entries(filteringAttributes).reduce<string | undefined>((foundScope, [currentScope, attributes]) => {
             if (foundScope) {
               return foundScope;
             }
             return attributes.includes(key) ? currentScope.substring(0, currentScope.indexOf('Attributes')) : foundScope;
           }, undefined) ?? ATTRIBUTE_SCOPES.inventory;
-        innerAccu[scope].push({ ...emptyFilter, scope, key, operator: DEVICE_FILTERING_OPTIONS.$eq.key, value });
+        innerAccu[scope].push({ ...emptyFilter, scope, key, operator: DEVICE_FILTERING_OPTIONS.$eq.key as FilterOperator, value });
         return innerAccu;
       }, accu),
     result
   );
-  [...params.keys()].map(key => params.delete(key));
+  [...params.keys()].forEach(key => params.delete(key));
   return { filters, params };
 };
 
-const scopedFilterParse = searchParams => {
+const scopedFilterParse = (searchParams: URLSearchParams): { filters: ScopedFilters; params: URLSearchParams } => {
   const params = new URLSearchParams(searchParams);
-  const filters = Object.keys(scopes).reduce(
+  const filters = Object.keys(scopes).reduce<ScopedFilters>(
     (accu, scope) => {
       accu[scope] = [];
       if (!params.has(scope)) {
@@ -117,24 +156,39 @@ const scopedFilterParse = searchParams => {
       accu[scope] = params.getAll(scope).map(scopedQuery => {
         const items = scopedQuery.split(SEPARATOR);
         // URLSearchParams will automatically decode any URI encoding present in the query string, thus we have to also handle queries with a SEPARATOR separately
-        return { ...emptyFilter, scope, key: items[0], operator: `$${items[1]}`, value: items.slice(2).join(SEPARATOR) };
+        return { ...emptyFilter, scope, key: items[0], operator: `$${items[1]}` as FilterOperator, value: items.slice(2).join(SEPARATOR) };
       });
       return accu;
     },
-    { ...scopes }
+    { identity: [], inventory: [], monitor: [], system: [], tags: [] }
   );
-  Object.keys(scopes).map(scope => params.delete(scope));
+  Object.keys(scopes).forEach(scope => params.delete(scope));
   return { filters, params };
 };
 
+type ParseDeviceQueryExtraProps = {
+  filteringAttributes?: FilteringAttributes;
+  pageState?: PageState;
+};
+
+export type ParseDeviceQueryResult = {
+  detailsTab: string | null;
+  filters: DeviceFilter[];
+  groupId: string | null;
+  groupName: string;
+  open?: boolean;
+};
+
 // filters, selectedGroup
-export const parseDeviceQuery = (searchParams, extraProps = {}) => {
+export const parseDeviceQuery = (searchParams: URLSearchParams, extraProps: ParseDeviceQueryExtraProps = {}): ParseDeviceQueryResult => {
   let queryParams = new URLSearchParams(searchParams);
   const { filteringAttributes = {}, pageState = {} } = extraProps;
   const pageStateExtension = pageState.id?.length === 1 ? { open: true } : {};
 
-  let scopedFilters;
-  const refersOldStyleAttributes = Object.values(filteringAttributes).some(scopeValues => scopeValues.some(scopedValue => queryParams.get(scopedValue)));
+  let scopedFilters: ScopedFilters;
+  const refersOldStyleAttributes = Object.values(filteringAttributes).some(scopeValues =>
+    (scopeValues as string[]).some(scopedValue => queryParams.get(scopedValue))
+  );
   if ((refersOldStyleAttributes && !Object.keys(scopes).some(scope => queryParams.get(scope))) || queryParams.get('group')) {
     const { filters, params } = legacyDeviceQueryParse(queryParams, filteringAttributes);
     scopedFilters = filters;
@@ -148,7 +202,7 @@ export const parseDeviceQuery = (searchParams, extraProps = {}) => {
   let groupName = '';
   const groupFilterIndex = scopedFilters.inventory.findIndex(filter => filter.key === 'group' && filter.operator === DEVICE_FILTERING_OPTIONS.$eq.key);
   if (groupFilterIndex > -1) {
-    groupName = scopedFilters.inventory[groupFilterIndex].value;
+    groupName = scopedFilters.inventory[groupFilterIndex].value as string;
     scopedFilters.inventory.splice(groupFilterIndex, 1);
   }
 
@@ -157,12 +211,14 @@ export const parseDeviceQuery = (searchParams, extraProps = {}) => {
   return { detailsTab, filters: Object.values(scopedFilters).flat(), groupName, ...pageStateExtension, groupId };
 };
 
-const formatSorting = (sort, { sort: sortDefault }) => {
+type FormatSortingDefaults = { sort?: Partial<SortOptions> };
+
+const formatSorting = (sort: Partial<SortOptions> | undefined, { sort: sortDefault }: FormatSortingDefaults): string => {
   if (!sort || deepCompare(sort, sortDefault)) {
     return '';
   }
-  const sortQuery = ['scope', 'key', 'direction']
-    .reduce((accu, key) => {
+  const sortQuery = (['scope', 'key', 'direction'] as const)
+    .reduce<string[]>((accu, key) => {
       if (!sort[key]) {
         return accu;
       }
@@ -173,14 +229,24 @@ const formatSorting = (sort, { sort: sortDefault }) => {
   return `sort=${sortQuery}`;
 };
 
-export const formatPageState = ({ selectedId, selectedIssues, page, perPage, sort }, { defaults }) =>
+type FormatPageStateParams = {
+  page?: number;
+  perPage?: number;
+  selectedId?: string;
+  selectedIssues?: string[];
+  sort?: Partial<SortOptions>;
+};
+
+export type FormatPageStateDefaults = { defaults: FormatSortingDefaults };
+
+export const formatPageState = ({ selectedId, selectedIssues, page, perPage, sort }: FormatPageStateParams, { defaults }: FormatPageStateDefaults): string =>
   Object.entries({ page, perPage, id: selectedId, issues: selectedIssues, open: selectedId ? true : undefined })
-    .reduce(
+    .reduce<string[]>(
       (accu, [key, value]) => {
         if (Array.isArray(value)) {
           accu.push(...value.map(item => `${key}=${encodeURIComponent(item)}`));
-        } else if ((DEVICE_LIST_DEFAULTS[key] != value || !DEVICE_LIST_DEFAULTS.hasOwnProperty(key)) && value) {
-          accu.push(`${key}=${encodeURIComponent(value)}`);
+        } else if ((DEVICE_LIST_DEFAULTS[key] != value || !Object.hasOwn(DEVICE_LIST_DEFAULTS, key)) && value) {
+          accu.push(`${key}=${encodeURIComponent(value as string | number)}`);
         }
         return accu;
       },
@@ -189,18 +255,20 @@ export const formatPageState = ({ selectedId, selectedIssues, page, perPage, sor
     .filter(i => i)
     .join('&');
 
-const stripFilterOperator = operator => operator.replaceAll('$', '');
+const stripFilterOperator = (operator: string): string => operator.replaceAll('$', '');
 
-const formatFilters = filters => {
+const formatFilters = (filters: DeviceFilter[]): string[] => {
   const result = filters
     // group all filters by their scope to get a more organized result
-    .reduce(
+    .reduce<Record<Scope, Set<string>>>(
       (accu, filter) => {
         const { scope = ATTRIBUTE_SCOPES.inventory, operator = '$eq' } = filter;
-        accu[scope].add(`${scopes[scope].delimiter}=${filter.key}${SEPARATOR}${stripFilterOperator(operator)}${SEPARATOR}${encodeURIComponent(filter.value)}`);
+        accu[scope].add(
+          `${scopes[scope].delimiter}=${filter.key}${SEPARATOR}${stripFilterOperator(operator)}${SEPARATOR}${encodeURIComponent(filter.value as string)}`
+        );
         return accu;
       },
-      Object.keys(scopes).reduce((accu, item) => ({ ...accu, [item]: new Set() }), {})
+      Object.keys(scopes).reduce((accu, item) => ({ ...accu, [item]: new Set<string>() }), {} as Record<Scope, Set<string>>)
     );
   // boil it all down to a single line containing all filters
   return Object.values(result)
@@ -208,7 +276,14 @@ const formatFilters = filters => {
     .flat();
 };
 
-export const formatDeviceSearch = ({ pageState, filters, selectedGroup, groupId }) => {
+type FormatDeviceSearchParams = {
+  filters: DeviceFilter[];
+  groupId?: string;
+  pageState: PageState;
+  selectedGroup?: string;
+};
+
+export const formatDeviceSearch = ({ pageState, filters, selectedGroup, groupId }: FormatDeviceSearchParams): string => {
   let activeFilters = [...filters];
   if (selectedGroup && selectedGroup !== ALL_DEVICES) {
     const isUngroupedGroup = selectedGroup === UNGROUPED_GROUP.id;
@@ -218,7 +293,7 @@ export const formatDeviceSearch = ({ pageState, filters, selectedGroup, groupId 
         )
       : activeFilters;
     const groupName = isUngroupedGroup ? UNGROUPED_GROUP.name : selectedGroup;
-    activeFilters.push({ scope: ATTRIBUTE_SCOPES.inventory, key: 'group', operator: DEVICE_FILTERING_OPTIONS.$eq.key, value: groupName });
+    activeFilters.push({ scope: ATTRIBUTE_SCOPES.inventory, key: 'group', operator: DEVICE_FILTERING_OPTIONS.$eq.key as FilterOperator, value: groupName });
   }
   const formattedFilters = formatFilters(activeFilters).filter(i => i);
   if (pageState.detailsTab && pageState.selectedId) {
@@ -230,16 +305,24 @@ export const formatDeviceSearch = ({ pageState, filters, selectedGroup, groupId 
   return formattedFilters.join('&');
 };
 
-export const generateDevicePath = ({ pageState }) => {
+export const generateDevicePath = ({ pageState }: { pageState: PageState }): string => {
   const { state: selectedState } = pageState;
   const path = ['/devices'];
   if (selectedState !== '') {
-    path.push(selectedState);
+    path.push(selectedState as string);
   }
   return path.join('/');
 };
 
-const formatDates = ({ endDate, params, startDate, today, tonight }) => {
+type FormatDatesParams = {
+  endDate?: string;
+  params: URLSearchParams;
+  startDate?: string;
+  today?: string;
+  tonight?: string;
+};
+
+const formatDates = ({ endDate, params, startDate, today, tonight }: FormatDatesParams): URLSearchParams => {
   if (endDate && endDate !== tonight) {
     params.set('endDate', endDate.split('T')[0]);
   }
@@ -249,41 +332,63 @@ const formatDates = ({ endDate, params, startDate, today, tonight }) => {
   return params;
 };
 
-const paramReducer = (accu, [key, value]) => {
+const paramReducer = (accu: URLSearchParams, [key, value]: [string, string | undefined]): URLSearchParams => {
   if (value) {
     accu.set(key, value);
   }
   return accu;
 };
 
-export const formatAuditlogs = ({ pageState }, { today, tonight }) => {
+type AuditlogsPageState = {
+  detail?: string;
+  endDate?: string;
+  startDate?: string;
+  type?: { value?: string } | string;
+  user?: { id?: string } | string;
+};
+
+type AuditlogsExtras = { today: string; tonight: string };
+
+export const formatAuditlogs = ({ pageState }: { pageState: AuditlogsPageState }, { today, tonight }: AuditlogsExtras): string => {
   const { detail, endDate, startDate, type, user } = pageState;
   let params = new URLSearchParams();
-  let userId = user;
-  if (user?.id) {
+  let userId = user as string | undefined;
+  if (typeof user === 'object' && user?.id) {
     userId = user.id;
   }
   params = Object.entries({ objectId: detail, userId }).reduce(paramReducer, params);
   if (type) {
-    params.set('objectType', type.value ?? type);
+    params.set('objectType', typeof type === 'object' ? (type.value ?? '') : type);
   }
   params = formatDates({ endDate, params, startDate, today, tonight });
   return params.toString();
 };
 
-export const parseDateParams = (params, today, tonight) => {
+export const parseDateParams = (params: URLSearchParams, today: string, tonight: string): { endDate: string; startDate: string } => {
   let endDate = tonight;
-  if (params.get('endDate')) {
-    endDate = getISOStringBoundaries(new Date(params.get('endDate'))).end;
+  const endDateParam = params.get('endDate');
+  if (endDateParam) {
+    endDate = getISOStringBoundaries(new Date(endDateParam)).end;
   }
   let startDate = today;
-  if (params.get('startDate')) {
-    startDate = getISOStringBoundaries(new Date(params.get('startDate'))).start;
+  const startDateParam = params.get('startDate');
+  if (startDateParam) {
+    startDate = getISOStringBoundaries(new Date(startDateParam)).start;
   }
   return { endDate, startDate };
 };
 
-export const parseAuditlogsQuery = (params, { today, tonight }) => {
+type AuditLogType = (typeof AUDIT_LOGS_TYPES)[number] | undefined;
+
+export type ParseAuditlogsResult = {
+  detail: string | null;
+  endDate: string;
+  startDate: string;
+  type: AuditLogType;
+  user: string | null;
+};
+
+export const parseAuditlogsQuery = (params: URLSearchParams, { today, tonight }: AuditlogsExtras): ParseAuditlogsResult => {
   const type = AUDIT_LOGS_TYPES.find(typeObject => typeObject.value === params.get('objectType'));
   const { endDate, startDate } = parseDateParams(params, today, tonight);
   return {
@@ -295,16 +400,20 @@ export const parseAuditlogsQuery = (params, { today, tonight }) => {
   };
 };
 
-const formatActiveDeployments = (pageState, { defaults }) =>
+type DeploymentsBasePageState = Record<string, Partial<PaginationOptions>>;
+
+type DeploymentDefaults = { defaults: DeploymentsBasePageState & { sort?: Partial<SortOptions> } };
+
+const formatActiveDeployments = (pageState: DeploymentsBasePageState, { defaults }: DeploymentDefaults): string =>
   [DEPLOYMENT_STATES.inprogress, DEPLOYMENT_STATES.pending]
-    .reduce((accu, state) => {
+    .reduce<string[]>((accu, state) => {
       const { page, perPage } = pageState[state] ?? {};
       const stateDefaults = defaults[state] ?? {};
       const items = Object.entries({ page, perPage })
         .reverse()
-        .reduce((keyAccu, [key, value]) => {
-          if ((value && value !== stateDefaults[key]) || keyAccu.length) {
-            keyAccu.unshift(value || stateDefaults[key]);
+        .reduce((keyAccu: (number | undefined)[], [key, value]) => {
+          if ((value && value !== stateDefaults[key as keyof typeof stateDefaults]) || keyAccu.length) {
+            keyAccu.unshift(value || stateDefaults[key as keyof typeof stateDefaults]);
           }
           return keyAccu;
         }, []);
@@ -316,26 +425,48 @@ const formatActiveDeployments = (pageState, { defaults }) =>
     .filter(i => i)
     .join('&');
 
-export const formatDeployments = ({ deploymentObject, pageState }, { defaults, today, tonight }) => {
+type DeploymentObject = {
+  devices?: Array<{ id: string }>;
+  release?: { name: string };
+};
+
+type FormatDeploymentsPageState = DeploymentsBasePageState & {
+  [key: string]: { endDate?: string; search?: string; startDate?: string; type?: string } | Partial<PaginationOptions> | unknown;
+  general: { showCreationDialog?: boolean; state: string };
+};
+
+type FormatDeploymentsParams = {
+  deploymentObject: DeploymentObject;
+  pageState: FormatDeploymentsPageState;
+};
+
+type FormatDeploymentsExtras = {
+  defaults: DeploymentDefaults['defaults'];
+  today: string;
+  tonight: string;
+};
+
+export const formatDeployments = ({ deploymentObject, pageState }: FormatDeploymentsParams, { defaults, today, tonight }: FormatDeploymentsExtras): string => {
   const { state: selectedState, showCreationDialog } = pageState.general;
   let params = new URLSearchParams();
   if (showCreationDialog) {
-    params.set('open', true);
+    params.set('open', 'true');
     if (deploymentObject.release) {
       params.set('release', deploymentObject.release.name);
     }
     if (deploymentObject.devices?.length) {
-      deploymentObject.devices.map(({ id }) => params.append('deviceId', id));
+      deploymentObject.devices.forEach(({ id }) => params.append('deviceId', id));
     }
   }
-  let pageStateQuery;
+  let pageStateQuery: string;
   if (selectedState === DEPLOYMENT_ROUTES.finished.key) {
-    const { endDate, search, startDate, type } = pageState[selectedState];
+    const finishedState = pageState[selectedState] as { endDate?: string; search?: string; startDate?: string; type?: string };
+    const { endDate, search, startDate, type } = finishedState;
     params = formatDates({ endDate, params, startDate, today, tonight });
     params = Object.entries({ search, type }).reduce(paramReducer, params);
-    pageStateQuery = formatPageState(pageState[selectedState], { defaults });
+    pageStateQuery = formatPageState(pageState[selectedState] as FormatPageStateParams, { defaults: { sort: defaults.sort } });
   } else if (selectedState === DEPLOYMENT_ROUTES.scheduled.key) {
-    pageStateQuery = formatPageState(pageState[selectedState], { defaults });
+    pageStateQuery = formatPageState(pageState[selectedState] as FormatPageStateParams, { defaults: { sort: defaults.sort } });
   } else {
     pageStateQuery = formatActiveDeployments(pageState, { defaults });
   }
@@ -343,7 +474,7 @@ export const formatDeployments = ({ deploymentObject, pageState }, { defaults, t
 };
 
 const deploymentsPath = 'deployments/';
-const parseDeploymentsPath = path => {
+const parseDeploymentsPath = (path: string): string => {
   const parts = path.split(deploymentsPath);
   if (parts.length > 1 && Object.keys(DEPLOYMENT_ROUTES).includes(parts[1])) {
     return parts[1];
@@ -351,33 +482,58 @@ const parseDeploymentsPath = path => {
   return '';
 };
 
-const parseActiveDeployments = params =>
-  [DEPLOYMENT_STATES.inprogress, DEPLOYMENT_STATES.pending].reduce((accu, state) => {
+const parseActiveDeployments = (params: URLSearchParams): PageState =>
+  [DEPLOYMENT_STATES.inprogress, DEPLOYMENT_STATES.pending].reduce<PageState>((accu, state) => {
     if (!params.has(state)) {
       return accu;
     }
-    const items = params.get(state).split(SEPARATOR);
-    accu[state] = ['page', 'perPage'].reduce((stateAccu, key, index) => (items[index] ? { ...stateAccu, [key]: Number(items[index]) } : stateAccu), {});
+    const items = (params.get(state) as string).split(SEPARATOR);
+    accu[state] = Object.keys(DEVICE_LIST_DEFAULTS).reduce<Partial<PaginationOptions>>(
+      (stateAccu, key, index) => (items[index] ? { ...stateAccu, [key]: Number(items[index]) } : stateAccu),
+      {}
+    );
     return accu;
   }, {});
 
-const deploymentFields = {
-  deviceId: { attribute: 'devices', parse: id => ({ id }), select: i => i },
+type DeploymentFieldConfig<T> = {
+  attribute: string;
+  parse: (val: string) => T;
+  select: (values: T[]) => T | T[];
+};
+
+const deploymentFields: Record<string, DeploymentFieldConfig<unknown>> = {
+  deviceId: { attribute: 'devices', parse: (id: string) => ({ id }), select: <T>(i: T[]): T[] => i },
   release: { attribute: 'release', parse: String, select: defaultSelector }
 };
 
-export const parseDeploymentsQuery = (params, { pageState, location, tonight }) => {
+type ParseDeploymentsExtraProps = {
+  location: { pathname: string };
+  pageState: PageState;
+  tonight: string;
+};
+
+export type ParseDeploymentsQueryResult = {
+  [key: string]: unknown;
+  deploymentObject: Record<string, unknown>;
+  general: {
+    showCreationDialog: boolean;
+    showReportDialog: boolean;
+    state: string;
+  };
+};
+
+export const parseDeploymentsQuery = (params: URLSearchParams, { pageState, location, tonight }: ParseDeploymentsExtraProps): ParseDeploymentsQueryResult => {
   // for deployments we get a startDate implicitly from a list of retrieved deployments if none is set, thus we're not defaulting to today
   const { endDate, startDate } = parseDateParams(params, '', tonight);
-  const deploymentObject = Object.entries(deploymentFields).reduce(
-    (accu, [key, { attribute, parse, select }]) => (params.has(key) ? { ...accu, [attribute]: select(params.getAll(key).map(parse)) } : accu),
+  const deploymentObject = Object.entries(deploymentFields).reduce<Record<string, unknown>>(
+    (accu, [key, { attribute, parse, select }]) => (params.has(key) ? { ...accu, [attribute]: select(params.getAll(key).map(parse) as unknown[]) } : accu),
     {}
   );
   const { state: selectedState, id, open, ...remainingPageState } = pageState;
   const tab = parseDeploymentsPath(location.pathname);
   const deploymentsTab = tab || selectedState || DEPLOYMENT_ROUTES.active.key;
 
-  let state = {
+  let state: ParseDeploymentsQueryResult = {
     deploymentObject,
     general: {
       showCreationDialog: Boolean(open && !id),
@@ -386,7 +542,8 @@ export const parseDeploymentsQuery = (params, { pageState, location, tonight }) 
     }
   };
   if (deploymentsTab === DEPLOYMENT_ROUTES.finished.key) {
-    const type = DEPLOYMENT_TYPES[params.get('type')] || '';
+    const typeParam = params.get('type');
+    const type = typeParam ? (DEPLOYMENT_TYPES as Record<string, string>)[typeParam] || '' : '';
     const search = params.get('search') || '';
     state[deploymentsTab] = { ...remainingPageState, endDate, search, startDate, type };
   } else if (deploymentsTab === DEPLOYMENT_ROUTES.scheduled.key) {
@@ -400,7 +557,9 @@ export const parseDeploymentsQuery = (params, { pageState, location, tonight }) 
   return state;
 };
 
-export const generateDeploymentsPath = ({ pageState }) => {
+type GenerateDeploymentsPathParams = { pageState: PageState & { general: { state?: string } } };
+
+export const generateDeploymentsPath = ({ pageState }: GenerateDeploymentsPathParams): string => {
   const { state: selectedState = DEPLOYMENT_ROUTES.active.key } = pageState.general;
   return `/deployments/${selectedState}`;
 };
@@ -415,7 +574,7 @@ export interface FormatReleasesParams {
   };
 }
 const releasesRoot = '/software';
-export const formatReleases = ({ pageState: { id, searchTerm, selectedTags = [], tab, type } }: FormatReleasesParams) =>
+export const formatReleases = ({ pageState: { id, searchTerm, selectedTags = [], tab, type } }: FormatReleasesParams): string =>
   Object.entries({ name: searchTerm, tab, type, id })
     .reduce(
       (accu, [key, value]) => (value ? [...accu, `${key}=${value}`] : accu),
@@ -423,10 +582,26 @@ export const formatReleases = ({ pageState: { id, searchTerm, selectedTags = [],
     )
     .join('&');
 
-export const generateReleasesPath = ({ pageState: { selectedRelease } }) =>
+type GenerateReleasesPathParams = { pageState: { selectedRelease?: string } };
+
+export const generateReleasesPath = ({ pageState: { selectedRelease } }: GenerateReleasesPathParams): string =>
   `${releasesRoot}${selectedRelease ? `/${encodeURIComponent(selectedRelease)}` : ''}`;
 
-export const parseReleasesQuery = (queryParams, extraProps) => {
+type ParseReleasesExtraProps = {
+  location: { pathname: string };
+  pageState?: PageState;
+};
+
+export type ParseReleasesQueryResult = {
+  searchTerm: string | null;
+  selectedJob?: string;
+  selectedRelease: string;
+  tab?: string | null;
+  tags: string[];
+  type: string | null;
+};
+
+export const parseReleasesQuery = (queryParams: URLSearchParams, extraProps: ParseReleasesExtraProps): ParseReleasesQueryResult => {
   const name = queryParams.has('name') ? queryParams.get('name') : '';
   const tab = queryParams.has('tab') ? queryParams.get('tab') : undefined;
   const tags = queryParams.has('tag') ? queryParams.getAll('tag') : [];
@@ -443,16 +618,27 @@ export const parseReleasesQuery = (queryParams, extraProps) => {
 
 const tenantsRoot = '/tenants';
 
-export const generateTenantPath = ({ pageState: { selectedTenant } }) => {
+export const generateTenantPath = ({ pageState: { selectedTenant } }: { pageState: { selectedTenant?: string } }): string => {
   if (selectedTenant) {
     return `${tenantsRoot}/${encodeURIComponent(selectedTenant)}`;
   } else {
     return tenantsRoot;
   }
 };
-export const generateTenantPathById = id => (id ? `${tenantsRoot}/${encodeURIComponent(id)}` : tenantsRoot);
 
-export const parseTenantsQuery = (queryParams, extraProps) => {
+export const generateTenantPathById = (id: string | undefined): string => (id ? `${tenantsRoot}/${encodeURIComponent(id)}` : tenantsRoot);
+
+type ParseTenantsExtraProps = {
+  location: { pathname: string };
+  pageState: PageState;
+};
+
+export type ParseTenantsQueryResult = {
+  name: string | null;
+  selectedTenant: string;
+};
+
+export const parseTenantsQuery = (queryParams: URLSearchParams, extraProps: ParseTenantsExtraProps): ParseTenantsQueryResult => {
   const name = queryParams.has('name') ? queryParams.get('name') : '';
   let selectedTenant = extraProps.location.pathname.substring(tenantsRoot.length + 1);
   if (!selectedTenant && extraProps.pageState.id?.length) {
@@ -461,4 +647,4 @@ export const parseTenantsQuery = (queryParams, extraProps) => {
   return { name, selectedTenant };
 };
 
-export const formatTenants = () => '';
+export const formatTenants = (): string => '';

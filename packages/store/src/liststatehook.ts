@@ -11,10 +11,11 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { useCallback, useMemo } from 'react';
+import type { Location, NavigateOptions } from 'react-router-dom';
 import { useLocation, useNavigate, useNavigationType, useSearchParams } from 'react-router-dom';
 
+import type { CommonProcessorResult, FormatPageStateDefaults, PageState } from './locationutils';
 import {
   commonProcessor,
   formatAuditlogs,
@@ -34,7 +35,22 @@ import {
   parseTenantsQuery
 } from './locationutils';
 
-export const defaultProcessors = {
+type ProcessorConfig<TFormat, TLocate, TParse> = {
+  format: TFormat;
+  locate: TLocate;
+  parse: TParse;
+};
+
+type Processors = {
+  auditlogs: ProcessorConfig<typeof formatAuditlogs, () => undefined, typeof parseAuditlogsQuery>;
+  common: ProcessorConfig<typeof formatPageState, () => undefined, typeof commonProcessor>;
+  deployments: ProcessorConfig<typeof formatDeployments, typeof generateDeploymentsPath, typeof parseDeploymentsQuery>;
+  devices: ProcessorConfig<typeof formatDeviceSearch, typeof generateDevicePath, typeof parseDeviceQuery>;
+  releases: ProcessorConfig<typeof formatReleases, typeof generateReleasesPath, typeof parseReleasesQuery>;
+  tenants: ProcessorConfig<typeof formatTenants, typeof generateTenantPath, typeof parseTenantsQuery>;
+};
+
+export const defaultProcessors: Processors = {
   auditlogs: {
     format: formatAuditlogs,
     locate: () => undefined,
@@ -67,7 +83,24 @@ export const defaultProcessors = {
   }
 };
 
-export const useLocationParams = (key, extras, processors = defaultProcessors) => {
+type ProcessorKey = keyof Omit<Processors, 'common'>;
+
+type LocationExtras = Record<string, unknown>;
+
+type LocationParamsValue = PageState & CommonProcessorResult['sort'] & Record<string, unknown>;
+
+type SetValueParams = {
+  [key: string]: unknown;
+  pageState: PageState;
+};
+
+type UseLocationParamsReturn = [
+  value: LocationParamsValue,
+  setValue: (newValue: SetValueParams, options?: NavigateOptions) => void,
+  options: { shouldInitializeFromUrl: boolean }
+];
+
+export const useLocationParams = (key: ProcessorKey, extras: LocationExtras, processors: Processors = defaultProcessors): UseLocationParamsReturn => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -82,15 +115,19 @@ export const useLocationParams = (key, extras, processors = defaultProcessors) =
     return {
       ...pageState,
       sort,
-      ...processors[key].parse(params, extendedExtras)
-    };
+      ...(processors[key].parse as (params: URLSearchParams, extras: typeof extendedExtras) => Record<string, unknown>)(params, extendedExtras)
+    } as LocationParamsValue;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(extras), key, location.search, location.pathname, searchParams.toString()]);
 
   const setValue = useCallback(
-    (newValue, options = {}) => {
-      const pathname = processors[key].locate({ pageState: newValue.pageState, location });
-      const searchQuery = [processors.common.format(newValue.pageState, extras), processors[key].format(newValue, extras)].filter(i => i).join('&');
+    (newValue: SetValueParams, options: NavigateOptions = {}): void => {
+      const locateFn = processors[key].locate as (params: { location: Location; pageState: PageState }) => string | undefined;
+      const pathname = locateFn({ pageState: newValue.pageState, location });
+      const formatFn = processors[key].format as (value: SetValueParams, extras: LocationExtras) => string;
+      const searchQuery = [processors.common.format(newValue.pageState, extras as FormatPageStateDefaults), formatFn(newValue, extras)]
+        .filter(i => i)
+        .join('&');
       navigate({ pathname, replace: true, search: `?${searchQuery}`, ...options });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

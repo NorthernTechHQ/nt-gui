@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { blobToString, byteArrayToString } from '@northern.tech/utils/helpers';
@@ -24,11 +23,36 @@ const cookies = new Cookies();
 
 const MessagePack = msgpack5();
 
-export const useSession = ({ onClose, onHealthCheckFailed, onMessageReceived, onNotify, onOpen, token }) => {
-  const [sessionId, setSessionId] = useState();
-  const healthcheckTimeout = useRef();
-  const socketRef = useRef();
-  const sendMessage = useCallback(({ typ, body, props }) => {
+type UseSessionProps = {
+  onClose: (event: CloseEvent) => void;
+  onHealthCheckFailed: () => void;
+  onMessageReceived: (body: Uint8Array) => void;
+  onNotify: (message: string) => void;
+  onOpen: (isOpen: boolean) => void;
+  token: string;
+};
+
+type MessageProps = {
+  body?: Uint8Array;
+  props: Record<string, string | number>;
+  typ: string;
+};
+
+type SessionWebSocket = WebSocket & { sessionId?: string };
+
+type UseSessionReturn = [
+  connect: (deviceId: string) => void,
+  sendMessage: (message: MessageProps) => void,
+  close: () => void,
+  readyState: number,
+  sessionId: string | undefined
+];
+
+export const useSession = ({ onClose, onHealthCheckFailed, onMessageReceived, onNotify, onOpen, token }: UseSessionProps): UseSessionReturn => {
+  const [sessionId, setSessionId] = useState<string | undefined>();
+  const healthcheckTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const socketRef = useRef<SessionWebSocket | undefined>(undefined);
+  const sendMessage = useCallback(({ typ, body, props }: MessageProps): void => {
     if (!socketRef.current) {
       return;
     }
@@ -37,40 +61,45 @@ export const useSession = ({ onClose, onHealthCheckFailed, onMessageReceived, on
     socketRef.current.send(encodedData);
   }, []);
 
-  const close = useCallback(() => {
+  const close = useCallback((): void => {
     if (!socketRef.current || socketRef.current?.readyState !== WebSocket.OPEN) {
       return;
     }
     sendMessage({ typ: MessageTypes.Stop, props: {} });
     socketRef.current.close();
-    setSessionId();
+    setSessionId(undefined);
   }, [sendMessage]);
 
-  const healthcheckFailed = useCallback(() => {
+  const healthcheckFailed = useCallback((): void => {
     onHealthCheckFailed();
     close();
   }, [close, onHealthCheckFailed]);
 
   const onSocketMessage = useCallback(
-    event =>
-      blobToString(event.data).then(data => {
+    (event: MessageEvent): Promise<void> =>
+      blobToString(event.data).then((data: unknown) => {
         const {
-          hdr: { props = {}, proto, sid, typ },
+          hdr: { props = {} as Record<string, string | number>, proto, sid, typ },
           body
-        } = MessagePack.decode(data);
+        } = MessagePack.decode(data as Buffer) as {
+          body: Uint8Array;
+          hdr: { props: Record<string, string | number>; proto: number; sid: string; typ: string };
+        };
         if (proto !== MessageProtocols.Shell) {
           return;
         }
         switch (typ) {
           case MessageTypes.New: {
             if (props.status == WebSocket.CLOSING) {
-              onNotify(`Error: ${byteArrayToString(body)}`);
-              setSessionId();
+              onNotify(`Error: ${byteArrayToString(body as unknown as Buffer)}`);
+              setSessionId(undefined);
               return close();
             } else {
               clearTimeout(healthcheckTimeout.current);
               healthcheckTimeout.current = setTimeout(healthcheckFailed, 65 * TIMEOUTS.oneSecond);
-              socketRef.current.sessionId = sid;
+              if (socketRef.current) {
+                socketRef.current.sessionId = sid;
+              }
               return setSessionId(sid);
             }
           }
@@ -82,9 +111,8 @@ export const useSession = ({ onClose, onHealthCheckFailed, onMessageReceived, on
             if (healthcheckTimeout.current) {
               clearTimeout(healthcheckTimeout.current);
             }
-            sendMessage({ typ: MessageTypes.Pong });
-            //
-            const timeout = parseInt(props.timeout);
+            sendMessage({ typ: MessageTypes.Pong, props: {} });
+            const timeout = parseInt(props.timeout as string);
             if (timeout > 0) {
               healthcheckTimeout.current = setTimeout(healthcheckFailed, timeout * TIMEOUTS.oneSecond);
             }
@@ -98,21 +126,21 @@ export const useSession = ({ onClose, onHealthCheckFailed, onMessageReceived, on
   );
 
   const onSocketError = useCallback(
-    error => {
-      onNotify(`WebSocket error: ${error.message}`);
+    (error: Event): void => {
+      onNotify(`WebSocket error: ${(error as ErrorEvent).message || 'Unknown error'}`);
       close();
       clearTimeout(healthcheckTimeout.current);
     },
     [close, onNotify]
   );
 
-  const onSocketOpen = useCallback(() => {
+  const onSocketOpen = useCallback((): void => {
     sendMessage({ typ: MessageTypes.New, props: {} });
     onOpen(true);
   }, [onOpen, sendMessage]);
 
   const onSocketClose = useCallback(
-    e => {
+    (e: CloseEvent): void => {
       console.log('closing');
       onClose(e);
       close();
@@ -121,9 +149,9 @@ export const useSession = ({ onClose, onHealthCheckFailed, onMessageReceived, on
   );
 
   const connect = useCallback(
-    deviceId => {
+    (deviceId: string): void => {
       const uri = `wss://${window.location.host}${apiUrl.v1}/deviceconnect/devices/${deviceId}/connect`;
-      setSessionId();
+      setSessionId(undefined);
       cookies.set('JWT', token, { path: '/', secure: true, sameSite: 'strict', maxAge: 5 });
       try {
         socketRef.current = new WebSocket(uri);
@@ -135,20 +163,21 @@ export const useSession = ({ onClose, onHealthCheckFailed, onMessageReceived, on
   );
 
   useEffect(() => {
-    if (!socketRef.current) {
+    const currentSocket = socketRef.current;
+    if (!currentSocket) {
       return;
     }
 
-    socketRef.current.addEventListener('close', onSocketClose);
-    socketRef.current.addEventListener('error', onSocketError);
-    socketRef.current.addEventListener('message', onSocketMessage);
-    socketRef.current.addEventListener('open', onSocketOpen);
+    currentSocket.addEventListener('close', onSocketClose);
+    currentSocket.addEventListener('error', onSocketError);
+    currentSocket.addEventListener('message', onSocketMessage);
+    currentSocket.addEventListener('open', onSocketOpen);
 
     return () => {
-      socketRef.current.removeEventListener('close', onSocketClose);
-      socketRef.current.removeEventListener('error', onSocketError);
-      socketRef.current.removeEventListener('message', onSocketMessage);
-      socketRef.current.removeEventListener('open', onSocketOpen);
+      currentSocket.removeEventListener('close', onSocketClose);
+      currentSocket.removeEventListener('error', onSocketError);
+      currentSocket.removeEventListener('message', onSocketMessage);
+      currentSocket.removeEventListener('open', onSocketOpen);
     };
     // eslint-disable-next-line react-hooks/refs
   }, [onSocketClose, onSocketError, onSocketMessage, onSocketOpen, socketRef.current?.readyState]);

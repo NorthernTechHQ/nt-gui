@@ -11,16 +11,18 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { ThemeOptions } from '@mui/material';
+import { PaletteOptions } from '@mui/material/styles';
 
-const palette = {
+const palette: PaletteOptions = {
   border: {
     main: '#e3e3e3'
   },
-  tooltip: {
-    tierTipBackground: '#f7fafb'
+  background: {
+    default: '#fff'
   }
 };
 
-export const light = {
+export const light: ThemeOptions = {
   palette
 };

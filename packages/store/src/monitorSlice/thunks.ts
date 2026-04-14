@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import type { DeviceFilter } from '@/src/devicesSlice';
-import type { Alert } from '@northern.tech/types/MenderTypes';
+import type { Alert, DeviceInventory, MonitorConfiguration } from '@northern.tech/types/MenderTypes';
 
 import { actions, sliceName } from '.';
 import storeActions from '../actions';
@@ -20,7 +20,6 @@ import Api from '../api/general-api';
 import type { AlertChannelKey, DeviceIssueOptionKey } from '../constants';
 import { DEVICE_LIST_DEFAULTS, TIMEOUTS, alertChannels, headerNames, inventoryApiUrlV2, monitorApiUrlv1 } from '../constants';
 import { getDeviceFilters } from '../selectors';
-import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { convertDeviceListStateToFilters } from '../utils';
 
@@ -73,7 +72,7 @@ interface GetIssueCountsByTypePayload {
 }
 export const getIssueCountsByType = createAppAsyncThunk(
   `${sliceName}/getIssueCountsByType`,
-  ({ type, options = {} }: GetIssueCountsByTypePayload, { dispatch, getState }) => {
+  async ({ type, options = {} }: GetIssueCountsByTypePayload, { dispatch, getState }) => {
     const state = getState();
     const { filters = getDeviceFilters(state), group, status, ...remainder } = options;
     const { applicableFilters: nonMonitorFilters, filterTerms } = convertDeviceListStateToFilters({
@@ -84,26 +83,23 @@ export const getIssueCountsByType = createAppAsyncThunk(
       selectedIssues: [type],
       status
     });
-    return Api.post(`${inventoryApiUrlV2}/filters/search`, {
+    const res = await Api.post<DeviceInventory[]>(`${inventoryApiUrlV2}/filters/search`, {
       page: 1,
       per_page: 1,
       filters: filterTerms,
       attributes: [{ scope: 'identity', attribute: 'status' }]
-    })
-      .catch(err => commonErrorHandler(err, `Retrieving issue counts failed:`, dispatch, commonErrorFallback))
-      .then(res => {
-        const total = nonMonitorFilters.length ? state.monitor.issueCounts.byType[type].total : Number(res.headers[headerNames.total]);
-        const filtered = nonMonitorFilters.length ? Number(res.headers[headerNames.total]) : total;
-        if (total === state.monitor.issueCounts.byType[type].total && filtered === state.monitor.issueCounts.byType[type].filtered) {
-          return Promise.resolve();
-        }
-        return Promise.resolve(dispatch(actions.receiveDeviceIssueCounts({ counts: { filtered, total }, issueType: type }))) as ReturnType<AppDispatch>;
-      });
+    }).catch(err => commonErrorHandler(err, `Retrieving issue counts failed:`, dispatch, commonErrorFallback));
+    const total = nonMonitorFilters.length ? state.monitor.issueCounts.byType[type].total : Number(res.headers[headerNames.total]);
+    const filtered = nonMonitorFilters.length ? Number(res.headers[headerNames.total]) : total;
+    if (total === state.monitor.issueCounts.byType[type].total && filtered === state.monitor.issueCounts.byType[type].filtered) {
+      return;
+    }
+    return dispatch(actions.receiveDeviceIssueCounts({ counts: { filtered, total }, issueType: type }));
   }
 );
 
 export const getDeviceMonitorConfig = createAppAsyncThunk(`${sliceName}/getDeviceMonitorConfig`, (id: string, { dispatch }) =>
-  Api.get(`${monitorApiUrlv1}/devices/${id}/config`)
+  Api.get<MonitorConfiguration[]>(`${monitorApiUrlv1}/devices/${id}/config`)
     .catch(err => commonErrorHandler(err, `Retrieving device monitor config for device ${id} failed:`, dispatch))
     .then(({ data }) => Promise.all([dispatch(storeActions.receivedDevice({ id, monitors: data }), Promise.resolve(data))]))
 );

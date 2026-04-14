@@ -11,11 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import type { TypedUseSelectorHook } from 'react-redux';
 
 import { extractErrorMessage, preformatWithRequestID } from '@northern.tech/utils/helpers';
-import { combineReducers, configureStore, createAsyncThunk } from '@reduxjs/toolkit';
+import type { Middleware, Reducer, UnknownAction } from '@reduxjs/toolkit';
+import { combineReducers, configureStore, createAsyncThunk, isRejected } from '@reduxjs/toolkit';
 import { createReduxEnhancer } from '@sentry/react';
 
 import actions from './actions';
@@ -34,12 +35,37 @@ const { setSnackbar, uploadProgress } = actions;
 
 // exclude 'pendings-redirect' since this is expected to persist refreshes - the rest should be better to be redone
 const keys = ['sessionDeploymentChecker', settingsKeys.initialized];
-const resetEnvironment = () => keys.forEach(key => window.sessionStorage.removeItem(key));
+const resetEnvironment = (): void => keys.forEach(key => window.sessionStorage.removeItem(key));
 
 resetEnvironment();
 
+export type { ErrorWithResponse } from './utils';
+
+export type MenderEnvironment = {
+  [key: string]: unknown;
+  demoArtifactPort?: string | number;
+  disableOnboarding?: string;
+  features: Record<string, string>;
+  integrationVersion: string;
+  menderArtifactVersion: string;
+  metaMenderVersion: string;
+  sentry?: { isReduxEnabled?: string | boolean };
+};
+
+declare global {
+  interface Window {
+    mender_environment?: MenderEnvironment;
+  }
+}
+
 export const commonErrorFallback = 'Please check your connection.';
-export const commonErrorHandler = (err, errorContext, dispatch, fallback?: string, mightBeAuthRelated = false): Promise<never> => {
+export const commonErrorHandler = (
+  err: { message?: string; response?: { data?: unknown } },
+  errorContext: string,
+  dispatch: AppDispatch,
+  fallback?: string,
+  mightBeAuthRelated = false
+): Promise<never> => {
   const errMsg = extractErrorMessage(err, fallback);
   if (mightBeAuthRelated || getToken()) {
     dispatch(setSnackbar({ message: preformatWithRequestID(err.response, `${errorContext} ${errMsg}`), action: 'Copy to clipboard' }));
@@ -58,18 +84,23 @@ const rootReducer = combineReducers({
   users: userSlice
 });
 
-export const sessionReducer = (state, action) => {
+type RootReducerState = ReturnType<typeof rootReducer>;
+
+const sessionReducerImpl: Reducer<RootReducerState | undefined, UnknownAction> = (state, action) => {
   if (action.type === USER_LOGOUT) {
     state = undefined;
   }
   return rootReducer(state, action);
 };
+// Export for testing; cast to RootReducerState since undefined always falls through to initial slice states
+export const sessionReducer = sessionReducerImpl as Reducer<RootReducerState>;
 
-const rejectionLoggerMiddleware = () => next => action => {
-  if (action.type.endsWith('/rejected')) {
-    const { error } = action;
+const rejectionLoggerMiddleware: Middleware = () => next => action => {
+  if (isRejected(action)) {
     console.error('Rejection in action:', action);
-    console.error(error.stack);
+    if (action.error) {
+      console.error(action.error.stack);
+    }
   }
   return next(action);
 };
@@ -77,8 +108,8 @@ const rejectionLoggerMiddleware = () => next => action => {
 const tracingActionIgnoreList = [userActions.successfullyLoggedIn.type, 'users/loginUser/pending', 'users/loginUser/fulfilled', 'users/loginUser/rejected'];
 
 const sentryReduxEnhancer = createReduxEnhancer({
-  actionTransformer: action => {
-    if (tracingActionIgnoreList.includes(action.type)) {
+  actionTransformer: (action: UnknownAction) => {
+    if (tracingActionIgnoreList.includes(action.type as string)) {
       return null;
     }
     return action;
@@ -100,11 +131,11 @@ const sentryReduxEnhancer = createReduxEnhancer({
   }
 });
 
-export const getConfiguredStore = (options = {}) => {
-  const { preloadedState = {}, ...config } = options;
+export const getConfiguredStore = (options: { [key: string]: unknown; preloadedState?: Partial<RootReducerState> } = {}) => {
+  const { preloadedState, ...config } = options;
   return configureStore({
     ...config,
-    preloadedState,
+    preloadedState: preloadedState as RootReducerState,
     enhancers: getDefaultEnhancers => {
       // rely on the plain injected env object, as we're initializing the store only here
       if (window.mender_environment?.sentry?.isReduxEnabled) {
@@ -113,13 +144,14 @@ export const getConfiguredStore = (options = {}) => {
       return getDefaultEnhancers();
     },
     reducer: sessionReducer,
+    // @ts-expect-error - GetDefaultMiddleware type mismatch between @reduxjs/toolkit and @sentry/react
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
         immutableCheck: {
           ignoredPaths: ['app.uploadsById']
         },
         serializableCheck: {
-          ignoredActions: [organizationActions.receiveExternalDeviceIntegrations.name, uploadProgress.name],
+          ignoredActions: [organizationActions.receiveExternalDeviceIntegrations.type, uploadProgress.type],
           ignoredActionPaths: ['uploads', /payload\..*$/, 'meta.arg.file', 'meta.arg.integration.configHint'],
           ignoredPaths: ['app.uploadsById', 'organization.externalDeviceIntegrations']
         }
@@ -130,8 +162,9 @@ export const store = getConfiguredStore({
   preloadedState: {}
 });
 export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof rootReducer>;
 export const useAppDispatch: () => AppDispatch = useDispatch;
-export type RootState = ReturnType<typeof store.getState>;
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export const createAppAsyncThunk = createAsyncThunk.withTypes<{
   dispatch: AppDispatch;

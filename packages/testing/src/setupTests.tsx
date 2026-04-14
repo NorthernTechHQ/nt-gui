@@ -21,6 +21,7 @@ import { ThemeProvider } from '@mui/material/styles';
 
 import { yes } from '@northern.tech/utils/helpers';
 import { configureStore } from '@reduxjs/toolkit';
+import '@testing-library/jest-dom/vitest';
 import { cleanup, render } from '@testing-library/react';
 import { expect, vi } from 'vitest';
 import { MessageChannel } from 'worker_threads';

@@ -26,14 +26,6 @@ import { saveUserSettings } from '../thunks';
 
 const cookies = new Cookies();
 
-const applyOnboardingFallbacks = progress => {
-  const step = onboardingSteps[progress] as any;
-  if (step && step.fallbackStep) {
-    return step.fallbackStep;
-  }
-  return progress;
-};
-
 const determineProgress = (acceptedDevices, pendingDevices, releases, pastDeployments) => {
   const steps = onboardingSteps;
   let progress = -1;
@@ -65,7 +57,7 @@ const deductOnboardingState = ({ devicesById, devicesByStatus, onboardingState, 
   } else if (deviceType.length) {
     approach = 'physical';
   }
-  const progress = applyOnboardingFallbacks(onboardingState.progress || determineProgress(acceptedDevices, pendingDevices, releases, pastDeployments));
+  const progress = onboardingState.progress || determineProgress(acceptedDevices, pendingDevices, releases, pastDeployments);
   return {
     ...onboardingState,
     complete: !!(
@@ -119,7 +111,7 @@ export const setOnboardingApproach = createAppAsyncThunk(`${sliceName}/setOnboar
 );
 
 export const setOnboardingComplete = createAppAsyncThunk(`${sliceName}/setOnboardingComplete`, (value: boolean, { dispatch }) => {
-  const tasks: ReturnType<AppDispatch>[] = [Promise.resolve(dispatch(actions.setOnboardingComplete(value)))];
+  const tasks: Promise<ReturnType<AppDispatch> | unknown>[] = [Promise.resolve(dispatch(actions.setOnboardingComplete(value)))];
   if (value) {
     tasks.push(Promise.resolve(dispatch(actions.setShowOnboardingHelp(false))));
     tasks.push(Promise.resolve(dispatch(advanceOnboarding(onboardingStepNames.DEPLOYMENTS_PAST_COMPLETED))));
