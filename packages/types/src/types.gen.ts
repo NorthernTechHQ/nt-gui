@@ -988,23 +988,6 @@ export type ConfigurationTenant = {
   delta?: DeltaConfiguration;
 };
 
-/**
- * Error descriptor with additional metadata.
- */
-export type ErrorExt = {
-  /**
-   * Description of the error.
-   */
-  error: string;
-  /**
-   * Request ID (same as in X-MEN-RequestID header).
-   */
-  request_id?: string;
-  metadata?: {
-    [key: string]: unknown;
-  };
-};
-
 export type NewDeploymentTypeManagement = {
   /**
    * Name of the deployment
@@ -1397,20 +1380,6 @@ export type AbortDeploymentRequest = {
   status: 'aborted';
 };
 
-export type UploadArtifactRequest2 = {
-  /**
-   * Size of the artifact file in bytes.
-   * DEPRECATED: _since Mon Apr 6 2020_ Size is determined from uploaded content.
-   *
-   */
-  size?: number;
-  description?: string;
-  /**
-   * Artifact. It has to be the last part of request.
-   */
-  artifact: Blob | File;
-};
-
 export type CompleteDirectUpload404Response = {
   error?: string;
   /**
@@ -1627,6 +1596,39 @@ export const DeploymentDeviceStatusGet = {
 
 export type DeploymentDeviceStatusGet = (typeof DeploymentDeviceStatusGet)[keyof typeof DeploymentDeviceStatusGet];
 
+export type UploadArtifactRequest2 = {
+  /**
+   * Size of the artifact file in bytes.
+   * DEPRECATED: _since Mon Apr 6 2020_ Size is determined from uploaded content.
+   *
+   *
+   * @deprecated
+   */
+  size?: number;
+  description?: string;
+  /**
+   * Artifact. It has to be the last part of request.
+   */
+  artifact: Blob | File;
+};
+
+/**
+ * Error descriptor with additional metadata.
+ */
+export type ErrorExt = {
+  /**
+   * Description of the error.
+   */
+  error: string;
+  /**
+   * Request ID (same as in X-MEN-RequestID header).
+   */
+  request_id?: string;
+  metadata?: {
+    [key: string]: unknown;
+  };
+};
+
 /**
  * Tenant account storage limit and storage usage.
  */
@@ -1642,6 +1644,14 @@ export type StorageLimit = {
    */
   usage: number;
 };
+
+export type UploadManifestRequest = {
+  /**
+   * List of tags for the manifest.
+   *
+   */
+  tags?: Array<string>;
+} & UploadArtifactRequest2;
 
 /**
  * Detailed artifact.
@@ -3122,7 +3132,7 @@ export type Tenant = {
   /**
    * Currently used tenant token.
    */
-  tenant_token: string;
+  tenant_token?: string;
   /**
    * Status of the tenant account.
    */
@@ -7120,6 +7130,42 @@ export type UpdateBinaryDeltaConfigurationResponses = {
 };
 
 export type UpdateBinaryDeltaConfigurationResponse = UpdateBinaryDeltaConfigurationResponses[keyof UpdateBinaryDeltaConfigurationResponses];
+
+export type UploadDeploymentManifestArtifactData = {
+  body: UploadManifestRequest;
+  path?: never;
+  query?: never;
+  url: '/api/management/v1alpha1/deployments/manifests';
+};
+
+export type UploadDeploymentManifestArtifactErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * An artifact with the same name and matching dependency requirements already exists.
+   *
+   */
+  409: ErrorExt;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type UploadDeploymentManifestArtifactError = UploadDeploymentManifestArtifactErrors[keyof UploadDeploymentManifestArtifactErrors];
+
+export type UploadDeploymentManifestArtifactResponses = {
+  /**
+   * Artifact uploaded.
+   */
+  201: unknown;
+};
 
 export type GetDeploymentLogForDeviceV1Alpha1Data = {
   body?: never;
@@ -13868,6 +13914,44 @@ export type CreateTrialAccountResponses = {
    */
   202: unknown;
 };
+
+export type MyTenantData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Flag to include per-tiers limits in the response.
+     */
+    tiers?: boolean;
+  };
+  url: '/api/management/v2/tenantadm/tenants/me';
+};
+
+export type MyTenantErrors = {
+  /**
+   * Verification failed.
+   */
+  401: unknown;
+  /**
+   * User is not a part of any tenant organization.
+   */
+  404: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type MyTenantError = MyTenantErrors[keyof MyTenantErrors];
+
+export type MyTenantResponses = {
+  /**
+   * A tenant descriptor is returned.
+   */
+  200: Tenant;
+};
+
+export type MyTenantResponse = MyTenantResponses[keyof MyTenantResponses];
 
 export type DeleteInactiveAccountData = {
   body?: never;
