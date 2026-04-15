@@ -1,5 +1,33 @@
 ---
-## 0.8.3 - 2026-04-01
+## 0.8.4 - 2026-04-15
+
+
+### Bug fixes
+
+#### Utils
+
+
+- *(utils)* Fixed circular dependencies to ensure tsdown compatibility
+
+ ([e293a32](https://github.com/NorthernTechHQ/nt-gui/commit/e293a32167edd8ab737d82fea2ef6c4ced5fbb0b))  by @mzedel
+
+
+
+- *(utils)* Aligned pagination, sort + issue options w/ expanded usage across the codebase
+
+ ([78467a1](https://github.com/NorthernTechHQ/nt-gui/commit/78467a1334aeadd0c96f8af8c852cfb7082b4257))  by @mzedel
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/utils-0.8.3 - 2026-04-01
 
 
 ### Bug fixes
