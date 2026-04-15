@@ -7075,7 +7075,8 @@ paths:
             will sort by 'attr1' ascending, and then by 'attr2' descending.
           schema:
             type: string
-            format: attr[:ord][,attr[:ord]...]
+            pattern: ^[a-zA-Z0-9_-]+(:(asc|desc))?(,[a-zA-Z0-9_-]+(:(asc|desc))?)*$
+            example: attr1:asc,attr2:desc
         - name: has_group
           in: query
           description: Limit result to devices assigned to a group.
@@ -9916,7 +9917,7 @@ paths:
           required: true
           schema:
             type: string
-            format: Bearer [token]
+            pattern: ^Bearer .+$
         - name: X-Forwarded-Uri
           in: header
           description: |
@@ -9925,7 +9926,7 @@ paths:
           required: true
           schema:
             type: string
-            format: HTTP path
+            format: uri-reference
         - name: X-Forwarded-Method
           in: header
           description: HTTP method used when accessing the original URI
@@ -15966,6 +15967,7 @@ components:
       description: |
         Device external identity.
       type: object
+      additionalProperties: true
       properties:
         data:
           description: External identity.
@@ -16750,10 +16752,11 @@ components:
             - $exists
             - $regex
         value:
-          type: string
           description: |
             The value of the attribute to be used in filtering.
             Attribute type is implicit, inferred from the JSON type.
+            Supported types: number, string, boolean, array of numbers, array of strings.
+            Mixed arrays are not allowed.
 
             The $exists operator expects a boolean value: true means the specified
             attribute exists, false means the specified attribute doesn't exist.
@@ -16762,7 +16765,17 @@ components:
             (PCRE), automatically anchored by ^. If the regular expression is not valid,
             the filter will produce no results. If you need to specify options and flags,
             you can provide the full regex in the format of /regex/flags, for example
-            `/[a-z]+/i`. 
+            `/[a-z]+/i`.
+          oneOf:
+            - type: string
+            - type: number
+            - type: boolean
+            - type: array
+              items:
+                type: string
+            - type: array
+              items:
+                type: number
       description: Attribute filter predicate
       example:
         attribute: serial_no
