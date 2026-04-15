@@ -530,10 +530,11 @@ describe('device auth handling', () => {
       { type: appActions.setSnackbar.type, payload: { message: 'Device was successfully added to the preauthorization list', autoHideDuration: 5000 } },
       { type: preauthDevice.fulfilled.type }
     ];
+    const { id: _id, ts: _ts, status: _status, ...deviceAuthSet } = defaultState.devices.byId.a1.auth_sets[0];
     await store.dispatch(
       preauthDevice({
-        ...defaultState.devices.byId.a1.auth_sets[0],
-        identity_data: { ...defaultState.devices.byId.a1.auth_sets[0].identity_data, mac: '12:34:56' },
+        ...deviceAuthSet,
+        identity_data: { ...deviceAuthSet.identity_data, mac: '12:34:56' },
         pubkey: 'test'
       })
     );
@@ -542,9 +543,11 @@ describe('device auth handling', () => {
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
   it('should notify about duplicate device preauthorization attempts', async () => {
+    const { id: _id, ts: _ts, status: _status, ...deviceAuthSet } = defaultState.devices.byId.a1.auth_sets[0];
+
     const store = mockStore({ ...defaultState });
     await store
-      .dispatch(preauthDevice(defaultState.devices.byId.a1.auth_sets[0]))
+      .dispatch(preauthDevice(deviceAuthSet))
       .unwrap()
       .catch(message => expect(message).toContain('identity data set already exists'));
   });

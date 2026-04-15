@@ -137,6 +137,9 @@ export const filtersFilter = (item: DeviceFilter, index: number, array: DeviceFi
   return firstIndex === index;
 };
 
+export const stripUndefined = <T extends Record<string, unknown>>(obj: T): Partial<T> =>
+  Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined)) as Partial<T>;
+
 export const listItemMapper = <T extends object>(
   byId: Record<string, T>,
   ids: string[],

@@ -181,10 +181,11 @@ type OrganizationTrialPayload = {
   ts?: number;
 };
 export const createOrganizationTrial = createAppAsyncThunk(`${sliceName}/createOrganizationTrial`, async (data: OrganizationTrialPayload, { dispatch }) => {
-  const { key } = locations[data.location];
+  const { location, tos: _tos, ...trialPayload } = data;
+  const { key } = locations[location];
   const targetLocation = getTargetLocation(key);
   const target = `${targetLocation}${tenantadmApiUrlv2}/tenants/trial`;
-  const response = await Api.postUnauthorized(target, data).catch(err => {
+  const response = await Api.postUnauthorized(target, trialPayload).catch(err => {
     if (err.response?.status >= 400 && err.response?.status < 500) {
       dispatch(setSnackbar({ message: err.response.data.error, autoHideDuration: TIMEOUTS.fiveSeconds }));
     } else {
