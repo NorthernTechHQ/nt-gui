@@ -1,5 +1,66 @@
 ---
-## 0.30.0 - 2026-03-30
+## 0.30.1 - 2026-04-15
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Fixed faulty serialization check exemption
+
+ ([9f99800](https://github.com/NorthernTechHQ/nt-gui/commit/9f99800a77093ad9fe26434b6e1be0dd48a03939))  by @mzedel
+
+
+
+- *(store)* Fixed faulty type export type annotation
+
+ ([27c2b24](https://github.com/NorthernTechHQ/nt-gui/commit/27c2b245df9e9521ea0e289f5ac9a36b6a19fd5c))  by @mzedel
+
+
+
+- *(store)* Extended store type coverage to ease store root type coverage
+
+ ([7897282](https://github.com/NorthernTechHQ/nt-gui/commit/789728220a1d1c5b6cb8b4f3c2bb360c7a0811e7))  by @mzedel
+
+
+
+
+
+
+
+### Refactor
+
+#### Store
+
+
+- *(store)* Made store init slightly more redux thunk compliant
+
+ ([f26f7df](https://github.com/NorthernTechHQ/nt-gui/commit/f26f7dfdf1270967db75c14eafd60054fb3d6662))  by @mzedel
+
+
+
+
+  - to extend & clear up type coverage + clarify api data dependencies
+
+- *(store)* Made some more thunks rely on async structure + clear value returns
+
+ ([8d69a58](https://github.com/NorthernTechHQ/nt-gui/commit/8d69a58848990a9363741342bca540b50dc20cd1))  by @mzedel
+
+
+
+
+  - primarily to allow a clear return type, trying to balance error handling by keeping it close to the api call instead of a try/catch block
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/store-0.30.0 - 2026-03-30
 
 
 ### Features
