@@ -1,5 +1,27 @@
 ---
-## 0.15.1 - 2026-03-30
+## 0.15.2 - 2026-04-15
+
+
+### Bug fixes
+
+#### Themes
+
+
+- *(themes)* Made fonts theme local assets to ensure they get bundled
+
+ ([59cfbf5](https://github.com/NorthernTechHQ/nt-gui/commit/59cfbf53a410ae7413d06673b842478704914727))  by @mzedel
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/themes-0.15.1 - 2026-03-30
 
 
 ### Bug fixes
