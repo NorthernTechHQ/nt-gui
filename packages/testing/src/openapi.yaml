@@ -3286,6 +3286,99 @@ paths:
       summary: Upload mender artifact
       tags:
         - Deployments_v1alpha1_Management API
+    get:
+      description: Returns Mender Manifests according to the specified parameters.
+      operationId: Get Deployment Manifests
+      parameters:
+        - description: Manifest name filter.
+          in: query
+          name: name
+          schema:
+            type: string
+        - description: Starting page.
+          in: query
+          name: page
+          schema:
+            default: 1
+            type: integer
+        - description: Maximum number of results per page.
+          in: query
+          name: per_page
+          schema:
+            default: 20
+            maximum: 500
+            type: integer
+        - description: Sort the Manifest list by the specified field and direction.
+          in: query
+          name: sort
+          schema:
+            default: name:asc
+            enum:
+              - modified:asc
+              - modified:desc
+              - name:asc
+              - name:desc
+              - tags:asc
+              - tags:desc
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Manifest'
+          description: A successful response including the Manifests
+          headers:
+            X-Total-Count:
+              description: Total number of releases matching query.
+              schema:
+                type: integer
+            Link:
+              description: Standard header, we support 'first', 'next', and 'prev'.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/InvalidRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - ManagementJWT: []
+      summary: Get Mender Manifests
+      tags:
+        - Deployments_v1alpha1_Management API
+  /api/management/v1alpha1/deployments/manifests/{manifest_name}:
+    get:
+      description: Returns the Mender Manifest with the given name
+      operationId: Get Deployment Manifest by name
+      parameters:
+        - description: Name of the Manifest
+          in: path
+          name: manifest_name
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Manifest'
+          description: A successful response including the Manifest.
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - ManagementJWT: []
+      summary: Get Mender Manifest
+      tags:
+        - Deployments_v1alpha1_Management API
   /api/management/v1alpha1/deployments/deployments/{deployment_id}/devices/{device_id}/log:
     get:
       description: |
@@ -15315,16 +15408,148 @@ components:
         - limit
         - usage
       type: object
-    UploadManifestRequest:
-      allOf:
-        - properties:
-            tags:
-              description: |
-                List of tags for the manifest.
-              type: array
-              items:
-                type: string
-        - $ref: '#/components/schemas/UploadArtifactRequest'
+    ManifestComponentUpdateStrategy:
+      type: object
+      description: The `update_strategy` of a component from the manifest.yaml
+      required:
+        - order
+      properties:
+        order:
+          description: The installation priority (order). Lower number means higher priority.
+          type: integer
+    ManifestComponent:
+      description: |-
+        A `component` from the manifest.yaml. Every `component` will always have _at least_ one of
+        `artifact_name` and `artifact_path`. If both are defined, `artifact_path` takes precedence.
+      required:
+        - update_strategy
+      properties:
+        artifact_name:
+          type: string
+        artifact_path:
+          type: string
+        update_strategy:
+          $ref: '#/components/schemas/ManifestComponentUpdateStrategy'
+    ManifestContent:
+      description: |-
+        The content of the manifest.yaml file used to produce the Manifest and by extension the
+        file stored inside the associated Artifact.
+      required:
+        - api_version
+        - kind
+        - name
+        - system_types_compatible
+        - component_types
+      properties:
+        api_version:
+          description: The `api_version` from the manifest.yaml. Currently the only supported version is 'mender/v1'.
+          type: string
+        kind:
+          description: The `kind` from the manifest.yaml. Currently the only supported version is 'manifest'.
+          type: string
+        name:
+          description: |-
+            The name from the manifest.yaml. This will always be the same as the `name` of
+            the Manifest and associated Artifact.
+          type: string
+        system_types_compatible:
+          type: array
+          description: |-
+            The `system_types_compatible` from the manifest.yaml. This will always be the same 
+            as `device_types_compatible` from the associated Artifact.
+          items:
+            type: string
+        component_types:
+          type: object
+          description: |-
+            The `component_types` from the manifest.yaml. This is a dictionary that uses component IDs as keys
+            and describes the required end state of the components of the target system after the Manifest
+            has been deployed.
+          additionalProperties:
+            $ref: '#/components/schemas/ManifestComponent'
+      type: object
+    Manifest:
+      description: A Manifest is software that only can be deployed to a Mender Orchestrator Device.
+      example:
+        name: system-core-v1
+        modified: '2026-05-17T08:56:52.063493443Z'
+        artifact:
+          id: 0c13a0e6-6b63-475d-8260-ee42a590e8ff
+          name: system-core-v1
+          description: A demo manifest
+          device_types_compatible:
+            - system-core
+          info:
+            format: mender
+            version: 3
+          updates:
+            - type_info:
+                type: mender-orchestrator-manifest
+              files:
+                - name: manifest.yaml
+                  checksum: b9a5dd94a6f16546d4ad4f3e13f80b94d0ba4d101757f379572ee7daa8d31cc4
+                  size: 276
+                  date: 2026-03-06T16:05:58.063+0000
+              metadata: {}
+              meta_data: []
+          artifact_provides:
+            artifact_name: system-core-v1
+            data-partition.mender-orchestrator-manifest.version: system-core-v1
+          artifact_depends:
+            device_type:
+              - system-core
+          clears_artifact_provides:
+            - data-partition.mender-orchestrator-manifest.*
+          size: 5120
+          modified: '2026-04-13T08:56:52.063493443Z'
+        manifest:
+          api_version: mender/v1
+          kind: manifest
+          name: system-core-v1
+          system_types_compatible:
+            - system-core
+          component_types:
+            gateway:
+              artifact_name: gateway-v1
+              update_strategy:
+                order: 10
+            rtos:
+              artifact_path: /data/artifacts/rtos-v1
+              update_strategy:
+                order: 20
+        tags:
+          - system-core
+          - demo
+        notes: This is a demo manifest used for documentation purposes.
+      required:
+        - name
+        - modified
+        - artifact
+      properties:
+        name:
+          description: The name of the Manifest.
+          type: string
+        modified:
+          description: Last modification time for the Manifest.
+          format: date-time
+          type: string
+        artifact:
+          $ref: '#/components/schemas/ArtifactV2'
+        manifest:
+          $ref: '#/components/schemas/ManifestContent'
+        tags:
+          description: |-
+            Tags assigned to the Manifest used for filtering. Each tag
+            must be valid a ASCII string and contain only lowercase and uppercase
+            letters, digits, underscores, periods and hyphens.
+          items:
+            type: string
+          type: array
+        notes:
+          description: |
+            Additional information describing a Manifest limited to 1024 characters.
+          type: string
+      type: object
     ArtifactV2:
       description: Detailed artifact.
       example:
@@ -15417,6 +15642,16 @@ components:
         - modified
         - name
       type: object
+    UploadManifestRequest:
+      allOf:
+        - properties:
+            tags:
+              description: |
+                List of tags for the manifest.
+              type: array
+              items:
+                type: string
+        - $ref: '#/components/schemas/UploadArtifactRequest'
     ReleasesV2:
       description: List of releases
       items:
