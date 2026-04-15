@@ -1645,13 +1645,85 @@ export type StorageLimit = {
   usage: number;
 };
 
-export type UploadManifestRequest = {
+/**
+ * The `update_strategy` of a component from the manifest.yaml
+ */
+export type ManifestComponentUpdateStrategy = {
   /**
-   * List of tags for the manifest.
-   *
+   * The installation priority (order). Lower number means higher priority.
+   */
+  order: number;
+};
+
+/**
+ * A `component` from the manifest.yaml. Every `component` will always have _at least_ one of
+ * `artifact_name` and `artifact_path`. If both are defined, `artifact_path` takes precedence.
+ */
+export type ManifestComponent = {
+  artifact_name?: string;
+  artifact_path?: string;
+  update_strategy: ManifestComponentUpdateStrategy;
+};
+
+/**
+ * The content of the manifest.yaml file used to produce the Manifest and by extension the
+ * file stored inside the associated Artifact.
+ */
+export type ManifestContent = {
+  /**
+   * The `api_version` from the manifest.yaml. Currently the only supported version is 'mender/v1'.
+   */
+  api_version: string;
+  /**
+   * The `kind` from the manifest.yaml. Currently the only supported version is 'manifest'.
+   */
+  kind: string;
+  /**
+   * The name from the manifest.yaml. This will always be the same as the `name` of
+   * the Manifest and associated Artifact.
+   */
+  name: string;
+  /**
+   * The `system_types_compatible` from the manifest.yaml. This will always be the same
+   * as `device_types_compatible` from the associated Artifact.
+   */
+  system_types_compatible: Array<string>;
+  /**
+   * The `component_types` from the manifest.yaml. This is a dictionary that uses component IDs as keys
+   * and describes the required end state of the components of the target system after the Manifest
+   * has been deployed.
+   */
+  component_types: {
+    [key: string]: ManifestComponent;
+  };
+};
+
+/**
+ * A Manifest is software that only can be deployed to a Mender Orchestrator Device.
+ */
+export type Manifest = {
+  /**
+   * The name of the Manifest.
+   */
+  name: string;
+  /**
+   * Last modification time for the Manifest.
+   */
+  modified: string;
+  artifact: ArtifactV2;
+  manifest?: ManifestContent;
+  /**
+   * Tags assigned to the Manifest used for filtering. Each tag
+   * must be valid a ASCII string and contain only lowercase and uppercase
+   * letters, digits, underscores, periods and hyphens.
    */
   tags?: Array<string>;
-} & UploadArtifactRequest2;
+  /**
+   * Additional information describing a Manifest limited to 1024 characters.
+   *
+   */
+  notes?: string;
+};
 
 /**
  * Detailed artifact.
@@ -1703,6 +1775,14 @@ export type ArtifactV2 = {
    */
   modified: string;
 };
+
+export type UploadManifestRequest = {
+  /**
+   * List of tags for the manifest.
+   *
+   */
+  tags?: Array<string>;
+} & UploadArtifactRequest2;
 
 /**
  * List of releases
@@ -7134,6 +7214,56 @@ export type UpdateBinaryDeltaConfigurationResponses = {
 
 export type UpdateBinaryDeltaConfigurationResponse = UpdateBinaryDeltaConfigurationResponses[keyof UpdateBinaryDeltaConfigurationResponses];
 
+export type GetDeploymentManifestsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Manifest name filter.
+     */
+    name?: string;
+    /**
+     * Starting page.
+     */
+    page?: number;
+    /**
+     * Maximum number of results per page.
+     */
+    per_page?: number;
+    /**
+     * Sort the Manifest list by the specified field and direction.
+     */
+    sort?: 'modified:asc' | 'modified:desc' | 'name:asc' | 'name:desc' | 'tags:asc' | 'tags:desc';
+  };
+  url: '/api/management/v1alpha1/deployments/manifests';
+};
+
+export type GetDeploymentManifestsErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type GetDeploymentManifestsError = GetDeploymentManifestsErrors[keyof GetDeploymentManifestsErrors];
+
+export type GetDeploymentManifestsResponses = {
+  /**
+   * A successful response including the Manifests
+   */
+  200: Array<Manifest>;
+};
+
+export type GetDeploymentManifestsResponse = GetDeploymentManifestsResponses[keyof GetDeploymentManifestsResponses];
+
 export type UploadDeploymentManifestArtifactData = {
   body: UploadManifestRequest;
   path?: never;
@@ -7169,6 +7299,44 @@ export type UploadDeploymentManifestArtifactResponses = {
    */
   201: unknown;
 };
+
+export type GetDeploymentManifestByNameData = {
+  body?: never;
+  path: {
+    /**
+     * Name of the Manifest
+     */
+    manifest_name: string;
+  };
+  query?: never;
+  url: '/api/management/v1alpha1/deployments/manifests/{manifest_name}';
+};
+
+export type GetDeploymentManifestByNameErrors = {
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * Not Found.
+   */
+  404: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type GetDeploymentManifestByNameError = GetDeploymentManifestByNameErrors[keyof GetDeploymentManifestByNameErrors];
+
+export type GetDeploymentManifestByNameResponses = {
+  /**
+   * A successful response including the Manifest.
+   */
+  200: Manifest;
+};
+
+export type GetDeploymentManifestByNameResponse = GetDeploymentManifestByNameResponses[keyof GetDeploymentManifestByNameResponses];
 
 export type GetDeploymentLogForDeviceV1Alpha1Data = {
   body?: never;
