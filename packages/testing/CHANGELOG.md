@@ -1,5 +1,30 @@
 ---
-## 0.8.3 - 2026-04-01
+## 0.8.4 - 2026-04-15
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Openapi spec update
+
+ ([ae19dc9](https://github.com/NorthernTechHQ/nt-gui/commit/ae19dc9c5ca51ba1d80f00a7fa37c92cc3517b70))  by @mender-test-bot
+
+
+
+- *(testing)* Fixed ts errors to enable type checked usage
+
+ ([1ecaba0](https://github.com/NorthernTechHQ/nt-gui/commit/1ecaba038c2e492a625de85ab4a8264e06ceff7d))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/testing-0.8.3 - 2026-04-01
 
 
 ### Bug fixes
