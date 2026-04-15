@@ -2113,6 +2113,7 @@ export type ExternalIdentity = {
    * Status flag.
    */
   active?: boolean;
+  [key: string]: unknown | string | boolean | undefined;
 };
 
 export type Device = {
@@ -2650,6 +2651,8 @@ export type FilterPredicate = {
   /**
    * The value of the attribute to be used in filtering.
    * Attribute type is implicit, inferred from the JSON type.
+   * Supported types: number, string, boolean, array of numbers, array of strings.
+   * Mixed arrays are not allowed.
    *
    * The $exists operator expects a boolean value: true means the specified
    * attribute exists, false means the specified attribute doesn't exist.
@@ -2661,7 +2664,7 @@ export type FilterPredicate = {
    * `/[a-z]+/i`.
    *
    */
-  value: string;
+  value: string | number | boolean | Array<string> | Array<number>;
 };
 
 /**
@@ -3456,7 +3459,7 @@ export type SubscriptionRequest = {
 /**
  * The name of the product.
  */
-export const ProductName = { MENDER_STANDARD: 'mender_standard' } as const;
+export const ProductName = { MENDER_STANDARD: 'mender_standard', MENDER_MICRO: 'mender_micro' } as const;
 
 /**
  * The name of the product.
@@ -4028,7 +4031,7 @@ export type PasswordResetCompletion = {
   /**
    * Secret hash received by email by the user
    */
-  secret: string;
+  secret_hash: string;
   /**
    * New password of the user
    */
@@ -13792,6 +13795,10 @@ export type SignUpData = {
      */
     subscription_token?: string;
     /**
+     * User has opted in to marketing communications
+     */
+    marketing?: boolean;
+    /**
      * Campaign
      */
     campaign?: string;
@@ -13866,6 +13873,10 @@ export type CreateTrialAccountData = {
      * customer plan
      */
     plan?: 'os' | 'professional' | 'enterprise';
+    /**
+     * User has opted in to marketing communications.
+     */
+    marketing?: boolean;
     /**
      * Campaign
      */
