@@ -16,6 +16,7 @@ import { deploymentsApiUrl, deploymentsApiUrlV2, headerNames, limitDefault } fro
 import { HttpResponse, http } from 'msw';
 
 import { mockApiResponses } from '../mockData';
+import { validated } from './validation';
 
 const createdDeployment = {
   id: 'created-123',
@@ -125,43 +126,55 @@ export const deploymentHandlers = [
     }
     return new HttpResponse(null, { status: 521 });
   }),
-  http.post(`${deploymentsApiUrl}/deployments/statistics/list`, async ({ request }) => {
-    const { deployment_ids = [] } = await request.json();
-    if (deployment_ids.includes(createdDeployment.id)) {
-      return HttpResponse.json([]);
-    } else if (deployment_ids.every(id => mockApiResponses.deployments.byId[id])) {
-      const stats = deployment_ids.map(id => ({ id, stats: mockApiResponses.deployments.byId[id].statistics.status }));
-      return HttpResponse.json(stats);
-    }
-    return new HttpResponse(null, { status: 522 });
-  }),
+  http.post(
+    `${deploymentsApiUrl}/deployments/statistics/list`,
+    validated(async ({ request }) => {
+      const { deployment_ids = [] } = await request.json();
+      if (deployment_ids.includes(createdDeployment.id)) {
+        return HttpResponse.json([]);
+      } else if (deployment_ids.every(id => mockApiResponses.deployments.byId[id])) {
+        const stats = deployment_ids.map(id => ({ id, stats: mockApiResponses.deployments.byId[id].statistics.status }));
+        return HttpResponse.json(stats);
+      }
+      return new HttpResponse(null, { status: 522 });
+    })
+  ),
   http.get(`${deploymentsApiUrl}/deployments/:deploymentId/devices/:deviceId/log`, ({ params: { deploymentId, deviceId } }) => {
     if (mockApiResponses.deployments.byId[deploymentId] && mockApiResponses.deployments.byId[deploymentId].devices[deviceId]) {
       return HttpResponse.text('test');
     }
     return new HttpResponse(null, { status: 523 });
   }),
-  http.post(`${deploymentsApiUrl}/deployments`, async ({ request }) => {
-    const body = await request.json();
-    if (!Object.keys(body).length) {
-      return new HttpResponse(JSON.stringify({}), { status: 524 });
-    }
-    return new HttpResponse(JSON.stringify({}), { headers: { location: `find/me/here/${createdDeployment.id}` } });
-  }),
-  http.post(`${deploymentsApiUrlV2}/deployments`, async ({ request }) => {
-    const { filter_id, devices = [] } = await request.json();
-    if (!filter_id || !!devices.length) {
-      return new HttpResponse(JSON.stringify({}), { status: 525 });
-    }
-    return new HttpResponse(JSON.stringify({}), { headers: { location: `find/me/here/${createdDeployment.id}` } });
-  }),
-  http.post(`${deploymentsApiUrl}/deployments/group/:deploymentGroup`, async ({ params: { deploymentGroup }, request }) => {
-    const { filter_id, devices = [] } = await request.json();
-    if (filter_id || !!devices.length || deploymentGroup !== Object.keys(mockApiResponses.devices.groups.byId)[0]) {
-      return new HttpResponse(JSON.stringify({}), { status: 526 });
-    }
-    return new HttpResponse(JSON.stringify({}), { headers: { location: `find/me/here/${createdDeployment.id}` } });
-  }),
+  http.post(
+    `${deploymentsApiUrl}/deployments`,
+    validated(async ({ request }) => {
+      const body = await request.json();
+      if (!Object.keys(body).length) {
+        return new HttpResponse(JSON.stringify({}), { status: 524 });
+      }
+      return new HttpResponse(JSON.stringify({}), { headers: { location: `find/me/here/${createdDeployment.id}` } });
+    })
+  ),
+  http.post(
+    `${deploymentsApiUrlV2}/deployments`,
+    validated(async ({ request }) => {
+      const { filter_id, devices = [] } = await request.json();
+      if (!filter_id || !!devices.length) {
+        return new HttpResponse(JSON.stringify({}), { status: 525 });
+      }
+      return new HttpResponse(JSON.stringify({}), { headers: { location: `find/me/here/${createdDeployment.id}` } });
+    })
+  ),
+  http.post(
+    `${deploymentsApiUrl}/deployments/group/:deploymentGroup`,
+    validated(async ({ params: { deploymentGroup }, request }) => {
+      const { filter_id, devices = [] } = await request.json();
+      if (filter_id || !!devices.length || deploymentGroup !== Object.keys(mockApiResponses.devices.groups.byId)[0]) {
+        return new HttpResponse(JSON.stringify({}), { status: 526 });
+      }
+      return new HttpResponse(JSON.stringify({}), { headers: { location: `find/me/here/${createdDeployment.id}` } });
+    })
+  ),
   http.patch(`${deploymentsApiUrl}/deployments/:deploymentId`, async ({ params: { deploymentId }, request }) => {
     const { update_control_map } = await request.json();
     if (deploymentId === createdDeployment.id && Object.keys(update_control_map).length) {
@@ -169,18 +182,21 @@ export const deploymentHandlers = [
     }
     return new HttpResponse(null, { status: 581 });
   }),
-  http.put(`${deploymentsApiUrl}/deployments/:deploymentId/status`, async ({ params: { deploymentId }, request }) => {
-    const { status } = await request.json();
-    return new HttpResponse(JSON.stringify({}), {
-      status:
-        status === 'aborted' &&
-        [...mockApiResponses.deployments.byStatus.pending.deploymentIds, ...mockApiResponses.deployments.byStatus.inprogress.deploymentIds].includes(
-          deploymentId
-        )
-          ? 200
-          : 528
-    });
-  }),
+  http.put(
+    `${deploymentsApiUrl}/deployments/:deploymentId/status`,
+    validated(async ({ params: { deploymentId }, request }) => {
+      const { status } = await request.json();
+      return new HttpResponse(JSON.stringify({}), {
+        status:
+          status === 'aborted' &&
+          [...mockApiResponses.deployments.byStatus.pending.deploymentIds, ...mockApiResponses.deployments.byStatus.inprogress.deploymentIds].includes(
+            deploymentId
+          )
+            ? 200
+            : 528
+      });
+    })
+  ),
   http.get(`${deploymentsApiUrl}/deployments/:deploymentId/devices/list`, ({ params: { deploymentId } }) => {
     if (deploymentId === createdDeployment.id) {
       return new HttpResponse(JSON.stringify(Object.values(createdDeployment.devices)), {
@@ -194,13 +210,16 @@ export const deploymentHandlers = [
     return new HttpResponse(null, { status: 529 });
   }),
   http.get(`${deploymentsApiUrl}/config`, () => HttpResponse.json(defaultDeploymentConfig)),
-  http.put(`${deploymentsApiUrl}/config/binary_delta`, async ({ request }) => {
-    const { xdelta_args = {} } = await request.json();
-    if (xdelta_args.source_window_size === 55) {
-      return new HttpResponse(null, { status: 530 });
-    }
-    return new HttpResponse(null, { status: 200 });
-  }),
+  http.put(
+    `${deploymentsApiUrl}/config/binary_delta`,
+    validated(async ({ request }) => {
+      const { xdelta_args = {} } = await request.json();
+      if (xdelta_args.source_window_size === 55) {
+        return new HttpResponse(null, { status: 530 });
+      }
+      return new HttpResponse(null, { status: 200 });
+    })
+  ),
   http.get(`${deploymentsApiUrl}/deployments/devices/:deviceId`, ({ params: { deviceId } }) => {
     if (deviceId === mockApiResponses.devices.byId.a1.id) {
       return new HttpResponse(
