@@ -2113,6 +2113,7 @@ export type ExternalIdentity = {
    * Status flag.
    */
   active?: boolean;
+  [key: string]: unknown | string | boolean | undefined;
 };
 
 export type Device = {
@@ -2650,6 +2651,8 @@ export type FilterPredicate = {
   /**
    * The value of the attribute to be used in filtering.
    * Attribute type is implicit, inferred from the JSON type.
+   * Supported types: number, string, boolean, array of numbers, array of strings.
+   * Mixed arrays are not allowed.
    *
    * The $exists operator expects a boolean value: true means the specified
    * attribute exists, false means the specified attribute doesn't exist.
@@ -2661,7 +2664,7 @@ export type FilterPredicate = {
    * `/[a-z]+/i`.
    *
    */
-  value: string;
+  value: string | number | boolean | Array<string> | Array<number>;
 };
 
 /**
