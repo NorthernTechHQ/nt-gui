@@ -1,5 +1,40 @@
 ---
-## 0.8.4 - 2026-04-15
+## 0.9.0 - 2026-04-17
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Openapi spec update
+
+ ([08f8a5a](https://github.com/NorthernTechHQ/nt-gui/commit/08f8a5a44b172db2b1d1478927329fa3744a6cb7))  by @mender-test-bot
+
+
+
+
+
+
+
+### Features
+
+#### Testing
+
+
+- *(testing)* Added validation script to enforce spec compliance in msw handlers
+
+([QA-1539](https://northerntech.atlassian.net/browse/QA-1539)) ([0365e7b](https://github.com/NorthernTechHQ/nt-gui/commit/0365e7b6b6b12847c01601d0a20487a0cb904efc))  by @mineralsfree
+
+
+
+
+
+
+
+
+
+## @northern.tech/testing-0.8.4 - 2026-04-15
 
 
 ### Bug fixes
