@@ -1,5 +1,28 @@
 ---
-## @northern.tech/eslint-config-0.6.3 - 2026-02-23
+## 0.7.1 - 2026-04-17
+
+
+### Bug fixes
+
+#### Eslint-config
+
+
+- *(eslint-config)* Eased out unused vars rule for underscore prefixed vars
+
+([QA-1539](https://northerntech.atlassian.net/browse/QA-1539)) ([87012c6](https://github.com/NorthernTechHQ/nt-gui/commit/87012c66f5d915e9064e11fba63f57ff30a0145b))  by @mineralsfree
+
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/eslint-config-0.7.0 - 2026-02-23
 
 
 ### Bug fixes
