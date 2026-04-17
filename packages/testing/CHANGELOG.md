@@ -1,5 +1,24 @@
 ---
-## 0.9.0 - 2026-04-17
+## 0.9.1 - 2026-04-17
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Used named import for OpenAPIBackend to fix ESM interop
+
+ ([2433092](https://github.com/NorthernTechHQ/nt-gui/commit/243309217d60fb625f535e7a3bfc8389a30548ee))  by @mineralsfree
+
+
+
+
+
+
+
+
+## @northern.tech/testing-0.9.0 - 2026-04-17
 
 
 ### Bug fixes
