@@ -1,5 +1,25 @@
 ---
-## 0.30.1 - 2026-04-15
+## 0.30.2 - 2026-04-17
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Cleaned up sent properties in thunks and tests
+
+([QA-1539](https://northerntech.atlassian.net/browse/QA-1539)) ([3d29ee4](https://github.com/NorthernTechHQ/nt-gui/commit/3d29ee4897abe2189d1b0bb121bf24e8c1fa5f86))  by @mineralsfree
+
+
+
+
+
+
+
+
+
+## @northern.tech/store-0.30.1 - 2026-04-15
 
 
 ### Bug fixes
