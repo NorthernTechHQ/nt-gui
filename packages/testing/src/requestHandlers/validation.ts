@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { load } from 'js-yaml';
-import OpenAPIBackend from 'openapi-backend';
+import { OpenAPIBackend } from 'openapi-backend';
 import type { Document } from 'openapi-backend';
 
 import specYaml from '../openapi.yaml';
