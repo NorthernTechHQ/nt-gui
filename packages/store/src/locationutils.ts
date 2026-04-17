@@ -595,6 +595,7 @@ type ParseReleasesExtraProps = {
 export type ParseReleasesQueryResult = {
   searchTerm: string | null;
   selectedJob?: string;
+  selectedManifest?: string;
   selectedRelease: string;
   tab?: string | null;
   tags: string[];
@@ -608,12 +609,15 @@ export const parseReleasesQuery = (queryParams: URLSearchParams, extraProps: Par
   const type = queryParams.has('type') ? queryParams.get('type') : '';
   let selectedRelease = decodeURIComponent(extraProps.location.pathname.substring(releasesRoot.length + 1));
   let selectedJob;
+  let selectedManifest;
   if (extraProps.pageState?.id?.length && tab === 'delta') {
     selectedJob = extraProps.pageState.id[0];
+  } else if (extraProps.pageState?.id?.length && tab === 'manifests') {
+    selectedManifest = extraProps.pageState.id[0];
   } else if (!selectedRelease && extraProps.pageState?.id?.length) {
     selectedRelease = extraProps.pageState.id[0];
   }
-  return { searchTerm: name, selectedJob, selectedRelease, tab, tags, type };
+  return { searchTerm: name, selectedJob, selectedManifest, selectedRelease, tab, tags, type };
 };
 
 const tenantsRoot = '/tenants';

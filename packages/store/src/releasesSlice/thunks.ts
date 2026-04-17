@@ -17,6 +17,7 @@ import type {
   DeltaJobDetailsItem,
   DeltaJobsListItem,
   DeviceInventory,
+  Manifest,
   ReleaseUpdate,
   ReleaseV1,
   ReleaseV2,
@@ -28,7 +29,7 @@ import type { AxiosResponse } from 'axios';
 import { isCancel } from 'axios';
 import { v4 as uuid } from 'uuid';
 
-import type { Artifact, Release, ReleaseSliceType, ReleasesList } from '.';
+import type { Artifact, ManifestsList, Release, ReleaseSliceType, ReleasesList } from '.';
 import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import GeneralApi from '../api/general-api';
@@ -37,6 +38,7 @@ import {
   SORTING_OPTIONS,
   TIMEOUTS,
   deploymentsApiUrl,
+  deploymentsApiUrlV1alpha1,
   deploymentsApiUrlV2,
   emptyFilter,
   headerNames,
@@ -48,7 +50,7 @@ import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { convertDeviceListStateToFilters, progress } from '../utils';
 import { ARTIFACT_GENERATION_TYPE } from './constants';
-import { getReleasesById } from './selectors';
+import { getManifestsById, getReleasesById } from './selectors';
 
 const { setSnackbar, initUpload, uploadProgress, cleanUpUpload } = storeActions;
 const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
@@ -503,4 +505,102 @@ export const getDeltaGenerationJobDetails = createAppAsyncThunk(`${sliceName}/ge
   GeneralApi.get<DeltaJobDetailsItem>(`${deploymentsApiUrlV2}/deployments/releases/delta/jobs/${jobId}`)
     .then(({ data }) => dispatch(actions.receivedDeltaJobDetails({ ...data, id: jobId })))
     .catch(err => commonErrorHandler(err, 'There was an error retrieving delta generation job details:', dispatch))
+);
+
+/* Manifests */
+
+const manifestSortingDefaults = { direction: SORTING_OPTIONS.desc, key: 'modified' };
+
+const reduceReceivedManifests = (manifests: Manifest[]) =>
+  manifests.reduce<Record<string, Manifest>>((accu, manifest) => {
+    accu[manifest.name] = manifest;
+    return accu;
+  }, {});
+
+const manifestListRetrieval = (config: Partial<ManifestsList>) => {
+  const { searchTerm = '', page = defaultPage, perPage = defaultPerPage, sort = manifestSortingDefaults } = config;
+  const { key: attribute, direction } = sort;
+  const nameFilter = searchTerm ? `name=${encodeURIComponent(searchTerm)}` : '';
+  const sorting = attribute ? `sort=${attribute}:${direction}`.toLowerCase() : '';
+  return GeneralApi.get<Array<Manifest>>(
+    `${deploymentsApiUrlV1alpha1}/manifests?${[`page=${page}`, `per_page=${perPage}`, nameFilter, sorting].filter(i => i).join('&')}`
+  );
+};
+
+const deductManifestSearchState = (receivedManifests: Manifest[], config, total: number, state: ReleaseSliceType) => {
+  let manifestsListState = { ...state.manifestsList };
+  const { searchTerm, sort = {} } = config;
+  const sortedManifests = Object.values(receivedManifests).sort(customSort(sort.direction === SORTING_OPTIONS.desc, sort.key));
+  const manifestIds = sortedManifests.map(item => item.name);
+  const isFiltering = !!searchTerm;
+  manifestsListState = {
+    ...manifestsListState,
+    manifestIds,
+    searchTotal: isFiltering ? total : state.manifestsList.searchTotal,
+    total: !isFiltering ? total : state.manifestsList.total
+  };
+  return manifestsListState;
+};
+
+export const getManifests = createAppAsyncThunk(
+  `${sliceName}/getManifests`,
+  async (passedConfig: Partial<ManifestsList> | undefined = {}, { dispatch, getState }) => {
+    const config = { ...getState().releases.manifestsList, ...passedConfig };
+    const { data: receivedManifests = [], headers = {} } = await manifestListRetrieval(config).catch(err =>
+      commonErrorHandler(err, `Please check your connection`, dispatch)
+    );
+    const total = headers[headerNames.total] ? Number(headers[headerNames.total]) : 0;
+    const state = getState().releases;
+    const flatManifests = reduceReceivedManifests(receivedManifests);
+    const combinedManifests = { ...state.manifestsById, ...flatManifests };
+    dispatch(actions.receiveManifests(combinedManifests));
+    const manifestsListState = deductManifestSearchState(receivedManifests, config, total, state);
+    dispatch(actions.setManifestsListState(manifestsListState));
+    return combinedManifests;
+  }
+);
+
+export const getManifest = createAppAsyncThunk(`${sliceName}/getManifest`, async (name: string, { dispatch, getState }) => {
+  const { data } = await GeneralApi.get<Manifest>(`${deploymentsApiUrlV1alpha1}/manifests/${name}`);
+  if (!data) {
+    return null;
+  }
+  const stateManifest = getManifestsById(getState())[data.name] || {};
+  const manifest = { ...stateManifest, ...data };
+  dispatch(actions.receiveManifest(manifest));
+  return manifest;
+});
+
+export const selectManifest = createAppAsyncThunk(`${sliceName}/selectManifest`, async (manifest: Manifest | string | null, { dispatch }) => {
+  const name = (manifest && typeof manifest === 'object' ? manifest.name : manifest) || null;
+  dispatch(actions.selectedManifest(name));
+  if (name) {
+    await dispatch(getManifest(name)).unwrap();
+  }
+});
+
+export const setManifestsListState = createAppAsyncThunk(
+  `${sliceName}/setManifestsListState`,
+  async (selectionState: Partial<ManifestsList>, { dispatch, getState }) => {
+    const currentState = getState().releases.manifestsList;
+    const nextState = {
+      ...currentState,
+      ...selectionState,
+      sort: { ...currentState.sort, ...selectionState.sort } as SortOptions
+    };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { isLoading: currentLoading, ...currentRequestState } = currentState;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { isLoading: selectionLoading, ...selectionRequestState } = nextState;
+    if (!deepCompare(currentRequestState, selectionRequestState)) {
+      nextState.isLoading = true;
+      dispatch(getManifests(nextState)) // don't await here as this would otherwise overwrite setting the `nextState` below
+        .unwrap()
+        .finally(() => dispatch(setManifestsListState({ isLoading: false })).unwrap());
+    }
+    if (currentState.page !== nextState.page || currentState.perPage > nextState.perPage || !deepCompare(currentState.sort, nextState.sort)) {
+      nextState.selection = [];
+    }
+    dispatch(actions.setManifestsListState(nextState));
+  }
 );

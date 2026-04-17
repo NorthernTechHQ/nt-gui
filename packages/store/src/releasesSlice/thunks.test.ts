@@ -27,12 +27,16 @@ import {
   getArtifactInstallCount,
   getArtifactUrl,
   getExistingReleaseTags,
+  getManifest,
+  getManifests,
   getRelease,
   getReleases,
   getUpdateTypes,
   removeArtifact,
   removeRelease,
+  selectManifest,
   selectRelease,
+  setManifestsListState,
   setReleaseTags,
   setReleasesListState,
   setSingleReleaseTags,
@@ -419,6 +423,107 @@ describe('release actions', () => {
     const storeActions = store.getActions();
     expect(storeActions).toContainEqual(
       expect.objectContaining({ type: actions.setReleaseListState.type, payload: expect.objectContaining({ selection: [0, 1] }) })
+    );
+  });
+});
+
+const retrievedManifestIds = [
+  'm1',
+  'm10',
+  'm11',
+  'm12',
+  'm13',
+  'm14',
+  'm15',
+  'm16',
+  'm17',
+  'm18',
+  'm19',
+  'm2',
+  'm20',
+  'm3',
+  'm4',
+  'm5',
+  'm6',
+  'm7',
+  'm8',
+  'm9'
+];
+
+describe('manifest actions', () => {
+  it('should retrieve a single manifest by name', async () => {
+    const store = mockStore({ ...defaultState });
+    store.clearActions();
+    const expectedActions = [
+      { type: getManifest.pending.type },
+      { type: actions.receiveManifest.type, payload: defaultState.releases.manifestsById.m1000 },
+      { type: getManifest.fulfilled.type }
+    ];
+    await store.dispatch(getManifest(defaultState.releases.manifestsById.m1000.name));
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+  it('should retrieve a list of manifests', async () => {
+    const store = mockStore({ ...defaultState });
+    const expectedActions = [
+      { type: getManifests.pending.type },
+      { type: actions.receiveManifests.type, payload: defaultState.releases.manifestsById },
+      {
+        type: actions.setManifestsListState.type,
+        payload: { ...defaultState.releases.manifestsList, manifestIds: ['m1000'], total: 1000 }
+      },
+      { type: getManifests.fulfilled.type }
+    ];
+    await store.dispatch(getManifests({ perPage: 1, sort: { direction: 'desc', key: 'modified' } }));
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+  it('should retrieve a search filtered list of manifests', async () => {
+    const store = mockStore({ ...defaultState });
+    const expectedActions = [
+      { type: getManifests.pending.type },
+      { type: actions.receiveManifests.type, payload: defaultState.releases.manifestsById },
+      {
+        type: actions.setManifestsListState.type,
+        payload: {
+          ...defaultState.releases.manifestsList,
+          manifestIds: retrievedManifestIds,
+          searchTotal: 1234
+        }
+      },
+      { type: getManifests.fulfilled.type }
+    ];
+    await store.dispatch(getManifests({ searchTerm: 'something' }));
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+  it('should select a manifest by name', async () => {
+    const store = mockStore({ ...defaultState });
+    const expectedActions = [
+      { type: selectManifest.pending.type },
+      { type: actions.selectedManifest.type, payload: defaultState.releases.manifestsById.m1000.name },
+      { type: getManifest.pending.type },
+      { type: actions.receiveManifest.type, payload: defaultState.releases.manifestsById.m1000 },
+      { type: getManifest.fulfilled.type },
+      { type: selectManifest.fulfilled.type }
+    ];
+    await store.dispatch(selectManifest(defaultState.releases.manifestsById.m1000.name));
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+  it('should clear selection when manifest list page or sort changes', async () => {
+    const store = mockStore({
+      ...defaultState,
+      releases: { ...defaultState.releases, manifestsList: { ...defaultState.releases.manifestsList, selection: [0, 1, 2] } }
+    });
+    await store.dispatch(setManifestsListState({ page: 2 }));
+    const storeActions = store.getActions();
+    expect(storeActions).toContainEqual(
+      expect.objectContaining({ type: actions.setManifestsListState.type, payload: expect.objectContaining({ selection: [] }) })
     );
   });
 });

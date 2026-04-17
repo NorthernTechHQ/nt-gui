@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { ReleaseV2 } from '@northern.tech/types/MenderTypes';
+import type { Manifest, ReleaseV2 } from '@northern.tech/types/MenderTypes';
 import { createSelector } from '@reduxjs/toolkit';
 
 import type { RootState } from '../store';
@@ -43,3 +43,22 @@ export const getDeltaJobsById = (state: RootState) => state.releases.deltaJobs;
 export const getDeltaJobById = createSelector([getDeltaJobsById, (_, jobId) => jobId], (byId, jobId: string) => byId[jobId]);
 const getSelectedJobId = (state: RootState) => state.releases.selectedJob;
 export const getSelectedJob = createSelector([getDeltaJobsById, getSelectedJobId], (byId, jobId) => byId[jobId || '']);
+
+const getSelectedManifestId = (state: RootState) => state.releases.selectedManifest;
+export const getManifestsById = (state: RootState) => state.releases.manifestsById;
+export const getManifestsListState = (state: RootState) => state.releases.manifestsList;
+const getListedManifests = (state: RootState) => state.releases.manifestsList.manifestIds;
+const manifestDefaults = {};
+const getManifestMappingDefaults = () => manifestDefaults;
+export const getManifestsList = createSelector([getManifestsById, getListedManifests, getManifestMappingDefaults], listItemMapper<Manifest>);
+
+export const getHasManifests = createSelector(
+  [getManifestsListState, getManifestsById],
+  ({ searchTotal, total }, byId) => !!(Object.keys(byId).length || total || searchTotal)
+);
+
+export const getSelectedManifest = createSelector([getManifestsById, getSelectedManifestId], (byId, id) => byId[id || ''] ?? {});
+
+export const getSelectedManifests = createSelector([getManifestsListState, getManifestsList], ({ selection }, manifests) =>
+  selection.map(index => manifests[index])
+);
