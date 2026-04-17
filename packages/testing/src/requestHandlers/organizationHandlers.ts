@@ -16,6 +16,7 @@ import { auditLogsApiUrl, headerNames, iotManagerBaseURL, ssoIdpApiUrlv1, tenant
 import { HttpResponse, http } from 'msw';
 
 import { mockApiResponses, tenants, webhookEvents } from '../mockData';
+import { validated } from './validation';
 
 const PLANS = {
   os: { id: 'os', name: 'Basic' },
@@ -80,13 +81,13 @@ const releasesSample = {
 
 const tagsSample = [{ name: 'saas-v2023.05.02', more: 'here' }];
 
-const signupHandler = async ({ request }) => {
+const signupHandler = validated(async ({ request }) => {
   const signup = await request.json();
-  if (['email', 'organization', 'plan', 'tos'].every(item => !!signup[item])) {
+  if (['email', 'organization', 'plan'].every(item => !!signup[item])) {
     return HttpResponse.text('test');
   }
   return new HttpResponse(null, { status: 400 });
-};
+});
 
 const invoicePreviewBasic = {
   id: 'upcoming_in_1RlAkbFlFfXikjZVOHK5VQx0',
@@ -129,9 +130,16 @@ export const organizationHandlers = [
   http.get('/tags.json', () => HttpResponse.json(tagsSample)),
   http.get('/versions.json', () => HttpResponse.json(releasesSample)),
   http.get(`${tenantadmApiUrlv1}/user/tenant`, () => HttpResponse.json(mockApiResponses.organization.organization)),
-  http.put(`${tenantadmApiUrlv2}/tenants/:tenantId/child`, () => new HttpResponse(null, { status: 200 })),
-  http.post(`${tenantadmApiUrlv2}/tenants/:tenantId/cancel`, () => new HttpResponse(null, { status: 200 })),
+  http.put(
+    `${tenantadmApiUrlv2}/tenants/:tenantId/child`,
+    validated(() => new HttpResponse(null, { status: 200 }))
+  ),
+  http.post(
+    `${tenantadmApiUrlv2}/tenants/:tenantId/cancel`,
+    validated(() => new HttpResponse(null, { status: 200 }))
+  ),
   http.post(`${tenantadmApiUrlv2}/tenants/trial`, signupHandler),
+  // TODO: add validation once spec is fixed (accepts `device_limits`)
   http.post(`${tenantadmApiUrlv2}/tenants`, async ({ request }) => {
     const { users } = await request.json();
     const { email } = users[0];
@@ -151,10 +159,13 @@ export const organizationHandlers = [
       shipping: { address: { state: 'OSLO', line1: 'Blindern', country: 'NO', city: 'OSLO', postal_code: '0123' } }
     })
   ),
-  http.post(`${tenantadmApiUrlv2}/billing/card`, () => HttpResponse.json({ intent_id: mockApiResponses.organization.intentId, secret: 'testSecret' })),
+  http.post(
+    `${tenantadmApiUrlv2}/billing/card`,
+    validated(() => HttpResponse.json({ intent_id: mockApiResponses.organization.intentId, secret: 'testSecret' }))
+  ),
   http.post(
     `${tenantadmApiUrlv2}/billing/card/:intentId/confirm`,
-    ({ params: { intentId } }) => new HttpResponse(null, { status: intentId == mockApiResponses.organization.intentId ? 200 : 540 })
+    validated(({ params: { intentId } }) => new HttpResponse(null, { status: intentId == mockApiResponses.organization.intentId ? 200 : 540 }))
   ),
   http.post(`${tenantadmApiUrlv2}/tenants/:tenantId/upgrade/:status`, async ({ params: { status, tenantId }, request }) => {
     if (tenantId != mockApiResponses.organization.organization.id || !['cancel', 'complete', 'start'].includes(status)) {
@@ -175,27 +186,42 @@ export const organizationHandlers = [
     }
     return new HttpResponse(null, { status: 200 });
   }),
-  http.post(`${tenantadmApiUrlv2}/tenants/:tenantId/plan`, async ({ params: { tenantId }, request }) => {
-    const body = await request.json();
-    const expectedKeys = ['current_plan', 'requested_plan', 'current_addons', 'requested_addons', 'user_message'];
-    if (tenantId != mockApiResponses.organization.organization.id || !Object.keys(body).every(key => expectedKeys.includes(key))) {
-      return new HttpResponse(null, { status: 544 });
-    }
-    if (body.requested_plan && !Object.values(PLANS).some(item => item.name === body.requested_plan)) {
-      return new HttpResponse(null, { status: 545 });
-    }
-    return new HttpResponse(null, { status: 200 });
-  }),
-  http.post(`${tenantadmApiUrlv2}/contact/support`, async ({ request }) => {
-    const { subject, body } = await request.json();
-    if (!(subject && body)) {
-      return new HttpResponse(null, { status: 543 });
-    }
-    return new HttpResponse(null, { status: 200 });
-  }),
-  http.patch(`${tenantadmApiUrlv2}/billing/profile`, () => new HttpResponse(null, { status: 200 })),
-  http.post(`${tenantadmApiUrlv2}/billing/profile`, () => new HttpResponse(null, { status: 200 })),
-  http.post(`${tenantadmApiUrlv2}/billing/subscription`, () => new HttpResponse(null, { status: 202 })),
+  http.post(
+    `${tenantadmApiUrlv2}/tenants/:tenantId/plan`,
+    validated(async ({ params: { tenantId }, request }) => {
+      const body = await request.json();
+      const expectedKeys = ['current_plan', 'requested_plan', 'current_addons', 'requested_addons', 'user_message'];
+      if (tenantId != mockApiResponses.organization.organization.id || !Object.keys(body).every(key => expectedKeys.includes(key))) {
+        return new HttpResponse(null, { status: 544 });
+      }
+      if (body.requested_plan && !Object.values(PLANS).some(item => item.name === body.requested_plan)) {
+        return new HttpResponse(null, { status: 545 });
+      }
+      return new HttpResponse(null, { status: 200 });
+    })
+  ),
+  http.post(
+    `${tenantadmApiUrlv2}/contact/support`,
+    validated(async ({ request }) => {
+      const { subject, body } = await request.json();
+      if (!(subject && body)) {
+        return new HttpResponse(null, { status: 543 });
+      }
+      return new HttpResponse(null, { status: 200 });
+    })
+  ),
+  http.patch(
+    `${tenantadmApiUrlv2}/billing/profile`,
+    validated(() => new HttpResponse(null, { status: 200 }))
+  ),
+  http.post(
+    `${tenantadmApiUrlv2}/billing/profile`,
+    validated(() => new HttpResponse(null, { status: 200 }))
+  ),
+  http.post(
+    `${tenantadmApiUrlv2}/billing/subscription`,
+    validated(() => new HttpResponse(null, { status: 202 }))
+  ),
   http.post(`${tenantadmApiUrlv2}/billing/subscription/invoices/preview`, () => HttpResponse.json(invoicePreviewBasic)),
   http.get(`${tenantadmApiUrlv2}/billing/subscription`, () => HttpResponse.json(subscriptionBasic)),
   http.get(`${tenantadmApiUrlv2}/billing/products`, () => HttpResponse.json(mockApiResponses.organization.products)),
@@ -230,19 +256,28 @@ export const organizationHandlers = [
       { id: 2, provider: 'iot-core', something: 'new' }
     ])
   ),
-  http.post(`${iotManagerBaseURL}/integrations`, () => HttpResponse.json([{ connection_string: 'something_else', provider: 'iot-hub' }])),
-  http.put(`${iotManagerBaseURL}/integrations/:integrationId`, ({ params: { integrationId } }) => {
-    if (!integrationId) {
-      return new HttpResponse(null, { status: 547 });
-    }
-    return new HttpResponse(null, { status: 200 });
-  }),
-  http.put(`${iotManagerBaseURL}/integrations/:integrationId/credentials`, ({ params: { integrationId } }) => {
-    if (!integrationId) {
-      return new HttpResponse(null, { status: 548 });
-    }
-    return new HttpResponse(null, { status: 200 });
-  }),
+  http.post(
+    `${iotManagerBaseURL}/integrations`,
+    validated(() => HttpResponse.json([{ connection_string: 'something_else', provider: 'iot-hub' }]))
+  ),
+  http.put(
+    `${iotManagerBaseURL}/integrations/:integrationId`,
+    validated(({ params: { integrationId } }) => {
+      if (!integrationId) {
+        return new HttpResponse(null, { status: 547 });
+      }
+      return new HttpResponse(null, { status: 200 });
+    })
+  ),
+  http.put(
+    `${iotManagerBaseURL}/integrations/:integrationId/credentials`,
+    validated(({ params: { integrationId } }) => {
+      if (!integrationId) {
+        return new HttpResponse(null, { status: 548 });
+      }
+      return new HttpResponse(null, { status: 200 });
+    })
+  ),
   http.delete(`${iotManagerBaseURL}/integrations/:integrationId`, ({ params: { integrationId } }) => {
     if (!integrationId) {
       return new HttpResponse(null, { status: 549 });
@@ -261,13 +296,19 @@ export const organizationHandlers = [
       { id: '2', issuer: 'https://samltest2.id/saml/idp', valid_until: '2030-10-24T21:14:09Z' }
     ])
   ),
-  http.post(ssoIdpApiUrlv1, () => new HttpResponse(null, { status: 200 })),
+  http.post(
+    ssoIdpApiUrlv1,
+    validated(() => new HttpResponse(null, { status: 200 }))
+  ),
   http.get(`${ssoIdpApiUrlv1}/:configId`, ({ params: { configId } }) => {
     if (!configId) {
       return new HttpResponse(null, { status: 550 });
     }
     return HttpResponse.json({ email: 'user@acme.com', password: 'mypass1234', login: { google: 'bob@gmail.com' }, config: '<div>not quite right</div>' });
   }),
-  http.put(`${ssoIdpApiUrlv1}/:configId`, ({ params: { configId } }) => new HttpResponse(null, { status: configId ? 200 : 551 })),
+  http.put(
+    `${ssoIdpApiUrlv1}/:configId`,
+    validated(({ params: { configId } }) => new HttpResponse(null, { status: configId ? 200 : 551 }))
+  ),
   http.delete(`${ssoIdpApiUrlv1}/:configId`, ({ params: { configId } }) => new HttpResponse(null, { status: configId ? 200 : 552 }))
 ];

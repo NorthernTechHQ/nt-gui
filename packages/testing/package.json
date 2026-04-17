@@ -42,6 +42,8 @@
     "tsdown": "^0.21.7"
   },
   "dependencies": {
+    "openapi-backend": "^5.x",
+    "js-yaml": "^4.x",
     "@emotion/jest": "^11.x",
     "@mui/material": "^7.x",
     "@northern.tech/utils": "*",

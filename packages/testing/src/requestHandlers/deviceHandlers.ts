@@ -26,6 +26,7 @@ import {
 import { HttpResponse, http } from 'msw';
 
 import { defaultCreationDate, defaultMacAddress, mockApiResponses } from '../mockData';
+import { validated } from './validation';
 
 export const defaultDeviceId = 'a1';
 
@@ -101,7 +102,7 @@ const deviceAttributes = [
   { name: 'group', scope: 'system', count: 1 }
 ];
 
-const searchHandler = async ({ request }) => {
+const searchHandler = validated(async ({ request }) => {
   const { page, per_page, filters } = await request.json();
   if ([page, per_page, filters].some(item => !item)) {
     return new HttpResponse(null, { status: 509 });
@@ -126,7 +127,7 @@ const searchHandler = async ({ request }) => {
   }));
   deviceList = deviceList.slice((page - 1) * per_page, page * per_page);
   return new HttpResponse(JSON.stringify(deviceList), { headers: { [headerNames.total]: mockApiResponses.devices.byStatus[status].total } });
-};
+});
 
 export const deviceHandlers = [
   http.delete(`${deviceAuthV2}/devices/:deviceId/auth/:authId`, ({ params: { authId, deviceId } }) => {
@@ -147,13 +148,16 @@ export const deviceHandlers = [
     }
     return new HttpResponse(null, { status: 515 });
   }),
-  http.delete(`${inventoryApiUrl}/groups/:group/devices`, async ({ params: { group }, request }) => {
-    const deviceIds = await request.json();
-    if (mockApiResponses.devices.groups.byId[group] && deviceIds.every(id => !!mockApiResponses.devices.byId[id])) {
-      return new HttpResponse(null, { status: 200 });
-    }
-    return new HttpResponse(null, { status: 503 });
-  }),
+  http.delete(
+    `${inventoryApiUrl}/groups/:group/devices`,
+    validated(async ({ params: { group }, request }) => {
+      const deviceIds = await request.json();
+      if (mockApiResponses.devices.groups.byId[group] && deviceIds.every(id => !!mockApiResponses.devices.byId[id])) {
+        return new HttpResponse(null, { status: 200 });
+      }
+      return new HttpResponse(null, { status: 503 });
+    })
+  ),
   http.delete(`${inventoryApiUrlV2}/filters/:filterId`, ({ params: { filterId } }) => {
     if (Object.values(mockApiResponses.devices.groups.byId).find(group => group.id === filterId)) {
       return new HttpResponse(null, { status: 200 });
@@ -175,13 +179,16 @@ export const deviceHandlers = [
     }
     return new HttpResponse(null, { status: 506 });
   }),
-  http.put(`${inventoryApiUrl}/devices/:deviceId/tags`, async ({ params: { deviceId }, request }) => {
-    const tags = await request.json();
-    if (!mockApiResponses.devices.byId[deviceId] && !Array.isArray(tags) && !tags.every(item => item.name && item.value)) {
-      return new HttpResponse(null, { status: 506 });
-    }
-    return HttpResponse.json(tags);
-  }),
+  http.put(
+    `${inventoryApiUrl}/devices/:deviceId/tags`,
+    validated(async ({ params: { deviceId }, request }) => {
+      const tags = await request.json();
+      if (!mockApiResponses.devices.byId[deviceId] && !Array.isArray(tags) && !tags.every(item => item.name && item.value)) {
+        return new HttpResponse(null, { status: 506 });
+      }
+      return HttpResponse.json(tags);
+    })
+  ),
   http.get(`${inventoryApiUrl}/groups`, () => {
     const groups = Object.entries(mockApiResponses.devices.groups.byId).reduce((accu, [groupName, group]) => {
       if (!group.id) {
@@ -205,36 +212,47 @@ export const deviceHandlers = [
       }
     ])
   ),
-  http.patch(`${inventoryApiUrl}/groups/:group/devices`, async ({ params: { group }, request }) => {
-    const deviceIds = await request.json();
-    if (!!group && deviceIds.every(id => !!mockApiResponses.devices.byId[id])) {
+  http.patch(
+    `${inventoryApiUrl}/groups/:group/devices`,
+    validated(async ({ params: { group }, request }) => {
+      const deviceIds = await request.json();
+      if (!!group && deviceIds.every(id => !!mockApiResponses.devices.byId[id])) {
+        return new HttpResponse(null, { status: 200 });
+      }
+      return new HttpResponse(null, { status: 508 });
+    })
+  ),
+  http.post(
+    `${deviceAuthV2}/devices`,
+    validated(async ({ request }) => {
+      const authset = await request.json();
+      if (
+        Object.values(mockApiResponses.devices.byId).some(device =>
+          device.auth_sets.some(deviceAuthSet => deviceAuthSet.pubkey == authset.pubkey || deviceAuthSet.identity_data == authset.identity_data)
+        )
+      ) {
+        return new HttpResponse(null, { status: 409 });
+      }
       return new HttpResponse(null, { status: 200 });
-    }
-    return new HttpResponse(null, { status: 508 });
-  }),
-  http.post(`${deviceAuthV2}/devices`, async ({ request }) => {
-    const authset = await request.json();
-    if (
-      Object.values(mockApiResponses.devices.byId).some(device =>
-        device.auth_sets.some(deviceAuthSet => deviceAuthSet.pubkey == authset.pubkey || deviceAuthSet.identity_data == authset.identity_data)
-      )
-    ) {
-      return new HttpResponse(null, { status: 409 });
-    }
-    return new HttpResponse(null, { status: 200 });
-  }),
+    })
+  ),
   http.post(`${inventoryApiUrlV2}/filters/search`, searchHandler),
-  http.post(`${inventoryApiUrlV2}/filters`, async ({ request }) => {
-    const { name, terms } = await request.json();
-    if (
-      [name, terms].some(item => !item) ||
-      mockApiResponses.devices.groups[name] ||
-      !terms.every(term => DEVICE_FILTERING_OPTIONS[term.type] && ['identity', 'inventory', 'system'].includes(term.scope) && !!term.value && !!term.attribute)
-    ) {
-      return new HttpResponse(null, { status: 510 });
-    }
-    return new HttpResponse(JSON.stringify({}), { headers: { location: 'find/me/here/createdFilterId' } });
-  }),
+  http.post(
+    `${inventoryApiUrlV2}/filters`,
+    validated(async ({ request }) => {
+      const { name, terms } = await request.json();
+      if (
+        [name, terms].some(item => !item) ||
+        mockApiResponses.devices.groups[name] ||
+        !terms.every(
+          term => DEVICE_FILTERING_OPTIONS[term.type] && ['identity', 'inventory', 'system'].includes(term.scope) && !!term.value && !!term.attribute
+        )
+      ) {
+        return new HttpResponse(null, { status: 510 });
+      }
+      return new HttpResponse(JSON.stringify({}), { headers: { location: 'find/me/here/createdFilterId' } });
+    })
+  ),
   http.get(`${inventoryApiUrlV2}/statistics`, async () =>
     HttpResponse.json({
       devices_by_status: {
@@ -243,13 +261,16 @@ export const deviceHandlers = [
       }
     })
   ),
-  http.put(`${deviceAuthV2}/devices/:deviceId/auth/:authId/status`, async ({ params: { authId, deviceId }, request }) => {
-    const { status } = await request.json();
-    if (mockApiResponses.devices.byId[deviceId].auth_sets.find(authSet => authSet.id === authId) && DEVICE_STATES[status]) {
-      return new HttpResponse(null, { status: 200 });
-    }
-    return new HttpResponse(null, { status: 511 });
-  }),
+  http.put(
+    `${deviceAuthV2}/devices/:deviceId/auth/:authId/status`,
+    validated(async ({ params: { authId, deviceId }, request }) => {
+      const { status } = await request.json();
+      if (mockApiResponses.devices.byId[deviceId].auth_sets.find(authSet => authSet.id === authId) && DEVICE_STATES[status]) {
+        return new HttpResponse(null, { status: 200 });
+      }
+      return new HttpResponse(null, { status: 511 });
+    })
+  ),
   http.get(`${deviceConfig}/:deviceId`, ({ params: { deviceId } }) => {
     if (deviceId === 'testId') {
       return new HttpResponse(JSON.stringify({ error: { status_code: 404 } }), { status: 404 });
@@ -265,19 +286,25 @@ export const deviceHandlers = [
     }
     return new HttpResponse(null, { status: 512 });
   }),
-  http.put(`${deviceConfig}/:deviceId`, async ({ params: { deviceId }, request }) => {
-    const body = await request.text();
-    if (body.includes('evilValue')) {
-      return new HttpResponse(null, { status: 418 });
-    }
-    return new HttpResponse(null, { status: mockApiResponses.devices.byId[deviceId] ? 201 : 513 });
-  }),
-  http.post(`${deviceConfig}/:deviceId/deploy`, ({ params: { deviceId } }) => {
-    if (mockApiResponses.devices.byId[deviceId]) {
-      return HttpResponse.json({ deployment_id: 'config1' });
-    }
-    return new HttpResponse(null, { status: 514 });
-  }),
+  http.put(
+    `${deviceConfig}/:deviceId`,
+    validated(async ({ params: { deviceId }, request }) => {
+      const body = await request.text();
+      if (body.includes('evilValue')) {
+        return new HttpResponse(null, { status: 418 });
+      }
+      return new HttpResponse(null, { status: mockApiResponses.devices.byId[deviceId] ? 201 : 513 });
+    })
+  ),
+  http.post(
+    `${deviceConfig}/:deviceId/deploy`,
+    validated(({ params: { deviceId } }) => {
+      if (mockApiResponses.devices.byId[deviceId]) {
+        return HttpResponse.json({ deployment_id: 'config1' });
+      }
+      return new HttpResponse(null, { status: 514 });
+    })
+  ),
   http.get(`${deviceConnect}/devices/:deviceId`, ({ params: { deviceId } }) => {
     if (deviceId === 'testId') {
       return new HttpResponse(JSON.stringify({ error: { status_code: 404 } }), { status: 404 });
@@ -287,28 +314,34 @@ export const deviceHandlers = [
     }
     return new HttpResponse(null, { status: 512 });
   }),
-  http.post(`${deviceConnect}/devices/:deviceId/:action`, ({ params: { deviceId, action } }) => {
-    if (['check-update', 'send-inventory'].includes(action) && mockApiResponses.devices.byId[deviceId]) {
-      return new HttpResponse(null, { status: 202 });
-    }
-    return new HttpResponse(null, { status: 518 });
-  }),
+  http.post(
+    `${deviceConnect}/devices/:deviceId/:action`,
+    validated(({ params: { deviceId, action } }) => {
+      if (['check-update', 'send-inventory'].includes(action) && mockApiResponses.devices.byId[deviceId]) {
+        return new HttpResponse(null, { status: 202 });
+      }
+      return new HttpResponse(null, { status: 518 });
+    })
+  ),
   http.get(`${iotManagerBaseURL}/devices/:deviceId/state`, ({ params: { deviceId } }) => {
     if (mockApiResponses.devices.byId[deviceId]) {
       return HttpResponse.json({ deployment_id: mockApiResponses.deployments.byId.d1.id });
     }
     return new HttpResponse(null, { status: 515 });
   }),
-  http.put(`${iotManagerBaseURL}/devices/:deviceId/state/:integrationId`, async ({ params: { deviceId }, request }) => {
-    const body = await request.json();
-    if (mockApiResponses.devices.byId[deviceId] && body) {
-      return HttpResponse.json({ deployment_id: mockApiResponses.deployments.byId.d1.id });
-    }
-    return new HttpResponse(null, { status: 516 });
-  }),
+  http.put(
+    `${iotManagerBaseURL}/devices/:deviceId/state/:integrationId`,
+    validated(async ({ params: { deviceId }, request }) => {
+      const body = await request.json();
+      if (mockApiResponses.devices.byId[deviceId] && body) {
+        return HttpResponse.json({ deployment_id: mockApiResponses.deployments.byId.d1.id });
+      }
+      return new HttpResponse(null, { status: 516 });
+    })
+  ),
   http.put(
     `${deviceConnect}/devices/:deviceId/upload`,
-    ({ params: { deviceId } }) => new HttpResponse(null, { status: mockApiResponses.devices.byId[deviceId] ? 200 : 517 })
+    validated(({ params: { deviceId } }) => new HttpResponse(null, { status: mockApiResponses.devices.byId[deviceId] ? 200 : 517 }))
   ),
   http.get(`${deviceAuthV2}/license`, () => HttpResponse.text('test,report'))
 ];

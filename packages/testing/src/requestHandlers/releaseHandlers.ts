@@ -17,6 +17,7 @@ import { customSort } from '@northern.tech/utils/helpers';
 import { HttpResponse, http } from 'msw';
 
 import { mockApiResponses, releasesList } from '../mockData';
+import { validated } from './validation';
 
 const deltaJobs = {
   'delta-job-1': {
@@ -107,10 +108,13 @@ export const releaseHandlers = [
     `${deploymentsApiUrl}/artifacts/:id`,
     ({ params: { id } }) => new HttpResponse(null, { status: id === mockApiResponses.releases.byId.r1.artifacts[0].id ? 200 : 591 })
   ),
-  http.put(`${deploymentsApiUrl}/artifacts/:id`, async ({ params: { id }, request }) => {
-    const { description } = await request.json();
-    return new HttpResponse(null, { status: id === mockApiResponses.releases.byId.r1.artifacts[0].id && description ? 200 : 592 });
-  }),
+  http.put(
+    `${deploymentsApiUrl}/artifacts/:id`,
+    validated(async ({ params: { id }, request }) => {
+      const { description } = await request.json();
+      return new HttpResponse(null, { status: id === mockApiResponses.releases.byId.r1.artifacts[0].id && description ? 200 : 592 });
+    })
+  ),
   http.post(
     `${deploymentsApiUrl}/artifacts/generate`,
     () =>
@@ -145,17 +149,23 @@ export const releaseHandlers = [
   http.get(`${deploymentsApiUrlV2}/deployments/releases/:name`, () => HttpResponse.json(mockApiResponses.releases.byId.r1)),
   http.get(`${deploymentsApiUrlV2}/releases/all/tags`, () => HttpResponse.json(['foo', 'bar'])),
   http.get(`${deploymentsApiUrlV2}/releases/all/types`, () => HttpResponse.json(['single-file', 'not-this'])),
-  http.put(`${deploymentsApiUrlV2}/deployments/releases/:name/tags`, async ({ params: { name }, request }) => {
-    const tags = await request.json();
-    if (name && tags.every(i => i && i.toString() === i)) {
-      return new HttpResponse(null, { status: 200 });
-    }
-    return new HttpResponse(null, { status: 593 });
-  }),
-  http.patch(`${deploymentsApiUrlV2}/deployments/releases/:name`, async ({ params: { name }, request }) => {
-    const { notes } = await request.json();
-    return new HttpResponse(null, { status: name && notes.length ? 200 : 594 });
-  }),
+  http.put(
+    `${deploymentsApiUrlV2}/deployments/releases/:name/tags`,
+    validated(async ({ params: { name }, request }) => {
+      const tags = await request.json();
+      if (name && tags.every(i => i && i.toString() === i)) {
+        return new HttpResponse(null, { status: 200 });
+      }
+      return new HttpResponse(null, { status: 593 });
+    })
+  ),
+  http.patch(
+    `${deploymentsApiUrlV2}/deployments/releases/:name`,
+    validated(async ({ params: { name }, request }) => {
+      const { notes } = await request.json();
+      return new HttpResponse(null, { status: name && notes.length ? 200 : 594 });
+    })
+  ),
   http.get(`${deploymentsApiUrlV2}/deployments/releases/delta/jobs`, () => {
     const jobs = Object.values(deltaJobs);
     return new HttpResponse(JSON.stringify(jobs), { headers: { [headerNames.total]: jobs.length } });

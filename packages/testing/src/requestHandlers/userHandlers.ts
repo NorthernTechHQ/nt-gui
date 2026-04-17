@@ -16,6 +16,7 @@ import { APPLICATION_JWT_CONTENT_TYPE, useradmApiUrl, useradmApiUrlv2 } from '@n
 import { HttpResponse, http } from 'msw';
 
 import { accessTokens, defaultPassword, userId as defaultUserId, mockApiResponses, permissionSets, rbacRoles, testSsoId, token } from '../mockData';
+import { validated } from './validation';
 
 export const userHandlers = [
   http.post(`${useradmApiUrl}/auth/login`, ({ request }) => {
@@ -42,26 +43,32 @@ export const userHandlers = [
     return new HttpResponse(null, { status: 400 });
   }),
   http.post(`${useradmApiUrl}/auth/logout`, () => new HttpResponse(null, { status: 200 })),
-  http.post(`${useradmApiUrl}/auth/password-reset/:status`, async ({ params: { status }, request }) => {
-    const { email, secret_hash, password } = await request.json();
-    if (!['start', 'complete'].includes(status) && ![email, secret_hash, password].some(item => item)) {
-      return new HttpResponse(null, { status: 560 });
-    }
-    if (status === 'start' && email) {
+  http.post(
+    `${useradmApiUrl}/auth/password-reset/:status`,
+    validated(async ({ params: { status }, request }) => {
+      const { email, secret_hash, password } = await request.json();
+      if (!['start', 'complete'].includes(status) && ![email, secret_hash, password].some(item => item)) {
+        return new HttpResponse(null, { status: 560 });
+      }
+      if (status === 'start' && email) {
+        return new HttpResponse(null, { status: 200 });
+      }
+      if (status === 'complete' && secret_hash && password) {
+        return new HttpResponse(null, { status: 200 });
+      }
+      return new HttpResponse(null, { status: 561 });
+    })
+  ),
+  http.put(
+    `${useradmApiUrl}/2faverify`,
+    validated(async ({ request }) => {
+      const { token2fa } = await request.json();
+      if (!token2fa) {
+        return new HttpResponse(null, { status: 562 });
+      }
       return new HttpResponse(null, { status: 200 });
-    }
-    if (status === 'complete' && secret_hash && password) {
-      return new HttpResponse(null, { status: 200 });
-    }
-    return new HttpResponse(null, { status: 561 });
-  }),
-  http.put(`${useradmApiUrl}/2faverify`, async ({ request }) => {
-    const { token2fa } = await request.json();
-    if (!token2fa) {
-      return new HttpResponse(null, { status: 562 });
-    }
-    return new HttpResponse(null, { status: 200 });
-  }),
+    })
+  ),
   http.get(`${useradmApiUrl}/users`, () => HttpResponse.json(Object.values(mockApiResponses.users.byId))),
   http.get(`${useradmApiUrl}/users/me`, ({ request }) => {
     const authHeader = request.headers.get('authorization');
@@ -85,48 +92,60 @@ export const userHandlers = [
     }
     return new HttpResponse(null, { status: 563 });
   }),
-  http.post(`${useradmApiUrl}/users`, async ({ request }) => {
-    const { email, password } = await request.json();
-    if (email === 'test@test.com' || [email, password].every(value => value)) {
-      return HttpResponse.json(mockApiResponses.users.byId.a1);
-    }
-    return new HttpResponse(null, { status: 564 });
-  }),
-  http.put(`${useradmApiUrl}/users/:userId`, async ({ params: { userId }, request }) => {
-    const { email, password, current_password } = await request.json();
-    if (current_password === 'bad_password') {
-      return new HttpResponse(null, { status: 401 });
-    }
-    if (
-      (mockApiResponses.users.byId[userId] && [email, password].some(value => Object.values(mockApiResponses.users.byId[userId]).includes(value))) ||
-      email === 'test@test.com'
-    ) {
-      return new HttpResponse(null, { status: 200 });
-    }
-    return new HttpResponse(null, { status: 565 });
-  }),
+  http.post(
+    `${useradmApiUrl}/users`,
+    validated(async ({ request }) => {
+      const { email, password } = await request.json();
+      if (email === 'test@test.com' || [email, password].every(value => value)) {
+        return HttpResponse.json(mockApiResponses.users.byId.a1);
+      }
+      return new HttpResponse(null, { status: 564 });
+    })
+  ),
+  http.put(
+    `${useradmApiUrl}/users/:userId`,
+    validated(async ({ params: { userId }, request }) => {
+      const { email, password, current_password } = await request.json();
+      if (current_password === 'bad_password') {
+        return new HttpResponse(null, { status: 401 });
+      }
+      if (
+        (mockApiResponses.users.byId[userId] && [email, password].some(value => Object.values(mockApiResponses.users.byId[userId]).includes(value))) ||
+        email === 'test@test.com'
+      ) {
+        return new HttpResponse(null, { status: 200 });
+      }
+      return new HttpResponse(null, { status: 565 });
+    })
+  ),
   http.delete(
     `${useradmApiUrl}/users/:userId`,
     ({ params: { userId } }) => new HttpResponse(null, { status: mockApiResponses.users.byId[userId] ? 200 : 566 })
   ),
   http.get(`${useradmApiUrl}/roles`, () => HttpResponse.json(rbacRoles)),
-  http.post(`${useradmApiUrl}/roles`, async ({ request }) => {
-    const { name, permissions } = await request.json();
-    if (
-      [name, permissions].every(value => value) &&
-      permissions.every(permission => permission.action && permission.object && permission.object.type && permission.object.value)
-    ) {
-      return new HttpResponse(null, { status: 200 });
-    }
-    return new HttpResponse(null, { status: 567 });
-  }),
-  http.put(`${useradmApiUrl}/roles/:roleId`, async ({ params: { roleId }, request }) => {
-    const { description, name, permissions } = await request.json();
-    if (mockApiResponses.users.rolesById[roleId] && [description, name, permissions].some(value => value)) {
-      return new HttpResponse(null, { status: 200 });
-    }
-    return new HttpResponse(null, { status: 568 });
-  }),
+  http.post(
+    `${useradmApiUrl}/roles`,
+    validated(async ({ request }) => {
+      const { name, permissions } = await request.json();
+      if (
+        [name, permissions].every(value => value) &&
+        permissions.every(permission => permission.action && permission.object && permission.object.type && permission.object.value)
+      ) {
+        return new HttpResponse(null, { status: 200 });
+      }
+      return new HttpResponse(null, { status: 567 });
+    })
+  ),
+  http.put(
+    `${useradmApiUrl}/roles/:roleId`,
+    validated(async ({ params: { roleId }, request }) => {
+      const { description, name, permissions } = await request.json();
+      if (mockApiResponses.users.rolesById[roleId] && [description, name, permissions].some(value => value)) {
+        return new HttpResponse(null, { status: 200 });
+      }
+      return new HttpResponse(null, { status: 568 });
+    })
+  ),
   http.post(`${useradmApiUrlv2}/support/feedback/product`, async () => new HttpResponse(null, { status: 200 })),
   http.delete(
     `${useradmApiUrl}/roles/:roleId`,
@@ -139,23 +158,29 @@ export const userHandlers = [
     }
     return new HttpResponse(null, { status: 571 });
   }),
-  http.post(`${useradmApiUrlv2}/roles`, async ({ request }) => {
-    const { name, permission_sets_with_scope } = await request.json();
-    if (
-      !!name &&
-      permission_sets_with_scope.every(permission => permission.name && permissionSets.find(permissionSet => permissionSet.name === permission.name))
-    ) {
-      return new HttpResponse(null, { status: 200 });
-    }
-    return new HttpResponse(null, { status: 572 });
-  }),
-  http.put(`${useradmApiUrlv2}/roles/:roleId`, async ({ params: { roleId }, request }) => {
-    const { description, name, permission_sets_with_scope } = await request.json();
-    if (mockApiResponses.users.rolesById[roleId] && [description, name, permission_sets_with_scope].some(value => value)) {
-      return new HttpResponse(null, { status: 200 });
-    }
-    return new HttpResponse(null, { status: 573 });
-  }),
+  http.post(
+    `${useradmApiUrlv2}/roles`,
+    validated(async ({ request }) => {
+      const { name, permission_sets_with_scope } = await request.json();
+      if (
+        !!name &&
+        permission_sets_with_scope.every(permission => permission.name && permissionSets.find(permissionSet => permissionSet.name === permission.name))
+      ) {
+        return new HttpResponse(null, { status: 200 });
+      }
+      return new HttpResponse(null, { status: 572 });
+    })
+  ),
+  http.put(
+    `${useradmApiUrlv2}/roles/:roleId`,
+    validated(async ({ params: { roleId }, request }) => {
+      const { description, name, permission_sets_with_scope } = await request.json();
+      if (mockApiResponses.users.rolesById[roleId] && [description, name, permission_sets_with_scope].some(value => value)) {
+        return new HttpResponse(null, { status: 200 });
+      }
+      return new HttpResponse(null, { status: 573 });
+    })
+  ),
   http.delete(`${useradmApiUrlv2}/roles/:roleId`, ({ params: { roleId } }) => {
     if (mockApiResponses.users.rolesById[roleId]) {
       return new HttpResponse(null, { status: 200 });
@@ -186,14 +211,20 @@ export const userHandlers = [
     return new HttpResponse(null, { status: 571 });
   }),
   http.post(`${useradmApiUrl}/auth/verify-email/start`, () => new HttpResponse(null, { status: 200 })),
-  http.post(`${useradmApiUrl}/auth/verify-email/complete`, async ({ request }) => {
-    const { secret_hash } = await request.json();
-    return new HttpResponse(null, { status: secret_hash === 'superSecret' ? 200 : 576 });
-  }),
+  http.post(
+    `${useradmApiUrl}/auth/verify-email/complete`,
+    validated(async ({ request }) => {
+      const { secret_hash } = await request.json();
+      return new HttpResponse(null, { status: secret_hash === 'superSecret' ? 200 : 576 });
+    })
+  ),
   http.get(`${useradmApiUrlv2}/permission_sets`, () => HttpResponse.json(permissionSets)),
-  http.post(`${useradmApiUrl}/users/:userId/assign`, async ({ request }) => {
-    const { tenant_ids } = await request.json();
-    return new HttpResponse(null, { status: tenant_ids.length ? 200 : 577 });
-  }),
+  http.post(
+    `${useradmApiUrl}/users/:userId/assign`,
+    validated(async ({ request }) => {
+      const { tenant_ids } = await request.json();
+      return new HttpResponse(null, { status: tenant_ids.length ? 200 : 577 });
+    })
+  ),
   http.get(`${useradmApiUrl}/users/tenants/:tenantId/token`, () => HttpResponse.text('differentToken'))
 ];

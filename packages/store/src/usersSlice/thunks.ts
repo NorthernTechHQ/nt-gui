@@ -65,7 +65,7 @@ import { getHostedAnnouncement, getOnboardingState, getOrganization, getTooltips
 import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { setOfflineThreshold } from '../thunks';
-import { mergePermissions } from '../utils';
+import { mergePermissions, stripUndefined } from '../utils';
 import { OWN_USER_ID, READ_STATES, USER_LOGOUT, itemUiPermissionsReducer, settingsKeys } from './constants';
 import { getCurrentUser, getRolesById, getUsersById } from './selectors';
 
@@ -342,15 +342,19 @@ interface EditUserPayload {
   roles?: string[];
 }
 
-export const editUser = createAppAsyncThunk(`${sliceName}/editUser`, ({ id, ...userData }: EditUserPayload, { dispatch, getState }) =>
-  GeneralApi.put(`${useradmApiUrl}/users/${id}`, userData)
-    .then(() =>
-      Promise.all([
-        dispatch(actions.updatedUser({ ...userData, id: id === OWN_USER_ID ? getCurrentUser(getState()).id : id })),
-        dispatch(setSnackbar(userActions.edit.successMessage))
-      ])
-    )
-    .catch(err => userActionErrorHandler(err, 'edit', dispatch))
+export const editUser = createAppAsyncThunk(
+  `${sliceName}/editUser`,
+  ({ id, email, password, current_password, roles }: EditUserPayload, { dispatch, getState }) => {
+    const userData = stripUndefined({ email, password, current_password, roles });
+    return GeneralApi.put(`${useradmApiUrl}/users/${id}`, userData)
+      .then(() =>
+        Promise.all([
+          dispatch(actions.updatedUser({ ...userData, id: id === OWN_USER_ID ? getCurrentUser(getState()).id : id })),
+          dispatch(setSnackbar(userActions.edit.successMessage))
+        ])
+      )
+      .catch(err => userActionErrorHandler(err, 'edit', dispatch));
+  }
 );
 
 export const checkEmailExists = createAppAsyncThunk(`${sliceName}/checkEmailExists`, async (email: string) => {

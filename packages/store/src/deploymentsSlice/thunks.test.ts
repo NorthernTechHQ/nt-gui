@@ -217,7 +217,7 @@ describe('deployment actions', () => {
       { type: saveGlobalSettings.fulfilled.type },
       { type: createDeployment.fulfilled.type }
     ];
-    const deployment = { ...newDeployment, newDeployment: { ...newDeployment.newDeployment, filter_id, devices: [] }, hasNewRetryDefault: false };
+    const deployment = { ...newDeployment, newDeployment: { ...newDeployment.newDeployment, filter_id }, hasNewRetryDefault: false };
     return store.dispatch(createDeployment(deployment)).then(() => {
       const storeActions = store.getActions();
       expect(storeActions.length).toEqual(expectedActions.length);
@@ -245,7 +245,7 @@ describe('deployment actions', () => {
       { type: saveGlobalSettings.fulfilled.type },
       { type: createDeployment.fulfilled.type }
     ];
-    const deployment = { ...newDeployment, newDeployment: { ...newDeployment.newDeployment, devices: [], group }, hasNewRetryDefault: false };
+    const deployment = { ...newDeployment, newDeployment: { ...newDeployment.newDeployment, group }, hasNewRetryDefault: false };
     return store.dispatch(createDeployment(deployment)).then(() => {
       const storeActions = store.getActions();
       expect(storeActions.length).toEqual(expectedActions.length);

@@ -16,6 +16,7 @@ import { alertChannels, headerNames, monitorApiUrlv1 } from '@northern.tech/util
 import { HttpResponse, http } from 'msw';
 
 import { mockApiResponses } from '../mockData';
+import { validated } from './validation';
 
 export const monitorHandlers = [
   http.get(`${monitorApiUrlv1}/devices/:id/alerts`, () => new HttpResponse(JSON.stringify([]), { headers: { [headerNames.total]: 1 } })),
@@ -26,11 +27,14 @@ export const monitorHandlers = [
     }
     return HttpResponse.json([]);
   }),
-  http.put(`${monitorApiUrlv1}/settings/global/channel/alerts/:channel/status`, async ({ params: { channel }, request }) => {
-    const { enabled } = await request.json();
-    if (Object.keys(alertChannels).includes(channel) && enabled !== undefined) {
-      return new HttpResponse(null, { status: 200 });
-    }
-    return new HttpResponse(null, { status: 590 });
-  })
+  http.put(
+    `${monitorApiUrlv1}/settings/global/channel/alerts/:channel/status`,
+    validated(async ({ params: { channel }, request }) => {
+      const { enabled } = await request.json();
+      if (Object.keys(alertChannels).includes(channel) && enabled !== undefined) {
+        return new HttpResponse(null, { status: 200 });
+      }
+      return new HttpResponse(null, { status: 590 });
+    })
+  )
 ];
