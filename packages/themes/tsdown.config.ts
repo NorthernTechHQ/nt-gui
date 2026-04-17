@@ -12,7 +12,7 @@ const lessPlugin = () => ({
 });
 
 export default defineConfig({
-  dts: false,
+  dts: { entry: ['src/**/*.{ts,tsx}'] },
   publicDir: 'public',
   plugins: [lessPlugin()]
 });
