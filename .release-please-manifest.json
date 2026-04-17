@@ -4,7 +4,7 @@
   "packages/eslint-config": "0.7.1",
   "packages/prettier-config": "0.2.1",
   "packages/store": "0.30.2",
-  "packages/testing": "0.8.4",
+  "packages/testing": "0.9.0",
   "packages/themes": "0.15.2",
   "packages/types": "0.7.1",
   "packages/typescript-config": "0.2.0",
