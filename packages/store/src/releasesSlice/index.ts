@@ -47,7 +47,6 @@ export type ReleasesList = {
   selectedTags: string[];
   selection: number[];
   sort?: SortOptions;
-  tab?: 'releases' | 'delta';
   total: number;
   type: string;
 };
@@ -66,6 +65,7 @@ export type ReleaseSliceType = {
   releasesList: ReleasesList;
   selectedJob: string | null;
   selectedRelease: string | null;
+  tab?: 'releases' | 'delta';
   tags: string[];
   updateTypes: string[];
 };
@@ -142,6 +142,7 @@ export const initialState: ReleaseSliceType = {
     total: 0,
     type: ''
   },
+  tab: 'releases',
   tags: [],
   updateTypes: [],
   selectedJob: null,
@@ -207,6 +208,9 @@ export const releaseSlice = createSlice({
     },
     setSelectedJob: (state, action) => {
       state.selectedJob = action.payload;
+    },
+    setActiveTab: (state, action: PayloadAction<'releases' | 'delta'>) => {
+      state.tab = action.payload;
     }
   }
 });

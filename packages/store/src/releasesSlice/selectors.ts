@@ -17,6 +17,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 import { listItemMapper } from '../utils';
 
+export const getActiveTab = (state: RootState) => state.releases.tab;
 const getSelectedReleaseId = (state: RootState) => state.releases.selectedRelease;
 export const getReleasesById = (state: RootState) => state.releases.byId;
 export const getReleaseTags = (state: RootState) => state.releases.tags;
