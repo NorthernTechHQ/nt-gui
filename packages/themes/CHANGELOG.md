@@ -1,5 +1,25 @@
 ---
-## 0.15.2 - 2026-04-15
+## 0.16.0 - 2026-04-21
+
+
+### Features
+
+#### Themes
+
+
+- *(themes)* Added code1/code2 typography variants
+
+ ([0d7320a](https://github.com/NorthernTechHQ/nt-gui/commit/0d7320a6dbfd76101bf7dbb3d02e9840213b3481))  by @mineralsfree
+
+
+
+
+
+
+
+
+
+## @northern.tech/themes-0.15.2 - 2026-04-15
 
 
 ### Bug fixes
