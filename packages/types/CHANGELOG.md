@@ -1,5 +1,24 @@
 ---
-## 0.7.1 - 2026-04-15
+## 0.7.2 - 2026-04-21
+
+
+### Bug fixes
+
+#### Types
+
+
+- *(types)* Types update
+
+ ([213c77f](https://github.com/NorthernTechHQ/nt-gui/commit/213c77f4786061f24f3268477d01c3856a1f929e))  by @mender-test-bot
+
+
+
+
+
+
+
+
+## @northern.tech/types-0.7.1 - 2026-04-15
 
 
 ### Bug fixes
