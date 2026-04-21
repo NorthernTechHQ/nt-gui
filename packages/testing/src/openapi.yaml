@@ -3266,6 +3266,8 @@ paths:
           $ref: '#/components/responses/InvalidRequestError'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '402':
+          $ref: '#/components/responses/PaymentRequiredError'
         '409':
           content:
             application/json:
@@ -3343,6 +3345,8 @@ paths:
           $ref: '#/components/responses/InvalidRequestError'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '402':
+          $ref: '#/components/responses/PaymentRequiredError'
         '500':
           $ref: '#/components/responses/InternalServerError'
       security:
@@ -3370,6 +3374,8 @@ paths:
           description: A successful response including the Manifest.
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '402':
+          $ref: '#/components/responses/PaymentRequiredError'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -3416,6 +3422,8 @@ paths:
           description: Successful response, including the logs in text/plain format.
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '402':
+          $ref: '#/components/responses/PaymentRequiredError'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -3454,11 +3462,7 @@ paths:
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '402':
-          description: The endpoint requires a paid plan.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/PaymentRequiredError'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -8627,9 +8631,12 @@ paths:
         - name: id
           in: query
           description: |
-            Tenant ID filter. Matches if the tenant ID is equal to this string.
+            Tenant ID(s) filter. Matches if the tenant ID is equal to this string. Can be repeated to query a set of tenants.
           schema:
-            type: string
+            type: array
+            items:
+              type: string
+          explode: true
         - name: plan
           in: query
           description: |
@@ -12831,6 +12838,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    PaymentRequiredError:
+      description: The resource requires a paid plan.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
     Error:
       description: Error descriptor.
@@ -15523,7 +15536,6 @@ components:
         notes: This is a demo manifest used for documentation purposes.
       required:
         - name
-        - modified
         - artifact
       properties:
         name:
