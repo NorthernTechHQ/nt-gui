@@ -1709,7 +1709,7 @@ export type Manifest = {
   /**
    * Last modification time for the Manifest.
    */
-  modified: string;
+  modified?: string;
   artifact: ArtifactV2;
   manifest?: ManifestContent;
   /**
@@ -7248,6 +7248,10 @@ export type GetDeploymentManifestsErrors = {
    */
   401: Error;
   /**
+   * The resource requires a paid plan.
+   */
+  402: Error;
+  /**
    * Internal Server Error.
    */
   500: Error;
@@ -7280,6 +7284,10 @@ export type UploadDeploymentManifestArtifactErrors = {
    * Unauthorized.
    */
   401: Error;
+  /**
+   * The resource requires a paid plan.
+   */
+  402: Error;
   /**
    * An artifact with the same name and matching dependency requirements already exists.
    *
@@ -7317,6 +7325,10 @@ export type GetDeploymentManifestByNameErrors = {
    * Unauthorized.
    */
   401: Error;
+  /**
+   * The resource requires a paid plan.
+   */
+  402: Error;
   /**
    * Not Found.
    */
@@ -7365,6 +7377,10 @@ export type GetDeploymentLogForDeviceV1Alpha1Errors = {
    */
   401: Error;
   /**
+   * The resource requires a paid plan.
+   */
+  402: Error;
+  /**
    * Not Found.
    */
   404: Error;
@@ -7407,7 +7423,7 @@ export type ExplainDeploymentLogForDeviceErrors = {
    */
   401: Error;
   /**
-   * The endpoint requires a paid plan.
+   * The resource requires a paid plan.
    */
   402: Error;
   /**
@@ -12992,10 +13008,10 @@ export type ListTenantsData = {
   path?: never;
   query?: {
     /**
-     * Tenant ID filter. Matches if the tenant ID is equal to this string.
+     * Tenant ID(s) filter. Matches if the tenant ID is equal to this string. Can be repeated to query a set of tenants.
      *
      */
-    id?: string;
+    id?: Array<string>;
     /**
      * Tenant plan. Matches if the tenant plan is equal to this string.
      *
