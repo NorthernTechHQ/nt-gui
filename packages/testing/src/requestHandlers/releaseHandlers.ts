@@ -12,11 +12,11 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import { SORTING_OPTIONS, deploymentsApiUrl, deploymentsApiUrlV2, headerNames } from '@northern.tech/utils/constants';
+import { SORTING_OPTIONS, deploymentsApiUrl, deploymentsApiUrlV1alpha1, deploymentsApiUrlV2, headerNames } from '@northern.tech/utils/constants';
 import { customSort } from '@northern.tech/utils/helpers';
 import { HttpResponse, http } from 'msw';
 
-import { mockApiResponses, releasesList } from '../mockData';
+import { manifestsList, mockApiResponses, releasesList } from '../mockData';
 import { validated } from './validation';
 
 const deltaJobs = {
@@ -176,5 +176,37 @@ export const releaseHandlers = [
       return HttpResponse.json(jobDetails);
     }
     return new HttpResponse(null, { status: 404 });
-  })
+  }),
+  http.get(
+    `${deploymentsApiUrlV1alpha1}/manifests`,
+    validated(async ({ request }) => {
+      const { searchParams } = new URL(request.url);
+      const page = Number(searchParams.get('page'));
+      const perPage = Number(searchParams.get('per_page'));
+      if (!page || ![1, 10, 20, 50, 100, 250, 500].includes(perPage)) {
+        return new HttpResponse(null, { status: 593 });
+      }
+      if (page == 42) {
+        return new HttpResponse(JSON.stringify([mockApiResponses.manifests.byId.m1]), { headers: { [headerNames.total]: 1 } });
+      }
+      const sort = searchParams.get('sort');
+      const manifestListSection = manifestsList.sort(customSort(sort.includes(SORTING_OPTIONS.desc), 'modified')).slice((page - 1) * perPage, page * perPage);
+      if (page === 1 && perPage === 1 && searchParams.get('name')) {
+        return HttpResponse.json([mockApiResponses.manifests.byId.m1]);
+      }
+      if (searchParams.get('name')) {
+        return new HttpResponse(JSON.stringify(manifestListSection), { headers: { [headerNames.total]: 1234 } });
+      }
+      return new HttpResponse(JSON.stringify(manifestListSection), { headers: { [headerNames.total]: manifestsList.length } });
+    })
+  ),
+  http.get(
+    `${deploymentsApiUrlV1alpha1}/manifests/:name`,
+    validated(({ params: { name } }) => {
+      if (name === mockApiResponses.manifests.byId.m1000.name) {
+        return HttpResponse.json(mockApiResponses.manifests.byId.m1000);
+      }
+      return new HttpResponse(null, { status: 404 });
+    })
+  )
 ];

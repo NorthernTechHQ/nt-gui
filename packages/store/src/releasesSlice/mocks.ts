@@ -57,5 +57,43 @@ export const mockState = {
     searchTerm: '',
     searchTotal: 0,
     total: 1
+  },
+  manifestsById: {
+    m1000: {
+      name: 'm1000',
+      modified: '2020-01-01T00:16:39.000Z',
+      artifact: {
+        id: 'art-m1000',
+        name: 'm1000',
+        description: 'test manifest description',
+        device_types_compatible: [deviceTypes.qemu],
+        modified: '2020-01-01T00:16:39.000Z'
+      },
+      manifest: {
+        name: 'm1000',
+        system_types_compatible: [deviceTypes.qemu],
+        component_types: {
+          'component-a': {
+            artifact_name: 'art-m1000-component',
+            update_strategy: { order: 10 }
+          }
+        }
+      },
+      tags: [],
+      notes: ''
+    }
+  },
+  manifestsList: {
+    ...DEVICE_LIST_DEFAULTS,
+    manifestIds: ['m1'],
+    selection: [],
+    sort: {
+      direction: SORTING_OPTIONS.asc,
+      key: 'name'
+    },
+    isLoading: false,
+    searchTerm: '',
+    searchTotal: 0,
+    total: 1
   }
 };

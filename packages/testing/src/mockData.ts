@@ -512,6 +512,35 @@ export const mockApiResponses = {
       }
     }
   },
+  manifests: {
+    byId: {
+      m1000: {
+        name: 'm1000',
+        modified: '2020-01-01T00:16:39.000Z',
+        artifact: {
+          id: 'art-m1000',
+          name: 'm1000',
+          description: 'test manifest description',
+          device_types_compatible: [deviceTypes.qemu],
+          modified: '2020-01-01T00:16:39.000Z'
+        },
+        manifest: {
+          api_version: 'mender/v1',
+          kind: 'manifest',
+          name: 'm1000',
+          system_types_compatible: [deviceTypes.qemu],
+          component_types: {
+            'component-a': {
+              artifact_name: 'art-m1000-component',
+              update_strategy: { order: 10 }
+            }
+          }
+        },
+        tags: [],
+        notes: ''
+      }
+    }
+  },
   users: {
     byId: {
       a1: defaultUser,
@@ -539,6 +568,32 @@ export const mockApiResponses = {
     }
   }
 };
+
+export const manifestsList = Array.from({ length: 1000 }, (_, i) => ({
+  name: `m${i + 1}`,
+  modified: new Date(2020, 0, 1, 0, 0, i).toISOString(),
+  artifact: {
+    id: `art-m${i + 1}`,
+    name: `m${i + 1}`,
+    description: 'test manifest description',
+    device_types_compatible: [deviceTypes.qemu],
+    modified: new Date(2020, 0, 1, 0, 0, i).toISOString()
+  },
+  manifest: {
+    api_version: 'mender/v1',
+    kind: 'manifest',
+    name: `m${i + 1}`,
+    system_types_compatible: [deviceTypes.qemu],
+    component_types: {
+      'component-a': {
+        artifact_name: `art-m${i + 1}-component`,
+        update_strategy: { order: 10 }
+      }
+    }
+  },
+  tags: [],
+  notes: ''
+}));
 
 export const releasesList = Array.from({ length: 5000 }, (x, i) => ({
   artifacts: [

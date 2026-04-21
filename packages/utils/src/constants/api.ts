@@ -15,12 +15,14 @@
 export const apiRoot = '/api/management';
 export const apiUrl = {
   v1: `${apiRoot}/v1`,
+  v1alpha1: `${apiRoot}/v1alpha1`,
   v2: `${apiRoot}/v2`
 } as const;
 
 export const auditLogsApiUrl = `${apiUrl.v1}/auditlogs`;
 export const deploymentsApiUrl = `${apiUrl.v1}/deployments`;
 export const deploymentsApiUrlV1 = deploymentsApiUrl;
+export const deploymentsApiUrlV1alpha1 = `${apiUrl.v1alpha1}/deployments`;
 export const deploymentsApiUrlV2 = `${apiUrl.v2}/deployments`;
 export const deviceAuthV2 = `${apiUrl.v2}/devauth`;
 export const deviceConfig = `${apiUrl.v1}/deviceconfig/configurations/device`;

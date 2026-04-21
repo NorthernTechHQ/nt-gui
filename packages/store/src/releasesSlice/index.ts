@@ -18,7 +18,8 @@ import type {
   ReleaseV2 as BackendReleaseV2,
   Update as BackendUpdate,
   DeltaJobDetailsItem,
-  DeltaJobsListItem
+  DeltaJobsListItem,
+  Manifest
 } from '@northern.tech/types/MenderTypes';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -47,9 +48,20 @@ export type ReleasesList = {
   selectedTags: string[];
   selection: number[];
   sort?: SortOptions;
-  tab?: 'releases' | 'delta';
   total: number;
   type: string;
+};
+
+export type ManifestsList = {
+  isLoading?: boolean;
+  manifestIds: string[];
+  page: number;
+  perPage: number;
+  searchTerm: string;
+  searchTotal: number;
+  selection: number[];
+  sort?: SortOptions;
+  total: number;
 };
 
 export type ReleaseSliceType = {
@@ -63,9 +75,13 @@ export type ReleaseSliceType = {
     sort?: SortOptions;
     total: 0;
   };
+  manifestsById: Record<string, Manifest>;
+  manifestsList: ManifestsList;
   releasesList: ReleasesList;
   selectedJob: string | null;
+  selectedManifest: string | null;
   selectedRelease: string | null;
+  tab?: 'releases' | 'delta' | 'manifests';
   tags: string[];
   updateTypes: string[];
 };
@@ -142,9 +158,47 @@ export const initialState: ReleaseSliceType = {
     total: 0,
     type: ''
   },
+  /*
+   * Return list of saved manifest objects
+   */
+  manifestsById: {
+    /*
+    [manifestName]: {
+      name: '',
+      modified: '',
+      artifact: { ... },
+      manifest: {
+        name: '',
+        system_types_compatible: [],
+        component_types: { ... }
+        ...
+      },
+      tags: ['something'],
+      notes: ''
+    }
+    */
+  },
+  manifestsList: {
+    ...DEVICE_LIST_DEFAULTS,
+    manifestIds: [],
+    selection: [],
+    sort: {
+      direction: SORTING_OPTIONS.desc,
+      key: 'modified'
+    },
+    isLoading: undefined,
+    searchTerm: '',
+    searchTotal: 0,
+    total: 0
+  },
+  tab: 'releases',
   tags: [],
   updateTypes: [],
   selectedJob: null,
+  /*
+   * Return single manifest
+   */
+  selectedManifest: null,
   /*
    * Return single release with corresponding Artifacts
    */
@@ -207,6 +261,27 @@ export const releaseSlice = createSlice({
     },
     setSelectedJob: (state, action) => {
       state.selectedJob = action.payload;
+    },
+    setActiveTab: (state, action: PayloadAction<'releases' | 'delta' | 'manifests'>) => {
+      state.tab = action.payload;
+    },
+    receiveManifest: (state, action: PayloadAction<Manifest>) => {
+      const { name } = action.payload;
+      state.manifestsById[name] = action.payload;
+    },
+    receiveManifests: (state, action: PayloadAction<Record<string, Manifest>>) => {
+      state.manifestsById = action.payload;
+    },
+    removeManifest: (state, action: PayloadAction<string>) => {
+      const { [action.payload]: _toBeRemoved, ...manifestsById } = state.manifestsById;
+      state.manifestsById = manifestsById;
+      state.selectedManifest = action.payload === state.selectedManifest ? null : state.selectedManifest;
+    },
+    selectedManifest: (state, action: PayloadAction<string | null>) => {
+      state.selectedManifest = action.payload;
+    },
+    setManifestsListState: (state, action: PayloadAction<ManifestsList>) => {
+      state.manifestsList = action.payload;
     }
   }
 });

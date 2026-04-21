@@ -313,4 +313,31 @@ describe('locationutils', () => {
       expect(search).toEqual('tag=123&tag=456&tab=flump');
     });
   });
+
+  it('uses working utilities - parseReleasesQuery with manifests tab', () => {
+    const result = parseReleasesQuery(new URLSearchParams('tab=manifests'), {
+      location: { pathname: '/software' },
+      pageState: { id: ['my-manifest'] }
+    });
+    expect(result).toEqual({
+      searchTerm: '',
+      selectedManifest: 'my-manifest',
+      selectedRelease: '',
+      tab: 'manifests',
+      tags: [],
+      type: ''
+    });
+  });
+  it('uses working utilities - parseReleasesQuery with manifests tab without id', () => {
+    const result = parseReleasesQuery(new URLSearchParams('tab=manifests&name=search'), {
+      location: { pathname: '/software' }
+    });
+    expect(result).toEqual({
+      searchTerm: 'search',
+      selectedRelease: '',
+      tab: 'manifests',
+      tags: [],
+      type: ''
+    });
+  });
 });

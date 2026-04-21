@@ -125,6 +125,11 @@ export const BENEFITS = {
     benefit: 'scheduled deployments to steer the distribution of your updates.',
     requiredPlan: PLANS.professional.id
   },
+  manifests: {
+    id: 'manifests',
+    benefit: 'orchestrate multi-component updates with manifests for complex device software management',
+    requiredPlan: PLANS.enterprise.id
+  },
   webhookEvents: {
     id: 'webhookEvents',
     benefit: 'receive inventory events and select which type(s) of events the webhook will receive',
