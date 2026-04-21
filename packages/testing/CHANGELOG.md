@@ -1,5 +1,39 @@
 ---
-## 0.9.1 - 2026-04-17
+## 0.10.0 - 2026-04-21
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Openapi spec update
+
+ ([3002081](https://github.com/NorthernTechHQ/nt-gui/commit/3002081c6addb5e15118d195bd53981460e39ad5))  by @mender-test-bot
+
+
+
+
+
+
+
+### Features
+
+#### Testing
+
+
+- *(testing)* Added manifest mock data handling to allow redux based testing
+
+ ([4449dbd](https://github.com/NorthernTechHQ/nt-gui/commit/4449dbdadd65247f608a6810e136e8172f3327b3))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/testing-0.9.1 - 2026-04-17
 
 
 ### Bug fixes
