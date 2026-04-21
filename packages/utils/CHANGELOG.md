@@ -1,5 +1,24 @@
 ---
-## 0.8.4 - 2026-04-15
+## 0.9.0 - 2026-04-21
+
+
+### Features
+
+#### Utils
+
+
+- *(utils)* Added support for feature preview endpoints
+
+ ([8337c63](https://github.com/NorthernTechHQ/nt-gui/commit/8337c63247bedfb2e84bbe1004caeb2181dae9e7))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/utils-0.8.4 - 2026-04-15
 
 
 ### Bug fixes
