@@ -11,7 +11,13 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { PaletteOptions as MuiPaletteOptions } from '@mui/material';
+import type { CSSProperties } from 'react';
+
+import type { PaletteOptions as MuiPaletteOptions } from '@mui/material';
+
+// Re-exported from index to force the bundler to keep a type-level reference
+// to this module. Otherwise the module augmentations below would not reach consumers.
+export type DummyType = never;
 
 declare module '@mui/material' {
   interface PaletteOptions extends MuiPaletteOptions {
@@ -22,7 +28,7 @@ declare module '@mui/material' {
       main: string;
     };
   }
-  
+
   interface Palette {
     neutral: {
       contrastText: string;
@@ -47,9 +53,21 @@ declare module '@mui/material/Chip' {
 
 declare module '@mui/material/styles' {
   interface TypographyVariants {
-    mono: React.CSSProperties;
+    code1: CSSProperties;
+    code2: CSSProperties;
+    mono: CSSProperties;
   }
   interface TypographyVariantsOptions {
-    mono?: React.CSSProperties;
+    code1?: CSSProperties;
+    code2?: CSSProperties;
+    mono?: CSSProperties;
+  }
+}
+
+declare module '@mui/material/Typography' {
+  interface TypographyPropsVariantOverrides {
+    code1: true;
+    code2: true;
+    mono: true;
   }
 }
