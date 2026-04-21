@@ -1,5 +1,53 @@
 ---
-## 0.30.2 - 2026-04-17
+## 0.31.0 - 2026-04-21
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added support for manifest artifacts
+
+([MEN-9411](https://northerntech.atlassian.net/browse/MEN-9411)) ([ff6a544](https://github.com/NorthernTechHQ/nt-gui/commit/ff6a544ef23db6c6910c58de6d34f5fe29ed570f))  by @mzedel
+
+
+
+
+
+  - including manifest state retrieval functionality
+
+- *(store)* Added manifest benefit information to show for plan nudges
+
+([MEN-9411](https://northerntech.atlassian.net/browse/MEN-9411)) ([7142eb0](https://github.com/NorthernTechHQ/nt-gui/commit/7142eb084cca5412eda3d2951647c78ad11e2cde))  by @mzedel
+
+
+
+
+
+
+
+
+### Refactor
+
+#### Store
+
+
+- *(store)* Let tab handling reflect changed release page focus
+
+ ([2625c20](https://github.com/NorthernTechHQ/nt-gui/commit/2625c208f04eb306831e70d0c49dfb9a032ae212))  by @mzedel
+
+
+
+
+  - it's less tied to releases only, but spans multiple software types
+
+
+
+
+
+
+## @northern.tech/store-0.30.2 - 2026-04-17
 
 
 ### Bug fixes
