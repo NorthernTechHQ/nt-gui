@@ -1,5 +1,24 @@
 ---
-## 0.9.0 - 2026-04-21
+## 0.10.0 - 2026-04-22
+
+
+### Features
+
+#### Utils
+
+
+- *(utils)* Added support for nested attributes on custom attributes sorter
+
+ ([5f16b6e](https://github.com/NorthernTechHQ/nt-gui/commit/5f16b6e365d647990aee1692cc1c6ed0d7fca39e))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/utils-0.9.0 - 2026-04-21
 
 
 ### Features
