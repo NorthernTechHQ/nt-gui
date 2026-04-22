@@ -2543,6 +2543,17 @@ export type DBusSubsystem = {
 };
 
 /**
+ * The current value of the attribute.
+ *
+ * Attribute type is implicit, inferred from the JSON type.
+ *
+ * Supported types: number, string, array of numbers, array of strings.
+ * Mixed arrays are not allowed.
+ *
+ */
+export type AttributeValue = string | number | Array<string> | Array<number>;
+
+/**
  * Attribute descriptor.
  */
 export type Attribute = {
@@ -2555,16 +2566,7 @@ export type Attribute = {
    * Attribute description.
    */
   description?: string;
-  /**
-   * The current value of the attribute.
-   *
-   * Attribute type is implicit, inferred from the JSON type.
-   *
-   * Supported types: number, string, array of numbers, array of strings.
-   * Mixed type arrays are not allowed.
-   *
-   */
-  value: string | number | Array<string> | Array<number>;
+  value: AttributeValue;
 };
 
 export type DeviceNew = {
@@ -2631,31 +2633,7 @@ export type AttributeV2 = {
    * Attribute description.
    */
   description?: string;
-  /**
-   * The current value of the attribute.
-   *
-   * Attribute type is implicit, inferred from the JSON type.
-   *
-   * Supported types: number, string, array of numbers, array of strings.
-   * Mixed arrays are not allowed.
-   *
-   */
-  value: string | number | Array<string> | Array<number>;
-};
-
-export type DeviceInventory = {
-  /**
-   * Mender-assigned unique ID.
-   */
-  id?: string;
-  /**
-   * Timestamp of the most recent attribute update.
-   */
-  updated_ts?: string;
-  /**
-   * A list of attribute descriptors.
-   */
-  attributes?: Array<AttributeV2>;
+  value: AttributeValue;
 };
 
 /**
@@ -2670,17 +2648,6 @@ export type ErrorNotFound = {
    * Request ID (same as in X-MEN-RequestID header).
    */
   request_id?: string;
-};
-
-/**
- * Inventory attribute
- */
-export type SelectAttribute = {
-  /**
-   * Attribute name.
-   */
-  attribute: string;
-  scope: Scope;
 };
 
 /**
@@ -2699,6 +2666,18 @@ export type DeviceStatusStatistics = {
   accepted: DeviceCountByTier;
   pending: DeviceCountByTier;
 };
+
+/**
+ * The filter value.
+ *
+ * Attribute type is implicit, inferred from the JSON type.
+ *
+ * Supported types: number, string, array of numbers, array of strings.
+ * Mixed arrays are not allowed.
+ * For $exists type, a boolean is required.
+ *
+ */
+export type FilterValue = string | number | Array<string> | Array<number> | boolean;
 
 /**
  * Attribute filter predicate
@@ -2728,23 +2707,7 @@ export type FilterPredicate = {
    *
    */
   type: '$eq' | '$gt' | '$gte' | '$in' | '$lt' | '$lte' | '$ltne' | '$ne' | '$nin' | '$exists' | '$regex';
-  /**
-   * The value of the attribute to be used in filtering.
-   * Attribute type is implicit, inferred from the JSON type.
-   * Supported types: number, string, boolean, array of numbers, array of strings.
-   * Mixed arrays are not allowed.
-   *
-   * The $exists operator expects a boolean value: true means the specified
-   * attribute exists, false means the specified attribute doesn't exist.
-   *
-   * The $regex operator expects a string as a Perl compatible regular expression
-   * (PCRE), automatically anchored by ^. If the regular expression is not valid,
-   * the filter will produce no results. If you need to specify options and flags,
-   * you can provide the full regex in the format of /regex/flags, for example
-   * `/[a-z]+/i`.
-   *
-   */
-  value: string | number | boolean | Array<string> | Array<number>;
+  value: FilterValue & unknown;
 };
 
 /**
@@ -2760,6 +2723,63 @@ export type SortCriteria = {
    * Sort order.
    */
   order: 'asc' | 'desc';
+};
+
+/**
+ * Inventory attribute
+ */
+export type SelectAttribute = {
+  /**
+   * Attribute name.
+   */
+  attribute: string;
+  scope: Scope;
+};
+
+export type SearchParams = {
+  /**
+   * Starting page.
+   */
+  page?: number;
+  /**
+   * Number of results per page.
+   */
+  per_page?: number;
+  /**
+   * List of device IDs
+   */
+  device_ids?: Array<string>;
+  /**
+   * Free-text search query
+   */
+  text?: string;
+  /**
+   * List of filter predicates, chained with boolean AND operators to build the search condition definition.
+   */
+  filters?: Array<FilterPredicate>;
+  /**
+   * List of ordered sort criterias
+   */
+  sort?: Array<SortCriteria>;
+  /**
+   * List of attributes to select and return
+   */
+  attributes?: Array<SelectAttribute>;
+};
+
+export type DeviceInventory = {
+  /**
+   * Mender-assigned unique ID.
+   */
+  id?: string;
+  /**
+   * Timestamp of the most recent attribute update.
+   */
+  updated_ts?: string;
+  /**
+   * A list of attribute descriptors.
+   */
+  attributes?: Array<AttributeV2>;
 };
 
 /**
@@ -11324,36 +11344,7 @@ export type InventoryInternalV2SearchDeviceInventoriesData = {
   /**
    * The search and sort parameters of the filter
    */
-  body?: {
-    /**
-     * Starting page.
-     */
-    page?: number;
-    /**
-     * Number of results per page.
-     */
-    per_page?: number;
-    /**
-     * List of device IDs
-     */
-    device_ids?: Array<string>;
-    /**
-     * Free-text search query
-     */
-    text?: string;
-    /**
-     * List of filter predicates, chained with boolean AND operators to build the search condition definition.
-     */
-    filters?: Array<FilterPredicate>;
-    /**
-     * List of ordered sort criterias
-     */
-    sort?: Array<SortCriteria>;
-    /**
-     * List of attributes to select and return
-     */
-    attributes?: Array<SelectAttribute>;
-  };
+  body?: SearchParams;
   path: {
     /**
      * Tenant ID.
@@ -11403,7 +11394,7 @@ export type InternalV2ShowFilterData = {
     id: string;
   };
   query?: never;
-  url: '/api/internal/v2/tenants/{tenant_id}/filters/{id}';
+  url: '/api/internal/v2/inventory/tenants/{tenant_id}/filters/{id}';
 };
 
 export type InternalV2ShowFilterErrors = {
@@ -12034,32 +12025,7 @@ export type InventoryV2SearchDeviceInventoriesData = {
   /**
    * The search and sort parameters of the filter
    */
-  body?: {
-    /**
-     * Starting page.
-     */
-    page?: number;
-    /**
-     * Maximum number of results per page.
-     */
-    per_page?: number;
-    /**
-     * Free-text search query
-     */
-    text?: string;
-    /**
-     * List of filter predicates.
-     */
-    filters?: Array<FilterPredicate>;
-    /**
-     * List of ordered sort criteria
-     */
-    sort?: Array<SortCriteria>;
-    /**
-     * List of attributes to select and return
-     */
-    attributes?: Array<SelectAttribute>;
-  };
+  body?: SearchParams;
   path?: never;
   query?: never;
   url: '/api/management/v2/inventory/filters/search';
@@ -17385,8 +17351,7 @@ export type WorkflowsCheckLivelinessResponses = {
    * Successful response.
    */
   200: {
-    id?: string;
-    name?: string;
+    status?: string;
   };
 };
 
@@ -17455,7 +17420,9 @@ export type StartWorkflowData = {
   /**
    * Contains the definition of the job to be started.
    */
-  body: Array<InputParameter>;
+  body: {
+    [key: string]: unknown;
+  };
   path: {
     /**
      * Workflow identifier.
