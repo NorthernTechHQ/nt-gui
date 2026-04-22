@@ -1,5 +1,24 @@
 ---
-## 0.16.0 - 2026-04-21
+## 0.16.1 - 2026-04-22
+
+
+### Bug fixes
+
+#### Themes
+
+
+- *(themes)* Removed unused mender style overrides to minimize surprise styling chances
+
+ ([b3265a2](https://github.com/NorthernTechHQ/nt-gui/commit/b3265a217d1a86472729c2982e5ebe4c6091b83a))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/themes-0.16.0 - 2026-04-21
 
 
 ### Features
