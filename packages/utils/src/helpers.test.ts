@@ -42,7 +42,9 @@ const mockDeployments = {
 };
 
 const mockDevices = {
-  a1: { id: 'a1', attributes: { ipv4_wlan0: '192.168.10.141/24' } }
+  a1: { id: 'a1', attributes: { ipv4_wlan0: '192.168.10.141/24' } },
+  b1: { id: 'b1', attributes: { ipv4_wlan0: '192.168.10.142/24' } },
+  c1: { id: 'c1', attributes: { ipv4_wlan0: '192.168.10.143/24' } }
 };
 
 describe('getFormattedSize function', () => {
@@ -129,6 +131,12 @@ describe('customSort function', () => {
     const idSortedDown = Object.values(mockDeployments).sort(customSort(true, 'id'));
     expect(idSortedDown[0].id).toEqual(mockDeployments.d3.id);
     expect(idSortedDown[1].id).toEqual(mockDeployments.d2.id);
+    const ipSortedDown = Object.values(mockDevices).sort(customSort(true, 'attributes.ipv4_wlan0', true));
+    expect(ipSortedDown[0].attributes.ipv4_wlan0).toEqual(mockDevices.c1.attributes.ipv4_wlan0);
+    expect(ipSortedDown[2].attributes.ipv4_wlan0).toEqual(mockDevices.a1.attributes.ipv4_wlan0);
+    const ipSortedUp = Object.values(mockDevices).sort(customSort(false, 'attributes.ipv4_wlan0', true));
+    expect(ipSortedUp[0].attributes.ipv4_wlan0).toEqual(mockDevices.a1.attributes.ipv4_wlan0);
+    expect(ipSortedUp[2].attributes.ipv4_wlan0).toEqual(mockDevices.c1.attributes.ipv4_wlan0);
   });
 });
 describe('deepCompare function', () => {
@@ -176,7 +184,7 @@ describe('fullyDecodeURI function', () => {
 describe('getDemoDeviceAddress function', () => {
   it('works as expected', async () => {
     expect(getDemoDeviceAddress(Object.values(mockDevices), 'virtual')).toEqual('localhost');
-    expect(getDemoDeviceAddress(Object.values(mockDevices), 'physical')).toEqual('192.168.10.141');
+    expect(getDemoDeviceAddress(Object.values(mockDevices), 'physical')).toEqual('192.168.10.143');
   });
 });
 

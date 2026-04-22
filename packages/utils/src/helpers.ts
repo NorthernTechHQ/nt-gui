@@ -202,14 +202,21 @@ export const formatTime = date => {
   }
 };
 
-export const customSort = (direction: boolean, field: string) => (a, b) => {
-  if (typeof a[field] === 'string') {
-    const result = a[field].localeCompare(b[field], navigator.language, { sensitivity: 'case' });
-    return direction ? result * -1 : result;
-  }
-  if (a[field] > b[field]) return direction ? -1 : 1;
-  if (a[field] < b[field]) return direction ? 1 : -1;
-  return 0;
+const getNestedValue = (obj, path: string) => path.split('.').reduce((current, key) => current?.[key], obj);
+
+export const customSort = (direction: boolean, field: string, nested = false) => {
+  const collator = new Intl.Collator('en', { sensitivity: 'case' });
+  return (a, b) => {
+    const valueA = nested ? getNestedValue(a, field) : a[field];
+    const valueB = nested ? getNestedValue(b, field) : b[field];
+    if (typeof valueA === 'string') {
+      const result = collator.compare(valueA, valueB);
+      return direction ? result * -1 : result;
+    }
+    if (valueA > valueB) return direction ? -1 : 1;
+    if (valueA < valueB) return direction ? 1 : -1;
+    return 0;
+  };
 };
 
 export const duplicateFilter = (item, index, array) => array.indexOf(item) == index;
