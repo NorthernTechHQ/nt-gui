@@ -45,7 +45,7 @@
     "openapi-backend": "^5.x",
     "js-yaml": "^4.x",
     "@emotion/jest": "^11.x",
-    "@mui/material": "^7.x",
+    "@mui/material": "^9.x",
     "@northern.tech/utils": "*",
     "@reduxjs/toolkit": "^2.x",
     "@testing-library/react": "^16.x",
