@@ -1,5 +1,30 @@
 ---
-## 0.10.0 - 2026-04-21
+## 0.10.1 - 2026-04-23
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Openapi spec update
+
+ ([9431600](https://github.com/NorthernTechHQ/nt-gui/commit/9431600c39458d8b8575403a7c24632b5cf32c67))  by @mender-test-bot
+
+
+
+- *(testing)* Updated Mui to v9
+
+ ([f30e697](https://github.com/NorthernTechHQ/nt-gui/commit/f30e697ff567659e90b93713f766f8cd2dc46466))  by @mineralsfree
+
+
+
+
+
+
+
+
+## @northern.tech/testing-0.10.0 - 2026-04-21
 
 
 ### Bug fixes
