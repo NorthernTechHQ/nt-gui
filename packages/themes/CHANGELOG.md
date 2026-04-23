@@ -1,5 +1,24 @@
 ---
-## 0.16.1 - 2026-04-22
+## 0.16.2 - 2026-04-23
+
+
+### Bug fixes
+
+#### Themes
+
+
+- *(themes)* Updated Mui to v9
+
+ ([dca262b](https://github.com/NorthernTechHQ/nt-gui/commit/dca262b0e3918bdf8a2c143992b844203726357f))  by @mineralsfree
+
+
+
+
+
+
+
+
+## @northern.tech/themes-0.16.1 - 2026-04-22
 
 
 ### Bug fixes
