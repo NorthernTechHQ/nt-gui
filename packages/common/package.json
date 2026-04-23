@@ -35,7 +35,7 @@
   },
   "type": "module",
   "devDependencies": {
-    "@mui/x-date-pickers": "^8.x",
+    "@mui/x-date-pickers": "^9.x",
     "@northern.tech/eslint-config": "*",
     "@northern.tech/testing": "*",
     "@northern.tech/typescript-config": "*",
@@ -50,9 +50,9 @@
     "vitest": "^4.1.2"
   },
   "dependencies": {
-    "@mui/icons-material": "^7.x",
-    "@mui/material": "^7.x",
-    "@mui/x-tree-view": "^8.x",
+    "@mui/icons-material": "^9.x",
+    "@mui/material": "^9.x",
+    "@mui/x-tree-view": "^9.x",
     "@northern.tech/common-ui": "*",
     "@northern.tech/store": "*",
     "@northern.tech/themes": "*",

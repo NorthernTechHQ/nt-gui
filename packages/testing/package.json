@@ -42,14 +42,14 @@
     "tsdown": "^0.21.7"
   },
   "dependencies": {
-    "openapi-backend": "^5.x",
-    "js-yaml": "^4.x",
     "@emotion/jest": "^11.x",
-    "@mui/material": "^9.x",
+    "@mui/material": "^9.0.0",
     "@northern.tech/utils": "*",
     "@reduxjs/toolkit": "^2.x",
     "@testing-library/react": "^16.x",
+    "js-yaml": "^4.x",
     "msw": "^2.x",
+    "openapi-backend": "^5.x",
     "react": "19.x",
     "react-redux": "^9.x",
     "react-router-dom": "^7.x",
