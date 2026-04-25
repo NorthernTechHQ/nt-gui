@@ -3690,7 +3690,10 @@ paths:
           name: name
           schema:
             type: string
-        - description: Tag filter.
+        - description: |-
+            Filter the releases based on their associated tags and only return
+            releases that have at least one matching tag (i.e. OR matching).
+          explode: true
           in: query
           name: tag
           schema:
@@ -18771,12 +18774,23 @@ components:
         password:
           type: string
           description: Password.
+        roles:
+          type: array
+          description: 'Optional RBAC roles to assign to the user. Defaults to: RBAC_ROLE_PERMIT_ALL.'
+          items:
+            title: ListOfRoles
+            type: string
+            description: Role name
+        send_reset_password:
+          type: boolean
+          description: Flag indicating wether to trigger password reset on user creation.
       description: New user descriptor.
       example:
         email: user@acme.com
         password: mypass1234
-        login:
-          google: bob@gmail.com
+        roles:
+          - RBAC_ROLE_OBSERVER
+        send_reset_password: true
     UserUpdate:
       type: object
       properties:
