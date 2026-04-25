@@ -4018,6 +4018,14 @@ export type UserNew = {
    * Password.
    */
   password?: string;
+  /**
+   * Optional RBAC roles to assign to the user. Defaults to: RBAC_ROLE_PERMIT_ALL.
+   */
+  roles?: Array<string>;
+  /**
+   * Flag indicating wether to trigger password reset on user creation.
+   */
+  send_reset_password?: boolean;
 };
 
 /**
@@ -7644,7 +7652,8 @@ export type DeploymentsV2ListReleasesWithPaginationData = {
      */
     name?: string;
     /**
-     * Tag filter.
+     * Filter the releases based on their associated tags and only return
+     * releases that have at least one matching tag (i.e. OR matching).
      */
     tag?: Array<string>;
     /**
