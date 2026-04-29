@@ -2556,7 +2556,7 @@ export type AttributeValue = string | number | Array<string> | Array<number>;
 /**
  * Attribute descriptor.
  */
-export type Attribute = {
+export type DeviceAttribute = {
   /**
    * A human readable, unique attribute ID, e.g. 'device_type', 'ip_addr', 'cpu_load', etc.
    *
@@ -2619,21 +2619,15 @@ export type DevicesInGroupsReq = {
   groups: Array<string>;
 };
 
-/**
- * Attribute descriptor with scope (v2 APIs).
- */
-export type AttributeV2 = {
-  /**
-   * A human readable, unique attribute ID, e.g. 'device_type', 'ip_addr', 'cpu_load', etc.
-   *
-   */
-  name: string;
+export type Attribute = DeviceAttribute & {
   scope: Scope;
   /**
-   * Attribute description.
+   * The date and time of last tag update in RFC3339 format.
+   *
+   * Only applicable when scope is `tags`.
+   *
    */
-  description?: string;
-  value: AttributeValue;
+  timestamp?: string;
 };
 
 /**
@@ -2779,7 +2773,7 @@ export type DeviceInventory = {
   /**
    * A list of attribute descriptors.
    */
-  attributes?: Array<AttributeV2>;
+  attributes?: Array<Attribute>;
 };
 
 /**
@@ -2797,43 +2791,6 @@ export type Filter = {
    */
   name: string;
   terms?: Array<FilterPredicate>;
-};
-
-/**
- * Attribute descriptor.
- */
-export type AttributeV1 = {
-  /**
-   * A human readable, unique attribute ID, e.g. 'device_type', 'ip_addr', 'cpu_load', etc.
-   *
-   */
-  name: string;
-  /**
-   * The scope of the attribute.
-   *
-   * Scope is a string and acts as namespace for the attribute name.
-   *
-   */
-  scope: string;
-  /**
-   * Attribute description.
-   */
-  description?: string;
-  /**
-   * The current value of the attribute.
-   *
-   * Attribute type is implicit, inferred from the JSON type.
-   *
-   * Supported types: number, string, array of numbers, array of strings.
-   * Mixed type arrays are not allowed.
-   *
-   */
-  value: string | number | Array<string> | Array<number>;
-  /**
-   * The date and time of last tag update in RFC3339 format.
-   *
-   */
-  timestamp?: string;
 };
 
 /**
@@ -2860,21 +2817,6 @@ export type Tag = {
    *
    */
   timestamp?: string;
-};
-
-export type DeviceInventoryV1 = {
-  /**
-   * Mender-assigned unique device ID.
-   */
-  id?: string;
-  /**
-   * Timestamp of the most recent attribute update.
-   */
-  updated_ts?: string;
-  /**
-   * A list of attribute descriptors.
-   */
-  attributes?: Array<AttributeV1>;
 };
 
 export type Group = {
@@ -10807,7 +10749,7 @@ export type AssignAttributesData = {
    *
    * A list of attribute descriptors.
    */
-  body: Array<Attribute>;
+  body: Array<DeviceAttribute>;
   path?: never;
   query?: never;
   url: '/api/devices/v1/inventory/device/attributes';
@@ -10843,7 +10785,7 @@ export type ReplaceAttributesData = {
    *
    * A list of attribute descriptors.
    */
-  body: Array<Attribute>;
+  body: Array<DeviceAttribute>;
   path?: never;
   query?: never;
   url: '/api/devices/v1/inventory/device/attributes';
@@ -10889,7 +10831,7 @@ export type InventoryInternalCheckHealthErrors = {
    * Service unhealthy / not ready to accept traffic. At least one dependency is not running.
    *
    */
-  503: unknown;
+  503: Error;
 };
 
 export type InventoryInternalCheckHealthError = InventoryInternalCheckHealthErrors[keyof InventoryInternalCheckHealthErrors];
@@ -11156,7 +11098,7 @@ export type UpdateInventoryForADeviceScopeWiseData = {
   /**
    * A list of attribute descriptors.
    */
-  body: Array<AttributeV2>;
+  body: Array<Attribute>;
   headers?: {
     /**
      * Skips updating the device if modified after the given RFC1123 timestamp.
@@ -11489,7 +11431,7 @@ export type ListDeviceInventoriesResponses = {
    *
    * Successful response.
    */
-  200: Array<DeviceInventoryV1>;
+  200: Array<DeviceInventory>;
 };
 
 export type ListDeviceInventoriesResponse = ListDeviceInventoriesResponses[keyof ListDeviceInventoriesResponses];
@@ -11553,7 +11495,7 @@ export type GetDeviceInventoryResponses = {
   /**
    * Successful response - the device was found.
    */
-  200: DeviceInventoryV1;
+  200: DeviceInventory;
 };
 
 export type GetDeviceInventoryResponse = GetDeviceInventoryResponses[keyof GetDeviceInventoryResponses];
