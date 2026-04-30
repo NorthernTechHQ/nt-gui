@@ -42,13 +42,6 @@ body {
     padding-bottom: 0;
     padding-right: 0;
   }
-  #offerHeader {
-    justify-content: center;
-    display: flex;
-    box-shadow:
-      rgba(0, 0, 0, 0.1) 0px 0px 3px,
-      rgba(0, 0, 0, 0.1) 0px 1px 3px;
-  }
 }
 @media screen and (max-width: 600px) {
   #app {
@@ -79,15 +72,6 @@ a.warning:hover {
   color: @errorStyleColorLight !important;
 }
 
-.box-sizing (@type: border-box) {
-  box-sizing: @type;
-}
-
-ul.unstyled {
-  list-style: none;
-  padding-left: 0;
-}
-
 time,
 .nowrap {
   white-space: nowrap;
@@ -100,34 +84,6 @@ time,
 
 .pre-line {
   white-space: pre-line;
-}
-
-a,
-span.link,
-.copy-to-clipboard svg {
-  font-weight: 500;
-  color: @linkcolor;
-  cursor: pointer;
-  &:hover {
-    color: @linkhover;
-  }
-
-  &.small {
-    font-size: 13px;
-  }
-}
-
-.copy-to-clipboard {
-  cursor: pointer;
-}
-
-.copy-to-clipboard svg {
-  opacity: 0;
-  .transition(opacity 0.2s ease-in-out);
-}
-
-.copy-to-clipboard:hover svg {
-  opacity: 1;
 }
 
 .capitalized {
@@ -155,7 +111,7 @@ span.link,
 .break-all {
   white-space: normal;
   word-break: break-all;
-  word-wrap: break-all;
+  word-wrap: anywhere;
 }
 
 .hidden {
@@ -376,13 +332,17 @@ each(@directions, .(@direction) {
   border: white 1px solid;
   &.top,
   &.bottom {
-    .animation(bouncedownup 1.3s infinite);
+    .animation(onboard-nudge 1s ease-out infinite);
   }
   &.left {
-    .animation(bouncerightleft 1.3s infinite);
+    --nudge-back: translate(1px, 0);
+    --nudge-out: translate(-2px, 0);
+    .animation(onboard-nudge 1s ease-out infinite);
   }
   &.right {
-    .animation(bounceleftright 1.3s infinite);
+    --nudge-back: translate(-1px, 0);
+    --nudge-out: translate(2px, 0);
+    .animation(onboard-nudge 1s ease-out infinite);
   }
 }
 
@@ -472,15 +432,9 @@ each(@directions, .(@direction) {
       max-width: initial;
       min-width: 375px;
     }
-    &.flexbox {
-      display: flex;
-    }
   }
   .widgetHeader {
     width: 100%;
-  }
-  .link {
-    font-size: small;
   }
 }
 
@@ -641,7 +595,7 @@ form .required.file {
   &.active {
     background-color: @lightestgrey;
     .icon {
-      .animation(bouncedownup 1.3s infinite);
+      .animation(onboard-nudge 1s ease-out infinite);
     }
     .dashboard-placeholder {
       color: @textlight;
@@ -984,80 +938,35 @@ div.waiting-inventory {
   }
 }
 
-@keyframes bouncedownup {
-  0% {
-    top: 0;
-    animation-timing-function: ease-out;
-  }
-  8% {
-    top: 1px;
-    animation-timing-function: ease-out;
-  }
-  16% {
-    top: 0;
-    animation-timing-function: ease-out;
-  }
-  32% {
-    top: -2px;
-    animation-timing-function: ease-out;
-  }
-  50% {
-    top: 0px;
-    animation-timing-function: ease-out;
-  }
+@property --nudge-back {
+  syntax: '<transform-list>';
+  inherits: false;
+  initial-value: translate(0, 1px);
+}
+@property --nudge-out {
+  syntax: '<transform-list>';
+  inherits: false;
+  initial-value: translate(0, -2px);
+}
+
+@keyframes onboard-nudge {
+  0%,
+  50%,
   100% {
-    top: 0;
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: var(--nudge-back);
+  }
+  75% {
+    transform: var(--nudge-out);
   }
 }
 
-@keyframes bounceleftright {
-  0% {
-    left: 0;
-    animation-timing-function: ease-out;
-  }
-  8% {
-    left: 1px;
-    animation-timing-function: ease-out;
-  }
-  16% {
-    left: 0;
-    animation-timing-function: ease-out;
-  }
-  32% {
-    left: -2px;
-    animation-timing-function: ease-out;
-  }
-  50% {
-    left: 0px;
-    animation-timing-function: ease-out;
-  }
-  100% {
-    left: 0;
-  }
-}
-@keyframes bouncerightleft {
-  0% {
-    right: 0;
-    animation-timing-function: ease-out;
-  }
-  8% {
-    right: 1px;
-    animation-timing-function: ease-out;
-  }
-  16% {
-    right: 0;
-    animation-timing-function: ease-out;
-  }
-  32% {
-    right: -2px;
-    animation-timing-function: ease-out;
-  }
-  50% {
-    right: 0px;
-    animation-timing-function: ease-out;
-  }
-  100% {
-    right: 0;
+@media (prefers-reduced-motion: reduce) {
+  .onboard-icon,
+  .dropzone .icon {
+    animation: none;
   }
 }
 
@@ -1090,36 +999,6 @@ div.waiting-inventory {
 }
 .rotate (@deg) {
   transform: rotate(@deg);
-}
-
-@keyframes highlight {
-  0% {
-    border-color: @alertpurpleHover;
-    animation-timing-function: ease-in;
-  }
-  50% {
-    border-color: @alertpurpleHover;
-    animation-timing-function: ease-out;
-  }
-  100% {
-    border-color: @alertpurpleHover;
-    animation-timing-function: ease-in;
-  }
-}
-
-.placeholder(@rules) {
-  &::-webkit-input-placeholder {
-    @rules();
-  }
-  &:-moz-placeholder {
-    @rules();
-  }
-  &::-moz-placeholder {
-    @rules();
-  }
-  &:-ms-input-placeholder {
-    @rules();
-  }
 }
 
 .monaco-editor .margin {
