@@ -332,13 +332,17 @@ each(@directions, .(@direction) {
   border: white 1px solid;
   &.top,
   &.bottom {
-    .animation(bouncedownup 1.3s infinite);
+    .animation(onboard-nudge 1s ease-out infinite);
   }
   &.left {
-    .animation(bouncerightleft 1.3s infinite);
+    --nudge-back: translate(1px, 0);
+    --nudge-out: translate(-2px, 0);
+    .animation(onboard-nudge 1s ease-out infinite);
   }
   &.right {
-    .animation(bounceleftright 1.3s infinite);
+    --nudge-back: translate(-1px, 0);
+    --nudge-out: translate(2px, 0);
+    .animation(onboard-nudge 1s ease-out infinite);
   }
 }
 
@@ -591,7 +595,7 @@ form .required.file {
   &.active {
     background-color: @lightestgrey;
     .icon {
-      .animation(bouncedownup 1.3s infinite);
+      .animation(onboard-nudge 1s ease-out infinite);
     }
     .dashboard-placeholder {
       color: @textlight;
@@ -934,80 +938,35 @@ div.waiting-inventory {
   }
 }
 
-@keyframes bouncedownup {
-  0% {
-    top: 0;
-    animation-timing-function: ease-out;
-  }
-  8% {
-    top: 1px;
-    animation-timing-function: ease-out;
-  }
-  16% {
-    top: 0;
-    animation-timing-function: ease-out;
-  }
-  32% {
-    top: -2px;
-    animation-timing-function: ease-out;
-  }
-  50% {
-    top: 0px;
-    animation-timing-function: ease-out;
-  }
+@property --nudge-back {
+  syntax: '<transform-list>';
+  inherits: false;
+  initial-value: translate(0, 1px);
+}
+@property --nudge-out {
+  syntax: '<transform-list>';
+  inherits: false;
+  initial-value: translate(0, -2px);
+}
+
+@keyframes onboard-nudge {
+  0%,
+  50%,
   100% {
-    top: 0;
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: var(--nudge-back);
+  }
+  75% {
+    transform: var(--nudge-out);
   }
 }
 
-@keyframes bounceleftright {
-  0% {
-    left: 0;
-    animation-timing-function: ease-out;
-  }
-  8% {
-    left: 1px;
-    animation-timing-function: ease-out;
-  }
-  16% {
-    left: 0;
-    animation-timing-function: ease-out;
-  }
-  32% {
-    left: -2px;
-    animation-timing-function: ease-out;
-  }
-  50% {
-    left: 0px;
-    animation-timing-function: ease-out;
-  }
-  100% {
-    left: 0;
-  }
-}
-@keyframes bouncerightleft {
-  0% {
-    right: 0;
-    animation-timing-function: ease-out;
-  }
-  8% {
-    right: 1px;
-    animation-timing-function: ease-out;
-  }
-  16% {
-    right: 0;
-    animation-timing-function: ease-out;
-  }
-  32% {
-    right: -2px;
-    animation-timing-function: ease-out;
-  }
-  50% {
-    right: 0px;
-    animation-timing-function: ease-out;
-  }
-  100% {
-    right: 0;
+@media (prefers-reduced-motion: reduce) {
+  .onboard-icon,
+  .dropzone .icon {
+    animation: none;
   }
 }
 
