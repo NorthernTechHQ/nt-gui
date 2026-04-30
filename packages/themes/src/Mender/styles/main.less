@@ -102,34 +102,6 @@ time,
   white-space: pre-line;
 }
 
-a,
-span.link,
-.copy-to-clipboard svg {
-  font-weight: 500;
-  color: @linkcolor;
-  cursor: pointer;
-  &:hover {
-    color: @linkhover;
-  }
-
-  &.small {
-    font-size: 13px;
-  }
-}
-
-.copy-to-clipboard {
-  cursor: pointer;
-}
-
-.copy-to-clipboard svg {
-  opacity: 0;
-  .transition(opacity 0.2s ease-in-out);
-}
-
-.copy-to-clipboard:hover svg {
-  opacity: 1;
-}
-
 .capitalized {
   text-transform: capitalize;
 }
