@@ -1,5 +1,32 @@
 ---
-## 0.16.2 - 2026-04-23
+## 0.16.3 - 2026-04-30
+
+
+### Bug fixes
+
+#### Themes
+
+
+- *(themes)* Removed global selectors from css
+
+([MEN-9552](https://northerntech.atlassian.net/browse/MEN-9552)) ([74cf223](https://github.com/NorthernTechHQ/nt-gui/commit/74cf223cb66d67551f7bdc39d78ca6c0b4c286fe))  by @mineralsfree
+
+
+
+
+- *(themes)* Fixed wrong word-wrap value
+
+([MEN-9552](https://northerntech.atlassian.net/browse/MEN-9552)) ([bcc6ebf](https://github.com/NorthernTechHQ/nt-gui/commit/bcc6ebf192f3456b86d44bdd43f462df6b517a7f))  by @mineralsfree
+
+
+
+
+
+
+
+
+
+## @northern.tech/themes-0.16.2 - 2026-04-23
 
 
 ### Bug fixes
