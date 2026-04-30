@@ -42,13 +42,6 @@ body {
     padding-bottom: 0;
     padding-right: 0;
   }
-  #offerHeader {
-    justify-content: center;
-    display: flex;
-    box-shadow:
-      rgba(0, 0, 0, 0.1) 0px 0px 3px,
-      rgba(0, 0, 0, 0.1) 0px 1px 3px;
-  }
 }
 @media screen and (max-width: 600px) {
   #app {
@@ -77,15 +70,6 @@ body {
 }
 a.warning:hover {
   color: @errorStyleColorLight !important;
-}
-
-.box-sizing (@type: border-box) {
-  box-sizing: @type;
-}
-
-ul.unstyled {
-  list-style: none;
-  padding-left: 0;
 }
 
 time,
@@ -444,15 +428,9 @@ each(@directions, .(@direction) {
       max-width: initial;
       min-width: 375px;
     }
-    &.flexbox {
-      display: flex;
-    }
   }
   .widgetHeader {
     width: 100%;
-  }
-  .link {
-    font-size: small;
   }
 }
 
@@ -1062,36 +1040,6 @@ div.waiting-inventory {
 }
 .rotate (@deg) {
   transform: rotate(@deg);
-}
-
-@keyframes highlight {
-  0% {
-    border-color: @alertpurpleHover;
-    animation-timing-function: ease-in;
-  }
-  50% {
-    border-color: @alertpurpleHover;
-    animation-timing-function: ease-out;
-  }
-  100% {
-    border-color: @alertpurpleHover;
-    animation-timing-function: ease-in;
-  }
-}
-
-.placeholder(@rules) {
-  &::-webkit-input-placeholder {
-    @rules();
-  }
-  &:-moz-placeholder {
-    @rules();
-  }
-  &::-moz-placeholder {
-    @rules();
-  }
-  &:-ms-input-placeholder {
-    @rules();
-  }
 }
 
 .monaco-editor .margin {
