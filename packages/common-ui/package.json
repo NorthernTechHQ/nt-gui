@@ -75,10 +75,10 @@
     "@vitejs/plugin-react": "^6.0.1",
     "eslint": "^9.39.1",
     "jsdom": "29.0.2",
-    "msw": "^2.13.0",
+    "msw": "^2.14.2",
     "redux-mock-store": "1.5.5",
     "tsdown": "^0.21.7",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.5"
   },
   "dependencies": {
     "@mdi/js": "^7.x",
@@ -91,7 +91,7 @@
     "@xterm/addon-search": "^0.16.x",
     "@xterm/addon-web-links": "^0.12.x",
     "@xterm/xterm": "^6.x",
-    "copy-to-clipboard": "^3.x",
+    "copy-to-clipboard": "^4.x",
     "dayjs": "^1.x",
     "generate-password-browser": "^1.x",
     "pluralize": "^8.x",
