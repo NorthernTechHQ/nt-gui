@@ -1,5 +1,24 @@
 ---
-## 0.16.3 - 2026-04-30
+## 0.16.4 - 2026-05-06
+
+
+### Bug fixes
+
+#### Themes
+
+
+- *(themes)* Removed outdated auth set styles
+
+ ([b2baf1d](https://github.com/NorthernTechHQ/nt-gui/commit/b2baf1d6d98cc8de4590a0220bee624536d7be57))  by @mineralsfree
+
+
+
+
+
+
+
+
+## @northern.tech/themes-0.16.3 - 2026-04-30
 
 
 ### Bug fixes
