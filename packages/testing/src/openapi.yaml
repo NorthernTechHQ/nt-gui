@@ -3249,9 +3249,6 @@ paths:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/UploadManifestRequest'
-            encoding:
-              tags:
-                style: spaceDelimited
         required: true
       responses:
         '201':
@@ -3358,6 +3355,91 @@ paths:
         - Deployments_v1alpha1_Management API
       x-mender-plan:
         - enterprise
+    delete:
+      description: Deletes Mender Manifests according to the specified names.
+      operationId: Delete Deployment Manifests
+      parameters:
+        - description: Manifest name filter. Can be repeated to query a set of entries.
+          in: query
+          name: name
+          required: true
+          explode: true
+          style: form
+          schema:
+            items:
+              type: string
+            type: array
+      responses:
+        '204':
+          description: Manifests deleted successfully.
+        '400':
+          $ref: '#/components/responses/InvalidRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '402':
+          $ref: '#/components/responses/PaymentRequiredError'
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManifestInUseError'
+          description: Conflict.
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - ManagementJWT: []
+      summary: Delete Mender Manifests
+      tags:
+        - Deployments_v1alpha1_Management API
+      x-mender-plan:
+        - enterprise
+  /api/management/v1alpha1/deployments/manifests/generate:
+    post:
+      description: |
+        Generate a new Mender Manifest from a manifest.yaml file.
+      operationId: Generate Deployment Manifest Artifact
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GenerateManifestRequest'
+      responses:
+        '202':
+          content: {}
+          description: Generation request accepted and queued for processing.
+          headers:
+            Location:
+              description: URL of the newly uploaded manifest.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/InvalidRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '402':
+          $ref: '#/components/responses/PaymentRequiredError'
+        '409':
+          content:
+            application/json:
+              example:
+                error: software with the same name already exists
+                request_id: e4dde7e9-9424-4311-8648-86e24b542410
+                metadata:
+                  conflict:
+                    want: cookies
+              schema:
+                $ref: '#/components/schemas/ErrorExt'
+          description: |
+            Software with the same name already exists.
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - ManagementJWT: []
+      summary: Generate Mender Manifest
+      tags:
+        - Deployments_v1alpha1_Management API
+      x-mender-plan:
+        - enterprise
   /api/management/v1alpha1/deployments/manifests/{manifest_name}:
     get:
       description: Returns the Mender Manifest with the given name
@@ -3391,6 +3473,37 @@ paths:
         - Deployments_v1alpha1_Management API
       x-mender-plan:
         - enterprise
+  /api/management/v1alpha1/deployments/software/tags:
+    get:
+      operationId: List software tags
+      parameters:
+        - description: Only list tags used on software of a particular kind
+          in: query
+          name: kind
+          schema:
+            enum:
+              - release
+              - manifest
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tags'
+          description: Successful response.
+        '400':
+          $ref: '#/components/responses/InvalidRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - ManagementJWT: []
+      summary: |
+        Lists all available tags for software (releases and/or manifests).
+      tags:
+        - Deployments_v1alpha1_Management API
   /api/management/v1alpha1/deployments/deployments/{deployment_id}/devices/{device_id}/log:
     get:
       description: |
@@ -5328,6 +5441,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - configure
       security:
         - DeviceJWT: []
     put:
@@ -5347,6 +5462,8 @@ paths:
           $ref: '#/components/responses/InvalidRequestError'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - configure
       security:
         - DeviceJWT: []
   /api/internal/v1/deviceconfig/health:
@@ -5522,6 +5639,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - configure
       security:
         - ManagementJWT: []
     put:
@@ -5548,6 +5667,8 @@ paths:
           $ref: '#/components/responses/InvalidRequestError'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - configure
       security:
         - ManagementJWT: []
   /api/management/v1/deviceconfig/configurations/device/{deviceId}/deploy:
@@ -5582,6 +5703,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - configure
       security:
         - ManagementJWT: []
   /api/devices/v1/deviceconnect/connect:
@@ -5639,6 +5762,8 @@ paths:
           $ref: '#/components/responses/InvalidRequestError'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - troubleshoot
       security:
         - DeviceJWT: []
   /api/internal/v1/deviceconnect/health:
@@ -5830,6 +5955,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - troubleshoot
       security:
         - ManagementJWT: []
   /api/management/v1/deviceconnect/devices/{id}/check-update:
@@ -5857,6 +5984,8 @@ paths:
           $ref: '#/components/responses/ConflictError'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - troubleshoot
       security:
         - ManagementJWT: []
   /api/management/v1/deviceconnect/devices/{id}/connect:
@@ -5911,6 +6040,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - troubleshoot
       security:
         - ManagementJWT: []
   /api/management/v1/deviceconnect/devices/{id}/download:
@@ -5970,6 +6101,8 @@ paths:
           $ref: '#/components/responses/ConflictError'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - troubleshoot
       security:
         - ManagementJWT: []
   /api/management/v1/deviceconnect/devices/{id}/send-inventory:
@@ -5997,6 +6130,8 @@ paths:
           $ref: '#/components/responses/ConflictError'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - troubleshoot
       security:
         - ManagementJWT: []
   /api/management/v1/deviceconnect/sessions/{session_id}/playback:
@@ -6056,6 +6191,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-plan:
+        - enterprise
+      x-mender-addon:
+        - troubleshoot
       security:
         - ManagementJWT: []
   /api/management/v1/deviceconnect/devices/{id}/upload:
@@ -6088,6 +6227,8 @@ paths:
           $ref: '#/components/responses/ConflictError'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - troubleshoot
       security:
         - ManagementJWT: []
   /api/devices/v1/devicemonitor/alert:
@@ -6115,6 +6256,11 @@ paths:
           $ref: '#/components/responses/InvalidRequestError'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - monitor
+      x-mender-plan:
+        - professional
+        - enterprise
       security:
         - DeviceJWT: []
   /api/devices/v1/devicemonitor/config:
@@ -6142,6 +6288,11 @@ paths:
           $ref: '#/components/responses/InvalidRequestError'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - monitor
+      x-mender-plan:
+        - professional
+        - enterprise
       security:
         - DeviceJWT: []
   /api/internal/v1/devicemonitor/tenants/{tenantId}:
@@ -6347,6 +6498,11 @@ paths:
           $ref: '#/components/responses/InvalidRequestError'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - monitor
+      x-mender-plan:
+        - professional
+        - enterprise
       security:
         - ManagementJWT: []
   /api/management/v1/devicemonitor/devices/{id}/alerts/latest:
@@ -6415,6 +6571,11 @@ paths:
           $ref: '#/components/responses/InvalidRequestError'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - monitor
+      x-mender-plan:
+        - professional
+        - enterprise
       security:
         - ManagementJWT: []
   /api/management/v1/devicemonitor/devices/{id}/config:
@@ -6443,6 +6604,11 @@ paths:
           $ref: '#/components/responses/InvalidRequestError'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - monitor
+      x-mender-plan:
+        - professional
+        - enterprise
       security:
         - ManagementJWT: []
   /api/management/v1/devicemonitor/settings/global/channel/alerts/{name}/status:
@@ -6476,6 +6642,11 @@ paths:
           $ref: '#/components/responses/InvalidRequestError'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      x-mender-addon:
+        - monitor
+      x-mender-plan:
+        - professional
+        - enterprise
       security:
         - ManagementJWT: []
   /api/devices/v1/inventory/device/attributes:
@@ -10705,6 +10876,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '503':
           $ref: '#/components/responses/UnavailableError'
+      x-mender-plan:
+        - enterprise
   /api/management/v1/useradm/auth/sso/{id}/login:
     get:
       tags:
@@ -10735,6 +10908,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      x-mender-plan:
+        - enterprise
   /api/management/v1/useradm/auth/logout:
     post:
       tags:
@@ -11839,6 +12014,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - ManagementJWT: []
+      x-mender-plan:
+        - enterprise
     put:
       tags:
         - User_Administration_Management API
@@ -11888,6 +12065,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - ManagementJWT: []
+      x-mender-plan:
+        - enterprise
     delete:
       tags:
         - User_Administration_Management API
@@ -11922,6 +12101,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - ManagementJWT: []
+      x-mender-plan:
+        - enterprise
   /api/management/v1/useradm/sso/idp/metadata:
     get:
       tags:
@@ -11949,6 +12130,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - ManagementJWT: []
+      x-mender-plan:
+        - enterprise
     post:
       tags:
         - User_Administration_Management API
@@ -12008,6 +12191,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - ManagementJWT: []
+      x-mender-plan:
+        - enterprise
   /api/management/v1/useradm/sso/sp/metadata/{id}:
     get:
       tags:
@@ -12047,6 +12232,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - ManagementJWT: []
+      x-mender-plan:
+        - enterprise
   /api/management/v1/useradm/limits:
     get:
       tags:
@@ -15508,6 +15695,44 @@ components:
             Additional information describing a Manifest limited to 1024 characters.
           type: string
       type: object
+    GenerateManifestRequest:
+      properties:
+        description:
+          description: Description of the manifest.
+          type: string
+        tags:
+          description: |
+            List of tags for the manifest.
+          type: array
+          items:
+            type: string
+        file:
+          description: Raw manifest.yaml to be used to generate the manifest. It has to be the last part of request.
+          format: binary
+          type: string
+      required:
+        - file
+      type: object
+    ManifestInUseError:
+      description: Manifest used by active deployment.
+      example:
+        error: active deployments are using some of the Manifests from the request
+        active_deployments:
+          - 00a0c91e6-7dec-11d0-a765-f81d4faebf6
+        request_id: f7881e82-0492-49fb-b459-795654e7188a
+      properties:
+        error:
+          description: Description of the error.
+          type: string
+        active_deployments:
+          description: List of IDs of active deployments which are using Manifests from the request.
+          items:
+            type: string
+          type: array
+        request_id:
+          description: Request ID.
+          type: string
+      type: object
     ArtifactV2:
       description: Detailed artifact.
       example:
@@ -15610,6 +15835,14 @@ components:
               items:
                 type: string
         - $ref: '#/components/schemas/UploadArtifactRequest'
+    Tags:
+      description: |-
+        Tags assigned to software used for filtering. Each tag
+        must be valid a ASCII string and contain only lowercase and uppercase
+        letters, digits, underscores, periods and hyphens.
+      items:
+        type: string
+      type: array
     ReleasesV2:
       description: List of releases
       items:
@@ -15715,14 +15948,6 @@ components:
           description: Release notes, limited to maximum length.
           type: string
       type: object
-    Tags:
-      description: |-
-        Tags assigned to the release used for filtering releases. Each tag
-        must be valid a ASCII string and contain only lowercase and uppercase
-        letters, digits, underscores, periods and hyphens.
-      items:
-        type: string
-      type: array
     UpdateTypes:
       description: Update types as present in the images.
       items:
@@ -15831,6 +16056,8 @@ components:
             A valid JSON object defining the update control map.
             *NOTE*: Available only in the Enterprise plan.
           type: object
+          x-mender-plan:
+            - enterprise
         max_devices:
           description: |
             max_devices denotes a limit on a number of completed deployments (failed or successful) above which the dynamic deployment will be finished.
