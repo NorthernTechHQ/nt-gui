@@ -28,6 +28,7 @@ import {
   getArtifactInstallCount,
   getArtifactUrl,
   getExistingReleaseTags,
+  getExistingSoftwareTags,
   getManifest,
   getManifests,
   getRelease,
@@ -455,6 +456,30 @@ const retrievedManifestIds = [
 ];
 
 describe('manifest actions', () => {
+  it('should retrieve existing software tags', async () => {
+    const store = mockStore({ ...defaultState });
+    const expectedActions = [
+      { type: getExistingSoftwareTags.pending.type },
+      { type: actions.receiveReleaseTags.type, payload: ['foo', 'bar', 'manifest-tag-1', 'manifest-tag-2'] },
+      { type: getExistingSoftwareTags.fulfilled.type }
+    ];
+    await store.dispatch(getExistingSoftwareTags());
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+  it('should retrieve software tags filtered by kind', async () => {
+    const store = mockStore({ ...defaultState });
+    const expectedActions = [
+      { type: getExistingSoftwareTags.pending.type },
+      { type: actions.receiveReleaseTags.type, payload: ['manifest-tag-1', 'manifest-tag-2'] },
+      { type: getExistingSoftwareTags.fulfilled.type }
+    ];
+    await store.dispatch(getExistingSoftwareTags('manifest'));
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
   it('should retrieve a single manifest by name', async () => {
     const store = mockStore({ ...defaultState });
     store.clearActions();

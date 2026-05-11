@@ -32,6 +32,8 @@ export type Artifact = Omit<BackendArtifactV1, 'updates'> &
   Omit<BackendArtifactV2, 'updates'> & { installCount?: number; updates?: Array<Update>; url?: string };
 export type Release = BackendReleaseV1 & BackendReleaseV2 & { artifacts: Artifact[]; device_types_compatible: string[]; name: string };
 
+export type SoftwareKind = 'release' | 'manifest';
+
 export const sliceName = 'releases';
 
 type EnhancedJobDetailsItem = DeltaJobDetailsItem & DeltaJobsListItem;

@@ -30,7 +30,7 @@ import { isCancel } from 'axios';
 import pluralize from 'pluralize';
 import { v4 as uuid } from 'uuid';
 
-import type { Artifact, ManifestsList, Release, ReleaseSliceType, ReleasesList } from '.';
+import type { Artifact, ManifestsList, Release, ReleaseSliceType, ReleasesList, SoftwareKind } from '.';
 import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import GeneralApi from '../api/general-api';
@@ -477,6 +477,13 @@ export const getExistingReleaseTags = createAppAsyncThunk(`${sliceName}/getRelea
     .catch(err => commonErrorHandler(err, `Existing release tags couldn't be retrieved.`, dispatch))
     .then(({ data: tags }) => Promise.resolve(dispatch(actions.receiveReleaseTags(tags))))
 );
+
+export const getExistingSoftwareTags = createAppAsyncThunk(`${sliceName}/getSoftwareTags`, async (kind: SoftwareKind | undefined, { dispatch }) => {
+  const { data: tags } = await GeneralApi.get<Tags>(`${deploymentsApiUrlV1alpha1}/software/tags`, { params: { kind } }).catch(err =>
+    commonErrorHandler(err, `Existing software tags couldn't be retrieved.`, dispatch)
+  );
+  dispatch(actions.receiveReleaseTags(tags));
+});
 
 export const getUpdateTypes = createAppAsyncThunk(`${sliceName}/getReleaseTypes`, (_, { dispatch }) =>
   GeneralApi.get<UpdateTypes>(`${deploymentsApiUrlV2}/releases/all/types`)
