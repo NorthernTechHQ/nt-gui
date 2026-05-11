@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { PaletteOptions, ThemeOptions, alertClasses, alpha, getOverlayAlpha, outlinedInputClasses } from '@mui/material';
+import { PaletteOptions, ThemeOptions, alertClasses, getOverlayAlpha, lighten, outlinedInputClasses } from '@mui/material';
 import { common, red } from '@mui/material/colors';
 
 import { components as baseComponents, colors, typography } from './common';
@@ -89,13 +89,14 @@ export const dark: ThemeOptions = {
     MuiSpeedDialAction: {
       styleOverrides: {
         fab: ({ theme }) => ({
-          color: alpha(theme.palette.info.contrastText, 0.54),
-          background: alpha('#fff', getOverlayAlpha(6))
+          color: palette.action?.active,
+          background: lighten(theme.palette.background.paper, getOverlayAlpha(6))
         }),
-        staticTooltipLabel: {
+        staticTooltipLabel: ({ theme }) => ({
           boxShadow: 'none',
-          background: alpha('#fff', getOverlayAlpha(6))
-        }
+          background: lighten(theme.palette.background.paper, getOverlayAlpha(6)),
+          color: palette.action?.active
+        })
       }
     }
   }
