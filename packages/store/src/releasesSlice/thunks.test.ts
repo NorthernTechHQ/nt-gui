@@ -24,6 +24,7 @@ import { TIMEOUTS } from '../constants';
 import {
   createArtifact,
   editArtifact,
+  generateManifest,
   getArtifactInstallCount,
   getArtifactUrl,
   getExistingReleaseTags,
@@ -33,6 +34,8 @@ import {
   getReleases,
   getUpdateTypes,
   removeArtifact,
+  removeManifest,
+  removeManifests,
   removeRelease,
   selectManifest,
   selectRelease,
@@ -41,7 +44,8 @@ import {
   setReleasesListState,
   setSingleReleaseTags,
   updateReleaseInfo,
-  uploadArtifact
+  uploadArtifact,
+  uploadManifest
 } from './thunks';
 
 const middlewares = [thunk];
@@ -525,5 +529,86 @@ describe('manifest actions', () => {
     expect(storeActions).toContainEqual(
       expect.objectContaining({ type: actions.setManifestsListState.type, payload: expect.objectContaining({ selection: [] }) })
     );
+  });
+  it('should support uploading manifest artifacts', async () => {
+    const store = mockStore({ ...defaultState });
+    const mockFile = { name: 'test-manifest.mender', size: 1234 } as File;
+    const expectedActions = [
+      { type: uploadManifest.pending.type },
+      {
+        type: appActions.initUpload.type,
+        payload: { id: 'mock-uuid', upload: { cancelSource: mockAbortController, name: 'test-manifest.mender', size: 1234, progress: 0 } }
+      },
+      { type: appActions.uploadProgress.type, payload: { id: 'mock-uuid', progress: 100 } },
+      { type: appActions.setSnackbar.type, payload: { autoHideDuration: 5000, message: 'Upload successful' } },
+      { type: getManifests.pending.type },
+      { type: appActions.cleanUpUpload.type, payload: 'mock-uuid' }
+    ];
+    await store.dispatch(uploadManifest({ file: mockFile, meta: { description: 'test manifest' } }));
+    const storeActions = store.getActions();
+    expectedActions.forEach(expectedAction => {
+      const handledAction = storeActions.some(storeAction => Object.keys(expectedAction).every(key => deepCompare(storeAction[key], expectedAction[key])));
+      expect(handledAction, JSON.stringify(expectedAction)).toBeTruthy();
+    });
+  });
+  it('should support generating manifest artifacts', { timeout: 2 * TIMEOUTS.fiveSeconds }, async () => {
+    const store = mockStore({ ...defaultState });
+    const mockFile = { name: 'manifest.yaml', size: 567 } as File;
+    const expectedActions = [
+      {
+        type: appActions.initUpload.type,
+        payload: { id: 'mock-uuid', upload: { cancelSource: mockAbortController, name: 'manifest.yaml', size: 567, progress: 0 } }
+      },
+      { type: appActions.uploadProgress.type, payload: { id: 'mock-uuid', progress: 100 } },
+      { type: appActions.setSnackbar.type, payload: { message: 'Upload successful', autoHideDuration: 5000 } },
+      { type: getManifests.pending.type },
+      { type: appActions.cleanUpUpload.type, payload: 'mock-uuid' }
+    ];
+    await store.dispatch(generateManifest({ file: mockFile, meta: { description: 'test', tags: ['foo'] } }));
+    vi.runAllTimers();
+    const storeActions = store.getActions();
+    expectedActions.forEach(expectedAction => {
+      const handledAction = storeActions.some(storeAction => Object.keys(expectedAction).every(key => deepCompare(storeAction[key], expectedAction[key])));
+      expect(handledAction, JSON.stringify(expectedAction)).toBeTruthy();
+    });
+  });
+  it('should remove a single manifest by name', async () => {
+    const store = mockStore({ ...defaultState });
+    const expectedActions = [
+      { type: removeManifest.pending.type },
+      { type: removeManifests.pending.type },
+      { type: actions.removeManifests.type, payload: ['m1'] },
+      { type: selectManifest.pending.type },
+      { type: actions.selectedManifest.type, payload: null },
+      { type: selectManifest.fulfilled.type },
+      { type: removeManifests.fulfilled.type },
+      { type: getManifests.pending.type },
+      { type: removeManifest.fulfilled.type }
+    ];
+    await store.dispatch(removeManifest('m1'));
+    const storeActions = store.getActions();
+    expectedActions.forEach(expectedAction => {
+      const handledAction = storeActions.some(storeAction => Object.keys(expectedAction).every(key => deepCompare(storeAction[key], expectedAction[key])));
+      expect(handledAction, JSON.stringify(expectedAction)).toBeTruthy();
+    });
+  });
+  it('should remove multiple manifests by name', async () => {
+    const store = mockStore({ ...defaultState });
+    const expectedActions = [
+      { type: removeManifests.pending.type },
+      { type: actions.removeManifests.type, payload: ['m1', 'm2'] },
+      { type: appActions.setSnackbar.type, payload: { action: '', autoHideDuration: 5000, message: 'Manifests deleted successfully.' } },
+      { type: selectManifest.pending.type },
+      { type: actions.selectedManifest.type, payload: null },
+      { type: selectManifest.fulfilled.type },
+      { type: getManifests.pending.type },
+      { type: removeManifests.fulfilled.type }
+    ];
+    await store.dispatch(removeManifests(['m1', 'm2']));
+    const storeActions = store.getActions();
+    expectedActions.forEach(expectedAction => {
+      const handledAction = storeActions.some(storeAction => Object.keys(expectedAction).every(key => deepCompare(storeAction[key], expectedAction[key])));
+      expect(handledAction, JSON.stringify(expectedAction)).toBeTruthy();
+    });
   });
 });

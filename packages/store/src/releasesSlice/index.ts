@@ -277,6 +277,18 @@ export const releaseSlice = createSlice({
       state.manifestsById = manifestsById;
       state.selectedManifest = action.payload === state.selectedManifest ? null : state.selectedManifest;
     },
+    removeManifests: (state, action: PayloadAction<string[]>) => {
+      const { manifestsById, selectedManifest } = action.payload.reduce(
+        (accu, key) => {
+          const { [key]: _toBeRemoved, ...manifestsById } = accu.manifestsById;
+
+          return { manifestsById, selectedManifest: key === accu.selectedManifest ? null : accu.selectedManifest };
+        },
+        { manifestsById: { ...state.manifestsById }, selectedManifest: state.selectedManifest }
+      );
+      state.manifestsById = manifestsById;
+      state.selectedManifest = selectedManifest;
+    },
     selectedManifest: (state, action: PayloadAction<string | null>) => {
       state.selectedManifest = action.payload;
     },

@@ -27,6 +27,7 @@ import type {
 import { customSort, deepCompare, duplicateFilter, extractSoftwareItem } from '@northern.tech/utils/helpers';
 import type { AxiosResponse } from 'axios';
 import { isCancel } from 'axios';
+import pluralize from 'pluralize';
 import { v4 as uuid } from 'uuid';
 
 import type { Artifact, ManifestsList, Release, ReleaseSliceType, ReleasesList } from '.';
@@ -50,7 +51,7 @@ import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { convertDeviceListStateToFilters, progress } from '../utils';
 import { ARTIFACT_GENERATION_TYPE } from './constants';
-import { getManifestsById, getReleasesById } from './selectors';
+import { getManifestsById, getManifestsListState, getReleasesById } from './selectors';
 
 const { setSnackbar, initUpload, uploadProgress, cleanUpUpload } = storeActions;
 const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
@@ -542,6 +543,80 @@ const deductManifestSearchState = (receivedManifests: Manifest[], config, total:
   return manifestsListState;
 };
 
+type ManifestCreationPayload = {
+  file: File;
+  meta: {
+    description?: string;
+    tags?: string[];
+  };
+};
+
+const toManifestCreationData = ({ description, tags }: ManifestCreationPayload['meta']) => {
+  const formData = new FormData();
+  if (description) {
+    formData.append('description', description);
+  }
+  if (tags?.length) {
+    formData.append('tags', tags.join(','));
+  }
+  return formData;
+};
+
+export const uploadManifest = createAppAsyncThunk(`${sliceName}/uploadManifest`, async ({ file, meta }: ManifestCreationPayload, { dispatch }) => {
+  const formData = toManifestCreationData(meta);
+  formData.append('size', file.size.toString());
+  formData.append('artifact', file);
+  const uploadId = uuid();
+  const cancelSource = new AbortController();
+  dispatch(initUpload({ id: uploadId, upload: { name: file.name, size: file.size, progress: 0, cancelSource } }));
+  try {
+    const { headers } = await GeneralApi.upload(
+      `${deploymentsApiUrlV1alpha1}/manifests`,
+      formData,
+      e => dispatch(uploadProgress({ id: uploadId, progress: progress(e) })),
+      cancelSource.signal
+    );
+    const location = headers[headerNames.location] as string;
+    await pollLocation(location);
+    await dispatch(getManifests()).unwrap();
+    dispatch(setSnackbar({ message: 'Upload successful', autoHideDuration: TIMEOUTS.fiveSeconds }));
+  } catch (err) {
+    if (isCancel(err)) {
+      return dispatch(setSnackbar({ message: 'The upload has been cancelled', autoHideDuration: TIMEOUTS.fiveSeconds }));
+    }
+    return commonErrorHandler(err, `Manifest couldn't be uploaded.`, dispatch);
+  } finally {
+    dispatch(cleanUpUpload(uploadId));
+  }
+});
+
+export const generateManifest = createAppAsyncThunk(`${sliceName}/generateManifest`, async ({ file, meta }: ManifestCreationPayload, { dispatch }) => {
+  const formData = toManifestCreationData(meta);
+  formData.append('file', file);
+  const uploadId = uuid();
+  const cancelSource = new AbortController();
+  dispatch(initUpload({ id: uploadId, upload: { name: file.name, size: file.size, progress: 0, cancelSource } }));
+  try {
+    const { headers } = await GeneralApi.upload(
+      `${deploymentsApiUrlV1alpha1}/manifests/generate`,
+      formData,
+      e => dispatch(uploadProgress({ id: uploadId, progress: progress(e) })),
+      cancelSource.signal
+    );
+    const location = headers[headerNames.location] as string;
+    await pollLocation(location);
+    await dispatch(getManifests()).unwrap();
+    dispatch(setSnackbar({ message: 'Upload successful', autoHideDuration: TIMEOUTS.fiveSeconds }));
+  } catch (err) {
+    if (isCancel(err)) {
+      return dispatch(setSnackbar({ message: 'The manifest generation has been cancelled', autoHideDuration: TIMEOUTS.fiveSeconds }));
+    }
+    return commonErrorHandler(err, `Manifest couldn't be generated.`, dispatch);
+  } finally {
+    dispatch(cleanUpUpload(uploadId));
+  }
+});
+
 export const getManifests = createAppAsyncThunk(
   `${sliceName}/getManifests`,
   async (passedConfig: Partial<ManifestsList> | undefined = {}, { dispatch, getState }) => {
@@ -570,6 +645,28 @@ export const getManifest = createAppAsyncThunk(`${sliceName}/getManifest`, async
   dispatch(actions.receiveManifest(manifest));
   return manifest;
 });
+
+export const removeManifests = createAppAsyncThunk(`${sliceName}/removeManifests`, async (names: string[], { dispatch, getState }) => {
+  const nameParams = names.map(name => `name=${encodeURIComponent(name)}`).join('&');
+  await GeneralApi.delete(`${deploymentsApiUrlV1alpha1}/manifests?${nameParams}`).catch(err =>
+    commonErrorHandler(err, `Manifest${names.length > 1 ? 's' : ''} couldn't be deleted.`, dispatch)
+  );
+  const manifestsList = getManifestsListState(getState());
+  const manifestIds = manifestsList.manifestIds.filter(id => !names.includes(id));
+  dispatch(actions.removeManifests(names));
+  dispatch(
+    setManifestsListState({
+      manifestIds,
+      searchTotal: manifestsList.searchTerm ? manifestsList.searchTotal - names.length : manifestsList.searchTotal,
+      total: manifestsList.total - names.length
+    })
+  );
+  dispatch(setSnackbar({ message: `${pluralize('Manifest', names.length)} deleted successfully.`, autoHideDuration: TIMEOUTS.fiveSeconds, action: '' }));
+  dispatch(selectManifest(null));
+  await dispatch(getManifests()).unwrap();
+});
+
+export const removeManifest = createAppAsyncThunk(`${sliceName}/removeManifest`, (name: string, { dispatch }) => dispatch(removeManifests([name])));
 
 export const selectManifest = createAppAsyncThunk(`${sliceName}/selectManifest`, async (manifest: Manifest | string | null, { dispatch }) => {
   const name = (manifest && typeof manifest === 'object' ? manifest.name : manifest) || null;
