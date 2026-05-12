@@ -79,6 +79,7 @@ export const Xterm = ({ className, customKeyEventHandler, options = {}, onResize
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerResize]);
 
+  // eslint-disable-next-line react-hooks/refs
   return <div className={className} ref={xtermRef.current.terminalRef} style={style} />;
 };
 
