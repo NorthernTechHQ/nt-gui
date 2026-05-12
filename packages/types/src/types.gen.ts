@@ -1725,6 +1725,40 @@ export type Manifest = {
   notes?: string;
 };
 
+export type GenerateManifestRequest = {
+  /**
+   * Description of the manifest.
+   */
+  description?: string;
+  /**
+   * List of tags for the manifest.
+   *
+   */
+  tags?: Array<string>;
+  /**
+   * Raw manifest.yaml to be used to generate the manifest. It has to be the last part of request.
+   */
+  file: Blob | File;
+};
+
+/**
+ * Manifest used by active deployment.
+ */
+export type ManifestInUseError = {
+  /**
+   * Description of the error.
+   */
+  error?: string;
+  /**
+   * List of IDs of active deployments which are using Manifests from the request.
+   */
+  active_deployments?: Array<string>;
+  /**
+   * Request ID.
+   */
+  request_id?: string;
+};
+
 /**
  * Detailed artifact.
  */
@@ -1785,6 +1819,13 @@ export type UploadManifestRequest = {
 } & UploadArtifactRequest2;
 
 /**
+ * Tags assigned to software used for filtering. Each tag
+ * must be valid a ASCII string and contain only lowercase and uppercase
+ * letters, digits, underscores, periods and hyphens.
+ */
+export type Tags = Array<string>;
+
+/**
  * List of releases
  */
 export type ReleasesV2 = Array<ReleaseV2>;
@@ -1829,13 +1870,6 @@ export type ReleaseUpdate = {
    */
   notes?: string;
 };
-
-/**
- * Tags assigned to the release used for filtering releases. Each tag
- * must be valid a ASCII string and contain only lowercase and uppercase
- * letters, digits, underscores, periods and hyphens.
- */
-export type Tags = Array<string>;
 
 /**
  * Update types as present in the images.
@@ -7184,6 +7218,52 @@ export type UpdateBinaryDeltaConfigurationResponses = {
 
 export type UpdateBinaryDeltaConfigurationResponse = UpdateBinaryDeltaConfigurationResponses[keyof UpdateBinaryDeltaConfigurationResponses];
 
+export type DeleteDeploymentManifestsData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Manifest name filter. Can be repeated to query a set of entries.
+     */
+    name: Array<string>;
+  };
+  url: '/api/management/v1alpha1/deployments/manifests';
+};
+
+export type DeleteDeploymentManifestsErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * The resource requires a paid plan.
+   */
+  402: Error;
+  /**
+   * Conflict.
+   */
+  409: ManifestInUseError;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type DeleteDeploymentManifestsError = DeleteDeploymentManifestsErrors[keyof DeleteDeploymentManifestsErrors];
+
+export type DeleteDeploymentManifestsResponses = {
+  /**
+   * Manifests deleted successfully.
+   */
+  204: void;
+};
+
+export type DeleteDeploymentManifestsResponse = DeleteDeploymentManifestsResponses[keyof DeleteDeploymentManifestsResponses];
+
 export type GetDeploymentManifestsData = {
   body?: never;
   path?: never;
@@ -7192,6 +7272,11 @@ export type GetDeploymentManifestsData = {
      * Manifest name filter.
      */
     name?: string;
+    /**
+     * Filter the manifests based on their associated tags and only return
+     * manifests that have at least one matching tag (i.e. OR matching).
+     */
+    tag?: Array<string>;
     /**
      * Starting page.
      */
@@ -7278,6 +7363,46 @@ export type UploadDeploymentManifestArtifactResponses = {
   201: unknown;
 };
 
+export type GenerateDeploymentManifestArtifactData = {
+  body?: GenerateManifestRequest;
+  path?: never;
+  query?: never;
+  url: '/api/management/v1alpha1/deployments/manifests/generate';
+};
+
+export type GenerateDeploymentManifestArtifactErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * The resource requires a paid plan.
+   */
+  402: Error;
+  /**
+   * Software with the same name already exists.
+   *
+   */
+  409: ErrorExt;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type GenerateDeploymentManifestArtifactError = GenerateDeploymentManifestArtifactErrors[keyof GenerateDeploymentManifestArtifactErrors];
+
+export type GenerateDeploymentManifestArtifactResponses = {
+  /**
+   * Generation request accepted and queued for processing.
+   */
+  202: unknown;
+};
+
 export type GetDeploymentManifestByNameData = {
   body?: never;
   path: {
@@ -7319,6 +7444,44 @@ export type GetDeploymentManifestByNameResponses = {
 };
 
 export type GetDeploymentManifestByNameResponse = GetDeploymentManifestByNameResponses[keyof GetDeploymentManifestByNameResponses];
+
+export type ListSoftwareTagsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Only list tags used on software of a particular kind
+     */
+    kind?: 'release' | 'manifest';
+  };
+  url: '/api/management/v1alpha1/deployments/software/tags';
+};
+
+export type ListSoftwareTagsErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type ListSoftwareTagsError = ListSoftwareTagsErrors[keyof ListSoftwareTagsErrors];
+
+export type ListSoftwareTagsResponses = {
+  /**
+   * Successful response.
+   */
+  200: Tags;
+};
+
+export type ListSoftwareTagsResponse = ListSoftwareTagsResponses[keyof ListSoftwareTagsResponses];
 
 export type GetDeploymentLogForDeviceV1Alpha1Data = {
   body?: never;
