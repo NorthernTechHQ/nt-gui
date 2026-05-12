@@ -129,16 +129,16 @@ exports[`TimeframePicker Component > renders correctly 1`] = `
   border-width: 2px;
 }
 
+.emotion-2.Mui-error .MuiPickersOutlinedInput-notchedOutline {
+  border-color: #d32f2f;
+}
+
 .emotion-2.Mui-disabled .MuiPickersOutlinedInput-notchedOutline {
   border-color: rgba(0, 0, 0, 0.26);
 }
 
 .emotion-2.Mui-disabled * {
   color: rgba(0, 0, 0, 0.26);
-}
-
-.emotion-2.Mui-error .MuiPickersOutlinedInput-notchedOutline {
-  border-color: #d32f2f;
 }
 
 .emotion-2.Mui-focused:not(.Mui-error) .MuiPickersOutlinedInput-notchedOutline {
@@ -501,6 +501,7 @@ exports[`TimeframePicker Component > renders correctly 1`] = `
           <button
             aria-label="Choose date, selected date is Jan 13, 2019"
             class="MuiButtonBase-root MuiIconButton-root MuiIconButton-edgeEnd MuiIconButton-sizeMedium emotion-17"
+            data-mui-picker-open-button="true"
             tabindex="0"
             type="button"
           >
@@ -533,7 +534,6 @@ exports[`TimeframePicker Component > renders correctly 1`] = `
         </fieldset>
         <input
           aria-hidden="true"
-          aria-label="From"
           class="MuiPickersInputBase-input MuiPickersOutlinedInput-input emotion-22"
           id="_r_1_"
           tabindex="-1"
@@ -663,6 +663,7 @@ exports[`TimeframePicker Component > renders correctly 1`] = `
           <button
             aria-label="Choose date, selected date is Jan 13, 2019"
             class="MuiButtonBase-root MuiIconButton-root MuiIconButton-edgeEnd MuiIconButton-sizeMedium emotion-17"
+            data-mui-picker-open-button="true"
             tabindex="0"
             type="button"
           >
@@ -695,7 +696,6 @@ exports[`TimeframePicker Component > renders correctly 1`] = `
         </fieldset>
         <input
           aria-hidden="true"
-          aria-label="To"
           class="MuiPickersInputBase-input MuiPickersOutlinedInput-input emotion-22"
           id="_r_4_"
           tabindex="-1"
