@@ -200,6 +200,33 @@ export const releaseHandlers = [
       return new HttpResponse(JSON.stringify(manifestListSection), { headers: { [headerNames.total]: manifestsList.length } });
     })
   ),
+  http.delete(
+    `${deploymentsApiUrlV1alpha1}/manifests`,
+    validated(({ request: { url } }) => {
+      const { searchParams } = new URL(url);
+      const names = searchParams.getAll('name');
+      if (!names.length) {
+        return new HttpResponse(null, { status: 400 });
+      }
+      return new HttpResponse(null, { status: 204 });
+    })
+  ),
+  http.post(
+    `${deploymentsApiUrlV1alpha1}/manifests`,
+    () =>
+      new HttpResponse(null, {
+        status: 201,
+        headers: { [headerNames.location]: `${deploymentsApiUrlV1alpha1}/manifests/m1000` }
+      })
+  ),
+  http.post(
+    `${deploymentsApiUrlV1alpha1}/manifests/generate`,
+    () =>
+      new HttpResponse(null, {
+        status: 202,
+        headers: { [headerNames.location]: `${deploymentsApiUrlV1alpha1}/manifests/m1000` }
+      })
+  ),
   http.get(
     `${deploymentsApiUrlV1alpha1}/manifests/:name`,
     validated(({ params: { name } }) => {
@@ -207,6 +234,20 @@ export const releaseHandlers = [
         return HttpResponse.json(mockApiResponses.manifests.byId.m1000);
       }
       return new HttpResponse(null, { status: 404 });
+    })
+  ),
+  http.get(
+    `${deploymentsApiUrlV1alpha1}/software/tags`,
+    validated(({ request: { url } }) => {
+      const { searchParams } = new URL(url);
+      const kind = searchParams.get('kind');
+      if (kind === 'manifest') {
+        return HttpResponse.json(['manifest-tag-1', 'manifest-tag-2']);
+      }
+      if (kind === 'release') {
+        return HttpResponse.json(['foo', 'bar']);
+      }
+      return HttpResponse.json(['foo', 'bar', 'manifest-tag-1', 'manifest-tag-2']);
     })
   )
 ];
