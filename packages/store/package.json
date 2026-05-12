@@ -136,7 +136,7 @@
     "@emotion/react": "^11.x",
     "@emotion/styled": "^11.x",
     "@mdi/js": "^7.x",
-    "@mui/icons-material": "^7.x",
+    "@mui/icons-material": "^9.x",
     "@northern.tech/types": "*",
     "@northern.tech/utils": "*",
     "@reduxjs/toolkit": "^2.x",
