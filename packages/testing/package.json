@@ -39,7 +39,7 @@
     "@northern.tech/eslint-config": "*",
     "@northern.tech/typescript-config": "*",
     "eslint": "^9.39.1",
-    "tsdown": "^0.21.7"
+    "tsdown": "^0.22.0"
   },
   "dependencies": {
     "@emotion/jest": "^11.x",
