@@ -109,6 +109,9 @@ export const useLocationParams = (key: ProcessorKey, extras: LocationExtras, pro
   // POP (back/ forward/ initial load) -> rely on url state - otherwise on stored redux state
   const shouldInitializeFromUrl = navigationType === 'POP';
 
+  const extrasString = JSON.stringify(extras);
+  const searchParamsString = searchParams.toString();
+
   const value = useMemo(() => {
     const { pageState, params, sort } = processors.common.parse(searchParams);
     const extendedExtras = { ...extras, pageState, location };
@@ -118,7 +121,7 @@ export const useLocationParams = (key: ProcessorKey, extras: LocationExtras, pro
       ...(processors[key].parse as (params: URLSearchParams, extras: typeof extendedExtras) => Record<string, unknown>)(params, extendedExtras)
     } as LocationParamsValue;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(extras), key, location.search, location.pathname, searchParams.toString()]);
+  }, [extrasString, key, location.search, location.pathname, searchParamsString]);
 
   const setValue = useCallback(
     (newValue: SetValueParams, options: NavigateOptions = {}): void => {
@@ -131,7 +134,7 @@ export const useLocationParams = (key: ProcessorKey, extras: LocationExtras, pro
       navigate({ pathname, replace: true, search: `?${searchQuery}`, ...options });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [JSON.stringify(extras), key]
+    [extrasString, key]
   );
 
   return [value, setValue, { shouldInitializeFromUrl }];

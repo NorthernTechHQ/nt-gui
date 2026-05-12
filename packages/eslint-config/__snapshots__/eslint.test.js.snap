@@ -1130,7 +1130,6 @@ exports[`ESLint Config Integrity > react config matches snapshot 1`] = `
   {
     "files": undefined,
     "rules": {
-      "react-hooks/component-hook-factories": "error",
       "react-hooks/config": "error",
       "react-hooks/error-boundaries": "error",
       "react-hooks/exhaustive-deps": "warn",
