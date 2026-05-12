@@ -88,6 +88,8 @@ export const AuditLogs = () => {
   const { detail, perPage, endDate, user, sort, startDate, type, total, isLoading } = selectionState;
   const [auditLogsTypes, setAuditLogsTypes] = useState(AUDIT_LOGS_TYPES);
   const timers = useRef({ init: null, detailsReset: null, dirtyField: null });
+  const eventsString = JSON.stringify(events);
+  const usersString = JSON.stringify(users);
 
   useEffect(() => {
     if (isSP) {
@@ -165,7 +167,7 @@ export const AuditLogs = () => {
       return;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dispatch, endDate, JSON.stringify(events), startDate, today, tonight]
+    [dispatch, endDate, eventsString, startDate, today, tonight]
   );
 
   useEffect(() => {
@@ -183,7 +185,7 @@ export const AuditLogs = () => {
       .unwrap()
       .then(({ payload: result }) => initAuditlogState(result, state));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, hasAuditlogs, JSON.stringify(events), JSON.stringify(locationParams), initAuditlogState, updateState, today, tonight]);
+  }, [dispatch, hasAuditlogs, eventsString, JSON.stringify(locationParams), initAuditlogState, updateState, today, tonight]);
 
   useEffect(() => {
     const currentTimers = timers.current;
@@ -221,7 +223,7 @@ export const AuditLogs = () => {
       dispatch(setAuditlogsState({ page: 1, detail, startDate, endDate, user: selectedUser, type }));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dispatch, JSON.stringify(users)]
+    [dispatch, usersString]
   );
 
   return (
