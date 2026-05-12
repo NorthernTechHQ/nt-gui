@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { BarChart as BarChartIcon, PieChartOutline as PieChartIcon } from '@mui/icons-material';
+import { BarChart as BarChartIcon, PieChartOutlined as PieChartIcon } from '@mui/icons-material';
 
 import { yes as yesUtil } from '@northern.tech/utils';
 

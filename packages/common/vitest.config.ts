@@ -32,16 +32,25 @@ export default defineConfig({
       {
         find: /^dayjs(\/.*)?$/,
         replacement: path.resolve(__dirname, 'node_modules/dayjs$1')
+      },
+      {
+        find: /^@mui\/material(\/.*)?$/,
+        replacement: path.resolve(__dirname, 'node_modules/@mui/material$1')
+      },
+      {
+        find: 'tss-react/mui',
+        replacement: path.resolve(__dirname, '../../node_modules/tss-react/esm/mui/index.js')
       }
     ],
-    dedupe: ['react-router', 'react-router-dom']
+    dedupe: ['react-router', 'react-router-dom', '@mui/x-date-pickers']
   },
   test: {
     ...baseConfig.test,
     setupFiles: path.resolve(__dirname, 'setupTests.ts'),
     server: {
       deps: {
-        inline: ['@mui/x-date-pickers']
+        inline: ['tss-react'],
+        moduleDirectories: ['node_modules', path.resolve(__dirname, 'node_modules')]
       }
     }
   }

@@ -109,24 +109,6 @@ exports[`EnterpriseNotification Component > renders correctly 1`] = `
   font-size: 0.75rem;
 }
 
-.emotion-0 .MuiChip-avatarColorPrimary {
-  color: #fff;
-  background-color: #1565c0;
-}
-
-.emotion-0 .MuiChip-avatarColorSecondary {
-  color: #fff;
-  background-color: #7b1fa2;
-}
-
-.emotion-0 .MuiChip-avatarSmall {
-  margin-left: 4px;
-  margin-right: -4px;
-  width: 18px;
-  height: 18px;
-  font-size: 0.625rem;
-}
-
 .emotion-0 .MuiChip-icon {
   margin-left: 5px;
   margin-right: -6px;
@@ -182,12 +164,12 @@ exports[`EnterpriseNotification Component > renders correctly 1`] = `
     data-mui-internal-clone-element="true"
   >
     <div
-      class="MuiButtonBase-root MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-filledDefault emotion-0"
+      class="MuiButtonBase-root MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable emotion-0"
       role="button"
       tabindex="0"
     >
       <span
-        class="MuiChip-label MuiChip-labelMedium emotion-1"
+        class="MuiChip-label emotion-1"
       >
         Enterprise
       </span>
@@ -209,7 +191,7 @@ exports[`EnterpriseNotification Component > works as expected 1`] = `
   word-wrap: break-word;
   font-weight: 500;
   position: relative;
-  margin: 0;
+  margin-block: 0;
   background-color: #fff;
   box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);
   color: rgba(0, 0, 0, 0.87);
@@ -222,10 +204,14 @@ exports[`EnterpriseNotification Component > works as expected 1`] = `
 
 .MuiTooltip-popper[data-popper-placement*="left"] .emotion-0 {
   transform-origin: right center;
+  -webkit-margin-end: 14px;
+  margin-inline-end: 14px;
 }
 
 .MuiTooltip-popper[data-popper-placement*="right"] .emotion-0 {
   transform-origin: left center;
+  -webkit-margin-start: 14px;
+  margin-inline-start: 14px;
 }
 
 .MuiTooltip-popper[data-popper-placement*="top"] .emotion-0 {
@@ -236,14 +222,6 @@ exports[`EnterpriseNotification Component > works as expected 1`] = `
 .MuiTooltip-popper[data-popper-placement*="bottom"] .emotion-0 {
   transform-origin: center top;
   margin-top: 14px;
-}
-
-.MuiTooltip-popper[data-popper-placement*="left"] .emotion-0 {
-  margin-right: 14px;
-}
-
-.MuiTooltip-popper[data-popper-placement*="right"] .emotion-0 {
-  margin-left: 14px;
 }
 
 .emotion-0 info {

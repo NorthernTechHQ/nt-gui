@@ -68,9 +68,6 @@
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "*"
   },
-  "overrides": {
-    "@mui/system": "^7.x"
-  },
   "packageManager": "npm@11.0.0",
   "type": "module",
   "workspaces": [

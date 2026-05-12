@@ -22,12 +22,12 @@ exports[`Auditlogs Component > renders correctly 1`] = `
           data-mui-internal-clone-element="true"
         >
           <div
-            class="MuiButtonBase-root MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-filledDefault css-o2u2ak-MuiButtonBase-root-MuiChip-root-root-root"
+            class="MuiButtonBase-root MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorDefault MuiChip-clickable css-1vid46o-MuiButtonBase-root-MuiChip-root-root-root"
             role="button"
             tabindex="0"
           >
             <span
-              class="MuiChip-label MuiChip-labelMedium css-1dybbl5-MuiChip-label"
+              class="MuiChip-label css-1dybbl5-MuiChip-label"
             >
               Enterprise
             </span>
@@ -66,7 +66,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                   aria-invalid="false"
                   autocapitalize="none"
                   autocomplete="off"
-                  class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd MuiAutocomplete-input MuiAutocomplete-inputFocused css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input"
+                  class="MuiInputBase-input MuiOutlinedInput-input MuiAutocomplete-input MuiAutocomplete-inputFocused css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input"
                   id="_r_2_"
                   placeholder="Select a user"
                   role="combobox"
@@ -140,7 +140,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                   aria-invalid="false"
                   autocapitalize="none"
                   autocomplete="off"
-                  class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd MuiAutocomplete-input MuiAutocomplete-inputFocused css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input"
+                  class="MuiInputBase-input MuiOutlinedInput-input MuiAutocomplete-input MuiAutocomplete-inputFocused css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input"
                   id="_r_5_"
                   placeholder="Type"
                   role="combobox"
@@ -266,7 +266,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
               <div
                 aria-invalid="false"
                 aria-labelledby="_r_a_-label"
-                class="MuiPickersInputBase-root MuiPickersOutlinedInput-root MuiPickersInputBase-colorPrimary MuiPickersInputBase-inputSizeSmall MuiPickersInputBase-adornedEnd css-vycme6-MuiPickersInputBase-root-MuiPickersOutlinedInput-root"
+                class="MuiPickersInputBase-root MuiPickersOutlinedInput-root MuiPickersInputBase-colorPrimary MuiPickersInputBase-inputSizeSmall MuiPickersInputBase-adornedEnd css-17nnke6-MuiPickersInputBase-root-MuiPickersOutlinedInput-root"
                 role="group"
               >
                 <div
@@ -374,6 +374,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                   <button
                     aria-label="Choose date, selected date is Jan 13, 2019"
                     class="MuiButtonBase-root MuiIconButton-root MuiIconButton-edgeEnd MuiIconButton-sizeMedium css-1ysp02-MuiButtonBase-root-MuiIconButton-root"
+                    data-mui-picker-open-button="true"
                     tabindex="0"
                     type="button"
                   >
@@ -406,7 +407,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                 </fieldset>
                 <input
                   aria-hidden="true"
-                  aria-label="From"
                   class="MuiPickersInputBase-input MuiPickersOutlinedInput-input css-31lcvl-MuiPickersInputBase-input"
                   id="_r_a_"
                   tabindex="-1"
@@ -428,7 +428,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
               <div
                 aria-invalid="false"
                 aria-labelledby="_r_d_-label"
-                class="MuiPickersInputBase-root MuiPickersOutlinedInput-root MuiPickersInputBase-colorPrimary MuiPickersInputBase-inputSizeSmall MuiPickersInputBase-adornedEnd css-vycme6-MuiPickersInputBase-root-MuiPickersOutlinedInput-root"
+                class="MuiPickersInputBase-root MuiPickersOutlinedInput-root MuiPickersInputBase-colorPrimary MuiPickersInputBase-inputSizeSmall MuiPickersInputBase-adornedEnd css-17nnke6-MuiPickersInputBase-root-MuiPickersOutlinedInput-root"
                 role="group"
               >
                 <div
@@ -536,6 +536,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                   <button
                     aria-label="Choose date, selected date is Jan 13, 2019"
                     class="MuiButtonBase-root MuiIconButton-root MuiIconButton-edgeEnd MuiIconButton-sizeMedium css-1ysp02-MuiButtonBase-root-MuiIconButton-root"
+                    data-mui-picker-open-button="true"
                     tabindex="0"
                     type="button"
                   >
@@ -568,7 +569,6 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                 </fieldset>
                 <input
                   aria-hidden="true"
-                  aria-label="To"
                   class="MuiPickersInputBase-input MuiPickersOutlinedInput-input css-31lcvl-MuiPickersInputBase-input"
                   id="_r_d_"
                   tabindex="-1"
@@ -605,7 +605,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
         </div>
       </div>
       <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-1mns5ui-MuiButtonBase-root-MuiButton-root"
+        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-sizeMedium MuiButton-colorSecondary css-1mns5ui-MuiButtonBase-root-MuiButton-root"
         style="margin-left: 15px;"
         tabindex="0"
         type="button"
@@ -837,7 +837,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
               <div
                 aria-expanded="false"
                 aria-haspopup="listbox"
-                aria-labelledby="_r_i_ _r_h_"
+                aria-labelledby="_r_i_"
                 class="MuiSelect-select MuiTablePagination-select MuiSelect-standard MuiInputBase-input css-18zjd9i-MuiNativeSelect-root-MuiSelect-select-MuiInputBase-input"
                 id="_r_h_"
                 role="combobox"
@@ -849,13 +849,14 @@ exports[`Auditlogs Component > renders correctly 1`] = `
                 aria-hidden="true"
                 aria-invalid="false"
                 class="MuiSelect-nativeInput css-j0riat-MuiSelect-nativeInput"
+                id="_r_k_"
                 name="pagination"
                 tabindex="-1"
                 value="20"
               />
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiTablePagination-selectIcon MuiSelect-iconStandard css-ug7h84-MuiSvgIcon-root-MuiNativeSelect-root-MuiSelect-icon"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiTablePagination-selectIcon css-ug7h84-MuiSvgIcon-root-MuiNativeSelect-root-MuiSelect-icon"
                 data-testid="ArrowDropDownIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
