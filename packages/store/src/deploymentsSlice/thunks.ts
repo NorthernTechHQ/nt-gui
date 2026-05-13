@@ -166,8 +166,11 @@ export const createDeployment = createAppAsyncThunk(
     const { name, artifact_name, retries, update_control_map, autogenerate_delta } = newDeployment;
     const common = { name, artifact_name, phases: cleanPhases(newDeployment.phases), retries, update_control_map, autogenerate_delta };
     if ('filter_id' in newDeployment && newDeployment.filter_id) {
-      const { filter_id, max_devices } = newDeployment;
-      request = GeneralApi.post(`${deploymentsApiUrlV2}/deployments`, stripUndefined({ ...common, filter_id, max_devices }));
+      const { filter_id, max_devices, uniform_phases } = newDeployment;
+      request = GeneralApi.post(
+        `${deploymentsApiUrlV2}/deployments`,
+        stripUndefined({ ...common, filter_id, max_devices, uniform_phases, phases: uniform_phases ? undefined : common.phases })
+      );
     } else if ('group' in newDeployment && newDeployment.group) {
       const { force_installation, group } = newDeployment;
       request = GeneralApi.post(`${deploymentsApiUrl}/deployments/group/${group}`, stripUndefined({ ...common, force_installation }));
