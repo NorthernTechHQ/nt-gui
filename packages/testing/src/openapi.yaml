@@ -3296,6 +3296,17 @@ paths:
           name: name
           schema:
             type: string
+        - description: |-
+            Filter the manifests based on their associated tags and only return
+            manifests that have at least one matching tag (i.e. OR matching).
+          explode: true
+          in: query
+          name: tag
+          schema:
+            items:
+              type: string
+            type: array
+          style: form
         - description: Starting page.
           in: query
           name: page
@@ -3580,8 +3591,6 @@ paths:
           description: Successful response with an AI-generated explanation of the deployment log.
         '401':
           $ref: '#/components/responses/UnauthorizedError'
-        '402':
-          $ref: '#/components/responses/PaymentRequiredError'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -15601,7 +15610,7 @@ components:
         system_types_compatible:
           type: array
           description: |-
-            The `system_types_compatible` from the manifest.yaml. This will always be the same 
+            The `system_types_compatible` from the manifest.yaml. This will always be the same
             as `device_types_compatible` from the associated Artifact.
           items:
             type: string
