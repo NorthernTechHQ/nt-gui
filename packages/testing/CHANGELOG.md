@@ -1,5 +1,48 @@
 ---
-## 0.10.1 - 2026-04-23
+## 0.11.0 - 2026-05-13
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Openapi spec update
+
+ ([6bfcf11](https://github.com/NorthernTechHQ/nt-gui/commit/6bfcf1151673d747b2f7ca65425351aecbbaca96))  by @mender-test-bot
+
+
+
+
+
+
+
+### Features
+
+#### Testing
+
+
+- *(testing)* Extended support for manifest & software request handling
+
+ ([1c75220](https://github.com/NorthernTechHQ/nt-gui/commit/1c75220786f2b0b8b72365a26d83ef79d5f6e72d))  by @mzedel
+
+
+
+- *(testing)* Added support for uniform phase deployment processing
+
+ ([6057dac](https://github.com/NorthernTechHQ/nt-gui/commit/6057dac170b5fc1d73a4edbbad530264ab183d2d))  by @mzedel
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/testing-0.10.1 - 2026-04-23
 
 
 ### Bug fixes
