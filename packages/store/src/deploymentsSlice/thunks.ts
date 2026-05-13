@@ -164,7 +164,7 @@ export const createDeployment = createAppAsyncThunk(
   ) => {
     let request;
     const { name, artifact_name, retries, update_control_map, autogenerate_delta } = newDeployment;
-    const common = stripUndefined({ name, artifact_name, phases: cleanPhases(newDeployment.phases), retries, update_control_map, autogenerate_delta });
+    const common = { name, artifact_name, phases: cleanPhases(newDeployment.phases), retries, update_control_map, autogenerate_delta };
     if ('filter_id' in newDeployment && newDeployment.filter_id) {
       const { filter_id, max_devices } = newDeployment;
       request = GeneralApi.post(`${deploymentsApiUrlV2}/deployments`, stripUndefined({ ...common, filter_id, max_devices }));
