@@ -1,5 +1,27 @@
 ---
-## 0.16.4 - 2026-05-06
+## 0.16.5 - 2026-05-13
+
+
+### Bug fixes
+
+#### Themes
+
+
+- *(themes)* Realigned quick actions appearance after mui 9 update
+
+ ([f08a84c](https://github.com/NorthernTechHQ/nt-gui/commit/f08a84c3b718143963e72ee76a99d25fc4425041))  by @mzedel
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/themes-0.16.4 - 2026-05-06
 
 
 ### Bug fixes
