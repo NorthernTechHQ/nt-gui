@@ -158,8 +158,8 @@ export const deploymentHandlers = [
   http.post(
     `${deploymentsApiUrlV2}/deployments`,
     validated(async ({ request }) => {
-      const { filter_id, devices = [] } = await request.json();
-      if (!filter_id || !!devices.length) {
+      const { filter_id, devices = [], uniform_phases = [] } = await request.json();
+      if (!filter_id || !!devices.length || !!uniform_phases.length) {
         return new HttpResponse(JSON.stringify({}), { status: 525 });
       }
       return new HttpResponse(JSON.stringify({}), { headers: { location: `find/me/here/${createdDeployment.id}` } });
