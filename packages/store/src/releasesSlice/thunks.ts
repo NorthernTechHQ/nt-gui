@@ -472,16 +472,18 @@ export const setReleasesTags = createAppAsyncThunk(
   }
 );
 
-export const getExistingReleaseTags = createAppAsyncThunk(`${sliceName}/getReleaseTags`, (_, { dispatch }) =>
-  GeneralApi.get<Tags>(`${deploymentsApiUrlV2}/releases/all/tags`)
-    .catch(err => commonErrorHandler(err, `Existing release tags couldn't be retrieved.`, dispatch))
-    .then(({ data: tags }) => Promise.resolve(dispatch(actions.receiveReleaseTags(tags))))
-);
-
 export const getExistingSoftwareTags = createAppAsyncThunk(`${sliceName}/getSoftwareTags`, async (kind: SoftwareKind | undefined, { dispatch }) => {
   const { data: tags } = await GeneralApi.get<Tags>(`${deploymentsApiUrlV1alpha1}/software/tags`, { params: { kind } }).catch(err =>
-    commonErrorHandler(err, `Existing software tags couldn't be retrieved.`, dispatch)
+    commonErrorHandler(err, `Existing ${kind ?? 'software'} tags couldn't be retrieved.`, dispatch)
   );
+  if (kind) {
+    return tags;
+  }
+  dispatch(actions.receiveSoftwareTags(tags));
+});
+
+export const getExistingReleaseTags = createAppAsyncThunk(`${sliceName}/getReleaseTags`, async (_, { dispatch }) => {
+  const tags = (await dispatch(getExistingSoftwareTags('release')).unwrap()) ?? [];
   dispatch(actions.receiveReleaseTags(tags));
 });
 
@@ -622,6 +624,11 @@ export const generateManifest = createAppAsyncThunk(`${sliceName}/generateManife
   } finally {
     dispatch(cleanUpUpload(uploadId));
   }
+});
+
+export const getExistingManifestTags = createAppAsyncThunk(`${sliceName}/getManifestTags`, async (_, { dispatch }) => {
+  const tags = (await dispatch(getExistingSoftwareTags('manifest')).unwrap()) ?? [];
+  dispatch(actions.receiveManifestTags(tags));
 });
 
 export const getManifests = createAppAsyncThunk(

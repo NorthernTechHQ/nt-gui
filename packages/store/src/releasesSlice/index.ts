@@ -19,7 +19,8 @@ import type {
   Update as BackendUpdate,
   DeltaJobDetailsItem,
   DeltaJobsListItem,
-  Manifest
+  Manifest,
+  Tags
 } from '@northern.tech/types/MenderTypes';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -84,7 +85,7 @@ export type ReleaseSliceType = {
   selectedManifest: string | null;
   selectedRelease: string | null;
   tab?: 'releases' | 'delta' | 'manifests';
-  tags: string[];
+  tags: Record<'releases' | 'manifests' | 'software', Tags>;
   updateTypes: string[];
 };
 
@@ -194,7 +195,11 @@ export const initialState: ReleaseSliceType = {
     total: 0
   },
   tab: 'releases',
-  tags: [],
+  tags: {
+    manifests: [],
+    releases: [],
+    software: []
+  },
   updateTypes: [],
   selectedJob: null,
   /*
@@ -218,8 +223,11 @@ export const releaseSlice = createSlice({
     receiveReleases: (state, action: PayloadAction<Record<string, Release>>) => {
       state.byId = action.payload;
     },
-    receiveReleaseTags: (state, action: PayloadAction<string[]>) => {
-      state.tags = action.payload;
+    receiveSoftwareTags: (state, action: PayloadAction<Tags>) => {
+      state.tags.software = action.payload;
+    },
+    receiveReleaseTags: (state, action: PayloadAction<Tags>) => {
+      state.tags.releases = action.payload;
     },
     receiveReleaseTypes: (state, action: PayloadAction<string[]>) => {
       state.updateTypes = action.payload;
@@ -273,6 +281,9 @@ export const releaseSlice = createSlice({
     },
     receiveManifests: (state, action: PayloadAction<Record<string, Manifest>>) => {
       state.manifestsById = action.payload;
+    },
+    receiveManifestTags: (state, action: PayloadAction<Tags>) => {
+      state.tags.manifests = action.payload;
     },
     removeManifest: (state, action: PayloadAction<string>) => {
       const { [action.payload]: _toBeRemoved, ...manifestsById } = state.manifestsById;
