@@ -1,5 +1,60 @@
 ---
-## 0.31.0 - 2026-04-21
+## 0.32.0 - 2026-05-13
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Ensured mui 9 compatibility
+
+ ([75e943d](https://github.com/NorthernTechHQ/nt-gui/commit/75e943d728723a27bc8b7eb375b690bd30daa69f))  by @mzedel
+
+
+
+- *(store)* Ensured software tags handling is done consistently
+
+ ([9289ec7](https://github.com/NorthernTechHQ/nt-gui/commit/9289ec7c38e1ff4ffa83f588c7009be9e4955dea))  by @mzedel
+
+
+
+
+
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Extended support for manifest handling
+
+ ([ea36d38](https://github.com/NorthernTechHQ/nt-gui/commit/ea36d380786aefc3099290a1a8b02ed68ce55934))  by @mzedel
+
+
+
+- *(store)* Added initial support for software based artifact handling
+
+ ([e40200a](https://github.com/NorthernTechHQ/nt-gui/commit/e40200a48546d3954309445ce38bfc5ba2370c84))  by @mzedel
+
+
+
+- *(store)* Added support for uniform phase deployment processing
+
+ ([af3aa60](https://github.com/NorthernTechHQ/nt-gui/commit/af3aa6004d873e80fc85466d720749b2de7a50dc))  by @mzedel
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/store-0.31.0 - 2026-04-21
 
 
 ### Features
