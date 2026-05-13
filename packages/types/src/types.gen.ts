@@ -7273,6 +7273,11 @@ export type GetDeploymentManifestsData = {
      */
     name?: string;
     /**
+     * Filter the manifests based on their associated tags and only return
+     * manifests that have at least one matching tag (i.e. OR matching).
+     */
+    tag?: Array<string>;
+    /**
      * Starting page.
      */
     page?: number;
@@ -7550,10 +7555,6 @@ export type ExplainDeploymentLogForDeviceErrors = {
    * Unauthorized.
    */
   401: Error;
-  /**
-   * The resource requires a paid plan.
-   */
-  402: Error;
   /**
    * Not Found.
    */
