@@ -24,7 +24,7 @@ import type {
   Tags,
   UpdateTypes
 } from '@northern.tech/types/MenderTypes';
-import { customSort, deepCompare, duplicateFilter, extractSoftwareItem } from '@northern.tech/utils/helpers';
+import { customSort, deepCompare, duplicateFilter, extractErrorMessage, extractSoftwareItem } from '@northern.tech/utils/helpers';
 import type { AxiosResponse } from 'axios';
 import { isCancel } from 'axios';
 import pluralize from 'pluralize';
@@ -571,33 +571,36 @@ const toManifestCreationData = ({ description, tags }: ManifestCreationPayload['
   return formData;
 };
 
-export const uploadManifest = createAppAsyncThunk(`${sliceName}/uploadManifest`, async ({ file, meta }: ManifestCreationPayload, { dispatch }) => {
-  const formData = toManifestCreationData(meta);
-  formData.append('size', file.size.toString());
-  formData.append('artifact', file);
-  const uploadId = uuid();
-  const cancelSource = new AbortController();
-  dispatch(initUpload({ id: uploadId, upload: { name: file.name, size: file.size, progress: 0, cancelSource } }));
-  try {
-    const { headers } = await GeneralApi.upload(
-      `${deploymentsApiUrlV1alpha1}/manifests`,
-      formData,
-      e => dispatch(uploadProgress({ id: uploadId, progress: progress(e) })),
-      cancelSource.signal
-    );
-    const location = headers[headerNames.location] as string;
-    await pollLocation(location);
-    await dispatch(getManifests()).unwrap();
-    dispatch(setSnackbar({ message: 'Upload successful', autoHideDuration: TIMEOUTS.fiveSeconds }));
-  } catch (err) {
-    if (isCancel(err)) {
-      return dispatch(setSnackbar({ message: 'The upload has been cancelled', autoHideDuration: TIMEOUTS.fiveSeconds }));
+export const uploadManifest = createAppAsyncThunk(
+  `${sliceName}/uploadManifest`,
+  async ({ file, meta }: ManifestCreationPayload, { dispatch, rejectWithValue }) => {
+    const formData = toManifestCreationData(meta);
+    formData.append('size', file.size.toString());
+    formData.append('artifact', file);
+    const uploadId = uuid();
+    const cancelSource = new AbortController();
+    dispatch(initUpload({ id: uploadId, upload: { name: file.name, size: file.size, progress: 0, cancelSource } }));
+    try {
+      const { headers } = await GeneralApi.upload(
+        `${deploymentsApiUrlV1alpha1}/manifests`,
+        formData,
+        e => dispatch(uploadProgress({ id: uploadId, progress: progress(e) })),
+        cancelSource.signal
+      );
+      const location = headers[headerNames.location] as string;
+      await pollLocation(location);
+      await dispatch(getManifests()).unwrap();
+      dispatch(setSnackbar({ message: 'Upload successful', autoHideDuration: TIMEOUTS.fiveSeconds }));
+    } catch (err) {
+      if (isCancel(err)) {
+        return dispatch(setSnackbar({ message: 'The upload has been cancelled', autoHideDuration: TIMEOUTS.fiveSeconds }));
+      }
+      return commonErrorHandler(err, `Manifest couldn't be uploaded.`, dispatch).catch(e => rejectWithValue(extractErrorMessage(e)));
+    } finally {
+      dispatch(cleanUpUpload(uploadId));
     }
-    return commonErrorHandler(err, `Manifest couldn't be uploaded.`, dispatch);
-  } finally {
-    dispatch(cleanUpUpload(uploadId));
   }
-});
+);
 
 export const generateManifest = createAppAsyncThunk(`${sliceName}/generateManifest`, async ({ file, meta }: ManifestCreationPayload, { dispatch }) => {
   const formData = toManifestCreationData(meta);
