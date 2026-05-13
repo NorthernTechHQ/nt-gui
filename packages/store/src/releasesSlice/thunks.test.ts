@@ -351,6 +351,8 @@ describe('release actions', () => {
     const store = mockStore({ ...defaultState });
     const expectedActions = [
       { type: getExistingReleaseTags.pending.type },
+      { type: getExistingSoftwareTags.pending.type },
+      { type: getExistingSoftwareTags.fulfilled.type },
       { type: actions.receiveReleaseTags.type, payload: ['foo', 'bar'] },
       { type: getExistingReleaseTags.fulfilled.type }
     ];
@@ -460,7 +462,7 @@ describe('manifest actions', () => {
     const store = mockStore({ ...defaultState });
     const expectedActions = [
       { type: getExistingSoftwareTags.pending.type },
-      { type: actions.receiveReleaseTags.type, payload: ['foo', 'bar', 'manifest-tag-1', 'manifest-tag-2'] },
+      { type: actions.receiveSoftwareTags.type, payload: ['foo', 'bar', 'manifest-tag-1', 'manifest-tag-2'] },
       { type: getExistingSoftwareTags.fulfilled.type }
     ];
     await store.dispatch(getExistingSoftwareTags());
@@ -470,12 +472,9 @@ describe('manifest actions', () => {
   });
   it('should retrieve software tags filtered by kind', async () => {
     const store = mockStore({ ...defaultState });
-    const expectedActions = [
-      { type: getExistingSoftwareTags.pending.type },
-      { type: actions.receiveReleaseTags.type, payload: ['manifest-tag-1', 'manifest-tag-2'] },
-      { type: getExistingSoftwareTags.fulfilled.type }
-    ];
-    await store.dispatch(getExistingSoftwareTags('manifest'));
+    const expectedActions = [{ type: getExistingSoftwareTags.pending.type }, { type: getExistingSoftwareTags.fulfilled.type }];
+    const tags = await store.dispatch(getExistingSoftwareTags('manifest')).unwrap();
+    expect(tags).toEqual(['manifest-tag-1', 'manifest-tag-2']);
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));

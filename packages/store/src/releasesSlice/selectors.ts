@@ -17,18 +17,23 @@ import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 import { listItemMapper } from '../utils';
 
+const transformToId = tags => tags.reduce((accu, key) => ({ ...accu, [key]: key }), {});
+
 export const getActiveTab = (state: RootState) => state.releases.tab;
 const getSelectedReleaseId = (state: RootState) => state.releases.selectedRelease;
 export const getReleasesById = (state: RootState) => state.releases.byId;
-export const getReleaseTags = (state: RootState) => state.releases.tags;
+const getTags = (state: RootState) => state.releases.tags;
 export const getReleaseListState = (state: RootState) => state.releases.releasesList;
 const getListedReleases = (state: RootState) => state.releases.releasesList.releaseIds;
 export const getUpdateTypes = (state: RootState) => state.releases.updateTypes;
 const releaseDefaults = {};
 const getReleaseMappingDefaults = () => releaseDefaults;
+export const getSoftwareTags = createSelector([getTags], ({ software }) => software);
+export const getSoftwareTagsById = createSelector([getSoftwareTags], transformToId);
 export const getReleasesList = createSelector([getReleasesById, getListedReleases, getReleaseMappingDefaults], listItemMapper<ReleaseV2>);
 
-export const getReleaseTagsById = createSelector([getReleaseTags], releaseTags => releaseTags.reduce((accu, key) => ({ ...accu, [key]: key }), {}));
+export const getReleaseTags = createSelector([getTags], ({ releases }) => releases);
+export const getReleaseTagsById = createSelector([getReleaseTags], transformToId);
 export const getHasReleases = createSelector(
   [getReleaseListState, getReleasesById],
   ({ searchTotal, total }, byId) => !!(Object.keys(byId).length || total || searchTotal)
@@ -45,6 +50,8 @@ const getSelectedJobId = (state: RootState) => state.releases.selectedJob;
 export const getSelectedJob = createSelector([getDeltaJobsById, getSelectedJobId], (byId, jobId) => byId[jobId || '']);
 
 const getSelectedManifestId = (state: RootState) => state.releases.selectedManifest;
+export const getManifestTags = createSelector([getTags], ({ manifests }) => manifests);
+export const getManifestTagsById = createSelector([getManifestTags], transformToId);
 export const getManifestsById = (state: RootState) => state.releases.manifestsById;
 export const getManifestsListState = (state: RootState) => state.releases.manifestsList;
 const getListedManifests = (state: RootState) => state.releases.manifestsList.manifestIds;
