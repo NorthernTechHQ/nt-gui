@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { Manifest, ReleaseV2 } from '@northern.tech/types/MenderTypes';
+import type { Manifest, ReleaseV2, Software } from '@northern.tech/types/MenderTypes';
 import { createSelector } from '@reduxjs/toolkit';
 
 import type { RootState } from '../store';
@@ -68,4 +68,16 @@ export const getSelectedManifest = createSelector([getManifestsById, getSelected
 
 export const getSelectedManifests = createSelector([getManifestsListState, getManifestsList], ({ selection }, manifests) =>
   selection.map(index => manifests[index])
+);
+
+export const getSoftwareById = (state: RootState) => state.releases.softwareById;
+export const getSoftwareListState = (state: RootState) => state.releases.softwareList;
+const getListedSoftware = (state: RootState) => state.releases.softwareList.softwareIds;
+const softwareDefaults = {};
+const getSoftwareMappingDefaults = () => softwareDefaults;
+export const getSoftwareList = createSelector([getSoftwareById, getListedSoftware, getSoftwareMappingDefaults], listItemMapper<Software>);
+
+export const getHasSoftware = createSelector(
+  [getSoftwareListState, getSoftwareById],
+  ({ searchTotal, total }, byId) => !!(Object.keys(byId).length || total || searchTotal)
 );

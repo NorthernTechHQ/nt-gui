@@ -21,6 +21,7 @@ import type {
   ReleaseUpdate,
   ReleaseV1,
   ReleaseV2,
+  Software,
   Tags,
   UpdateTypes
 } from '@northern.tech/types/MenderTypes';
@@ -30,7 +31,7 @@ import { isCancel } from 'axios';
 import pluralize from 'pluralize';
 import { v4 as uuid } from 'uuid';
 
-import type { Artifact, ManifestsList, Release, ReleaseSliceType, ReleasesList, SoftwareKind } from '.';
+import type { Artifact, ManifestsList, Release, ReleaseSliceType, ReleasesList, SoftwareKind, SoftwareList } from '.';
 import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import GeneralApi from '../api/general-api';
@@ -51,7 +52,7 @@ import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { convertDeviceListStateToFilters, progress } from '../utils';
 import { ARTIFACT_GENERATION_TYPE } from './constants';
-import { getManifestsById, getManifestsListState, getReleasesById } from './selectors';
+import { getManifestsById, getManifestsListState, getReleasesById, getSoftwareListState } from './selectors';
 
 const { setSnackbar, initUpload, uploadProgress, cleanUpUpload } = storeActions;
 const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
@@ -716,5 +717,81 @@ export const setManifestsListState = createAppAsyncThunk(
       nextState.selection = [];
     }
     dispatch(actions.setManifestsListState(nextState));
+  }
+);
+
+/* Software */
+
+const softwareSortingDefaults = { direction: SORTING_OPTIONS.desc, key: 'modified' };
+
+const reduceReceivedSoftware = (items: Software[]) =>
+  items.reduce<Record<string, Software>>((accu, item) => {
+    accu[item.name] = item;
+    return accu;
+  }, {});
+
+const softwareListRetrieval = (config: Partial<SoftwareList>) => {
+  const { searchTerm = '', page = defaultPage, perPage = defaultPerPage, sort = softwareSortingDefaults } = config;
+  const { key: attribute, direction } = sort;
+  const nameFilter = searchTerm ? `name=${encodeURIComponent(searchTerm)}` : '';
+  const sorting = attribute ? `sort=${attribute}:${direction}`.toLowerCase() : '';
+  return GeneralApi.get<Array<Software>>(
+    `${deploymentsApiUrlV1alpha1}/software?${[`page=${page}`, `per_page=${perPage}`, nameFilter, sorting].filter(i => i).join('&')}`
+  );
+};
+
+const deductSoftwareSearchState = (receivedSoftware: Software[], config, total: number, state: ReleaseSliceType) => {
+  let softwareListState = { ...state.softwareList };
+  const { searchTerm, sort = {} } = config;
+  const sortedSoftware = Object.values(receivedSoftware).sort(customSort(sort.direction === SORTING_OPTIONS.desc, sort.key));
+  const softwareIds = sortedSoftware.map(item => item.name);
+  const isFiltering = !!searchTerm;
+  softwareListState = {
+    ...softwareListState,
+    softwareIds,
+    searchTotal: isFiltering ? total : state.softwareList.searchTotal,
+    total: !isFiltering ? total : state.softwareList.total
+  };
+  return softwareListState;
+};
+
+export const getSoftware = createAppAsyncThunk(
+  `${sliceName}/getSoftware`,
+  async (passedConfig: Partial<SoftwareList> | undefined = {}, { dispatch, getState }) => {
+    const config = { ...getSoftwareListState(getState()), ...passedConfig };
+    const { data: receivedSoftware = [], headers = {} } = await softwareListRetrieval(config).catch(err =>
+      commonErrorHandler(err, `Please check your connection`, dispatch)
+    );
+    const total = headers[headerNames.total] ? Number(headers[headerNames.total]) : 0;
+    const state = getState().releases;
+    const flatSoftware = reduceReceivedSoftware(receivedSoftware);
+    const combinedSoftware = { ...state.softwareById, ...flatSoftware };
+    dispatch(actions.receiveSoftwareItems(combinedSoftware));
+    const softwareListState = deductSoftwareSearchState(receivedSoftware, config, total, state);
+    dispatch(actions.setSoftwareListState(softwareListState));
+    return combinedSoftware;
+  }
+);
+
+export const setSoftwareListState = createAppAsyncThunk(
+  `${sliceName}/setSoftwareListState`,
+  async (selectionState: Partial<SoftwareList>, { dispatch, getState }) => {
+    const currentState = getSoftwareListState(getState());
+    const nextState = {
+      ...currentState,
+      ...selectionState,
+      sort: { ...currentState.sort, ...selectionState.sort } as SortOptions
+    };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { isLoading: currentLoading, ...currentRequestState } = currentState;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { isLoading: selectionLoading, ...selectionRequestState } = nextState;
+    if (!deepCompare(currentRequestState, selectionRequestState)) {
+      nextState.isLoading = true;
+      dispatch(getSoftware(nextState))
+        .unwrap()
+        .finally(() => dispatch(setSoftwareListState({ isLoading: false })).unwrap());
+    }
+    dispatch(actions.setSoftwareListState(nextState));
   }
 );

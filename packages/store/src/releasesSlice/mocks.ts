@@ -11,6 +11,8 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { Software } from '@northern.tech/types/MenderTypes';
+
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS } from '../constants';
 import { initialState } from './index';
 
@@ -95,5 +97,33 @@ export const mockState = {
     searchTerm: '',
     searchTotal: 0,
     total: 1
+  },
+  softwareById: {
+    r1: {
+      name: 'r1',
+      modified: '2020-09-10T12:16:22.667Z',
+      kind: 'release',
+      tags: [],
+      notes: ''
+    } satisfies Software,
+    m1000: {
+      name: 'm1000',
+      modified: '2020-01-01T00:16:39.000Z',
+      kind: 'manifest',
+      tags: [],
+      notes: ''
+    } satisfies Software
+  },
+  softwareList: {
+    ...DEVICE_LIST_DEFAULTS,
+    softwareIds: ['r1', 'm1000'],
+    sort: {
+      direction: SORTING_OPTIONS.desc,
+      key: 'modified'
+    },
+    isLoading: false,
+    searchTerm: '',
+    searchTotal: 0,
+    total: 2
   }
 };
