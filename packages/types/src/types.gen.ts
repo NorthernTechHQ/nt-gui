@@ -1725,6 +1725,20 @@ export type Manifest = {
   notes?: string;
 };
 
+/**
+ * Update metadata update.
+ */
+export type ManifestUpdate = {
+  /**
+   * Manifest notes.
+   */
+  notes?: string;
+  /**
+   * Manifest tags
+   */
+  tags?: Array<string>;
+};
+
 export type GenerateManifestRequest = {
   /**
    * Description of the manifest.
@@ -1757,6 +1771,33 @@ export type ManifestInUseError = {
    * Request ID.
    */
   request_id?: string;
+};
+
+/**
+ * Software information representing either a Release or a Manifest.
+ * Contains only the shared attributes common to both kinds.
+ */
+export type Software = {
+  /**
+   * The name of the Software.
+   */
+  name: string;
+  /**
+   * Last modification time for the Software.
+   */
+  modified?: string;
+  kind: 'release' | 'manifest';
+  /**
+   * Tags assigned to the Software used for filtering. Each tag
+   * must be valid a ASCII string and contain only lowercase and uppercase
+   * letters, digits, underscores, periods and hyphens.
+   */
+  tags?: Array<string>;
+  /**
+   * Additional information describing a Software limited to 1024 characters.
+   *
+   */
+  notes?: string;
 };
 
 /**
@@ -7444,6 +7485,110 @@ export type GetDeploymentManifestByNameResponses = {
 };
 
 export type GetDeploymentManifestByNameResponse = GetDeploymentManifestByNameResponses[keyof GetDeploymentManifestByNameResponses];
+
+export type UpdateManifestInformationData = {
+  body?: ManifestUpdate;
+  path: {
+    /**
+     * Name of the manifest
+     */
+    manifest_name: string;
+  };
+  query?: never;
+  url: '/api/management/v1alpha1/deployments/manifests/{manifest_name}';
+};
+
+export type UpdateManifestInformationErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * The resource requires a paid plan.
+   */
+  402: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type UpdateManifestInformationError = UpdateManifestInformationErrors[keyof UpdateManifestInformationErrors];
+
+export type UpdateManifestInformationResponses = {
+  /**
+   * Successful response.
+   */
+  204: void;
+};
+
+export type UpdateManifestInformationResponse = UpdateManifestInformationResponses[keyof UpdateManifestInformationResponses];
+
+export type GetDeploymentSoftwareData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Software name filter. Can be repeated to query a set of entries. Mutually exclusive with `name_prefix`.
+     */
+    name?: string;
+    /**
+     * Software name prefix filter. Mutually exclusive with `name`.
+     */
+    name_prefix?: string;
+    /**
+     * Software kind filter.
+     */
+    kind?: 'release' | 'manifest';
+    /**
+     * Update type filter.
+     */
+    update_type?: string;
+    /**
+     * Starting page.
+     */
+    page?: number;
+    /**
+     * Maximum number of results per page.
+     */
+    per_page?: number;
+    /**
+     * Sort the Software list by the specified field and direction.
+     */
+    sort?: 'modified:asc' | 'modified:desc' | 'name:asc' | 'name:desc' | 'tags:asc' | 'tags:desc';
+  };
+  url: '/api/management/v1alpha1/deployments/software';
+};
+
+export type GetDeploymentSoftwareErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type GetDeploymentSoftwareError = GetDeploymentSoftwareErrors[keyof GetDeploymentSoftwareErrors];
+
+export type GetDeploymentSoftwareResponses = {
+  /**
+   * A successful response including the Software information
+   */
+  200: Array<Software>;
+};
+
+export type GetDeploymentSoftwareResponse = GetDeploymentSoftwareResponses[keyof GetDeploymentSoftwareResponses];
 
 export type ListSoftwareTagsData = {
   body?: never;
@@ -15600,6 +15745,35 @@ export type VerifyPlanResponses = {
    */
   202: unknown;
 };
+
+export type LinkOAuth20Data = {
+  /**
+   * Log in options
+   */
+  body?: LoginOptions;
+  path?: never;
+  query?: never;
+  url: '/api/management/v1/useradm/oauth2/link';
+};
+
+export type LinkOAuth20Errors = {
+  /**
+   * The user is not authorized.
+   *
+   */
+  401: Error;
+};
+
+export type LinkOAuth20Error = LinkOAuth20Errors[keyof LinkOAuth20Errors];
+
+export type LinkOAuth20Responses = {
+  /**
+   * Successful response.
+   */
+  204: void;
+};
+
+export type LinkOAuth20Response = LinkOAuth20Responses[keyof LinkOAuth20Responses];
 
 export type LoginOAuth20Data = {
   body?: never;
