@@ -3484,6 +3484,43 @@ paths:
         - Deployments_v1alpha1_Management API
       x-mender-plan:
         - enterprise
+    patch:
+      summary: |
+        Update selected metadata fields of the Manifest object.
+      description: |
+        Updates the Manifest object.
+      operationId: Update Manifest information
+      security:
+        - ManagementJWT: []
+      tags:
+        - Deployments_v1alpha1_Management API
+      parameters:
+        - description: Name of the manifest
+          in: path
+          name: manifest_name
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManifestUpdate'
+        required: false
+      responses:
+        '204':
+          content: {}
+          description: Successful response.
+        '400':
+          $ref: '#/components/responses/InvalidRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '402':
+          $ref: '#/components/responses/PaymentRequiredError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      x-mender-plan:
+        - enterprise
   /api/management/v1alpha1/deployments/software:
     get:
       description: |-
@@ -11176,6 +11213,60 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - Login: []
+  /api/management/v1/useradm/oauth2/link:
+    post:
+      tags:
+        - User_Administration_Management API
+      summary: Link to an OAuth2.0 provider after authorization with existing user
+      operationId: Link OAuth2.0
+      parameters:
+        - name: oauth_session_id
+          in: cookie
+          description: The session ID for the OAuth2 session.
+          schema:
+            type: string
+        - name: externalID
+          in: cookie
+          description: The login Id from the OAuth2 provider.
+          schema:
+            type: string
+        - name: email
+          in: cookie
+          schema:
+            type: string
+          description: |
+            The user email from the authorized OAuth2 session.
+        - name: provider
+          in: cookie
+          required: true
+          schema:
+            type: string
+            enum:
+              - github
+              - google
+              - microsoft
+          description: |
+            The OAuth2 provider from the authorized OAuth2 session.
+      requestBody:
+        description: Log in options
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginOptions'
+        required: false
+      responses:
+        '204':
+          description: Successful response.
+        '401':
+          description: |
+            The user is not authorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-mender-plan: []
+      security:
+        - Login: []
   /api/management/v1/useradm/oauth2/{provider}:
     get:
       tags:
@@ -15792,6 +15883,24 @@ components:
             Additional information describing a Manifest limited to 1024 characters.
           type: string
       type: object
+    ManifestUpdate:
+      description: Update metadata update.
+      example:
+        notes: New security fixes 2026
+        tags:
+          - security
+          - production
+      properties:
+        notes:
+          description: Manifest notes.
+          type: string
+          maxLength: 1024
+        tags:
+          description: Manifest tags
+          type: array
+          items:
+            type: string
+      type: object
     GenerateManifestRequest:
       properties:
         description:
@@ -18559,7 +18668,9 @@ components:
                 description: Role of the user to be added
         device_limit:
           type: integer
-          description: Device limit for the tenant.
+          description: Device limit of standard devices for the tenant.
+        device_limits:
+          $ref: '#/components/schemas/DeviceLimitsPut'
         binary_delta:
           type: boolean
           description: Enable server side binary delta generation for the tenant.
@@ -18568,7 +18679,12 @@ components:
           description: |
             Inherit single sign-on configuration from service provider.
             The new tenant will not be able to modify the SSO configuration.
-      description: New Tenant
+      description: |
+        New Tenant
+
+        In environments where the "Device Tiers" feature is enabled the `device_limits`
+        property is made available and takes precedence over the `device_limit` property.
+        Use this option to set the limits for all device tiers at once.
     CancelRequest:
       required:
         - reason
@@ -18588,15 +18704,23 @@ components:
         device_limit:
           type: integer
         device_limits:
-          type: object
-          properties:
-            max_devices:
-              $ref: '#/components/schemas/DeviceLimitPut'
-            max_micro_devices:
-              $ref: '#/components/schemas/DeviceLimitPut'
-            max_system_devices:
-              $ref: '#/components/schemas/DeviceLimitPut'
-      description: Update Tenant
+          $ref: '#/components/schemas/DeviceLimitsPut'
+      description: |
+        Update Tenant
+
+        In environments where the "Device Tiers" feature is enabled the `device_limits`
+        property is made available and takes precedence over the `device_limit` property.
+        Use this option to set the limits for all device tiers at once.
+    DeviceLimitsPut:
+      description: All device limits.
+      type: object
+      properties:
+        max_devices:
+          $ref: '#/components/schemas/DeviceLimitPut'
+        max_micro_devices:
+          $ref: '#/components/schemas/DeviceLimitPut'
+        max_system_devices:
+          $ref: '#/components/schemas/DeviceLimitPut'
     DeviceLimitPut:
       description: Device limit.
       type: object
