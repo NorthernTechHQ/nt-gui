@@ -36,7 +36,7 @@ export const getReleaseTags = createSelector([getTags], ({ releases }) => releas
 export const getReleaseTagsById = createSelector([getReleaseTags], transformToId);
 export const getHasReleases = createSelector(
   [getReleaseListState, getReleasesById],
-  ({ searchTotal, total }, byId) => !!(Object.keys(byId).length || total || searchTotal)
+  ({ searchTotal, total }, byId) => total || searchTotal || !!Object.keys(byId).length
 );
 
 export const getSelectedRelease = createSelector([getReleasesById, getSelectedReleaseId], (byId, id) => byId[id || ''] ?? {});
@@ -61,7 +61,7 @@ export const getManifestsList = createSelector([getManifestsById, getListedManif
 
 export const getHasManifests = createSelector(
   [getManifestsListState, getManifestsById],
-  ({ searchTotal, total }, byId) => !!(Object.keys(byId).length || total || searchTotal)
+  ({ searchTotal, total }, byId) => total || searchTotal || !!Object.keys(byId).length
 );
 
 export const getSelectedManifest = createSelector([getManifestsById, getSelectedManifestId], (byId, id) => byId[id || ''] ?? {});
@@ -79,5 +79,5 @@ export const getSoftwareList = createSelector([getSoftwareById, getListedSoftwar
 
 export const getHasSoftware = createSelector(
   [getSoftwareListState, getSoftwareById],
-  ({ searchTotal, total }, byId) => !!(Object.keys(byId).length || total || searchTotal)
+  ({ searchTotal, total }, byId) => total || searchTotal || !!Object.keys(byId).length
 );
