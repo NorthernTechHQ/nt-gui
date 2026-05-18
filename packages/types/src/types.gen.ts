@@ -1760,6 +1760,33 @@ export type ManifestInUseError = {
 };
 
 /**
+ * Software information representing either a Release or a Manifest.
+ * Contains only the shared attributes common to both kinds.
+ */
+export type Software = {
+  /**
+   * The name of the Software.
+   */
+  name: string;
+  /**
+   * Last modification time for the Software.
+   */
+  modified?: string;
+  kind: 'release' | 'manifest';
+  /**
+   * Tags assigned to the Software used for filtering. Each tag
+   * must be valid a ASCII string and contain only lowercase and uppercase
+   * letters, digits, underscores, periods and hyphens.
+   */
+  tags?: Array<string>;
+  /**
+   * Additional information describing a Software limited to 1024 characters.
+   *
+   */
+  notes?: string;
+};
+
+/**
  * Detailed artifact.
  */
 export type ArtifactV2 = {
@@ -7444,6 +7471,68 @@ export type GetDeploymentManifestByNameResponses = {
 };
 
 export type GetDeploymentManifestByNameResponse = GetDeploymentManifestByNameResponses[keyof GetDeploymentManifestByNameResponses];
+
+export type GetDeploymentSoftwareData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Software name filter. Can be repeated to query a set of entries. Mutually exclusive with `name_prefix`.
+     */
+    name?: string;
+    /**
+     * Software name prefix filter. Mutually exclusive with `name`.
+     */
+    name_prefix?: string;
+    /**
+     * Software kind filter.
+     */
+    kind?: 'release' | 'manifest';
+    /**
+     * Update type filter.
+     */
+    update_type?: string;
+    /**
+     * Starting page.
+     */
+    page?: number;
+    /**
+     * Maximum number of results per page.
+     */
+    per_page?: number;
+    /**
+     * Sort the Software list by the specified field and direction.
+     */
+    sort?: 'modified:asc' | 'modified:desc' | 'name:asc' | 'name:desc' | 'tags:asc' | 'tags:desc';
+  };
+  url: '/api/management/v1alpha1/deployments/software';
+};
+
+export type GetDeploymentSoftwareErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type GetDeploymentSoftwareError = GetDeploymentSoftwareErrors[keyof GetDeploymentSoftwareErrors];
+
+export type GetDeploymentSoftwareResponses = {
+  /**
+   * A successful response including the Software information
+   */
+  200: Array<Software>;
+};
+
+export type GetDeploymentSoftwareResponse = GetDeploymentSoftwareResponses[keyof GetDeploymentSoftwareResponses];
 
 export type ListSoftwareTagsData = {
   body?: never;

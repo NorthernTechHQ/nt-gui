@@ -33,6 +33,7 @@ import {
   getManifests,
   getRelease,
   getReleases,
+  getSoftware,
   getUpdateTypes,
   removeArtifact,
   removeManifest,
@@ -44,6 +45,7 @@ import {
   setReleaseTags,
   setReleasesListState,
   setSingleReleaseTags,
+  setSoftwareListState,
   updateReleaseInfo,
   uploadArtifact,
   uploadManifest
@@ -634,5 +636,74 @@ describe('manifest actions', () => {
       const handledAction = storeActions.some(storeAction => Object.keys(expectedAction).every(key => deepCompare(storeAction[key], expectedAction[key])));
       expect(handledAction, JSON.stringify(expectedAction)).toBeTruthy();
     });
+  });
+});
+
+const retrievedSoftwareIds = [
+  'release-500',
+  'release-499',
+  'release-498',
+  'release-497',
+  'release-496',
+  'release-495',
+  'release-494',
+  'release-493',
+  'release-492',
+  'release-491',
+  'release-490',
+  'release-489',
+  'release-488',
+  'release-487',
+  'release-486',
+  'release-485',
+  'release-484',
+  'release-483',
+  'release-482',
+  'release-481'
+];
+
+describe('software actions', () => {
+  it('should retrieve a list of software', async () => {
+    const store = mockStore({ ...defaultState });
+    const expectedActions = [
+      { type: getSoftware.pending.type },
+      { type: actions.receiveSoftwareItems.type, payload: defaultState.releases.softwareById },
+      {
+        type: actions.setSoftwareListState.type,
+        payload: { ...defaultState.releases.softwareList, softwareIds: ['release-500'], total: 1000 }
+      },
+      { type: getSoftware.fulfilled.type }
+    ];
+    await store.dispatch(getSoftware({ perPage: 1, sort: { direction: 'desc', key: 'modified' } }));
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+  it('should retrieve a search filtered list of software', async () => {
+    const store = mockStore({ ...defaultState });
+    const expectedActions = [
+      { type: getSoftware.pending.type },
+      { type: actions.receiveSoftwareItems.type, payload: defaultState.releases.softwareById },
+      {
+        type: actions.setSoftwareListState.type,
+        payload: {
+          ...defaultState.releases.softwareList,
+          softwareIds: retrievedSoftwareIds,
+          searchTotal: 500
+        }
+      },
+      { type: getSoftware.fulfilled.type }
+    ];
+    await store.dispatch(getSoftware({ searchTerm: 'release' }));
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+  it('should update software list state and trigger fetch on change', async () => {
+    const store = mockStore({ ...defaultState });
+    await store.dispatch(setSoftwareListState({ page: 2 }));
+    const storeActions = store.getActions();
+    expect(storeActions).toContainEqual(expect.objectContaining({ type: setSoftwareListState.pending.type }));
+    expect(storeActions).toContainEqual(expect.objectContaining({ type: actions.setSoftwareListState.type, payload: expect.objectContaining({ page: 2 }) }));
   });
 });

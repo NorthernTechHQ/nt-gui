@@ -20,6 +20,7 @@ import type {
   DeltaJobDetailsItem,
   DeltaJobsListItem,
   Manifest,
+  Software,
   Tags
 } from '@northern.tech/types/MenderTypes';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -33,7 +34,7 @@ export type Artifact = Omit<BackendArtifactV1, 'updates'> &
   Omit<BackendArtifactV2, 'updates'> & { installCount?: number; updates?: Array<Update>; url?: string };
 export type Release = BackendReleaseV1 & BackendReleaseV2 & { artifacts: Artifact[]; device_types_compatible: string[]; name: string };
 
-export type SoftwareKind = 'release' | 'manifest';
+export type SoftwareKind = Software['kind'];
 
 export const sliceName = 'releases';
 
@@ -67,6 +68,17 @@ export type ManifestsList = {
   total: number;
 };
 
+export type SoftwareList = {
+  isLoading?: boolean;
+  page: number;
+  perPage: number;
+  searchTerm: string;
+  searchTotal: number;
+  softwareIds: string[];
+  sort?: SortOptions;
+  total: number;
+};
+
 export type ReleaseSliceType = {
   artifacts: never[];
   byId: Record<string, Release>;
@@ -84,6 +96,8 @@ export type ReleaseSliceType = {
   selectedJob: string | null;
   selectedManifest: string | null;
   selectedRelease: string | null;
+  softwareById: Record<string, Software>;
+  softwareList: SoftwareList;
   tab?: 'releases' | 'delta' | 'manifests';
   tags: Record<'releases' | 'manifests' | 'software', Tags>;
   updateTypes: string[];
@@ -185,6 +199,19 @@ export const initialState: ReleaseSliceType = {
     ...DEVICE_LIST_DEFAULTS,
     manifestIds: [],
     selection: [],
+    sort: {
+      direction: SORTING_OPTIONS.desc,
+      key: 'modified'
+    },
+    isLoading: undefined,
+    searchTerm: '',
+    searchTotal: 0,
+    total: 0
+  },
+  softwareById: {},
+  softwareList: {
+    ...DEVICE_LIST_DEFAULTS,
+    softwareIds: [],
     sort: {
       direction: SORTING_OPTIONS.desc,
       key: 'modified'
@@ -307,6 +334,12 @@ export const releaseSlice = createSlice({
     },
     setManifestsListState: (state, action: PayloadAction<ManifestsList>) => {
       state.manifestsList = action.payload;
+    },
+    receiveSoftwareItems: (state, action: PayloadAction<Record<string, Software>>) => {
+      state.softwareById = action.payload;
+    },
+    setSoftwareListState: (state, action: PayloadAction<SoftwareList>) => {
+      state.softwareList = action.payload;
     }
   }
 });

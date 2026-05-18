@@ -595,6 +595,23 @@ export const manifestsList = Array.from({ length: 1000 }, (_, i) => ({
   notes: ''
 }));
 
+export const softwareList = [
+  ...Array.from({ length: 500 }, (_, i) => ({
+    name: `release-${i + 1}`,
+    modified: new Date(2020, 8, 10, 12, 16, i).toISOString(),
+    kind: 'release' as const,
+    tags: [],
+    notes: ''
+  })),
+  ...Array.from({ length: 500 }, (_, i) => ({
+    name: `m${i + 1}`,
+    modified: new Date(2020, 0, 1, 0, 0, i).toISOString(),
+    kind: 'manifest' as const,
+    tags: [],
+    notes: ''
+  }))
+];
+
 export const releasesList = Array.from({ length: 5000 }, (x, i) => ({
   artifacts: [
     {

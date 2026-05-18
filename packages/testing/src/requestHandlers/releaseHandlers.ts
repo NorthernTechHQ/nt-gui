@@ -16,7 +16,7 @@ import { SORTING_OPTIONS, deploymentsApiUrl, deploymentsApiUrlV1alpha1, deployme
 import { customSort } from '@northern.tech/utils/helpers';
 import { HttpResponse, http } from 'msw';
 
-import { manifestsList, mockApiResponses, releasesList } from '../mockData';
+import { manifestsList, mockApiResponses, releasesList, softwareList } from '../mockData';
 import { validated } from './validation';
 
 const deltaJobs = {
@@ -233,6 +233,30 @@ export const releaseHandlers = [
         return HttpResponse.json(mockApiResponses.manifests.byId.m1000);
       }
       return new HttpResponse(null, { status: 404 });
+    })
+  ),
+  http.get(
+    `${deploymentsApiUrlV1alpha1}/software`,
+    validated(async ({ request }) => {
+      const { searchParams } = new URL(request.url);
+      const page = Number(searchParams.get('page'));
+      const perPage = Number(searchParams.get('per_page'));
+      if (!page || ![1, 10, 20, 50, 100, 250, 500].includes(perPage)) {
+        return new HttpResponse(null, { status: 593 });
+      }
+      const sort = searchParams.get('sort');
+      let filtered = [...softwareList];
+      const kind = searchParams.get('kind');
+      if (kind) {
+        filtered = filtered.filter(item => item.kind === kind);
+      }
+      const name = searchParams.get('name');
+      if (name) {
+        filtered = filtered.filter(item => item.name.includes(name));
+      }
+      filtered.sort(customSort(sort?.includes(SORTING_OPTIONS.desc) ?? false, sort?.includes('name') ? 'name' : 'modified'));
+      const section = filtered.slice((page - 1) * perPage, page * perPage);
+      return new HttpResponse(JSON.stringify(section), { headers: { [headerNames.total]: filtered.length } });
     })
   ),
   http.get(
