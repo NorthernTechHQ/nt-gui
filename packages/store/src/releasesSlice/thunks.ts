@@ -502,8 +502,8 @@ interface DeltaListingProps {
 export const getDeltaGenerationJobs = createAppAsyncThunk(`${sliceName}/getDeltaGenerationJobs`, (options: DeltaListingProps = {}, { dispatch }) => {
   const { page = defaultPage, perPage = defaultPerPage, sort = {} } = options;
   const { key: sortKey, direction: sortDirection } = sort as SortOptions;
-  const sortParam = sortKey && sortDirection ? `&sort=${sortKey}:${sortDirection}` : '';
-  return GeneralApi.get<DeltaJobsListItem[]>(`${deploymentsApiUrlV2}/deployments/releases/delta/jobs?page=${page}&per_page=${perPage}${sortParam}`)
+  const sortParam = sortKey && sortDirection ? `${sortKey}:${sortDirection}` : undefined;
+  return GeneralApi.get<DeltaJobsListItem[]>(`${deploymentsApiUrlV2}/deployments/releases/delta/jobs`, { params: { page, per_page: perPage, sort: sortParam } })
     .then(({ data, headers }) => {
       const total = Number(headers[headerNames.total]) || data.length;
       const result = { jobs: data, total };
@@ -529,13 +529,12 @@ const reduceReceivedManifests = (manifests: Manifest[]) =>
   }, {});
 
 const manifestListRetrieval = (config: Partial<ManifestsList>) => {
-  const { searchTerm = '', page = defaultPage, perPage = defaultPerPage, sort = manifestSortingDefaults } = config;
+  const { searchTerm, page = defaultPage, perPage = defaultPerPage, sort = manifestSortingDefaults } = config;
   const { key: attribute, direction } = sort;
-  const nameFilter = searchTerm ? `name=${encodeURIComponent(searchTerm)}` : '';
-  const sorting = attribute ? `sort=${attribute}:${direction}`.toLowerCase() : '';
-  return GeneralApi.get<Array<Manifest>>(
-    `${deploymentsApiUrlV1alpha1}/manifests?${[`page=${page}`, `per_page=${perPage}`, nameFilter, sorting].filter(i => i).join('&')}`
-  );
+  const sorting = attribute ? `${attribute}:${direction}`.toLowerCase() : undefined;
+  return GeneralApi.get<Array<Manifest>>(`${deploymentsApiUrlV1alpha1}/manifests`, {
+    params: { page, per_page: perPage, name: searchTerm, sort: sorting }
+  });
 };
 
 const deductManifestSearchState = (receivedManifests: Manifest[], config, total: number, state: ReleaseSliceType) => {
@@ -731,13 +730,12 @@ const reduceReceivedSoftware = (items: Software[]) =>
   }, {});
 
 const softwareListRetrieval = (config: Partial<SoftwareList>) => {
-  const { searchTerm = '', page = defaultPage, perPage = defaultPerPage, sort = softwareSortingDefaults } = config;
+  const { searchTerm, page = defaultPage, perPage = defaultPerPage, sort = softwareSortingDefaults } = config;
   const { key: attribute, direction } = sort;
-  const nameFilter = searchTerm ? `name=${encodeURIComponent(searchTerm)}` : '';
-  const sorting = attribute ? `sort=${attribute}:${direction}`.toLowerCase() : '';
-  return GeneralApi.get<Array<Software>>(
-    `${deploymentsApiUrlV1alpha1}/software?${[`page=${page}`, `per_page=${perPage}`, nameFilter, sorting].filter(i => i).join('&')}`
-  );
+  const sorting = attribute ? `${attribute}:${direction}`.toLowerCase() : undefined;
+  return GeneralApi.get<Array<Software>>(`${deploymentsApiUrlV1alpha1}/software`, {
+    params: { page, per_page: perPage, name: searchTerm, sort: sorting }
+  });
 };
 
 const deductSoftwareSearchState = (receivedSoftware: Software[], config, total: number, state: ReleaseSliceType) => {
