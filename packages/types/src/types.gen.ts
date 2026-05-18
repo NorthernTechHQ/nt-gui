@@ -1725,6 +1725,20 @@ export type Manifest = {
   notes?: string;
 };
 
+/**
+ * Update metadata update.
+ */
+export type ManifestUpdate = {
+  /**
+   * Manifest notes.
+   */
+  notes?: string;
+  /**
+   * Manifest tags
+   */
+  tags?: Array<string>;
+};
+
 export type GenerateManifestRequest = {
   /**
    * Description of the manifest.
@@ -3615,6 +3629,11 @@ export type SupportRequest = {
 
 /**
  * New Tenant
+ *
+ * In environments where the "Device Tiers" feature is enabled the `device_limits`
+ * property is made available and takes precedence over the `device_limit` property.
+ * Use this option to set the limits for all device tiers at once.
+ *
  */
 export type NewTenantTypeManagement = {
   /**
@@ -3652,9 +3671,10 @@ export type NewTenantTypeManagement = {
     role?: string;
   }>;
   /**
-   * Device limit for the tenant.
+   * Device limit of standard devices for the tenant.
    */
   device_limit?: number;
+  device_limits?: DeviceLimitsPut;
   /**
    * Enable server side binary delta generation for the tenant.
    */
@@ -3676,6 +3696,11 @@ export type CancelRequest = {
 
 /**
  * Update Tenant
+ *
+ * In environments where the "Device Tiers" feature is enabled the `device_limits`
+ * property is made available and takes precedence over the `device_limit` property.
+ * Use this option to set the limits for all device tiers at once.
+ *
  */
 export type UpdateChildTenant = {
   /**
@@ -3683,11 +3708,16 @@ export type UpdateChildTenant = {
    */
   name?: string;
   device_limit?: number;
-  device_limits?: {
-    max_devices?: DeviceLimitPut;
-    max_micro_devices?: DeviceLimitPut;
-    max_system_devices?: DeviceLimitPut;
-  };
+  device_limits?: DeviceLimitsPut;
+};
+
+/**
+ * All device limits.
+ */
+export type DeviceLimitsPut = {
+  max_devices?: DeviceLimitPut;
+  max_micro_devices?: DeviceLimitPut;
+  max_system_devices?: DeviceLimitPut;
 };
 
 /**
@@ -7471,6 +7501,48 @@ export type GetDeploymentManifestByNameResponses = {
 };
 
 export type GetDeploymentManifestByNameResponse = GetDeploymentManifestByNameResponses[keyof GetDeploymentManifestByNameResponses];
+
+export type UpdateManifestInformationData = {
+  body?: ManifestUpdate;
+  path: {
+    /**
+     * Name of the manifest
+     */
+    manifest_name: string;
+  };
+  query?: never;
+  url: '/api/management/v1alpha1/deployments/manifests/{manifest_name}';
+};
+
+export type UpdateManifestInformationErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * The resource requires a paid plan.
+   */
+  402: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type UpdateManifestInformationError = UpdateManifestInformationErrors[keyof UpdateManifestInformationErrors];
+
+export type UpdateManifestInformationResponses = {
+  /**
+   * Successful response.
+   */
+  204: void;
+};
+
+export type UpdateManifestInformationResponse = UpdateManifestInformationResponses[keyof UpdateManifestInformationResponses];
 
 export type GetDeploymentSoftwareData = {
   body?: never;
@@ -15689,6 +15761,35 @@ export type VerifyPlanResponses = {
    */
   202: unknown;
 };
+
+export type LinkOAuth20Data = {
+  /**
+   * Log in options
+   */
+  body?: LoginOptions;
+  path?: never;
+  query?: never;
+  url: '/api/management/v1/useradm/oauth2/link';
+};
+
+export type LinkOAuth20Errors = {
+  /**
+   * The user is not authorized.
+   *
+   */
+  401: Error;
+};
+
+export type LinkOAuth20Error = LinkOAuth20Errors[keyof LinkOAuth20Errors];
+
+export type LinkOAuth20Responses = {
+  /**
+   * Successful response.
+   */
+  204: void;
+};
+
+export type LinkOAuth20Response = LinkOAuth20Responses[keyof LinkOAuth20Responses];
 
 export type LoginOAuth20Data = {
   body?: never;
