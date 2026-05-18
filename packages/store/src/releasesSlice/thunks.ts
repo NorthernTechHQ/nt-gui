@@ -522,11 +522,7 @@ export const getDeltaGenerationJobDetails = createAppAsyncThunk(`${sliceName}/ge
 
 const manifestSortingDefaults = { direction: SORTING_OPTIONS.desc, key: 'modified' };
 
-const reduceReceivedManifests = (manifests: Manifest[]) =>
-  manifests.reduce<Record<string, Manifest>>((accu, manifest) => {
-    accu[manifest.name] = manifest;
-    return accu;
-  }, {});
+const transformReceivedSoftware = (items: Software[] | Manifest[]) => Object.fromEntries(items.map(item => [item.name, item]));
 
 const manifestListRetrieval = (config: Partial<ManifestsList>) => {
   const { searchTerm, page = defaultPage, perPage = defaultPerPage, sort = manifestSortingDefaults } = config;
@@ -643,7 +639,7 @@ export const getManifests = createAppAsyncThunk(
     );
     const total = headers[headerNames.total] ? Number(headers[headerNames.total]) : 0;
     const state = getState().releases;
-    const flatManifests = reduceReceivedManifests(receivedManifests);
+    const flatManifests: Record<string, Manifest> = transformReceivedSoftware(receivedManifests);
     const combinedManifests = { ...state.manifestsById, ...flatManifests };
     dispatch(actions.receiveManifests(combinedManifests));
     const manifestsListState = deductManifestSearchState(receivedManifests, config, total, state);
@@ -723,12 +719,6 @@ export const setManifestsListState = createAppAsyncThunk(
 
 const softwareSortingDefaults = { direction: SORTING_OPTIONS.desc, key: 'modified' };
 
-const reduceReceivedSoftware = (items: Software[]) =>
-  items.reduce<Record<string, Software>>((accu, item) => {
-    accu[item.name] = item;
-    return accu;
-  }, {});
-
 const softwareListRetrieval = (config: Partial<SoftwareList>) => {
   const { searchTerm, page = defaultPage, perPage = defaultPerPage, sort = softwareSortingDefaults } = config;
   const { key: attribute, direction } = sort;
@@ -762,7 +752,7 @@ export const getSoftware = createAppAsyncThunk(
     );
     const total = headers[headerNames.total] ? Number(headers[headerNames.total]) : 0;
     const state = getState().releases;
-    const flatSoftware = reduceReceivedSoftware(receivedSoftware);
+    const flatSoftware: Record<string, Software> = transformReceivedSoftware(receivedSoftware);
     const combinedSoftware = { ...state.softwareById, ...flatSoftware };
     dispatch(actions.receiveSoftwareItems(combinedSoftware));
     const softwareListState = deductSoftwareSearchState(receivedSoftware, config, total, state);
