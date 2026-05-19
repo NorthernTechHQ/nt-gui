@@ -1,5 +1,57 @@
 ---
-## 0.11.0 - 2026-05-13
+## 0.12.0 - 2026-05-19
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Openapi spec update
+
+ ([ba45ea2](https://github.com/NorthernTechHQ/nt-gui/commit/ba45ea2a0902d7099a4e351851fe3092218a6946))  by @mender-test-bot
+
+
+
+- *(testing)* Allowed getting multiple software items by name
+
+ ([7540448](https://github.com/NorthernTechHQ/nt-gui/commit/75404485ac5e4ec10e088c06f9ec1f08d9fee047))  by @mzedel
+
+
+
+
+
+
+
+### Features
+
+#### Testing
+
+
+- *(testing)* Added support for software list retrieval
+
+ ([903416d](https://github.com/NorthernTechHQ/nt-gui/commit/903416d199372a7fe71516fbc827df774da3985b))  by @mzedel
+
+
+
+- *(testing)* Added oauth linking support
+
+ ([5bb7391](https://github.com/NorthernTechHQ/nt-gui/commit/5bb73916c378bc4ff4bbe622dbfd39c9ede505a2))  by @mzedel
+
+
+
+- *(testing)* Added manifest manipulation support
+
+ ([f6b656b](https://github.com/NorthernTechHQ/nt-gui/commit/f6b656b597dffe90eb7475c02d5d851c2a476dd1))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/testing-0.11.0 - 2026-05-13
 
 
 ### Bug fixes
@@ -190,7 +242,7 @@
 
 - *(testing)* Ensure package content
 
-([QA-1039](https://northerntech.atlassian.net/browse/QA-1039)) ([de4cb9a](https://github.com/NorthernTechHQ/nt-gui/commit/de4cb9a162fccbc4de575a25358b2b9e746e951d))  by @mineralsfree
+([QA-1039](https://northerntech.atlassian.net/browse/QA-1039)) ([de4cb9a](https://github.com/NorthernTechHQ/nt-gui/commit/de4cb9a162fccbc4de575a25358b2b9e746e951d)) 
 
 
 
@@ -210,7 +262,7 @@
 
 - *(testing)* Ensured package content
 
- ([8df53da](https://github.com/NorthernTechHQ/nt-gui/commit/8df53da18c36b1940cf4ee19bc7cd5e4024ca79d))  by @mzedel
+ ([8df53da](https://github.com/NorthernTechHQ/nt-gui/commit/8df53da18c36b1940cf4ee19bc7cd5e4024ca79d)) 
 
 
 
@@ -229,7 +281,7 @@
 
 - *(testing)* Ensured non-reporting utils package gets used in testing package
 
- ([c1aaf99](https://github.com/NorthernTechHQ/nt-gui/commit/c1aaf99f7a0f23f97b2c169431034ef2a77e0d26))  by @mzedel
+ ([c1aaf99](https://github.com/NorthernTechHQ/nt-gui/commit/c1aaf99f7a0f23f97b2c169431034ef2a77e0d26)) 
 
 
 
@@ -248,7 +300,7 @@
 
 - *(testing)* Added tiers support to sp tenant
 
- ([70d19e8](https://github.com/NorthernTechHQ/nt-gui/commit/70d19e8f2fdbec3260768da010b8eadb2db84c0e))  by @mineralsfree
+ ([70d19e8](https://github.com/NorthernTechHQ/nt-gui/commit/70d19e8f2fdbec3260768da010b8eadb2db84c0e)) 
 
 
 
@@ -267,7 +319,7 @@
 
 - *(testing)* Let deployments search rely on non-deprecated endpoint
 
- ([71797db](https://github.com/NorthernTechHQ/nt-gui/commit/71797dbb11dcb9730af717f1fe16a50d464e5571))  by @mzedel
+ ([71797db](https://github.com/NorthernTechHQ/nt-gui/commit/71797dbb11dcb9730af717f1fe16a50d464e5571)) 
 
 
 
@@ -286,7 +338,7 @@
 
 - *(testing)* Products mock
 
- ([a8ba060](https://github.com/NorthernTechHQ/nt-gui/commit/a8ba0600c0b2db527f2429d336ad5b309ff82037))  by @mineralsfree
+ ([a8ba060](https://github.com/NorthernTechHQ/nt-gui/commit/a8ba0600c0b2db527f2429d336ad5b309ff82037)) 
 
 
 
@@ -305,7 +357,7 @@
 
 - *(testing)* Aligned provided abortcontroller w/  functionality expected by jsdom
 
- ([d7f9242](https://github.com/NorthernTechHQ/nt-gui/commit/d7f9242d61c4600933e509d4dde7bbe891ef6af0))  by @mzedel
+ ([d7f9242](https://github.com/NorthernTechHQ/nt-gui/commit/d7f9242d61c4600933e509d4dde7bbe891ef6af0)) 
 
 
 
@@ -320,7 +372,7 @@
 
 - *(testing)* Added rendering helper to ease url state mocking
 
- ([a5c8abf](https://github.com/NorthernTechHQ/nt-gui/commit/a5c8abfc3a5b9d8ce7cc729ea43f18b35b5dc0fe))  by @mzedel
+ ([a5c8abf](https://github.com/NorthernTechHQ/nt-gui/commit/a5c8abfc3a5b9d8ce7cc729ea43f18b35b5dc0fe)) 
 
 
 
@@ -339,7 +391,7 @@
 
 - *(testing)* Aligned faulty update type mock w/ api response reality
 
- ([237064b](https://github.com/NorthernTechHQ/nt-gui/commit/237064b4e3eaefd4e785552211127f32b10ddde3))  by @mzedel
+ ([237064b](https://github.com/NorthernTechHQ/nt-gui/commit/237064b4e3eaefd4e785552211127f32b10ddde3)) 
 
 
 
@@ -358,7 +410,7 @@
 
 - *(testing)* Adjusted invoice preview mock response
 
-([MEN-8878](https://northerntech.atlassian.net/browse/MEN-8878)) ([e7c9cd5](https://github.com/NorthernTechHQ/nt-gui/commit/e7c9cd561cf5370a5316fea5b8a338e07e544ec1))  by @mineralsfree
+([MEN-8878](https://northerntech.atlassian.net/browse/MEN-8878)) ([e7c9cd5](https://github.com/NorthernTechHQ/nt-gui/commit/e7c9cd561cf5370a5316fea5b8a338e07e544ec1)) 
 
 
 
@@ -381,7 +433,7 @@
 
 - *(store)* Made use of combined device counts endpoint & adjusted related tracking state
 
- ([4d0bb34](https://github.com/NorthernTechHQ/nt-gui/commit/4d0bb34af23d726019e4b7d906701c9bc2b60c60))  by @mzedel
+ ([4d0bb34](https://github.com/NorthernTechHQ/nt-gui/commit/4d0bb34af23d726019e4b7d906701c9bc2b60c60)) 
 
 
 
@@ -400,7 +452,7 @@
 
 - *(testing)* Added support for tiered device limits
 
- ([bc893e5](https://github.com/NorthernTechHQ/nt-gui/commit/bc893e527e2ae73507a226b6a42506ada58e6d03))  by @mzedel
+ ([bc893e5](https://github.com/NorthernTechHQ/nt-gui/commit/bc893e527e2ae73507a226b6a42506ada58e6d03)) 
 
 
 
@@ -419,7 +471,7 @@
 
 - *(testing)* Align time mock handling w/ vitest + rtl recommendations by providing proper `beforeEach` util
 
- ([7e26a57](https://github.com/NorthernTechHQ/nt-gui/commit/7e26a577e3737fd0d00f967cdc170589219841f1))  by @mzedel
+ ([7e26a57](https://github.com/NorthernTechHQ/nt-gui/commit/7e26a577e3737fd0d00f967cdc170589219841f1)) 
 
 
 
@@ -441,7 +493,7 @@
 
 - *(testing)* Aligned MSW handlers w/ store & current Mender
 
- ([d200130](https://github.com/NorthernTechHQ/nt-gui/commit/d200130da18f871b572f9ed08e424a7c591576b3))  by @mzedel
+ ([d200130](https://github.com/NorthernTechHQ/nt-gui/commit/d200130da18f871b572f9ed08e424a7c591576b3)) 
 
 
 
@@ -460,7 +512,7 @@
 
 - *(testing)* Synced msw handlers with current mender
 
- ([4dfe2d0](https://github.com/NorthernTechHQ/nt-gui/commit/4dfe2d02ad4c58329c0c99a2f1cf305e4cee8997))  by @mzedel
+ ([4dfe2d0](https://github.com/NorthernTechHQ/nt-gui/commit/4dfe2d02ad4c58329c0c99a2f1cf305e4cee8997)) 
 
 
 
@@ -479,7 +531,7 @@
 
 - *(testing)* Also handle user existence checking
 
- ([db1f75b](https://github.com/NorthernTechHQ/nt-gui/commit/db1f75b37dcba66a02432a6ef2e0b7e3f33f6c0c))  by @mzedel
+ ([db1f75b](https://github.com/NorthernTechHQ/nt-gui/commit/db1f75b37dcba66a02432a6ef2e0b7e3f33f6c0c)) 
 
 
 
@@ -501,7 +553,7 @@
 
 - *(testing)* Added testing package
 
-([MEN-8006](https://northerntech.atlassian.net/browse/MEN-8006)) ([46c2efd](https://github.com/NorthernTechHQ/nt-gui/commit/46c2efd789d54a3a0393e3a1337645ca138eefa3))  by @mzedel
+([MEN-8006](https://northerntech.atlassian.net/browse/MEN-8006)) ([46c2efd](https://github.com/NorthernTechHQ/nt-gui/commit/46c2efd789d54a3a0393e3a1337645ca138eefa3)) 
 
 
 
