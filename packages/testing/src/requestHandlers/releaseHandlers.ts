@@ -235,6 +235,16 @@ export const releaseHandlers = [
       return new HttpResponse(null, { status: 404 });
     })
   ),
+  http.patch(
+    `${deploymentsApiUrlV1alpha1}/manifests/:name`,
+    validated(async ({ params: { name }, request }) => {
+      const body = await request.json();
+      if (name && (body.notes !== undefined || body.tags !== undefined)) {
+        return new HttpResponse(null, { status: 204 });
+      }
+      return new HttpResponse(null, { status: 400 });
+    })
+  ),
   http.get(
     `${deploymentsApiUrlV1alpha1}/software`,
     validated(async ({ request }) => {
@@ -250,9 +260,9 @@ export const releaseHandlers = [
       if (kind) {
         filtered = filtered.filter(item => item.kind === kind);
       }
-      const name = searchParams.get('name');
-      if (name) {
-        filtered = filtered.filter(item => item.name.includes(name));
+      const names = searchParams.getAll('name');
+      if (names.length) {
+        filtered = filtered.filter(item => names.some(name => item.name.includes(name)));
       }
       filtered.sort(customSort(sort?.includes(SORTING_OPTIONS.desc) ?? false, sort?.includes('name') ? 'name' : 'modified'));
       const section = filtered.slice((page - 1) * perPage, page * perPage);

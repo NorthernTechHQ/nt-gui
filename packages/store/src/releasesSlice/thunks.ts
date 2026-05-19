@@ -18,6 +18,7 @@ import type {
   DeltaJobsListItem,
   DeviceInventory,
   Manifest,
+  ManifestUpdate,
   ReleaseUpdate,
   ReleaseV1,
   ReleaseV2,
@@ -658,6 +659,17 @@ export const getManifest = createAppAsyncThunk(`${sliceName}/getManifest`, async
   dispatch(actions.receiveManifest(manifest));
   return manifest;
 });
+
+export const updateManifestInfo = createAppAsyncThunk(
+  `${sliceName}/updateManifestInfo`,
+  ({ name, info }: { info: ManifestUpdate; name: string }, { dispatch, getState }) =>
+    GeneralApi.patch(`${deploymentsApiUrlV1alpha1}/manifests/${name}`, info)
+      .catch(err => commonErrorHandler(err, `Manifest details couldn't be updated.`, dispatch))
+      .then(() => {
+        dispatch(actions.receiveManifest({ ...getManifestsById(getState())[name], ...info, name }));
+        dispatch(setSnackbar('Manifest details were updated successfully.'));
+      })
+);
 
 export const removeManifests = createAppAsyncThunk(`${sliceName}/removeManifests`, async (names: string[], { dispatch, getState }) => {
   const nameParams = names.map(name => `name=${encodeURIComponent(name)}`).join('&');
