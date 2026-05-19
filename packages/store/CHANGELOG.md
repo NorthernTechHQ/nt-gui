@@ -1,5 +1,63 @@
 ---
-## 0.32.0 - 2026-05-13
+## 0.33.0 - 2026-05-19
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Propagate the error message when uploading manifest file
+
+ ([236d1b9](https://github.com/NorthernTechHQ/nt-gui/commit/236d1b9119da86f4236a5069611a7a1e6cffb3ea))  by @mineralsfree
+
+
+
+
+
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added support for software list retrieval
+
+ ([7cf592b](https://github.com/NorthernTechHQ/nt-gui/commit/7cf592b11dd8ea6180a8ea10417f5b50661adfa0))  by @mzedel
+
+
+
+- *(store)* Added support for manifest meta data manipulation
+
+ ([f1e687b](https://github.com/NorthernTechHQ/nt-gui/commit/f1e687bb9bcccabf4d92afd7965c44b43515e383))  by @mzedel
+
+
+
+
+
+
+
+### Refactor
+
+#### Store
+
+
+- *(store)* Optimized existence focused selectors to avoid single software processing
+
+ ([6ec9813](https://github.com/NorthernTechHQ/nt-gui/commit/6ec981321b147e738813e1902244405efa85cf61))  by @mzedel
+
+
+
+
+  - favor collated data instead
+
+
+
+
+
+
+## @northern.tech/store-0.32.0 - 2026-05-13
 
 
 ### Bug fixes
