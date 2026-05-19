@@ -46,6 +46,7 @@ import {
   setReleasesListState,
   setSingleReleaseTags,
   setSoftwareListState,
+  updateManifestInfo,
   updateReleaseInfo,
   uploadArtifact,
   uploadManifest
@@ -555,6 +556,19 @@ describe('manifest actions', () => {
     expect(storeActions).toContainEqual(
       expect.objectContaining({ type: actions.setManifestsListState.type, payload: expect.objectContaining({ selection: [] }) })
     );
+  });
+  it('should allow updating manifest info', async () => {
+    const store = mockStore({ ...defaultState });
+    const expectedActions = [
+      { type: updateManifestInfo.pending.type },
+      { type: actions.receiveManifest.type, payload: { ...defaultState.releases.manifestsById.m1000, notes: 'new manifest notes' } },
+      { type: appActions.setSnackbar.type, payload: 'Manifest details were updated successfully.' },
+      { type: updateManifestInfo.fulfilled.type }
+    ];
+    await store.dispatch(updateManifestInfo({ name: defaultState.releases.manifestsById.m1000.name, info: { notes: 'new manifest notes' } }));
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
   it('should support uploading manifest artifacts', async () => {
     const store = mockStore({ ...defaultState });
