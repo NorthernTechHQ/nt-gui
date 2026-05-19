@@ -28,6 +28,7 @@ import { setOfflineThreshold } from '../thunks';
 import { USER_LOGOUT } from './constants';
 import {
   addUserToCurrentTenant,
+  confirmOAuthLink,
   createRole,
   createUser,
   disableUser2fa,
@@ -205,6 +206,31 @@ describe('user actions', () => {
     ];
     const store = mockStore({ ...defaultState });
     await store.dispatch(loginUser({ email: 'test@example.com', password: defaultPassword }));
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+  it('should allow linking an OAuth account', async () => {
+    vi.clearAllMocks();
+    const expectedActions = [
+      { type: confirmOAuthLink.pending.type },
+      { type: getUser.pending.type },
+      { type: actions.receivedUser.type, payload: defaultState.users.byId[userId] },
+      ...commonUserRetrievalActions,
+      { type: actions.successfullyLoggedIn.type, payload: getSessionInfo() },
+      { type: confirmOAuthLink.fulfilled.type }
+    ];
+    const store = mockStore({ ...defaultState });
+    await store.dispatch(confirmOAuthLink({ email: 'test@example.com', password: defaultPassword }));
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+  it('should reject linking an OAuth account with wrong credentials', async () => {
+    vi.clearAllMocks();
+    const expectedActions = [{ type: confirmOAuthLink.pending.type }, { type: confirmOAuthLink.rejected.type }];
+    const store = mockStore({ ...defaultState });
+    await expect(store.dispatch(confirmOAuthLink({ email: 'test@example.com', password: 'wrongPassword' })).unwrap()).rejects.toBeTruthy();
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
