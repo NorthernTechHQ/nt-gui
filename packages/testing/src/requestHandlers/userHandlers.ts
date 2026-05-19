@@ -226,5 +226,6 @@ export const userHandlers = [
       return new HttpResponse(null, { status: tenant_ids.length ? 200 : 577 });
     })
   ),
-  http.get(`${useradmApiUrl}/users/tenants/:tenantId/token`, () => HttpResponse.text('differentToken'))
+  http.get(`${useradmApiUrl}/users/tenants/:tenantId/token`, () => HttpResponse.text('differentToken')),
+  http.post(`${useradmApiUrl}/oauth2/link`, () => new HttpResponse(null, { status: 204 }))
 ];
