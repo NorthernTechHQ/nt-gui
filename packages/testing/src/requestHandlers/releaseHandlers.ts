@@ -235,6 +235,16 @@ export const releaseHandlers = [
       return new HttpResponse(null, { status: 404 });
     })
   ),
+  http.patch(
+    `${deploymentsApiUrlV1alpha1}/manifests/:name`,
+    validated(async ({ params: { name }, request }) => {
+      const body = await request.json();
+      if (name && (body.notes !== undefined || body.tags !== undefined)) {
+        return new HttpResponse(null, { status: 204 });
+      }
+      return new HttpResponse(null, { status: 400 });
+    })
+  ),
   http.get(
     `${deploymentsApiUrlV1alpha1}/software`,
     validated(async ({ request }) => {
