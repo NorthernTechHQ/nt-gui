@@ -227,5 +227,17 @@ export const userHandlers = [
     })
   ),
   http.get(`${useradmApiUrl}/users/tenants/:tenantId/token`, () => HttpResponse.text('differentToken')),
-  http.post(`${useradmApiUrl}/oauth2/link`, () => new HttpResponse(null, { status: 204 }))
+  http.post(`${useradmApiUrl}/oauth2/link`, ({ request }) => {
+    const authHeader = request.headers.get('authorization');
+    const authInfo = atob(authHeader?.split(' ')[1]);
+    const [user, password] = authInfo.split(':');
+
+    if (password !== defaultPassword) {
+      return new HttpResponse(null, { status: 401 });
+    } else if (user.includes('2fa')) {
+      return new HttpResponse(JSON.stringify({ error: '2fa needed' }), { status: 401 });
+    }
+
+    return new HttpResponse(token, { headers: { 'Content-Type': APPLICATION_JWT_CONTENT_TYPE } });
+  })
 ];
