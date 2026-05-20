@@ -15786,7 +15786,7 @@ export type LinkOAuth20Responses = {
   /**
    * Successful response.
    */
-  204: void;
+  200: string;
 };
 
 export type LinkOAuth20Response = LinkOAuth20Responses[keyof LinkOAuth20Responses];

@@ -11257,8 +11257,13 @@ paths:
               $ref: '#/components/schemas/LoginOptions'
         required: false
       responses:
-        '204':
+        '200':
           description: Successful response.
+          content:
+            application/jwt:
+              schema:
+                type: string
+                example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0NzYxMTkxMzYsImlzcyI6Ik1lbmRlciIsInN1YiI6Ijg1NGIzMTA5LTQ4NjItNGEyNS1hMWZiLWYxMTE2MWNlN2E4NCIsInNjcCI6WyJtZW5kZXIuKiJdfQ.X7Ief4PhPLlR6mA2wh3G3K0Z2tud0rK1QJesxu52NfICSeARmlujczs-_1YZxMwI0s-HgpXHbXIjaSVK80BjxjAM1rqpRGvgqSqG-dU5KmglDpAaTr4VaJci3VFPlVUVTRpI7bfqNMnKZtjmOUAGwjvroDUwX1RwayEmms-efGI
         '401':
           description: |
             The user is not authorized.
