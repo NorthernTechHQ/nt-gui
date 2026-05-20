@@ -124,6 +124,43 @@ interface LoginUserPayload {
   token2fa?: string;
 }
 
+const finalizeJwtLogin = ({ dispatch, stayLoggedIn, token }: { dispatch: AppDispatch; stayLoggedIn?: boolean; token: string }) => {
+  const now = new Date();
+  now.setSeconds(now.getSeconds() + maxSessionAge);
+  const expiresAt = stayLoggedIn ? undefined : now.toISOString();
+  setSessionInfo({ token, expiresAt });
+  cookies.remove('JWT', { path: '/' });
+  return dispatch(getUser(OWN_USER_ID))
+    .unwrap()
+    .catch(e => {
+      cleanUp();
+      return Promise.reject(dispatch(setSnackbar(extractErrorMessage(e))));
+    })
+    .then(() => {
+      window.sessionStorage.removeItem('pendings-redirect');
+      if (window.location.pathname !== '/ui/') {
+        window.location.replace('/ui/');
+      }
+      return Promise.resolve(dispatch(actions.successfullyLoggedIn({ expiresAt, token })));
+    });
+};
+
+export const confirmOAuthLink = createAppAsyncThunk(
+  `${sliceName}/confirmOAuthLink`,
+  ({ stayLoggedIn, ...userData }: LoginUserPayload, { dispatch, rejectWithValue }) =>
+    UsersApi.postLogin(`${useradmApiUrl}/oauth2/link`, userData)
+      .catch(err => {
+        cleanUp();
+        return Promise.reject(dispatch(handleLoginError(err, userData, rejectWithValue)));
+      })
+      .then(({ text: token, contentType }) => {
+        if (contentType !== APPLICATION_JWT_CONTENT_TYPE || !token) {
+          return;
+        }
+        return finalizeJwtLogin({ token, dispatch, stayLoggedIn });
+      })
+);
+
 export const loginUser = createAppAsyncThunk(`${sliceName}/loginUser`, ({ stayLoggedIn, ...userData }: LoginUserPayload, { dispatch, rejectWithValue }) =>
   UsersApi.postLogin(`${useradmApiUrl}/auth/login`, { ...userData, no_expiry: stayLoggedIn })
     .catch(err => {
@@ -144,25 +181,7 @@ export const loginUser = createAppAsyncThunk(`${sliceName}/loginUser`, ({ stayLo
       if (contentType !== APPLICATION_JWT_CONTENT_TYPE || !token) {
         return;
       }
-      // save token to local storage & set maxAge if noexpiry checkbox not checked
-      const now = new Date();
-      now.setSeconds(now.getSeconds() + maxSessionAge);
-      const expiresAt = stayLoggedIn ? undefined : now.toISOString();
-      setSessionInfo({ token, expiresAt });
-      cookies.remove('JWT', { path: '/' });
-      return dispatch(getUser(OWN_USER_ID))
-        .unwrap()
-        .catch(e => {
-          cleanUp();
-          return Promise.reject(dispatch(setSnackbar(extractErrorMessage(e))));
-        })
-        .then(() => {
-          window.sessionStorage.removeItem('pendings-redirect');
-          if (window.location.pathname !== '/ui/') {
-            window.location.replace('/ui/');
-          }
-          return Promise.resolve(dispatch(actions.successfullyLoggedIn({ expiresAt, token })));
-        });
+      return finalizeJwtLogin({ token, dispatch, stayLoggedIn });
     })
 );
 
