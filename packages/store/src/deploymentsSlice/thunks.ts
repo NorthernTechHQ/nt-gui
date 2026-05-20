@@ -155,13 +155,7 @@ const cleanPhases = (phases?: NewDeployment['phases']) =>
 const MAX_PREVIOUS_PHASES_COUNT = 5;
 export const createDeployment = createAppAsyncThunk(
   `${sliceName}/createDeployment`,
-  (
-    {
-      newDeployment,
-      hasNewRetryDefault = false
-    }: { hasNewRetryDefault: boolean; newDeployment: NewDeployment | (NewDeploymentForGroup & { group: string }) | NewDeploymentV2 },
-    { dispatch, getState }
-  ) => {
+  ({ newDeployment }: { newDeployment: NewDeployment | (NewDeploymentForGroup & { group: string }) | NewDeploymentV2 }, { dispatch, getState }) => {
     let request;
     const { name, artifact_name, retries, update_control_map, autogenerate_delta } = newDeployment;
     const common = { name, artifact_name, phases: cleanPhases(newDeployment.phases), retries, update_control_map, autogenerate_delta };
@@ -204,9 +198,9 @@ export const createDeployment = createAppAsyncThunk(
         trackDeploymentCreation(totalDeploymentCount, hasDeployments, trial_expiration);
         const { canManageUsers } = getUserCapabilities(getState());
         if (canManageUsers) {
-          const { phases, retries } = newDeployment;
-          const { previousPhases = [], retries: previousRetries = 0 } = getGlobalSettings(getState());
-          const newSettings: any = { retries: hasNewRetryDefault ? retries : previousRetries, hasDeployments: true };
+          const { phases } = newDeployment;
+          const { previousPhases = [] } = getGlobalSettings(getState());
+          const newSettings: any = { hasDeployments: true };
           if (phases) {
             const standardPhases = standardizePhases(phases);
             const prevPhases = previousPhases.map(standardizePhases);
