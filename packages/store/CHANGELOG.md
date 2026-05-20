@@ -1,5 +1,32 @@
 ---
-## 0.33.0 - 2026-05-19
+## 0.34.0 - 2026-05-20
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Let default deployment retries setting no longer be defined on deployment creation
+
+([MEN-8723](https://northerntech.atlassian.net/browse/MEN-8723)) ([7a02998](https://github.com/NorthernTechHQ/nt-gui/commit/7a029986ee8313613c663916442551f8a5ed623c))  by @mzedel
+
+
+
+
+- *(store)* Added OAuth linking endpoint
+
+([MEN-8205](https://northerntech.atlassian.net/browse/MEN-8205)) ([0095b24](https://github.com/NorthernTechHQ/nt-gui/commit/0095b243b7641ee855a4806d339d96ab2ea6ac69))  by @mineralsfree
+
+
+
+
+
+
+
+
+
+## @northern.tech/store-0.33.0 - 2026-05-19
 
 
 ### Bug fixes
