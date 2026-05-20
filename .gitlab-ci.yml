@@ -154,6 +154,11 @@ release:
     - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH
   needs:
     - job: changelog
+  id_tokens:
+    NPM_ID_TOKEN:
+      aud: "npm:registry.npmjs.org"
+    SIGSTORE_ID_TOKEN:
+      aud: sigstore
   before_script:
     - apt-get update && apt-get install -y jq
     - echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
