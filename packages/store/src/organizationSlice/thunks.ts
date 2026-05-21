@@ -527,21 +527,20 @@ export const changeIntegration = createAppAsyncThunk(`${sliceName}/changeIntegra
 
 export const deleteIntegration = createAppAsyncThunk(
   `${sliceName}/deleteIntegration`,
-  ({ id, provider }: { id: string } & Integration, { dispatch, getState }) =>
-    Api.delete(`${iotManagerBaseURL}/integrations/${id}`, {})
-      .catch(err => commonErrorHandler(err, 'There was an error removing the integration', dispatch, commonErrorFallback))
-      .then(() => {
-        const integrations = getState().organization.externalDeviceIntegrations.filter(item => provider !== item.provider);
-        return Promise.all([
-          dispatch(setSnackbar('The integration was removed successfully')),
-          dispatch(actions.receiveExternalDeviceIntegrations(integrations))
-        ]);
-      })
+  async ({ id, provider }: { id: string } & Integration, { dispatch, getState }) => {
+    await Api.delete(`${iotManagerBaseURL}/integrations/${id}`, {}).catch(err =>
+      commonErrorHandler(err, 'There was an error removing the integration', dispatch, commonErrorFallback)
+    );
+    const integrations = getState().organization.externalDeviceIntegrations.filter(item => provider !== item.provider);
+    dispatch(setSnackbar('The integration was removed successfully'));
+    dispatch(actions.receiveExternalDeviceIntegrations(integrations));
+    await dispatch(getIntegrations()).unwrap();
+  }
 );
 
 export const getIntegrations = createAppAsyncThunk(`${sliceName}/getIntegrations`, (_, { dispatch, getState }) =>
   Api.get<Integration[]>(`${iotManagerBaseURL}/integrations`)
-    .catch(err => commonErrorHandler(err, 'There was an error retrieving the integration', dispatch, commonErrorFallback))
+    .catch(err => commonErrorHandler(err, 'There was an error retrieving the integrations', dispatch, commonErrorFallback))
     .then(({ data }) => {
       const existingIntegrations = getState().organization.externalDeviceIntegrations;
       const integrations = data.reduce<Integration[]>((accu, item) => {
