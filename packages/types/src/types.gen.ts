@@ -2432,9 +2432,9 @@ export type FileUpload = {
 };
 
 /**
- * Alert request
+ * A new alert
  */
-export type Alert = {
+export type PostAlert = {
   /**
    * A descriptive name of the alert
    *
@@ -2452,6 +2452,20 @@ export type Alert = {
    */
   timestamp: string;
 };
+
+/**
+ * Alert request
+ */
+export type Alert = {
+  /**
+   * ID of the alert
+   */
+  id: string;
+  /**
+   * ID of the device
+   */
+  device_id?: string;
+} & PostAlert;
 
 /**
  * Alert subject: the description of the alert origin
@@ -10664,7 +10678,7 @@ export type DeviceConnectManagementUploadResponses = {
 };
 
 export type DeviceAlertPostData = {
-  body: Array<Alert>;
+  body: Array<PostAlert>;
   path?: never;
   query?: never;
   url: '/api/devices/v1/devicemonitor/alert';
