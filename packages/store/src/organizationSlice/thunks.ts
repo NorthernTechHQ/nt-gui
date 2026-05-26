@@ -477,7 +477,9 @@ export const getProducts = createAppAsyncThunk(`${sliceName}/getEnabledTiers`, (
 export const requestPlanUpgrade = createAppAsyncThunk(`${sliceName}/requestPlanUpgrade`, (order: { plan: string; products: Product[] }, { dispatch }) =>
   Api.post(`${tenantadmApiUrlv2}/billing/subscription`, order)
     .catch(err => commonErrorHandler(err, 'There was an error sending your request', dispatch, commonErrorFallback))
-    .then(() => Promise.all([setTimeout(() => dispatch(getDeviceLimits()), TIMEOUTS.threeSeconds), dispatch(getUserOrganization())]))
+    .then(() =>
+      Promise.all([new Promise(resolve => setTimeout(resolve, TIMEOUTS.threeSeconds)).then(() => dispatch(getDeviceLimits())), dispatch(getUserOrganization())])
+    )
 );
 
 export const sendSupportMessage = createAppAsyncThunk(`${sliceName}/sendSupportMessage`, (content: SupportRequest, { dispatch }) =>
