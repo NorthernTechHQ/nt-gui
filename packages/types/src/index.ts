@@ -1395,6 +1395,7 @@ export {
   type PlanBindingDetails,
   type PlanChangeRequest,
   type PlanLimits,
+  type PostAlert,
   type PostSamlOpenIdConnectMetadataOrUrlPointToThemData,
   type PostSamlOpenIdConnectMetadataOrUrlPointToThemError,
   type PostSamlOpenIdConnectMetadataOrUrlPointToThemErrors,
