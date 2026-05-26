@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { NewDeploymentPhaseTypeManagement as NewDeploymentPhase } from '@northern.tech/types/MenderTypes';
+import type { DeploymentUniformPhase, NewDeploymentPhaseTypeManagement as NewDeploymentPhase } from '@northern.tech/types/MenderTypes';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 import pluralize from 'pluralize';
@@ -305,22 +305,25 @@ export const detectOsIdentifier = () => {
 
 type TimeUnit = 'days' | 'minutes' | 'hours';
 
-interface StandardizedPhase {
-  batch_size: number;
+export interface StandardizedPhase {
+  batch_size?: number;
+  batch_size_devices?: number;
   delay?: number;
   delayUnit?: TimeUnit;
   device_count?: number;
+  isUniform?: boolean;
   start_ts?: number;
 }
 
-type UiDeploymentPhase = NewDeploymentPhase & StandardizedPhase;
+export type UiDeploymentPhase = NewDeploymentPhase & StandardizedPhase;
 
-export const standardizePhases = (phases: NewDeploymentPhase[] | UiDeploymentPhase[]) =>
+export const standardizePhases = (phases: NewDeploymentPhase[] | UiDeploymentPhase[] | DeploymentUniformPhase[]) =>
   phases.map((phase, index) => {
-    const standardizedPhase = { batch_size: phase.batch_size, start_ts: index } as StandardizedPhase;
-    if (phase.delay) {
-      standardizedPhase.delay = phase.delay;
-      standardizedPhase.delayUnit = phase.delayUnit || 'hours';
+    const standardizedPhase = { batch_size: phase.batch_size, batch_size_devices: phase.batch_size_devices, start_ts: index } as StandardizedPhase;
+    if (phase.delay || phase.time_interval) {
+      standardizedPhase.delay = phase.delay || parseInterval(phase.time_interval).delay;
+      standardizedPhase.delayUnit = phase.delayUnit || parseInterval(phase.time_interval).delayUnit;
+      standardizedPhase.isUniform = !!phase.time_interval;
     }
     if (index === 0) {
       // delete the start timestamp from a deployment pattern, to default to starting without delay
