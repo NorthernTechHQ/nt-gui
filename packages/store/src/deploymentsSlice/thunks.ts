@@ -198,11 +198,11 @@ export const createDeployment = createAppAsyncThunk(
         trackDeploymentCreation(totalDeploymentCount, hasDeployments, trial_expiration);
         const { canManageUsers } = getUserCapabilities(getState());
         if (canManageUsers) {
-          const { phases } = newDeployment;
+          const { phases = [], uniform_phases } = newDeployment as NewDeploymentV2;
           const { previousPhases = [] } = getGlobalSettings(getState());
           const newSettings: any = { hasDeployments: true };
           if (phases) {
-            const standardPhases = standardizePhases(phases);
+            const standardPhases = standardizePhases(uniform_phases ? [uniform_phases] : phases);
             const prevPhases = previousPhases.map(standardizePhases);
             if (!prevPhases.find(previousPhaseList => previousPhaseList.every(oldPhase => standardPhases.find(phase => deepCompare(phase, oldPhase))))) {
               prevPhases.push(standardPhases);
