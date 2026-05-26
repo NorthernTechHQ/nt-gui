@@ -736,7 +736,7 @@ const softwareListRetrieval = (config: Partial<SoftwareList>) => {
   const { key: attribute, direction } = sort;
   const sorting = attribute ? `${attribute}:${direction}`.toLowerCase() : undefined;
   return GeneralApi.get<Array<Software>>(`${deploymentsApiUrlV1alpha1}/software`, {
-    params: { page, per_page: perPage, name: searchTerm, sort: sorting }
+    params: { page, per_page: perPage, name: searchTerm || undefined, sort: sorting }
   });
 };
 
