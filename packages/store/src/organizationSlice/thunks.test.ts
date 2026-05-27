@@ -458,15 +458,24 @@ describe('organization actions', () => {
     });
   });
   it('should allow deleting external device provider configurations', async () => {
-    const store = mockStore({ ...defaultState, externalDeviceIntegrations: [{ id: 1, something: 'something' }] });
+    const store = mockStore({
+      ...defaultState,
+      organization: {
+        ...defaultState.organization,
+        externalDeviceIntegrations: [...expectedDeviceProviders, { id: '3', provider: 'webhook', something: 'something' }]
+      }
+    });
     expect(store.getActions()).toHaveLength(0);
     const expectedActions = [
       { type: deleteIntegration.pending.type },
       { type: appActions.setSnackbar.type, payload: 'The integration was removed successfully' },
-      { type: actions.receiveExternalDeviceIntegrations.type, payload: [] },
+      { type: actions.receiveExternalDeviceIntegrations.type, payload: expectedDeviceProviders },
+      { type: getIntegrations.pending.type },
+      { type: actions.receiveExternalDeviceIntegrations.type, payload: expectedDeviceProviders },
+      { type: getIntegrations.fulfilled.type },
       { type: deleteIntegration.fulfilled.type }
     ];
-    const request = store.dispatch(deleteIntegration({ id: '1', provider: 'webhook', credentials: { type: 'http', http: { url: '' } } as Credentials }));
+    const request = store.dispatch(deleteIntegration({ id: '3', provider: 'webhook', credentials: { type: 'http', http: { url: '' } } as Credentials }));
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
