@@ -6381,7 +6381,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/Alert'
+                $ref: '#/components/schemas/PostAlert'
               minItems: 1
               maxItems: 128
       responses:
@@ -14164,19 +14164,21 @@ components:
     ConfigurationDeploymentRequest:
       example:
         name: config-1.1
-        configuration: '{"foo":"bar"}'
+        configuration:
+          foo: bar
       properties:
         name:
           description: Name of the deployment
           type: string
         configuration:
-          description: |
-            A string containing a configuration object.
-            The deployments service will use it to generate configuration
-            artifact for the device.
-            The artifact will be generated when the device will ask
-            for an update.
-          type: string
+          allOf:
+            - $ref: '#/components/schemas/ManagementAPIConfiguration'
+            - description: |
+                A string containing a configuration object.
+                The deployments service will use it to generate configuration
+                artifact for the device.
+                The artifact will be generated when the device will ask
+                for an update.
         retries:
           description: |
             The number of times a device can retry the deployment
@@ -14533,6 +14535,10 @@ components:
         - log
         - status
       type: object
+    ManagementAPIConfiguration:
+      type: object
+      additionalProperties:
+        type: string
     XDeltaArgs:
       description: |
         xdelta3 arguments. Please refer to the xdelta3 documentation
@@ -16804,10 +16810,6 @@ components:
         deployment_id:
           type: string
           description: Deployment ID
-    ManagementAPIConfiguration:
-      type: object
-      additionalProperties:
-        type: string
     DeviceConfiguration:
       type: object
       properties:
@@ -16870,8 +16872,8 @@ components:
           format: binary
       required:
         - path
-    Alert:
-      description: Alert request
+    PostAlert:
+      description: A new alert
       type: object
       properties:
         name:
@@ -16898,6 +16900,45 @@ components:
         - subject
         - timestamp
       example:
+        name: mender-connect systemd service
+        level: CRITICAL
+        timestamp: '2019-07-21T17:32:28Z'
+        subject:
+          name: mender-connect
+          status: not-running
+          type: systemd.unit
+          details:
+            description: Description of an error.
+            lines_before:
+              - line_number: 1
+                data: Line 1 from a log file
+              - line_number: 2
+                data: Line 2 from a log file
+            line_matching:
+              line_number: 3
+              data: Line 3 from a log file
+            lines_after:
+              - line_number: 4
+                data: Line 4 from a log file
+              - line_number: 5
+                data: Line 5 from a log file
+    Alert:
+      description: Alert request
+      type: object
+      allOf:
+        - properties:
+            id:
+              description: ID of the alert
+              type: string
+            device_id:
+              description: ID of the device
+              type: string
+        - $ref: '#/components/schemas/PostAlert'
+      required:
+        - id
+      example:
+        id: 0bb917a4-f6ff-4b0f-97b6-dce617b8e6ad
+        device_id: b86dfe3d-a0a6-4838-b374-5fbcb7c956a1
         name: mender-connect systemd service
         level: CRITICAL
         timestamp: '2019-07-21T17:32:28Z'
@@ -16989,6 +17030,10 @@ components:
           maxItems: 1024
         line_matching:
           $ref: '#/components/schemas/LineDescriptor'
+        log_pattern:
+          type: string
+        log_file_path:
+          type: string
       example:
         description: Description of an error.
         lines_before:
@@ -17004,6 +17049,8 @@ components:
             data: Line 4 from a log file
           - line_number: 5
             data: Line 5 from a log file
+        log_pattern: session opened for user [a-z]*
+        log_file_path: /tmp/mylog.log
     LineDescriptor:
       description: |
         Describes the data and line of a pattern-matched log line.
@@ -17056,7 +17103,8 @@ components:
         alerts_open_count: 1
         alerts_total_count: 1
         alerts:
-          - name: mender-connect systemd service
+          - id: 0bb917a4-f6ff-4b0f-97b6-dce617b8e6ad
+            name: mender-connect systemd service
             level: CRITICAL
             device_id: 1298be14-b5ce-4c01-868a-acb93f35e255
             timestamp: '2019-07-21T17:32:28Z'
