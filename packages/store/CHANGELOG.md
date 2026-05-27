@@ -1,5 +1,59 @@
 ---
-## 0.34.0 - 2026-05-20
+## 0.35.0 - 2026-05-27
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Wait for timeout before resolving
+
+ ([97368f2](https://github.com/NorthernTechHQ/nt-gui/commit/97368f2b4ab65558ac64b998e592353fdab3e9a4))  by @mineralsfree
+
+
+
+- *(store)* Pass undefined when empty string passed to software endpoint
+
+ ([dd604c9](https://github.com/NorthernTechHQ/nt-gui/commit/dd604c9a4d79569efc36ae55c8d8be613f167660))  by @mineralsfree
+
+
+
+- *(store)* Let external device integrations get refreshed on integration removal as well
+
+ ([0ba6783](https://github.com/NorthernTechHQ/nt-gui/commit/0ba67839e74eb53a9a32b9badeadef4033e2a3ad))  by @mzedel
+
+
+
+
+
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added support for uniform deployment phase definition history
+
+([MEN-9001](https://northerntech.atlassian.net/browse/MEN-9001)) ([becd6a1](https://github.com/NorthernTechHQ/nt-gui/commit/becd6a18b5621d802701a651efbe0b368105948d))  by @mzedel
+
+
+
+
+- *(store)* Added support for tag based manifest filtering
+
+([MEN-9560](https://northerntech.atlassian.net/browse/MEN-9560)) ([578016f](https://github.com/NorthernTechHQ/nt-gui/commit/578016fe4a551b16c532d599e073738f8b8a8bd9))  by @mzedel
+
+
+
+
+
+
+
+
+
+## @northern.tech/store-0.34.0 - 2026-05-20
 
 
 ### Features
