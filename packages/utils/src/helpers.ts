@@ -11,12 +11,15 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { NewDeploymentPhaseTypeManagement as NewDeploymentPhase } from '@northern.tech/types/MenderTypes';
+import type { DeploymentUniformPhase, NewDeploymentPhaseTypeManagement as NewDeploymentPhase } from '@northern.tech/types/MenderTypes';
 import dayjs from 'dayjs';
+import durationPlugin from 'dayjs/plugin/duration.js';
+import type { DurationUnitType } from 'dayjs/plugin/duration.js';
 import utc from 'dayjs/plugin/utc.js';
 import pluralize from 'pluralize';
 import Cookies from 'universal-cookie';
 
+dayjs.extend(durationPlugin);
 dayjs.extend(utc);
 
 const isEncoded = (uri = '') => uri !== decodeURIComponent(uri);
@@ -303,24 +306,48 @@ export const detectOsIdentifier = () => {
   return 'Linux';
 };
 
-type TimeUnit = 'days' | 'minutes' | 'hours';
+export const delayUnits = {
+  minutes: 'minutes',
+  hours: 'hours',
+  days: 'days'
+};
 
-interface StandardizedPhase {
-  batch_size: number;
+type TimeUnit = keyof typeof delayUnits;
+
+export const parseInterval = (interval?: string): { delay: number; delayUnit: string } => {
+  if (!interval) return { delay: 2, delayUnit: delayUnits.hours };
+  const seconds = dayjs.duration(parseInt(interval) || 7200, 'seconds');
+  return [delayUnits.days, delayUnits.hours, delayUnits.minutes].reduce(
+    (accu, unit) => {
+      const durationPerUnit = seconds.get(unit as DurationUnitType);
+      if (durationPerUnit >= 1 && Number.isInteger(durationPerUnit)) {
+        return { delay: durationPerUnit, delayUnit: unit };
+      }
+      return accu;
+    },
+    { delay: Math.max(1, Math.round(seconds.asHours())), delayUnit: delayUnits.hours }
+  );
+};
+
+export interface StandardizedPhase {
+  batch_size?: number;
+  batch_size_devices?: number;
   delay?: number;
   delayUnit?: TimeUnit;
   device_count?: number;
+  isUniform?: boolean;
   start_ts?: number;
 }
 
-type UiDeploymentPhase = NewDeploymentPhase & StandardizedPhase;
+export type UiDeploymentPhase = NewDeploymentPhase & StandardizedPhase;
 
-export const standardizePhases = (phases: NewDeploymentPhase[] | UiDeploymentPhase[]) =>
+export const standardizePhases = (phases: NewDeploymentPhase[] | UiDeploymentPhase[] | DeploymentUniformPhase[]) =>
   phases.map((phase, index) => {
-    const standardizedPhase = { batch_size: phase.batch_size, start_ts: index } as StandardizedPhase;
-    if (phase.delay) {
-      standardizedPhase.delay = phase.delay;
-      standardizedPhase.delayUnit = phase.delayUnit || 'hours';
+    const standardizedPhase = { batch_size: phase.batch_size, batch_size_devices: phase.batch_size_devices, start_ts: index } as StandardizedPhase;
+    if (phase.delay || phase.time_interval) {
+      standardizedPhase.delay = phase.delay || parseInterval(phase.time_interval).delay;
+      standardizedPhase.delayUnit = phase.delayUnit || parseInterval(phase.time_interval).delayUnit;
+      standardizedPhase.isUniform = !!phase.time_interval;
     }
     if (index === 0) {
       // delete the start timestamp from a deployment pattern, to default to starting without delay

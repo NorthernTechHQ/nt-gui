@@ -237,9 +237,9 @@ describe('standardizePhases function', () => {
       { batch_size: 10, start_ts: deploymentCreationTime }
     ];
     expect(standardizePhases(phases)).toEqual([
-      { batch_size: 10, delay: 2, delayUnit: 'hours' },
-      { batch_size: 10, delay: 2, delayUnit: 'hours', start_ts: 1 },
-      { batch_size: 10, start_ts: 2 }
+      { batch_size: 10, batch_size_devices: undefined, delay: 2, delayUnit: 'hours', isUniform: false },
+      { batch_size: 10, batch_size_devices: undefined, delay: 2, delayUnit: 'hours', isUniform: false, start_ts: 1 },
+      { batch_size: 10, batch_size_devices: undefined, start_ts: 2 }
     ]);
   });
 });
