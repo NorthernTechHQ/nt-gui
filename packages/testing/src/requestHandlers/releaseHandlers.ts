@@ -265,6 +265,14 @@ export const releaseHandlers = [
       if (names.length) {
         filtered = filtered.filter(item => names.some(name => item.name.includes(name)));
       }
+      const tags = searchParams.getAll('tag');
+      if (tags.length) {
+        filtered = filtered.filter(item => tags.some(tag => item.tags?.includes(tag)));
+      }
+      const updateType = searchParams.get('update_type');
+      if (updateType) {
+        filtered = filtered.filter(item => item.update_type === updateType);
+      }
       filtered.sort(customSort(sort?.includes(SORTING_OPTIONS.desc) ?? false, sort?.includes('name') ? 'name' : 'modified'));
       const section = filtered.slice((page - 1) * perPage, page * perPage);
       return new HttpResponse(JSON.stringify(section), { headers: { [headerNames.total]: filtered.length } });
