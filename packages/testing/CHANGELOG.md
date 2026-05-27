@@ -1,5 +1,39 @@
 ---
-## 0.12.1 - 2026-05-20
+## 0.13.0 - 2026-05-27
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Openapi spec update
+
+ ([83b3dd9](https://github.com/NorthernTechHQ/nt-gui/commit/83b3dd93228d193f75974e19b28aca8f272dfaab))  by @mender-test-bot
+
+
+
+
+
+
+
+### Features
+
+#### Testing
+
+
+- *(testing)* Added support for tag based manifest filtering
+
+ ([b5265d2](https://github.com/NorthernTechHQ/nt-gui/commit/b5265d291bac6cfb6f4793b5d323fcf07e5cd6d9))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/testing-0.12.1 - 2026-05-20
 
 
 ### Bug fixes
