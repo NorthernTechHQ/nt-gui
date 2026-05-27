@@ -71,13 +71,16 @@ export type ManifestsList = {
 
 export type SoftwareList = {
   isLoading?: boolean;
+  kind: SoftwareKind | undefined;
   page: number;
   perPage: number;
   searchTerm: string;
   searchTotal: number;
+  selectedTags: string[];
   softwareIds: string[];
   sort?: SortOptions;
   total: number;
+  type: string;
 };
 
 export type ReleaseSliceType = {
@@ -219,9 +222,12 @@ export const initialState: ReleaseSliceType = {
       key: 'modified'
     },
     isLoading: undefined,
+    kind: undefined,
     searchTerm: '',
     searchTotal: 0,
-    total: 0
+    selectedTags: [],
+    total: 0,
+    type: ''
   },
   tab: 'releases',
   tags: {
