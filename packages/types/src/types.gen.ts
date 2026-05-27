@@ -642,15 +642,7 @@ export type ConfigurationDeploymentRequest = {
    * Name of the deployment
    */
   name: string;
-  /**
-   * A string containing a configuration object.
-   * The deployments service will use it to generate configuration
-   * artifact for the device.
-   * The artifact will be generated when the device will ask
-   * for an update.
-   *
-   */
-  configuration: string;
+  configuration: ManagementApiConfiguration & unknown;
   /**
    * The number of times a device can retry the deployment
    * in case of failure, defaults to 0.
@@ -850,6 +842,10 @@ export type DeviceWithImage = {
    */
   phase_id?: string;
   image?: DeviceWithImageImage;
+};
+
+export type ManagementApiConfiguration = {
+  [key: string]: string;
 };
 
 /**
@@ -2376,10 +2372,6 @@ export type NewConfigurationDeploymentResponse = {
   deployment_id?: string;
 };
 
-export type ManagementApiConfiguration = {
-  [key: string]: string;
-};
-
 export type DeviceConfiguration = {
   id?: string;
   configured?: ManagementApiConfiguration;
@@ -2432,9 +2424,9 @@ export type FileUpload = {
 };
 
 /**
- * Alert request
+ * A new alert
  */
-export type Alert = {
+export type PostAlert = {
   /**
    * A descriptive name of the alert
    *
@@ -2452,6 +2444,20 @@ export type Alert = {
    */
   timestamp: string;
 };
+
+/**
+ * Alert request
+ */
+export type Alert = {
+  /**
+   * ID of the alert
+   */
+  id: string;
+  /**
+   * ID of the device
+   */
+  device_id?: string;
+} & PostAlert;
 
 /**
  * Alert subject: the description of the alert origin
@@ -2497,6 +2503,8 @@ export type AlertDetails = {
    */
   lines_after?: Array<LineDescriptor>;
   line_matching?: LineDescriptor;
+  log_pattern?: string;
+  log_file_path?: string;
 };
 
 /**
@@ -10664,7 +10672,7 @@ export type DeviceConnectManagementUploadResponses = {
 };
 
 export type DeviceAlertPostData = {
-  body: Array<Alert>;
+  body: Array<PostAlert>;
   path?: never;
   query?: never;
   url: '/api/devices/v1/devicemonitor/alert';
