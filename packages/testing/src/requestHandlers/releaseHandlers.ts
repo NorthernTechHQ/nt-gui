@@ -193,7 +193,8 @@ export const releaseHandlers = [
       if (page === 1 && perPage === 1 && searchParams.get('name')) {
         return HttpResponse.json([mockApiResponses.manifests.byId.m1]);
       }
-      if (searchParams.get('name')) {
+      const tags = searchParams.getAll('tag');
+      if (searchParams.get('name') || tags.length) {
         return new HttpResponse(JSON.stringify(manifestListSection), { headers: { [headerNames.total]: 1234 } });
       }
       return new HttpResponse(JSON.stringify(manifestListSection), { headers: { [headerNames.total]: manifestsList.length } });

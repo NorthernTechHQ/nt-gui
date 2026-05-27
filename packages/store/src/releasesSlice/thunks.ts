@@ -526,20 +526,21 @@ const manifestSortingDefaults = { direction: SORTING_OPTIONS.desc, key: 'modifie
 const transformReceivedSoftware = (items: Software[] | Manifest[]) => Object.fromEntries(items.map(item => [item.name, item]));
 
 const manifestListRetrieval = (config: Partial<ManifestsList>) => {
-  const { searchTerm, page = defaultPage, perPage = defaultPerPage, sort = manifestSortingDefaults } = config;
+  const { searchTerm = '', page = defaultPage, perPage = defaultPerPage, sort = manifestSortingDefaults, selectedTags = [] } = config;
   const { key: attribute, direction } = sort;
-  const sorting = attribute ? `${attribute}:${direction}`.toLowerCase() : undefined;
-  return GeneralApi.get<Array<Manifest>>(`${deploymentsApiUrlV1alpha1}/manifests`, {
-    params: { page, per_page: perPage, name: searchTerm, sort: sorting }
-  });
+  const filterQuery = formatReleases({ pageState: { searchTerm, selectedTags } });
+  const sorting = attribute ? `sort=${attribute}:${direction}`.toLowerCase() : '';
+  return GeneralApi.get<Array<Manifest>>(
+    `${deploymentsApiUrlV1alpha1}/manifests?${[`page=${page}`, `per_page=${perPage}`, filterQuery, sorting].filter(i => i).join('&')}`
+  );
 };
 
 const deductManifestSearchState = (receivedManifests: Manifest[], config, total: number, state: ReleaseSliceType) => {
   let manifestsListState = { ...state.manifestsList };
-  const { searchTerm, sort = {} } = config;
+  const { searchTerm, selectedTags = [], sort = {} } = config;
   const sortedManifests = Object.values(receivedManifests).sort(customSort(sort.direction === SORTING_OPTIONS.desc, sort.key));
   const manifestIds = sortedManifests.map(item => item.name);
-  const isFiltering = !!searchTerm;
+  const isFiltering = !!(searchTerm || selectedTags.length);
   manifestsListState = {
     ...manifestsListState,
     manifestIds,
