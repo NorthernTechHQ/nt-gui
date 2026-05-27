@@ -1,5 +1,33 @@
 ---
-## 0.10.0 - 2026-04-22
+## 0.11.0 - 2026-05-27
+
+
+### Features
+
+#### Utils
+
+
+- *(utils)* Added support for uniform + device count based deployment phase definitions
+
+ ([fa0ea2a](https://github.com/NorthernTechHQ/nt-gui/commit/fa0ea2a057364222f1c7a188d2758ea26d19c07f))  by @mzedel
+
+
+
+- *(utils)* Added support for uniform deployments delay conversion to ui consumable units
+
+ ([c9afbd1](https://github.com/NorthernTechHQ/nt-gui/commit/c9afbd18a9365451493860d6c3440f46665dab15))  by @mzedel
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/utils-0.10.0 - 2026-04-22
 
 
 ### Features
