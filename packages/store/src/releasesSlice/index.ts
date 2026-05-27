@@ -63,6 +63,7 @@ export type ManifestsList = {
   perPage: number;
   searchTerm: string;
   searchTotal: number;
+  selectedTags: string[];
   selection: number[];
   sort?: SortOptions;
   total: number;
@@ -206,6 +207,7 @@ export const initialState: ReleaseSliceType = {
     isLoading: undefined,
     searchTerm: '',
     searchTotal: 0,
+    selectedTags: [],
     total: 0
   },
   softwareById: {},

@@ -531,6 +531,19 @@ describe('manifest actions', () => {
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
+  it('should retrieve a tag filtered list of manifests', async () => {
+    const store = mockStore({ ...defaultState });
+    const expectedActions = [
+      { type: getManifests.pending.type },
+      { type: actions.receiveManifests.type, payload: defaultState.releases.manifestsById },
+      { type: actions.setManifestsListState.type, payload: { ...defaultState.releases.manifestsList, manifestIds: retrievedManifestIds, searchTotal: 1234 } },
+      { type: getManifests.fulfilled.type }
+    ];
+    await store.dispatch(getManifests({ selectedTags: ['some-tag'] }));
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
   it('should select a manifest by name', async () => {
     const store = mockStore({ ...defaultState });
     const expectedActions = [
