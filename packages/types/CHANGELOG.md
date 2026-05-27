@@ -1,5 +1,24 @@
 ---
-## 0.7.5 - 2026-05-19
+## 0.7.6 - 2026-05-27
+
+
+### Bug fixes
+
+#### Types
+
+
+- *(types)* Types update
+
+ ([e2b6a47](https://github.com/NorthernTechHQ/nt-gui/commit/e2b6a474f7a1dc60bbfde250f81ebf2ae637e515))  by @mender-test-bot
+
+
+
+
+
+
+
+
+## @northern.tech/types-0.7.5 - 2026-05-19
 
 
 ### Bug fixes
@@ -107,7 +126,7 @@
 
 - *(types)* Types update
 
- ([52c6298](https://github.com/NorthernTechHQ/nt-gui/commit/52c6298adc613948a879de4fe7012932da8651f4)) 
+ ([52c6298](https://github.com/NorthernTechHQ/nt-gui/commit/52c6298adc613948a879de4fe7012932da8651f4))  by @mender-test-bot
 
 
 
@@ -126,7 +145,7 @@
 
 - *(types)* Types update
 
- ([d4b839a](https://github.com/NorthernTechHQ/nt-gui/commit/d4b839af1d193ca39c147418816de431785e3f37)) 
+ ([d4b839a](https://github.com/NorthernTechHQ/nt-gui/commit/d4b839af1d193ca39c147418816de431785e3f37))  by @mender-test-bot
 
 
 
@@ -148,7 +167,7 @@
 
 - *(types)* Types update
 
- ([543bcb9](https://github.com/NorthernTechHQ/nt-gui/commit/543bcb9d68964c11030331fd545986f24c986a17)) 
+ ([543bcb9](https://github.com/NorthernTechHQ/nt-gui/commit/543bcb9d68964c11030331fd545986f24c986a17))  by @mender-test-bot
 
 
 
@@ -167,7 +186,7 @@
 
 - *(types)* Types update
 
- ([963f3bd](https://github.com/NorthernTechHQ/nt-gui/commit/963f3bd009e413f9d55d501db0e64cac26ab5cbc)) 
+ ([963f3bd](https://github.com/NorthernTechHQ/nt-gui/commit/963f3bd009e413f9d55d501db0e64cac26ab5cbc))  by @mender-test-bot
 
 
 
@@ -187,7 +206,7 @@
 
 - *(types)* Types update
 
- ([5acb595](https://github.com/NorthernTechHQ/nt-gui/commit/5acb59509876167dd0eea88aff21356f0f5663bf)) 
+ ([5acb595](https://github.com/NorthernTechHQ/nt-gui/commit/5acb59509876167dd0eea88aff21356f0f5663bf))  by @mender-test-bot
 
 
 
@@ -206,7 +225,7 @@
 
 - *(types)* Types update
 
- ([ac963d3](https://github.com/NorthernTechHQ/nt-gui/commit/ac963d36ad75eba16673c9c688f2aef6ca3f256f)) 
+ ([ac963d3](https://github.com/NorthernTechHQ/nt-gui/commit/ac963d36ad75eba16673c9c688f2aef6ca3f256f))  by @mender-test-bot
 
 
 
@@ -226,7 +245,7 @@
 
 - *(types)* Made package only rely on types generated from official spec file
 
- ([5ed5919](https://github.com/NorthernTechHQ/nt-gui/commit/5ed5919c9e232609cdec9331e5fb5392f3bfa53a)) 
+ ([5ed5919](https://github.com/NorthernTechHQ/nt-gui/commit/5ed5919c9e232609cdec9331e5fb5392f3bfa53a))  by @mzedel
 
 
 
@@ -245,7 +264,7 @@
 
 - *(types)* Cleaned up now unused types
 
- ([6c03c0a](https://github.com/NorthernTechHQ/nt-gui/commit/6c03c0a9f0bd8e1ba19f03bd1317937d23f4c8ae)) 
+ ([6c03c0a](https://github.com/NorthernTechHQ/nt-gui/commit/6c03c0a9f0bd8e1ba19f03bd1317937d23f4c8ae))  by @mzedel
 
 
 
@@ -264,7 +283,7 @@
 
 - *(types)* Fixed api type naming conflict
 
- ([95c73a4](https://github.com/NorthernTechHQ/nt-gui/commit/95c73a4a894b3824f7138a9e672f8a91916a1bdf)) 
+ ([95c73a4](https://github.com/NorthernTechHQ/nt-gui/commit/95c73a4a894b3824f7138a9e672f8a91916a1bdf))  by @mzedel
 
 
 
@@ -282,7 +301,7 @@
 
 - *(types)* Added base types package meant for nt-gui internal use
 
- ([b8f8282](https://github.com/NorthernTechHQ/nt-gui/commit/b8f8282552de39dc291a9d03b0281d984a2d0067)) 
+ ([b8f8282](https://github.com/NorthernTechHQ/nt-gui/commit/b8f8282552de39dc291a9d03b0281d984a2d0067))  by @mzedel
 
 
 
