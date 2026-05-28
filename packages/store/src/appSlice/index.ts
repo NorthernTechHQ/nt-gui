@@ -27,32 +27,6 @@ const getYesterday = () => {
   return today.toISOString();
 };
 
-export type Repository = {
-  name: string;
-  version: string;
-};
-
-export type VersionRelease = Partial<{ [versionInfo: string]: VersionRelease }> & {
-  release?: string;
-  release_date?: string;
-  repos?: Repository[];
-  supported_until?: string;
-};
-
-export type SaasVersion = {
-  date: string;
-  tag: string;
-};
-
-export type ReleaseData = {
-  lts: string[];
-  releases: {
-    [version: string]: VersionRelease;
-  };
-  saas: SaasVersion[];
-};
-export type TagData = { name: string }[];
-
 export interface SnackbarContent extends Pick<SnackbarProps, 'action' | 'autoHideDuration' | 'message' | 'open'> {
   preventClickToCopy?: boolean;
 }
@@ -75,16 +49,9 @@ export interface Upload {
   size?: number;
 }
 
-type UILatestRelease = {
-  releaseDate: string;
-  repos: Record<string, string>;
-};
-
 type VersionInformation = {
-  [key: string]: string | UILatestRelease | undefined;
-  backend?: string;
-  GUI?: string;
-  latestRelease?: UILatestRelease;
+  docsVersion?: string;
+  version?: string;
 };
 
 export type SentryConfig = {
@@ -174,11 +141,7 @@ export const initialState: AppSliceType = {
   },
   newThreshold: getYesterday(),
   offlineThreshold: getYesterday(),
-  versionInformation: {
-    Integration: '',
-    'Mender-Artifact': '',
-    'Meta-Mender': ''
-  },
+  versionInformation: { docsVersion: '', version: '' },
   yesterday: undefined
 };
 

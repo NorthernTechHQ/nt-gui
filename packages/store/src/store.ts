@@ -46,10 +46,8 @@ export type MenderEnvironment = {
   demoArtifactPort?: string | number;
   disableOnboarding?: string;
   features: Record<string, string>;
-  integrationVersion: string;
-  menderArtifactVersion: string;
-  metaMenderVersion: string;
   sentry?: { isReduxEnabled?: string | boolean };
+  version: string;
 };
 
 declare global {

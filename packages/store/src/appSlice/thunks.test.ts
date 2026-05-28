@@ -20,9 +20,7 @@ import { actions } from '.';
 import { actions as deviceActions } from '../devicesSlice';
 import { commonErrorHandler } from '../store';
 import { searchDevices } from '../thunks';
-import { getLatestReleaseInfo, setFirstLoginAfterSignup, setOfflineThreshold, setSearchState } from './thunks';
-
-export const latestSaasReleaseTag = 'saas-v2023.05.02';
+import { setFirstLoginAfterSignup, setOfflineThreshold, setSearchState } from './thunks';
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
@@ -42,38 +40,6 @@ describe('app actions', () => {
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
-  it('should not get the latest release info when not hosted', async () => {
-    const store = mockStore({ ...defaultState, app: { ...defaultState.app, features: { ...defaultState.app.features, isHosted: false } } });
-    const expectedActions = [{ type: getLatestReleaseInfo.pending.type }, { type: getLatestReleaseInfo.fulfilled.type }];
-    await store.dispatch(getLatestReleaseInfo());
-    const storeActions = store.getActions();
-    expect(storeActions.length).toEqual(expectedActions.length);
-  });
-  it('should get the latest release info when hosted', async () => {
-    const store = mockStore({
-      ...defaultState,
-      app: {
-        ...defaultState.app,
-        features: {
-          ...defaultState.app.features,
-          isHosted: true
-        }
-      }
-    });
-    const expectedActions = [
-      { type: getLatestReleaseInfo.pending.type },
-      {
-        type: actions.setVersionInformation.type,
-        payload: { Server: latestSaasReleaseTag, Integration: '1.2.3', 'Mender-Artifact': '1.3.7' }
-      },
-      { type: getLatestReleaseInfo.fulfilled.type }
-    ];
-    await store.dispatch(getLatestReleaseInfo());
-    const storeActions = store.getActions();
-    expect(storeActions.length).toEqual(expectedActions.length);
-    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
-  });
-
   it('should store first login after Signup', async () => {
     const store = mockStore({ ...defaultState });
     const expectedActions = [

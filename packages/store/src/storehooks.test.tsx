@@ -24,7 +24,6 @@ import { thunk } from 'redux-thunk';
 import { expect, it, vi } from 'vitest';
 
 import { actions as appActions } from './appSlice';
-import { latestSaasReleaseTag } from './appSlice/thunks.test';
 import { getSessionInfo } from './auth';
 import { EXTERNAL_PROVIDER, timeUnits } from './commonConstants';
 import { DEVICE_STATES } from './constants';
@@ -63,15 +62,7 @@ export const receivedInventoryDevice = {
 const appInitActions = [
   { type: userActions.successfullyLoggedIn.type },
   { type: appActions.setFeatures.type, payload: { ...defaultState.app.features, hasMultitenancy: true, isHosted: false } },
-  {
-    type: appActions.setVersionInformation.type,
-    payload: {
-      docsVersion: '',
-      Integration: 'master',
-      'Mender-Artifact': undefined,
-      'Meta-Mender': 'saas-123.34'
-    }
-  },
+  { type: appActions.setVersionInformation.type, payload: { docsVersion: '', version: 'saas-123.34' } },
   {
     type: appActions.setEnvironmentData.type,
     payload: {
@@ -87,24 +78,7 @@ const appInitActions = [
   },
   { type: appActions.setFirstLoginAfterSignup.type, payload: false },
   { type: getUserOrganization.pending.type },
-  {
-    type: appActions.setVersionInformation.type,
-    payload: {
-      Integration: '1.2.3',
-      'Mender-Artifact': '1.3.7',
-      Server: latestSaasReleaseTag,
-      latestRelease: {
-        releaseDate: '2022-02-02',
-        repos: {
-          integration: '1.2.3',
-          mender: '3.2.1',
-          'mender-artifact': '1.3.7',
-          'other-service': '1.1.0',
-          service: '3.0.0'
-        }
-      }
-    }
-  },
+  { type: appActions.setVersionInformation.type, payload: { docsVersion: '', version: 'saas-123.34' } },
   { type: organizationActions.setOrganization.type, payload: defaultState.organization.organization },
   { type: appActions.setOfflineThreshold.type, payload: '2019-01-12T13:00:00.950Z' },
   {

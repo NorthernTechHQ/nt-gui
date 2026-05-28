@@ -15,7 +15,7 @@
 import { Link } from 'react-router-dom';
 
 import type {
-  AttributeV2,
+  Attribute,
   Device as BackendDevice,
   Filter as BackendFilter,
   ConnectionState,
@@ -711,7 +711,7 @@ export const searchDevices = createAppAsyncThunk(
 );
 
 const ATTRIBUTE_LIST_CUTOFF = 100;
-const attributeReducer = (attributes: AttributeV2[] = []) =>
+const attributeReducer = (attributes: Attribute[] = []) =>
   attributes.slice(0, ATTRIBUTE_LIST_CUTOFF).reduce(
     (accu, { name, scope }) => {
       if (!accu[scope]) {
