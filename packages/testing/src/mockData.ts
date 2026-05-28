@@ -29,14 +29,7 @@ export const menderEnvironment = {
   features: {
     hasMultitenancy: true
   },
-  integrationVersion: 'saas-123.34',
-  menderVersion: 'next',
-  metaMenderVersion: 'saas-123.34',
-  services: {
-    deploymentsVersion: '1.2.3',
-    deviceauthVersion: null,
-    inventoryVersion: null
-  }
+  version: 'saas-123.34'
 };
 export const TEST_SESSION_DATETIME = '2019-01-13T13:00:00.000Z';
 const testDate = new Date(TEST_SESSION_DATETIME);
