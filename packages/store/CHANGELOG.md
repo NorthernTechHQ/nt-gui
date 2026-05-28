@@ -1,4 +1,11 @@
 ---
+## [0.36.1](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.36.0...@northern.tech/store-0.36.1) (2026-05-28)
+
+
+### Bug Fixes
+
+* **store:** switched to name_prefix in software retrieval ([c67940f](https://github.com/NorthernTechHQ/nt-gui/commit/c67940f9c0e80bcc73ec90979e8c496ea4953f08))
+
 ## 0.36.0 - 2026-05-28
 
 
