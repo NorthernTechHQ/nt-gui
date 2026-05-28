@@ -1,5 +1,40 @@
 ---
-## 0.35.0 - 2026-05-27
+## 0.36.0 - 2026-05-28
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Added support for tags, kind and type filtering for software thunk
+
+ ([a0756ac](https://github.com/NorthernTechHQ/nt-gui/commit/a0756acc610c5cadd91c81a4df0d7ad94c2284a8))  by @mineralsfree
+
+
+
+
+
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added a way to check for release existence to prevent misleading links in manifests
+
+([MEN-9669](https://northerntech.atlassian.net/browse/MEN-9669)) ([030cfa7](https://github.com/NorthernTechHQ/nt-gui/commit/030cfa7676d468e828d7d829e983261d050516c1))  by @mzedel
+
+
+
+
+
+
+
+
+
+## @northern.tech/store-0.35.0 - 2026-05-27
 
 
 ### Bug fixes
