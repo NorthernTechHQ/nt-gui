@@ -22,6 +22,7 @@ import { actions } from '.';
 import { actions as appActions } from '../appSlice';
 import { TIMEOUTS } from '../constants';
 import {
+  checkReleasesExistence,
   createArtifact,
   editArtifact,
   generateManifest,
@@ -732,5 +733,10 @@ describe('software actions', () => {
     const storeActions = store.getActions();
     expect(storeActions).toContainEqual(expect.objectContaining({ type: setSoftwareListState.pending.type }));
     expect(storeActions).toContainEqual(expect.objectContaining({ type: actions.setSoftwareListState.type, payload: expect.objectContaining({ page: 2 }) }));
+  });
+  it('should check which releases exist', async () => {
+    const store = mockStore({ ...defaultState });
+    const result = await store.dispatch(checkReleasesExistence(['release-1', 'nonexistent'])).unwrap();
+    expect(result).toEqual({ 'release-1': true, nonexistent: false });
   });
 });

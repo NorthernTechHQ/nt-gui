@@ -796,3 +796,18 @@ export const setSoftwareListState = createAppAsyncThunk(
     dispatch(actions.setSoftwareListState(nextState));
   }
 );
+
+export const checkReleasesExistence = createAppAsyncThunk(`${sliceName}/checkReleasesExistence`, async (names: string[], { dispatch }) => {
+  if (!names.length) {
+    return {};
+  }
+  const nameFilter = names.map(name => `name=${encodeURIComponent(name)}`).join('&');
+  const { data = [] } = await GeneralApi.get<Array<Software>>(`${deploymentsApiUrlV1alpha1}/software?${nameFilter}&kind=release&page=1&per_page=100`).catch(
+    err => commonErrorHandler(err, 'Checking release existence failed:', dispatch)
+  );
+  const existingNames = new Set(data.map(item => item.name));
+  return names.reduce<Record<string, boolean>>((accu, name) => {
+    accu[name] = existingNames.has(name);
+    return accu;
+  }, {});
+});
