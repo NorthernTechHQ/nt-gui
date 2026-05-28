@@ -35,7 +35,7 @@ export const getAppInitDone = (state: RootState) => state.app.appInitDone;
 
 export const getIsUploading = createSelector([getUploads], uploadsById => !!Object.keys(uploadsById).length);
 export const getSearchedDevices = createSelector([getSearchState], ({ deviceIds }) => deviceIds);
-export const getVersionInformation = createSelector([getFullVersionInformation, getFeatures], ({ Integration, ...remainder }, { isHosted }) =>
-  isHosted && Integration !== 'next' ? remainder : { ...remainder, Integration }
+export const getVersionInformation = createSelector([getFullVersionInformation, getFeatures], ({ version, ...remainder }, { isHosted }) =>
+  isHosted && version !== 'next' ? remainder : { ...remainder }
 );
-export const getIsPreview = createSelector([getFullVersionInformation], ({ Integration }) => versionCompare(Integration, 'next') > -1);
+export const getIsPreview = createSelector([getFullVersionInformation], ({ version }) => versionCompare(version, 'next') > -1);

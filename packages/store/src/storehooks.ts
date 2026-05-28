@@ -90,8 +90,8 @@ const environmentDatas = [
 ] as const;
 
 type VersionInfo = {
-  docs?: string;
-  remainder?: Record<string, string>;
+  docsVersion?: string;
+  version?: string;
 };
 
 type FeatureFlagsState = Record<string, boolean>;
@@ -105,7 +105,7 @@ export const parseEnvironmentInfo = createAppAsyncThunk(`app/parseEnvironmentInf
   let versionInfo: VersionInfo = {};
   const mender_environment = window.mender_environment;
   if (mender_environment) {
-    const { features = {}, demoArtifactPort: port, disableOnboarding, integrationVersion, menderArtifactVersion, metaMenderVersion } = mender_environment;
+    const { features = {}, demoArtifactPort: port, disableOnboarding, version } = mender_environment;
     demoArtifactPort = Number(port) || demoArtifactPort;
     const appState = state.app;
     environmentData = environmentDatas.reduce((accu, flag) => ({ ...accu, [flag]: mender_environment[flag] || appState[flag as keyof typeof appState] }), {});
@@ -115,12 +115,8 @@ export const parseEnvironmentInfo = createAppAsyncThunk(`app/parseEnvironmentInf
     };
     onboardingComplete = !environmentFeatures.isHosted || stringToBoolean(disableOnboarding) || onboardingComplete;
     versionInfo = {
-      docs: isNaN(parseInt(integrationVersion.charAt(0))) ? '' : integrationVersion.split('.').slice(0, 2).join('.'),
-      remainder: {
-        Integration: getComparisonCompatibleVersion(integrationVersion),
-        'Mender-Artifact': menderArtifactVersion,
-        'Meta-Mender': metaMenderVersion
-      }
+      docsVersion: isNaN(parseInt(version.charAt(0))) ? '' : version.split('.').slice(0, 2).join('.'),
+      version
     };
   }
   return Promise.all([
@@ -128,7 +124,7 @@ export const parseEnvironmentInfo = createAppAsyncThunk(`app/parseEnvironmentInf
     dispatch(storeActions.setOnboardingComplete(onboardingComplete)),
     dispatch(storeActions.setDemoArtifactPort(demoArtifactPort)),
     dispatch(storeActions.setFeatures(environmentFeatures)),
-    dispatch(storeActions.setVersionInformation({ ...(versionInfo.remainder ?? {}), docsVersion: versionInfo.docs })),
+    dispatch(storeActions.setVersionInformation(versionInfo)),
     dispatch(storeActions.setEnvironmentData(environmentData)),
     dispatch(getLatestReleaseInfo())
   ]);

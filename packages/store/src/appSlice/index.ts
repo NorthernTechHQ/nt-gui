@@ -81,10 +81,8 @@ type UILatestRelease = {
 };
 
 type VersionInformation = {
-  [key: string]: string | UILatestRelease | undefined;
-  backend?: string;
-  GUI?: string;
-  latestRelease?: UILatestRelease;
+  docsVersion?: string;
+  version?: string;
 };
 
 export type SentryConfig = {
@@ -174,11 +172,7 @@ export const initialState: AppSliceType = {
   },
   newThreshold: getYesterday(),
   offlineThreshold: getYesterday(),
-  versionInformation: {
-    Integration: '',
-    'Mender-Artifact': '',
-    'Meta-Mender': ''
-  },
+  versionInformation: { docsVersion: '', version: '' },
   yesterday: undefined
 };
 
