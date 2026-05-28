@@ -733,20 +733,23 @@ export const setManifestsListState = createAppAsyncThunk(
 const softwareSortingDefaults = { direction: SORTING_OPTIONS.desc, key: 'modified' };
 
 const softwareListRetrieval = (config: Partial<SoftwareList>) => {
-  const { searchTerm, page = defaultPage, perPage = defaultPerPage, sort = softwareSortingDefaults } = config;
+  const { searchTerm = '', kind, page = defaultPage, perPage = defaultPerPage, sort = softwareSortingDefaults, selectedTags = [], type = '' } = config;
   const { key: attribute, direction } = sort;
-  const sorting = attribute ? `${attribute}:${direction}`.toLowerCase() : undefined;
-  return GeneralApi.get<Array<Software>>(`${deploymentsApiUrlV1alpha1}/software`, {
-    params: { page, per_page: perPage, name: searchTerm || undefined, sort: sorting }
-  });
+  const filterQuery = formatReleases({ pageState: { searchTerm, selectedTags } });
+  const sorting = attribute ? `sort=${attribute}:${direction}`.toLowerCase() : '';
+  const kindQuery = kind ? `kind=${encodeURIComponent(kind)}` : '';
+  const updateTypeQuery = type ? `update_type=${encodeURIComponent(type)}` : '';
+  return GeneralApi.get<Array<Software>>(
+    `${deploymentsApiUrlV1alpha1}/software?${[`page=${page}`, `per_page=${perPage}`, kindQuery, filterQuery, updateTypeQuery, sorting].filter(i => i).join('&')}`
+  );
 };
 
 const deductSoftwareSearchState = (receivedSoftware: Software[], config, total: number, state: ReleaseSliceType) => {
   let softwareListState = { ...state.softwareList };
-  const { searchTerm, sort = {} } = config;
+  const { searchTerm, kind, selectedTags = [], sort = {}, type } = config;
   const sortedSoftware = Object.values(receivedSoftware).sort(customSort(sort.direction === SORTING_OPTIONS.desc, sort.key));
   const softwareIds = sortedSoftware.map(item => item.name);
-  const isFiltering = !!searchTerm;
+  const isFiltering = !!(searchTerm || kind || selectedTags.length || type);
   softwareListState = {
     ...softwareListState,
     softwareIds,

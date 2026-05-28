@@ -600,14 +600,16 @@ export const softwareList = [
     name: `release-${i + 1}`,
     modified: new Date(2020, 8, 10, 12, 16, i).toISOString(),
     kind: 'release' as const,
-    tags: [],
+    tags: i < 5 ? ['some-tag'] : [],
+    update_type: i < 5 ? 'single-file' : undefined,
     notes: ''
   })),
   ...Array.from({ length: 500 }, (_, i) => ({
     name: `m${i + 1}`,
     modified: new Date(2020, 0, 1, 0, 0, i).toISOString(),
     kind: 'manifest' as const,
-    tags: [],
+    tags: i < 3 ? ['some-tag'] : [],
+    update_type: i < 2 ? 'single-file' : undefined,
     notes: ''
   }))
 ];
