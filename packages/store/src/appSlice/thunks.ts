@@ -11,18 +11,16 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { deepCompare, extractErrorMessage } from '@northern.tech/utils/helpers';
+import { deepCompare } from '@northern.tech/utils/helpers';
 import Cookies from 'universal-cookie';
 
-import type { ReleaseData, SearchState, TagData, VersionRelease } from '.';
+import type { SearchState } from '.';
 import { actions, sliceName } from '.';
-import GeneralApi from '../api/general-api';
 import { getOfflineThresholdSettings } from '../selectors';
 import type { AppDispatch } from '../store';
 import { createAppAsyncThunk } from '../store';
 import { searchDevices } from '../thunks';
-import { getComparisonCompatibleVersion } from '../utils';
-import { getFeatures, getSearchState } from './selectors';
+import { getSearchState } from './selectors';
 
 const cookies = new Cookies();
 
@@ -53,62 +51,6 @@ export const setOfflineThreshold = createAppAsyncThunk(`${sliceName}/setOfflineT
     return;
   }
   return dispatch(actions.setOfflineThreshold(value));
-});
-
-const versionRegex = new RegExp(/\d+\.\d+/);
-
-const getLatestRelease = (thing: VersionRelease): VersionRelease => {
-  const latestKey = Object.keys(thing)
-    .filter(key => versionRegex.test(key))
-    .sort()
-    .reverse()[0];
-  return thing[latestKey] as VersionRelease;
-};
-
-const repoKeyMap = {
-  integration: 'Integration',
-  'mender-artifact': 'Mender-Artifact'
-} as const;
-
-const deductSaasState = (latestRelease: VersionRelease, guiTags: TagData): string | undefined => {
-  const latestGuiTag = guiTags.length ? guiTags[0].name : '';
-  return latestGuiTag ? latestGuiTag : latestRelease.release;
-};
-
-export const getLatestReleaseInfo = createAppAsyncThunk(`${sliceName}/getLatestReleaseInfo`, async (_, { dispatch, getState }) => {
-  if (!getFeatures(getState()).isHosted) {
-    return;
-  }
-  const [{ data }, { data: guiTags }] = await Promise.all([GeneralApi.get<ReleaseData>('/versions.json'), GeneralApi.get<TagData>('/tags.json')]).catch(err => {
-    console.log('init error:', extractErrorMessage(err));
-    return [{ data: {} as Partial<ReleaseData> }, { data: [] as TagData }] as const;
-  });
-  if (!guiTags.length) {
-    return;
-  }
-  const { releases } = data;
-  const latestRelease = getLatestRelease(getLatestRelease(releases as VersionRelease));
-  const { latestRepos, latestVersions } = latestRelease.repos!.reduce(
-    (accu, item) => {
-      if (repoKeyMap[item.name]) {
-        accu.latestVersions[repoKeyMap[item.name]] = getComparisonCompatibleVersion(item.version);
-      }
-      accu.latestRepos[item.name] = getComparisonCompatibleVersion(item.version);
-      return accu;
-    },
-    { latestVersions: { ...getState().app.versionInformation }, latestRepos: {} }
-  );
-  const info = deductSaasState(latestRelease, guiTags);
-  return dispatch(
-    actions.setVersionInformation({
-      ...latestVersions,
-      Server: info,
-      latestRelease: {
-        releaseDate: latestRelease.release_date!,
-        repos: latestRepos
-      }
-    })
-  );
 });
 
 export const setSearchState = createAppAsyncThunk(`${sliceName}/setSearchState`, (searchState: Partial<SearchState>, { dispatch, getState }) => {

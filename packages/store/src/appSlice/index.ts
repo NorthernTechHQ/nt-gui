@@ -27,32 +27,6 @@ const getYesterday = () => {
   return today.toISOString();
 };
 
-export type Repository = {
-  name: string;
-  version: string;
-};
-
-export type VersionRelease = Partial<{ [versionInfo: string]: VersionRelease }> & {
-  release?: string;
-  release_date?: string;
-  repos?: Repository[];
-  supported_until?: string;
-};
-
-export type SaasVersion = {
-  date: string;
-  tag: string;
-};
-
-export type ReleaseData = {
-  lts: string[];
-  releases: {
-    [version: string]: VersionRelease;
-  };
-  saas: SaasVersion[];
-};
-export type TagData = { name: string }[];
-
 export interface SnackbarContent extends Pick<SnackbarProps, 'action' | 'autoHideDuration' | 'message' | 'open'> {
   preventClickToCopy?: boolean;
 }
@@ -74,11 +48,6 @@ export interface Upload {
   progress: number;
   size?: number;
 }
-
-type UILatestRelease = {
-  releaseDate: string;
-  repos: Record<string, string>;
-};
 
 type VersionInformation = {
   docsVersion?: string;

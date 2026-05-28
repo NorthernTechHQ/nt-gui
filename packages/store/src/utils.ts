@@ -199,8 +199,6 @@ export const extractErrorMessage = (err: ErrorWithResponse, fallback = ''): stri
 export const ensureVersionString = (software: string, fallback: string): string =>
   software.length && software !== 'artifact_name' ? (software.endsWith(softwareIndicator) ? software : `${software}${softwareIndicator}`) : fallback;
 
-export const getComparisonCompatibleVersion = (version: string): string => (isNaN(parseInt(version.charAt(0))) && version !== 'next' ? 'master' : version);
-
 export const stringToBoolean = (content: string | number | undefined): boolean => {
   if (!content) {
     return false;

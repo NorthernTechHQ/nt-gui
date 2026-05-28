@@ -47,7 +47,6 @@ import {
   getGlobalSettings,
   getGroups,
   getIntegrations,
-  getLatestReleaseInfo,
   getOnboardingState,
   getReleases,
   getRoles,
@@ -57,7 +56,7 @@ import {
   saveUserSettings
 } from './thunks';
 import type { UserSettings, UserSliceType } from './usersSlice';
-import { getComparisonCompatibleVersion, stringToBoolean } from './utils';
+import { stringToBoolean } from './utils';
 
 const cookies = new Cookies();
 dayjs.extend(durationDayJs);
@@ -125,8 +124,7 @@ export const parseEnvironmentInfo = createAppAsyncThunk(`app/parseEnvironmentInf
     dispatch(storeActions.setDemoArtifactPort(demoArtifactPort)),
     dispatch(storeActions.setFeatures(environmentFeatures)),
     dispatch(storeActions.setVersionInformation(versionInfo)),
-    dispatch(storeActions.setEnvironmentData(environmentData)),
-    dispatch(getLatestReleaseInfo())
+    dispatch(storeActions.setEnvironmentData(environmentData))
   ]);
 });
 
