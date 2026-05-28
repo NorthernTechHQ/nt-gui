@@ -735,12 +735,13 @@ const softwareSortingDefaults = { direction: SORTING_OPTIONS.desc, key: 'modifie
 const softwareListRetrieval = (config: Partial<SoftwareList>) => {
   const { searchTerm = '', kind, page = defaultPage, perPage = defaultPerPage, sort = softwareSortingDefaults, selectedTags = [], type = '' } = config;
   const { key: attribute, direction } = sort;
-  const filterQuery = formatReleases({ pageState: { searchTerm, selectedTags } });
+  const filterQuery = formatReleases({ pageState: { selectedTags } });
   const sorting = attribute ? `sort=${attribute}:${direction}`.toLowerCase() : '';
   const kindQuery = kind ? `kind=${encodeURIComponent(kind)}` : '';
   const updateTypeQuery = type ? `update_type=${encodeURIComponent(type)}` : '';
+  const namePrefixQuery = searchTerm ? `name_prefix=${encodeURIComponent(searchTerm)}` : '';
   return GeneralApi.get<Array<Software>>(
-    `${deploymentsApiUrlV1alpha1}/software?${[`page=${page}`, `per_page=${perPage}`, kindQuery, filterQuery, updateTypeQuery, sorting].filter(i => i).join('&')}`
+    `${deploymentsApiUrlV1alpha1}/software?${[`page=${page}`, `per_page=${perPage}`, namePrefixQuery, kindQuery, filterQuery, updateTypeQuery, sorting].filter(i => i).join('&')}`
   );
 };
 

@@ -265,6 +265,10 @@ export const releaseHandlers = [
       if (names.length) {
         filtered = filtered.filter(item => names.some(name => item.name.includes(name)));
       }
+      const namePrefix = searchParams.get('name_prefix');
+      if (namePrefix) {
+        filtered = filtered.filter(item => item.name.startsWith(namePrefix));
+      }
       const tags = searchParams.getAll('tag');
       if (tags.length) {
         filtered = filtered.filter(item => tags.some(tag => item.tags?.includes(tag)));
