@@ -2713,6 +2713,56 @@ export type Attribute = DeviceAttribute & {
   timestamp?: string;
 };
 
+export type InternalDeviceInventory = {
+  /**
+   * Mender-assigned unique ID.
+   */
+  id?: string;
+  /**
+   * Timestamp of the most recent attribute update.
+   */
+  updated_ts?: string;
+  /**
+   * A list of attribute descriptors.
+   */
+  attributes?: Array<InternalAttribute>;
+};
+
+/**
+ * Attribute descriptor.
+ */
+export type InternalAttribute = {
+  /**
+   * A human readable, unique attribute ID, e.g. 'device_type', 'ip_addr', 'cpu_load', etc.
+   *
+   */
+  name: string;
+  /**
+   * Attribute description.
+   */
+  description?: string;
+  value: InternalAttributeValue;
+  scope: Scope;
+  /**
+   * The date and time of last tag update in RFC3339 format.
+   *
+   * Only applicable when scope is `tags`.
+   *
+   */
+  timestamp?: string;
+};
+
+/**
+ * The current value of the attribute.
+ *
+ * Attribute type is implicit, inferred from the JSON type.
+ *
+ * Supported types: number, string, array of numbers, array of strings.
+ * Mixed arrays are not allowed.
+ *
+ */
+export type InternalAttributeValue = boolean | string | number | Array<string> | Array<number>;
+
 /**
  * Error descriptor.
  */
@@ -2844,21 +2894,6 @@ export type SearchParams = {
   attributes?: Array<SelectAttribute>;
 };
 
-export type DeviceInventory = {
-  /**
-   * Mender-assigned unique ID.
-   */
-  id?: string;
-  /**
-   * Timestamp of the most recent attribute update.
-   */
-  updated_ts?: string;
-  /**
-   * A list of attribute descriptors.
-   */
-  attributes?: Array<Attribute>;
-};
-
 /**
  * Filter definition
  */
@@ -2907,6 +2942,21 @@ export type Group = {
    * Device group.
    */
   group: string;
+};
+
+export type DeviceInventory = {
+  /**
+   * Mender-assigned unique ID.
+   */
+  id?: string;
+  /**
+   * Timestamp of the most recent attribute update.
+   */
+  updated_ts?: string;
+  /**
+   * A list of attribute descriptors.
+   */
+  attributes?: Array<Attribute>;
 };
 
 /**
@@ -7569,6 +7619,11 @@ export type GetDeploymentSoftwareData = {
      */
     kind?: 'release' | 'manifest';
     /**
+     * Filter the software based on their associated tags and only return
+     * software that have at least one matching tag (i.e. OR matching).
+     */
+    tag?: Array<string>;
+    /**
      * Update type filter.
      */
     update_type?: string;
@@ -11654,7 +11709,7 @@ export type InventoryInternalV2SearchDeviceInventoriesResponses = {
    *
    * Successful response.
    */
-  200: Array<DeviceInventory>;
+  200: Array<InternalDeviceInventory>;
 };
 
 export type InventoryInternalV2SearchDeviceInventoriesResponse =
