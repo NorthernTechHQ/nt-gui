@@ -43,11 +43,11 @@
   "devDependencies": {
     "@northern.tech/eslint-config": "*",
     "@northern.tech/typescript-config": "*",
-    "@tsdown/css": "^0.22.0",
-    "@types/node": "25.7.0",
+    "@tsdown/css": "^0.22.1",
+    "@types/node": "25.9.1",
     "eslint": "^9.39.1",
     "less": "^4.6.4",
-    "tsdown": "^0.22.0"
+    "tsdown": "^0.22.1"
   },
   "dependencies": {
     "@mui/material": "^9.x"
