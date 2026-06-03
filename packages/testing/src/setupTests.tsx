@@ -14,7 +14,7 @@
 //@ts-nocheck
 import React from 'react';
 import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 
 import { createSerializer } from '@emotion/jest';
 import { ThemeProvider } from '@mui/material/styles';
