@@ -1584,6 +1584,7 @@ export {
   type SignUpResponses,
   type Software,
   type SortCriteria,
+  type SourceTenant,
   type SsoObject,
   type StartBatchWorkflowsData,
   type StartBatchWorkflowsError,
