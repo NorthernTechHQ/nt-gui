@@ -30,10 +30,6 @@ export default defineConfig({
         replacement: path.resolve(__dirname, 'testUtils')
       },
       {
-        find: /^dayjs(\/.*)?$/,
-        replacement: path.resolve(__dirname, 'node_modules/dayjs$1')
-      },
-      {
         find: /^@mui\/material(\/.*)?$/,
         replacement: path.resolve(__dirname, 'node_modules/@mui/material$1')
       },
