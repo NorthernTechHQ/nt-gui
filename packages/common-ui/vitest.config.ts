@@ -28,26 +28,12 @@ export default defineConfig({
       {
         find: '@/testUtils',
         replacement: path.resolve(__dirname, 'testUtils')
-      },
-      {
-        find: /^@mui\/material(\/.*)?$/,
-        replacement: path.resolve(__dirname, 'node_modules/@mui/material$1')
-      },
-      {
-        find: 'tss-react/mui',
-        replacement: path.resolve(__dirname, '../../node_modules/tss-react/esm/mui/index.js')
       }
     ],
     dedupe: ['react-router', 'react-router-dom']
   },
   test: {
     ...baseConfig.test,
-    setupFiles: path.resolve(__dirname, 'setupTests.ts'),
-    server: {
-      deps: {
-        inline: ['@mui/x-date-pickers', 'tss-react'],
-        moduleDirectories: ['node_modules', path.resolve(__dirname, 'node_modules')]
-      }
-    }
+    setupFiles: path.resolve(__dirname, 'setupTests.ts')
   }
 });
