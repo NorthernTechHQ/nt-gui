@@ -1,5 +1,51 @@
 ---
-## 0.13.0 - 2026-05-27
+## 0.13.1 - 2026-06-04
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Added support for tags in software retrieval
+
+ ([aeb24a5](https://github.com/NorthernTechHQ/nt-gui/commit/aeb24a5e583b55e02b0cfce9c4dff431f4031490))  by @mineralsfree
+
+
+
+- *(testing)* Switched to name_prefix in software retrieval
+
+ ([deab3bc](https://github.com/NorthernTechHQ/nt-gui/commit/deab3bcb7d2fb3950ae921e603f2531c75c48465))  by @mineralsfree
+
+
+
+- *(testing)* Simplified version info to only rely on server repo tag if available
+
+ ([28851a3](https://github.com/NorthernTechHQ/nt-gui/commit/28851a3d4620fc5fecbe3fa3ac3a690c32f0636b))  by @mzedel
+
+
+
+- *(testing)* Openapi spec update
+
+ ([6a489f5](https://github.com/NorthernTechHQ/nt-gui/commit/6a489f52377e3445ae12744639cef417d954518f))  by @mender-test-bot
+
+
+
+- *(testing)* Switched to react-router instead of react-router-dom
+
+ ([ecd8a76](https://github.com/NorthernTechHQ/nt-gui/commit/ecd8a76181c49b5ca18d14e53cb9f7324c0c34f8))  by @mineralsfree
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/testing-0.13.0 - 2026-05-27
 
 
 ### Bug fixes
