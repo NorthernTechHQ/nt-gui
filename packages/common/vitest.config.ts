@@ -30,7 +30,7 @@ export default defineConfig({
         replacement: path.resolve(__dirname, 'testUtils')
       }
     ],
-    dedupe: ['react-router', 'react-router-dom', '@mui/x-date-pickers']
+    dedupe: ['react-router', '@mui/x-date-pickers']
   },
   test: {
     ...baseConfig.test,

@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 import DetailsIndicator from '@northern.tech/common-ui/DetailsIndicator';
 import DeviceIdentityDisplay from '@northern.tech/common-ui/DeviceIdentity';
