@@ -30,7 +30,7 @@ export default defineConfig({
         replacement: path.resolve(__dirname, 'testUtils')
       }
     ],
-    dedupe: ['react-router', 'react-router-dom']
+    dedupe: ['react-router']
   },
   test: {
     ...baseConfig.test,

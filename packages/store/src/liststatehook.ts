@@ -12,8 +12,8 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { useCallback, useMemo } from 'react';
-import type { Location, NavigateOptions } from 'react-router-dom';
-import { useLocation, useNavigate, useNavigationType, useSearchParams } from 'react-router-dom';
+import type { Location, NavigateOptions } from 'react-router';
+import { useLocation, useNavigate, useNavigationType, useSearchParams } from 'react-router';
 
 import type { CommonProcessorResult, FormatPageStateDefaults, PageState } from './locationutils';
 import {

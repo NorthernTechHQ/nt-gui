@@ -57,7 +57,7 @@
     "react-dom": "^19.x",
     "react-ga4": "^3.x",
     "react-redux": "^9.x",
-    "react-router-dom": "^7.x",
+    "react-router": "^7.x",
     "universal-cookie": "^8.x",
     "validator": "^13.x"
   }
