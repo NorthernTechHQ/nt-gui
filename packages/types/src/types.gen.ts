@@ -72,6 +72,13 @@ export type TenantNew = {
   tenant_id: string;
 };
 
+export type SourceTenant = {
+  /**
+   * ID of a sourcetenant.
+   */
+  source_tenant_id: string;
+};
+
 /**
  * Device identity attributes, in the form of a JSON structure. The attributes are completely vendor-specific, the provided ones are just an example. In reference implementation structure contains vendor-selected fields, such as MACs, serial numbers, etc.
  */
@@ -3969,15 +3976,21 @@ export type UserWithTenantInfo = User &
  */
 export type UserNewInternal = {
   /**
+   * User's login.
+   */
+  login?: {
+    [key: string]: string;
+  };
+  /**
    * User's email.
    */
   email: string;
   /**
    * User's password.
    */
-  password: string;
+  password_hash?: string;
   /**
-   * This paramter is deprecated _since Thu Jul 6 2023_, the propagation
+   * This parameter is deprecated _since Thu Jul 6 2023_, the propagation
    * of user information to tenantadm is disabled permanently.
    *
    */
@@ -5317,7 +5330,12 @@ export type DeploymentsInternalCheckLivelinessResponse = DeploymentsInternalChec
 export type GetBinaryDeltaConfigurationsData = {
   body?: never;
   path?: never;
-  query?: never;
+  query?: {
+    /**
+     * Tenant ID filter. Can be repeated to query a set of entries.
+     */
+    tenant_id?: Array<string>;
+  };
   url: '/api/internal/v1/deployments/tenants/config/binary_delta';
 };
 
@@ -5530,6 +5548,10 @@ export type GetDeploymentsData = {
      * Results page number
      */
     page?: number;
+    /**
+     * Per page count of records
+     */
+    per_page?: number;
     /**
      * List only deployments created before and equal to Unix timestamp (UTC)
      */
@@ -14939,10 +14961,10 @@ export type AssignTenantSsoData = {
   /**
    * Existing tenant ID to get the SSO configuration from.
    */
-  body: TenantNew;
+  body: SourceTenant;
   path: {
     /**
-     * Tenant ID to asign the SSO to.
+     * Tenant ID to assign the SSO to.
      */
     tenant_id: string;
   };
@@ -14969,11 +14991,11 @@ export type AssignTenantSsoError = AssignTenantSsoErrors[keyof AssignTenantSsoEr
 
 export type AssignTenantSsoResponses = {
   /**
-   * The SSO data was successfuly assigned, however there is additional message returned (for instance in case of replacement of existing configuration).
+   * The SSO data was successfully assigned, however there is additional message returned (for instance in case of replacement of existing configuration).
    */
   200: unknown;
   /**
-   * The SSO data was successfuly assigned.
+   * The SSO data was successfully assigned.
    */
   201: unknown;
 };
@@ -17825,7 +17847,9 @@ export type StartBatchWorkflowsData = {
   /**
    * Contains the definition of the job to be started.
    */
-  body: Array<Array<InputParameter>>;
+  body: Array<{
+    [key: string]: unknown;
+  }>;
   path: {
     /**
      * Workflow identifier.
