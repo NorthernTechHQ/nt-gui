@@ -1,5 +1,27 @@
 ---
-## 0.11.0 - 2026-05-27
+## 0.11.1 - 2026-06-03
+
+
+### Bug fixes
+
+#### Utils
+
+
+- *(utils)* Switched to react-router instead of react-router-dom
+
+ ([e43f2c5](https://github.com/NorthernTechHQ/nt-gui/commit/e43f2c5de207ac140b55f082a11ae499a02f5fe9))  by @mineralsfree
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/utils-0.11.0 - 2026-05-27
 
 
 ### Features
