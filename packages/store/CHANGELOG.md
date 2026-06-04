@@ -1,12 +1,52 @@
 ---
-## [0.36.1](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.36.0...@northern.tech/store-0.36.1) (2026-05-28)
+## 0.36.2 - 2026-06-04
 
 
-### Bug Fixes
+### Bug fixes
 
-* **store:** switched to name_prefix in software retrieval ([c67940f](https://github.com/NorthernTechHQ/nt-gui/commit/c67940f9c0e80bcc73ec90979e8c496ea4953f08))
+#### Store
 
-## 0.36.0 - 2026-05-28
+
+- *(store)* Simplified version info to only rely on server repo tag if available
+
+ ([35b70d9](https://github.com/NorthernTechHQ/nt-gui/commit/35b70d981ef9be32dddb26942d05612611f83314))  by @mzedel
+
+
+
+- *(store)* Switched to react-router instead of react-router-dom
+
+ ([0794900](https://github.com/NorthernTechHQ/nt-gui/commit/0794900afdc2e02402940d6b781c1b7bc1b700c6))  by @mineralsfree
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/store-0.36.1 - 2026-05-28
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Switched to name_prefix in software retrieval
+
+ ([c67940f](https://github.com/NorthernTechHQ/nt-gui/commit/c67940f9c0e80bcc73ec90979e8c496ea4953f08))  by @mineralsfree
+
+
+
+
+
+
+
+
+## @northern.tech/store-0.36.0 - 2026-05-28
 
 
 ### Bug fixes
