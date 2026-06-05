@@ -14,7 +14,7 @@
 import { createTheme } from '@mui/material/styles';
 
 import { act, queryByRole, waitFor, within } from '@testing-library/react';
-import { expect } from 'vitest';
+import { expect, vi } from 'vitest';
 
 import { light } from './theme/light';
 
@@ -30,6 +30,8 @@ export const selectMaterialUiSelectOption = async (element, optionText, user) =>
   await user.click(listItem);
   // Wait for the listbox to be removed, so it isn't visible in subsequent calls
   await waitFor(() => expect(queryByRole(document.documentElement, 'listbox')).not.toBeInTheDocument());
+  // Wait for the modal exit transition to run, so content won't be hidden unexpectedly
+  await act(async () => vi.runOnlyPendingTimers());
   return Promise.resolve();
 };
 
