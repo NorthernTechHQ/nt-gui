@@ -314,7 +314,9 @@ export type AuditLog = {
     | 'upload_file'
     | 'set_configuration'
     | 'deploy_configuration'
-    | 'upload';
+    | 'upload'
+    | 'password_change'
+    | 'auth_method_change';
   object: Object;
   change?: string;
 };
@@ -1789,6 +1791,14 @@ export type Software = {
    * Last modification time for the Software.
    */
   modified?: string;
+  /**
+   * The "types" compatible with at least one of the Artifacts of
+   * the Software.  If the kind of Software is 'release', these types are
+   * "device types" while they are "system types" in the case of 'manifest'
+   * Software kind.
+   *
+   */
+  compatible_types?: Array<string>;
   kind: 'release' | 'manifest';
   /**
    * Tags assigned to the Software used for filtering. Each tag
