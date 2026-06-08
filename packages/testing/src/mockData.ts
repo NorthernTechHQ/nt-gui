@@ -595,6 +595,7 @@ export const softwareList = [
     kind: 'release' as const,
     tags: i < 5 ? ['some-tag'] : [],
     update_type: i < 5 ? 'single-file' : undefined,
+    compatible_types: ['raspberrypi4', 'qemux86-64'],
     notes: ''
   })),
   ...Array.from({ length: 500 }, (_, i) => ({
@@ -603,6 +604,7 @@ export const softwareList = [
     kind: 'manifest' as const,
     tags: i < 3 ? ['some-tag'] : [],
     update_type: i < 2 ? 'single-file' : undefined,
+    compatible_types: ['system-core'],
     notes: ''
   }))
 ];
