@@ -1,5 +1,28 @@
 ---
-## 0.16.5 - 2026-05-13
+## 0.16.6 - 2026-06-09
+
+
+### Bug fixes
+
+#### Themes
+
+
+- *(themes)* Removed an override that prevented the gap on Accordion expand
+
+([MEN-9319](https://northerntech.atlassian.net/browse/MEN-9319)) ([88f2afe](https://github.com/NorthernTechHQ/nt-gui/commit/88f2afe70b688d52d8e75a172818e31a45ae7d1c))  by @mineralsfree
+
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/themes-0.16.5 - 2026-05-13
 
 
 ### Bug fixes
