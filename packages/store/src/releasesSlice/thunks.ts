@@ -637,7 +637,7 @@ export const getManifests = createAppAsyncThunk(
   async (passedConfig: Partial<ManifestsList> | undefined = {}, { dispatch, getState }) => {
     const config = { ...getState().releases.manifestsList, ...passedConfig };
     const { data: receivedManifests = [], headers = {} } = await manifestListRetrieval(config).catch(err =>
-      commonErrorHandler(err, `Please check your connection`, dispatch)
+      commonErrorHandler(err, 'There was an error while retrieving manifests', dispatch)
     );
     const total = headers[headerNames.total] ? Number(headers[headerNames.total]) : 0;
     const state = getState().releases;
@@ -765,7 +765,7 @@ export const getSoftware = createAppAsyncThunk(
   async (passedConfig: Partial<SoftwareList> | undefined = {}, { dispatch, getState }) => {
     const config = { ...getSoftwareListState(getState()), ...passedConfig };
     const { data: receivedSoftware = [], headers = {} } = await softwareListRetrieval(config).catch(err =>
-      commonErrorHandler(err, `Please check your connection`, dispatch)
+      commonErrorHandler(err, 'There was an error while listing software', dispatch)
     );
     const total = headers[headerNames.total] ? Number(headers[headerNames.total]) : 0;
     const state = getState().releases;
