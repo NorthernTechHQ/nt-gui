@@ -123,13 +123,13 @@
     "@northern.tech/eslint-config": "*",
     "@northern.tech/testing": "*",
     "@northern.tech/typescript-config": "*",
-    "@types/react": "^19.2.16",
+    "@types/react": "^19.2.17",
     "@types/react-dom": "^19.x",
     "@vitejs/plugin-react": "^6.0.2",
     "eslint": "^9.39.1",
     "jsdom": "29.1.1",
     "msw": "^2.14.6",
-    "tsdown": "^0.22.1",
+    "tsdown": "^0.22.2",
     "vitest": "^4.1.8"
   },
   "dependencies": {
@@ -140,7 +140,7 @@
     "@northern.tech/types": "*",
     "@northern.tech/utils": "*",
     "@reduxjs/toolkit": "^2.x",
-    "@sentry/react": "^10.57.0",
+    "@sentry/react": "^10.x",
     "axios": "^1.x",
     "dayjs": "^1.x",
     "md5": "^2.x",
@@ -148,7 +148,7 @@
     "react": "^19.x",
     "react-dom": "^19.x",
     "react-redux": "^9.x",
-    "react-router": "^7.17.0",
+    "react-router": "^7.x",
     "universal-cookie": "^8.x",
     "validator": "^13.x"
   }
