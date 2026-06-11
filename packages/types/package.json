@@ -27,6 +27,6 @@
   "sideEffects": false,
   "devDependencies": {
     "@northern.tech/typescript-config": "*",
-    "tsdown": "^0.22.1"
+    "tsdown": "^0.22.2"
   }
 }
