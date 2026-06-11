@@ -40,6 +40,7 @@
     "@northern.tech/testing": "*",
     "@northern.tech/themes": "*",
     "@northern.tech/typescript-config": "*",
+    "@tsdown/css": "^0.22.1",
     "@storybook/addon-docs": "^10.4.4",
     "@storybook/addon-links": "^10.4.4",
     "@storybook/react-vite": "^10.4.4",
