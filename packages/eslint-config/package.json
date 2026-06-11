@@ -31,7 +31,7 @@
     "typescript-eslint": "^8.x"
   },
   "devDependencies": {
-    "tsdown": "^0.22.1"
+    "tsdown": "^0.22.2"
   },
   "type": "module",
   "scripts": {
