@@ -456,7 +456,10 @@ export const setSingleReleaseTags = createAppAsyncThunk(
 export const setReleaseTags = createAppAsyncThunk(`${sliceName}/setReleaseTags`, ({ name, tags = [] }: { name: string; tags: Tags }, { dispatch }) =>
   dispatch(setSingleReleaseTags({ name, tags }))
     .catch(err => commonErrorHandler(err, `Release tags couldn't be set.`, dispatch))
-    .then(() => Promise.resolve(dispatch(setSnackbar({ message: 'Release tags were set successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' }))))
+    .then(() => {
+      dispatch(setSnackbar({ message: 'Release tags were set successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' }));
+      setTimeout(() => dispatch(getExistingReleaseTags()), TIMEOUTS.threeSeconds);
+    })
 );
 
 export const setReleasesTags = createAppAsyncThunk(
@@ -468,9 +471,10 @@ export const setReleasesTags = createAppAsyncThunk(
     }, []);
     return Promise.all(addRequests)
       .catch(err => commonErrorHandler(err, `Releases couldn't be tagged.`, dispatch))
-      .then(() =>
-        Promise.resolve(dispatch(setSnackbar({ message: 'Releases were tagged successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' })))
-      );
+      .then(() => {
+        dispatch(setSnackbar({ message: 'Releases were tagged successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' }));
+        setTimeout(() => dispatch(getExistingReleaseTags()), TIMEOUTS.threeSeconds);
+      });
   }
 );
 
@@ -569,6 +573,13 @@ const toManifestCreationData = ({ description, tags }: ManifestCreationPayload['
   return formData;
 };
 
+const maybeUpdateManifestTags = (maybeTags, dispatch) => {
+  if (!maybeTags?.length) {
+    return;
+  }
+  setTimeout(() => dispatch(getExistingManifestTags()), TIMEOUTS.threeSeconds);
+};
+
 export const uploadManifest = createAppAsyncThunk(
   `${sliceName}/uploadManifest`,
   async ({ file, meta }: ManifestCreationPayload, { dispatch, rejectWithValue }) => {
@@ -597,6 +608,7 @@ export const uploadManifest = createAppAsyncThunk(
     } finally {
       dispatch(cleanUpUpload(uploadId));
     }
+    maybeUpdateManifestTags(meta.tags, dispatch);
   }
 );
 
@@ -625,6 +637,7 @@ export const generateManifest = createAppAsyncThunk(`${sliceName}/generateManife
   } finally {
     dispatch(cleanUpUpload(uploadId));
   }
+  await maybeUpdateManifestTags(meta.tags, dispatch);
 });
 
 export const getExistingManifestTags = createAppAsyncThunk(`${sliceName}/getManifestTags`, async (_, { dispatch }) => {
@@ -663,13 +676,14 @@ export const getManifest = createAppAsyncThunk(`${sliceName}/getManifest`, async
 
 export const updateManifestInfo = createAppAsyncThunk(
   `${sliceName}/updateManifestInfo`,
-  ({ name, info }: { info: ManifestUpdate; name: string }, { dispatch, getState }) =>
-    GeneralApi.patch(`${deploymentsApiUrlV1alpha1}/manifests/${name}`, info)
-      .catch(err => commonErrorHandler(err, `Manifest details couldn't be updated.`, dispatch))
-      .then(() => {
-        dispatch(actions.receiveManifest({ ...getManifestsById(getState())[name], ...info, name }));
-        dispatch(setSnackbar('Manifest details were updated successfully.'));
-      })
+  async ({ name, info }: { info: ManifestUpdate; name: string }, { dispatch, getState }) => {
+    await GeneralApi.patch(`${deploymentsApiUrlV1alpha1}/manifests/${name}`, info).catch(err =>
+      commonErrorHandler(err, `Manifest details couldn't be updated.`, dispatch)
+    );
+    dispatch(actions.receiveManifest({ ...getManifestsById(getState())[name], ...info, name }));
+    dispatch(setSnackbar('Manifest details were updated successfully.'));
+    maybeUpdateManifestTags(info.tags, dispatch);
+  }
 );
 
 export const removeManifests = createAppAsyncThunk(`${sliceName}/removeManifests`, async (names: string[], { dispatch, getState }) => {
