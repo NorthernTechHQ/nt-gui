@@ -1,5 +1,28 @@
 ---
-## 0.36.2 - 2026-06-04
+## 0.36.3 - 2026-06-12
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Provide a better context for software & manifest retrieval failures
+
+([MEN-9853](https://northerntech.atlassian.net/browse/MEN-9853)) ([2eb74de](https://github.com/NorthernTechHQ/nt-gui/commit/2eb74de14e1a19c8f489c52698ab6d84df1a2978))  by @mzedel
+
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/store-0.36.2 - 2026-06-04
 
 
 ### Bug fixes
