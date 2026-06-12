@@ -1,3 +1,16 @@
+# Changelog
+
+## [0.5.1](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/common-0.5.0...@northern.tech/common-0.5.1) (2026-06-12)
+
+
+### Bug Fixes
+
+* **common:** ensured mui 9 compatibility ([586b2b0](https://github.com/NorthernTechHQ/nt-gui/commit/586b2b00b8c13407844cd6d753816718c5edfca6))
+* **common:** switched to react-router instead of react-router-dom ([885e903](https://github.com/NorthernTechHQ/nt-gui/commit/885e903444761998d577345764481441cad12f44))
+* migrated package bundling to tsdown ([400f54c](https://github.com/NorthernTechHQ/nt-gui/commit/400f54c686c6ea202e8de54f82c64ac5a1a0ac19))
+* **testing:** fixed ts errors to enable type checked usage ([1ecaba0](https://github.com/NorthernTechHQ/nt-gui/commit/1ecaba038c2e492a625de85ab4a8264e06ceff7d))
+* **themes:** set info & neutral base color to one that gets closer to the figma desired one ([cfe03ad](https://github.com/NorthernTechHQ/nt-gui/commit/cfe03ad658f63800ff6cdd1a8036e9086b56fd83))
+
 ---
 ## @northern.tech/common-ui-0.8.1 - 2025-11-12
 
