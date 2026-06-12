@@ -34,6 +34,11 @@ export default defineConfig({
   },
   test: {
     ...baseConfig.test,
-    setupFiles: path.resolve(__dirname, 'setupTests.ts')
+    setupFiles: path.resolve(__dirname, 'setupTests.ts'),
+    server: {
+      deps: {
+        inline: ['@mui/material', '@mui/x-date-pickers', 'react-transition-group']
+      }
+    }
   }
 });
