@@ -1,5 +1,39 @@
 ---
-## 0.13.1 - 2026-06-04
+## 0.13.2 - 2026-06-12
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Account for added wait for modal transitions to run after recent mui update
+
+ ([3f0867c](https://github.com/NorthernTechHQ/nt-gui/commit/3f0867c3fc3e8e7039d1da8253e046be48f8c87e))  by @mzedel
+
+
+
+- *(testing)* Openapi spec update
+
+ ([ca9f959](https://github.com/NorthernTechHQ/nt-gui/commit/ca9f959e15c884fa671ee21e4f716b0abe42f6b8))  by @mender-test-bot
+
+
+
+- *(testing)* Added compatible types to software mock
+
+ ([893c596](https://github.com/NorthernTechHQ/nt-gui/commit/893c5961bc532764f3a4ce9f937655ff0d5babe2))  by @mineralsfree
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/testing-0.13.1 - 2026-06-04
 
 
 ### Bug fixes
