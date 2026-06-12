@@ -343,6 +343,22 @@ describe('overall device information retrieval', () => {
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
+  it('should fetch device data when cached devices lack the report attribute', async () => {
+    const groupName = 'testGroup';
+    const store = mockStore({
+      ...defaultState,
+      users: {
+        ...defaultState.users,
+        userSettings: {
+          ...defaultState.users.userSettings,
+          reports: [{ attribute: 'custom_attribute', chartType: 'bar', group: groupName, type: 'distribution' }]
+        }
+      }
+    });
+    await store.dispatch(getReportDataWithoutBackendSupport(0));
+    const storeActions = store.getActions();
+    expect(storeActions.some(action => action.type === getAllGroupDevices.pending.type)).toBeTruthy();
+  });
   it('should allow system devices retrieval', async () => {
     const store = mockStore({
       ...defaultState,
