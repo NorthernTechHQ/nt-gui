@@ -456,7 +456,10 @@ export const setSingleReleaseTags = createAppAsyncThunk(
 export const setReleaseTags = createAppAsyncThunk(`${sliceName}/setReleaseTags`, ({ name, tags = [] }: { name: string; tags: Tags }, { dispatch }) =>
   dispatch(setSingleReleaseTags({ name, tags }))
     .catch(err => commonErrorHandler(err, `Release tags couldn't be set.`, dispatch))
-    .then(() => Promise.resolve(dispatch(setSnackbar({ message: 'Release tags were set successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' }))))
+    .then(() => {
+      dispatch(setSnackbar({ message: 'Release tags were set successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' }));
+      setTimeout(() => dispatch(getExistingReleaseTags()), TIMEOUTS.threeSeconds);
+    })
 );
 
 export const setReleasesTags = createAppAsyncThunk(
@@ -468,9 +471,10 @@ export const setReleasesTags = createAppAsyncThunk(
     }, []);
     return Promise.all(addRequests)
       .catch(err => commonErrorHandler(err, `Releases couldn't be tagged.`, dispatch))
-      .then(() =>
-        Promise.resolve(dispatch(setSnackbar({ message: 'Releases were tagged successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' })))
-      );
+      .then(() => {
+        dispatch(setSnackbar({ message: 'Releases were tagged successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' }));
+        setTimeout(() => dispatch(getExistingReleaseTags()), TIMEOUTS.threeSeconds);
+      });
   }
 );
 
