@@ -738,7 +738,7 @@ const initializeDistributionData = (report, groups: Record<string, DeviceGroup>,
   const relevantDevices: Device[] = deviceIds ? deviceIds.map(id => devices[id]) : Object.values(devices);
   const distributionByAttribute = relevantDevices.reduce<Record<string, number>>((accu, item) => {
     if (!item.attributes || item.status !== DEVICE_STATES.accepted) return accu;
-    const attributeValue: string = item.attributes[effectiveAttribute] as string;
+    const attributeValue = (item.attributes[effectiveAttribute] as string) ?? '';
     if (!accu[attributeValue]) {
       accu[attributeValue] = 0;
     }
@@ -783,14 +783,19 @@ export const getReportDataWithoutBackendSupport = createAppAsyncThunk(
     const { accepted: acceptedDevicesCount } = getDeviceCountsByStatus(getState());
     const groups = getGroupsById(getState());
     const { deviceIds = [], filters = [], total = 0 } = groups[group] || {};
+    const relevantIds = group ? deviceIds : acceptedDevices.deviceIds;
+    const hasAttributeData = relevantIds.every(id => devicesById[id]?.attributes?.[effectiveAttribute] !== undefined);
     let groupDevicesRequest = Promise.resolve({
       payload: { groupName: '', group: { deviceIds: Object.keys(devicesById), total: Object.keys(devicesById).length } }
     });
-    if (group && (!(deviceIds.length && total) || deviceIds.length !== total || !deviceIds.every(id => !!devicesById[id]))) {
+    if (group && (!(deviceIds.length && total) || deviceIds.length !== total || !deviceIds.every(id => !!devicesById[id]) || !hasAttributeData)) {
       groupDevicesRequest = filters.length
         ? dispatch(getAllDynamicGroupDevices({ group, attribute: effectiveAttribute })).unwrap()
         : dispatch(getAllGroupDevices({ group, attribute: effectiveAttribute })).unwrap();
-    } else if (!group && (acceptedDevices.deviceIds.length !== acceptedDevicesCount || !acceptedDevices.deviceIds.every(id => !!devicesById[id]))) {
+    } else if (
+      !group &&
+      (acceptedDevices.deviceIds.length !== acceptedDevicesCount || !acceptedDevices.deviceIds.every(id => !!devicesById[id]) || !hasAttributeData)
+    ) {
       groupDevicesRequest = dispatch(getAllDevicesByStatus({ status: DEVICE_STATES.accepted, attribute: effectiveAttribute })).unwrap();
     }
     return groupDevicesRequest.then(() => dispatch(updateReportData(reportIndex)));
