@@ -23,6 +23,7 @@ import {
   DEVICE_FILTERING_OPTIONS,
   DEVICE_ISSUE_OPTIONS,
   DEVICE_LIST_MAXIMUM_LENGTH,
+  TIMEOUTS,
   defaultStats,
   deploymentDisplayStates,
   deploymentStatesToSubstates,
@@ -34,6 +35,7 @@ import {
 import type { Deployment } from './deploymentsSlice';
 import type { DeviceFilter, DeviceGroup, InventoryAttributes } from './devicesSlice';
 import type { PricePreview } from './organizationSlice/types';
+import type { AppDispatch } from './store';
 
 type FilterProcessorValue = string | string[] | number | boolean; // this aligns with a API compatible `FilterPredicate.value`
 type FilterProcessor = (val: string) => FilterProcessorValue;
@@ -353,3 +355,6 @@ export const convertToBackendSPLimits = (
         return [backendId, { Name: backendId, value: Number(limit) || 0 }];
       })
   );
+
+export const dispatchDelayed = ({ action, delay = TIMEOUTS.threeSeconds, dispatch }: { action: any; delay?: number; dispatch: AppDispatch }) =>
+  setTimeout(() => dispatch(action), delay);

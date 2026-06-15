@@ -668,15 +668,13 @@ describe('organization actions', () => {
     const expectedActions = [
       { type: addTenant.pending.type },
       { type: appActions.setSnackbar.type, payload: 'Tenant was created successfully.' },
+      { type: addTenant.fulfilled.type },
       { type: getTenants.pending.type },
       { type: actions.setTenantListState.type },
-      { type: getTenants.fulfilled.type },
-      { type: addTenant.fulfilled.type }
+      { type: getTenants.fulfilled.type }
     ];
-    const request = store.dispatch(addTenant({ name: 'Mikita', users: [{ email: 'some@example.com' }], deviceLimits: { standard: '2' }, binary_delta: true }));
-    vi.advanceTimersByTime(TIMEOUTS.oneSecond);
-    await vi.runOnlyPendingTimersAsync();
-    await expect(request).resolves.toBeTruthy();
+    await store.dispatch(addTenant({ name: 'Mikita', users: [{ email: 'some@example.com' }], deviceLimits: { standard: '2' }, binary_delta: true }));
+    await vi.advanceTimersByTimeAsync(TIMEOUTS.fiveSeconds);
     const storeActions = store.getActions();
     expect(storeActions).toHaveLength(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -703,17 +701,15 @@ describe('organization actions', () => {
       { type: editTenant.pending.type },
       { type: appActions.setSnackbar.type, payload: 'Tenant was changed successfully' },
       { type: getUserOrganization.pending.type },
+      { type: editTenant.fulfilled.type },
       { type: actions.setOrganization.type },
       { type: getUserOrganization.fulfilled.type },
       { type: getTenants.pending.type },
       { type: actions.setTenantListState.type },
-      { type: getTenants.fulfilled.type },
-      { type: editTenant.fulfilled.type }
+      { type: getTenants.fulfilled.type }
     ];
-    const request = store.dispatch(editTenant({ id: '671a0f1dd58c813118fe8622', name: 'child2', deviceLimits: { standard: 2 } }));
-    await vi.advanceTimersByTime(TIMEOUTS.oneSecond + TIMEOUTS.halfASecond);
-    await vi.runOnlyPendingTimersAsync();
-    await expect(request).resolves.toBeTruthy();
+    await store.dispatch(editTenant({ id: '671a0f1dd58c813118fe8622', name: 'child2', deviceLimits: { standard: 2 } }));
+    await vi.advanceTimersByTimeAsync(TIMEOUTS.fiveSeconds);
     const storeActions = store.getActions();
     expect(storeActions).toHaveLength(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));

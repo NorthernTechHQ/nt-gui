@@ -47,7 +47,6 @@ import {
   APPLICATION_JWT_CONTENT_TYPE,
   PermissionTypes,
   SSO_TYPES,
-  TIMEOUTS,
   apiRoot,
   defaultPermissionSets,
   rolesById as defaultRolesById,
@@ -65,7 +64,7 @@ import { getHostedAnnouncement, getOnboardingState, getOrganization, getTooltips
 import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { setOfflineThreshold } from '../thunks';
-import { mergePermissions, stripUndefined } from '../utils';
+import { dispatchDelayed, mergePermissions, stripUndefined } from '../utils';
 import { OWN_USER_ID, READ_STATES, USER_LOGOUT, itemUiPermissionsReducer, settingsKeys } from './constants';
 import { getCurrentUser, getRolesById, getUsersById } from './selectors';
 
@@ -959,7 +958,7 @@ export const submitUserFeedback = createAppAsyncThunk(`${sliceName}/submitFeedba
     if (formId === 'product') {
       const today = new Date();
       dispatch(saveUserSettings({ feedbackCollectedAt: today.toISOString().split('T')[0] }));
-      setTimeout(() => dispatch(actions.setShowFeedbackDialog(false)), TIMEOUTS.threeSeconds);
+      dispatchDelayed({ action: actions.setShowFeedbackDialog(false), dispatch });
     }
   })
 );

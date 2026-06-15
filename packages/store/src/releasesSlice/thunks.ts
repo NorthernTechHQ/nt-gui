@@ -51,7 +51,7 @@ import type { SortOptions } from '../constants';
 import { formatReleases } from '../locationutils';
 import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
-import { convertDeviceListStateToFilters, progress } from '../utils';
+import { convertDeviceListStateToFilters, dispatchDelayed, progress } from '../utils';
 import { ARTIFACT_GENERATION_TYPE } from './constants';
 import { getManifestsById, getManifestsListState, getReleasesById, getSoftwareListState } from './selectors';
 
@@ -458,7 +458,7 @@ export const setReleaseTags = createAppAsyncThunk(`${sliceName}/setReleaseTags`,
     .catch(err => commonErrorHandler(err, `Release tags couldn't be set.`, dispatch))
     .then(() => {
       dispatch(setSnackbar({ message: 'Release tags were set successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' }));
-      setTimeout(() => dispatch(getExistingReleaseTags()), TIMEOUTS.threeSeconds);
+      dispatchDelayed({ action: getExistingReleaseTags(), dispatch });
     })
 );
 
@@ -473,7 +473,7 @@ export const setReleasesTags = createAppAsyncThunk(
       .catch(err => commonErrorHandler(err, `Releases couldn't be tagged.`, dispatch))
       .then(() => {
         dispatch(setSnackbar({ message: 'Releases were tagged successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' }));
-        setTimeout(() => dispatch(getExistingReleaseTags()), TIMEOUTS.threeSeconds);
+        dispatchDelayed({ action: getExistingReleaseTags(), dispatch });
       });
   }
 );
@@ -577,7 +577,7 @@ const maybeUpdateManifestTags = (maybeTags, dispatch) => {
   if (!maybeTags?.length) {
     return;
   }
-  setTimeout(() => dispatch(getExistingManifestTags()), TIMEOUTS.threeSeconds);
+  dispatchDelayed({ action: getExistingManifestTags(), dispatch });
 };
 
 export const uploadManifest = createAppAsyncThunk(
