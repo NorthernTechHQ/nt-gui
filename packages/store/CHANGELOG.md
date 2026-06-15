@@ -1,5 +1,69 @@
 ---
-## 0.36.2 - 2026-06-04
+## 0.36.3 - 2026-06-15
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Provide a better context for software & manifest retrieval failures
+
+([MEN-9853](https://northerntech.atlassian.net/browse/MEN-9853)) ([2eb74de](https://github.com/NorthernTechHQ/nt-gui/commit/2eb74de14e1a19c8f489c52698ab6d84df1a2978))  by @mzedel
+
+
+
+
+- *(store)* Fixed an issue that prevented showing device distribution information w/ multiple groups
+
+([MEN-9856](https://northerntech.atlassian.net/browse/MEN-9856)) ([6e1ee8b](https://github.com/NorthernTechHQ/nt-gui/commit/6e1ee8b964a146f5faffd4e73567089349ff35ff))  by @mzedel
+
+
+
+
+
+  prior only general device information was checked, not the value of the attribute the widget is configured for
+
+- *(store)* Retrieve manifest tag list more frequently to have newly added tags reflected w/o reload
+
+([MEN-9849](https://northerntech.atlassian.net/browse/MEN-9849)) ([c8dd41b](https://github.com/NorthernTechHQ/nt-gui/commit/c8dd41bcacc32590163283b62208524dc8d69856))  by @mzedel
+
+
+
+
+- *(store)* Retrieve release tag list on release changes to reflected new tags w/o reload
+
+ ([84eeb1a](https://github.com/NorthernTechHQ/nt-gui/commit/84eeb1a77b0a80aaa10d2cfd1ffda7d0a95d121b))  by @mzedel
+
+
+
+
+
+
+
+### Refactor
+
+#### Gui
+
+
+- *(gui)* Unified delayed data refresh pattern
+
+ ([18ce7e2](https://github.com/NorthernTechHQ/nt-gui/commit/18ce7e2335bfc214b782565e3873392ea178acf6))  by @mzedel
+
+
+
+
+  to rely on a single fire & forget approach across thunks
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/store-0.36.2 - 2026-06-04
 
 
 ### Bug fixes
