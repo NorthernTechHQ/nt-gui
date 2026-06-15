@@ -388,9 +388,15 @@ describe('release actions', () => {
       },
       { type: setSingleReleaseTags.fulfilled.type },
       { type: appActions.setSnackbar.type, payload: { action: '', autoHideDuration: 5000, message: 'Release tags were set successfully.' } },
-      { type: setReleaseTags.fulfilled.type }
+      { type: setReleaseTags.fulfilled.type },
+      { type: getExistingReleaseTags.pending.type },
+      { type: getExistingSoftwareTags.pending.type },
+      { type: getExistingSoftwareTags.fulfilled.type },
+      { type: actions.receiveReleaseTags.type, payload: ['foo', 'bar'] },
+      { type: getExistingReleaseTags.fulfilled.type }
     ];
     await store.dispatch(setReleaseTags({ name: defaultState.releases.byId.r1.name, tags: ['foo', 'bar'] }));
+    await vi.advanceTimersByTimeAsync(TIMEOUTS.fiveSeconds);
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -619,7 +625,7 @@ describe('manifest actions', () => {
       { type: appActions.cleanUpUpload.type, payload: 'mock-uuid' }
     ];
     await store.dispatch(generateManifest({ file: mockFile, meta: { description: 'test', tags: ['foo'] } }));
-    vi.runAllTimers();
+    await vi.advanceTimersByTimeAsync(TIMEOUTS.fiveSeconds);
     const storeActions = store.getActions();
     expectedActions.forEach(expectedAction => {
       const handledAction = storeActions.some(storeAction => Object.keys(expectedAction).every(key => deepCompare(storeAction[key], expectedAction[key])));
