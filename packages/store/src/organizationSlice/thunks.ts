@@ -60,7 +60,7 @@ import { getCurrentUser, getSpLimits, getTenantCapabilities, getTenantsList } fr
 import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { getDeviceLimits, setFirstLoginAfterSignup } from '../thunks';
-import { convertToBackendSPLimits, parseSubscriptionPreview } from '../utils';
+import { convertToBackendSPLimits, dispatchDelayed, parseSubscriptionPreview } from '../utils';
 import { SSO_TYPES } from './constants';
 import { getAuditlogState, getOrganization } from './selectors';
 import type { AuditLogSelectionState, ProductConfig, ProductPlan, ProductTier, SSOConfig, Tenant, TenantList } from './types';
@@ -340,12 +340,10 @@ export const addTenant = createAppAsyncThunk(
     const { deviceLimits, ...rest } = selectionState;
     const device_limits = convertToBackendSPLimits(deviceLimits, spLimits);
     return Api.post(`${tenantadmApiUrlv2}/tenants`, { ...rest, device_limits })
-      .then(() =>
-        Promise.all([
-          dispatch(setSnackbar('Tenant was created successfully.')),
-          new Promise(resolve => setTimeout(() => resolve(dispatch(getTenants())), TIMEOUTS.oneSecond))
-        ])
-      )
+      .then(() => {
+        dispatch(setSnackbar('Tenant was created successfully.'));
+        dispatchDelayed({ action: getTenants(), delay: TIMEOUTS.oneSecond, dispatch });
+      })
       .catch(err => commonErrorHandler(err, 'There was an error creating tenant', dispatch, commonErrorFallback));
   }
 );
@@ -389,13 +387,11 @@ export const editTenant = createAppAsyncThunk(`${sliceName}/editDeviceLimit`, ({
   const device_limits = convertToBackendSPLimits(deviceLimits, spLimits);
   return Api.put(`${tenantadmApiUrlv2}/tenants/${id}/child`, { device_limits, name })
     .catch(err => commonErrorHandler(err, `Device Limit cannot be changed`, dispatch))
-    .then(() =>
-      Promise.all([
-        dispatch(setSnackbar('Tenant was changed successfully')),
-        dispatch(getUserOrganization()),
-        new Promise(resolve => setTimeout(() => resolve(dispatch(getTenants())), TIMEOUTS.oneSecond))
-      ])
-    );
+    .then(() => {
+      dispatch(setSnackbar('Tenant was changed successfully'));
+      dispatch(getUserOrganization());
+      dispatchDelayed({ action: getTenants(), delay: TIMEOUTS.oneSecond, dispatch });
+    });
 });
 export const editBillingProfile = createAppAsyncThunk(
   `${sliceName}/editBillingProfileEmail`,
@@ -415,13 +411,11 @@ export const createBillingProfile = createAppAsyncThunk(
 export const removeTenant = createAppAsyncThunk(`${sliceName}/editDeviceLimit`, ({ id }: { id: string }, { dispatch }) =>
   Api.post(`${tenantadmApiUrlv2}/tenants/${id}/remove/start`)
     .catch(err => commonErrorHandler(err, `There was an error removing the tenant`, dispatch))
-    .then(() =>
-      Promise.all([
-        dispatch(setSnackbar('The tenant was removed successfully')),
-        dispatch(getUserOrganization()),
-        new Promise(resolve => setTimeout(() => resolve(dispatch(getTenants())), TIMEOUTS.oneSecond))
-      ])
-    )
+    .then(async () => {
+      dispatch(setSnackbar('The tenant was removed successfully'));
+      await dispatch(getUserOrganization()).unwrap();
+      dispatchDelayed({ action: getTenants(), delay: TIMEOUTS.oneSecond, dispatch });
+    })
 );
 export const getUserOrganization = createAppAsyncThunk(`${sliceName}/getUserOrganization`, (_, { dispatch, getState }) =>
   Api.get<Tenant>(`${tenantadmApiUrlv1}/user/tenant?tiers=true`).then(res => {

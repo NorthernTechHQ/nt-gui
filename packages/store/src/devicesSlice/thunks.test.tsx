@@ -1048,12 +1048,12 @@ describe('device config ', () => {
     const expectedActions = [
       { type: applyDeviceConfig.pending.type },
       { type: actions.receivedDevice.type, payload: { ...defaultState.devices.byId.a1, config: { deployment_id: 'config1' } } },
+      { type: applyDeviceConfig.fulfilled.type },
       { type: getSingleDeployment.pending.type },
       { type: deploymentActions.receivedDeployment.type, payload: { ...defaultState.deployments.byId.d1, id: 'config1', created: '2019-01-01T09:25:01.000Z' } },
-      { type: getSingleDeployment.fulfilled.type },
-      { type: applyDeviceConfig.fulfilled.type }
+      { type: getSingleDeployment.fulfilled.type }
     ];
-    const result = store.dispatch(
+    await store.dispatch(
       applyDeviceConfig({
         deviceId: defaultState.devices.byId.a1.id,
         config: { id: 'asdl' },
@@ -1064,12 +1064,10 @@ describe('device config ', () => {
         }
       })
     );
-    await act(async () => vi.runAllTicks());
-    result.then(() => {
-      const storeActions = store.getActions();
-      expect(storeActions.length).toEqual(expectedActions.length);
-      expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
-    });
+    await vi.advanceTimersByTimeAsync(TIMEOUTS.fiveSeconds);
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
   it('should allow setting device tags', async () => {
     const store = mockStore({ ...defaultState });

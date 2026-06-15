@@ -80,6 +80,7 @@ import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '..
 import { getDeviceMonitorConfig, getLatestDeviceAlerts, getSingleDeployment, saveGlobalSettings, saveUserSettings } from '../thunks';
 import {
   convertDeviceListStateToFilters,
+  dispatchDelayed,
   extractErrorMessage,
   filtersFilter,
   mapDeviceAttributes,
@@ -1012,9 +1013,9 @@ export const applyDeviceConfig = createAppAsyncThunk(
         const device = getDeviceByIdSelector(getState(), deviceId);
         const { canManageUsers } = getUserCapabilities(getState());
         const tasks: Promise<ReturnType<AppDispatch> | unknown>[] = [
-          Promise.resolve(dispatch(actions.receivedDevice({ ...device, config: { ...device.config, deployment_id: data.deployment_id! } }))),
-          new Promise(resolve => setTimeout(() => resolve(dispatch(getSingleDeployment(data.deployment_id!))), TIMEOUTS.oneSecond))
+          Promise.resolve(dispatch(actions.receivedDevice({ ...device, config: { ...device.config, deployment_id: data.deployment_id! } })))
         ];
+        dispatchDelayed({ action: getSingleDeployment(data.deployment_id!), delay: TIMEOUTS.oneSecond, dispatch });
         if (isDefault && canManageUsers) {
           const { previous } = getGlobalSettings(getState()).defaultDeviceConfig ?? {};
           tasks.push(dispatch(saveGlobalSettings({ defaultDeviceConfig: { current: config, previous } })));
