@@ -2284,6 +2284,13 @@ export type ExternalIdentity = {
   [key: string]: unknown | string | boolean | undefined;
 };
 
+export type DeviceFlags = {
+  /**
+   * Enables shorter polling interval for testing/evaluation.
+   */
+  test_device?: boolean;
+};
+
 export type Device = {
   /**
    * Mender assigned Device ID.
@@ -2310,6 +2317,7 @@ export type Device = {
   decommissioning?: boolean;
   external_id?: ExternalIdentity;
   tier?: 'standard' | 'micro' | 'system';
+  flags?: DeviceFlags;
 };
 
 /**
@@ -3229,6 +3237,20 @@ export type TenantUpdateInternal = {
   customer_id?: string;
   subscription_id?: string;
   subscription_type?: string;
+};
+
+/**
+ * Upgrade tenant subscription.
+ */
+export type TenantSubscriptionUpgradeInternal = {
+  /**
+   * Type of subscription.
+   */
+  subscription_type: 'azure';
+  /**
+   * Subscription token.
+   */
+  subscription_token: string;
 };
 
 /**
@@ -9511,6 +9533,43 @@ export type DeviceAuthManagementSetAuthenticationStatusResponses = {
 export type DeviceAuthManagementSetAuthenticationStatusResponse =
   DeviceAuthManagementSetAuthenticationStatusResponses[keyof DeviceAuthManagementSetAuthenticationStatusResponses];
 
+export type AssignDeviceFlagsData = {
+  body?: DeviceFlags;
+  path?: never;
+  query?: never;
+  url: '/api/management/v2/devauth/devices/:id/flags';
+};
+
+export type AssignDeviceFlagsErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Not Found.
+   */
+  404: Error;
+  /**
+   * Client has made too many requests.
+   */
+  429: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type AssignDeviceFlagsError = AssignDeviceFlagsErrors[keyof AssignDeviceFlagsErrors];
+
+export type AssignDeviceFlagsResponses = {
+  /**
+   * Device flags updated successfully
+   */
+  204: void;
+};
+
+export type AssignDeviceFlagsResponse = AssignDeviceFlagsResponses[keyof AssignDeviceFlagsResponses];
+
 export type DeviceAuthManagementCountDevicesData = {
   body?: never;
   headers?: {
@@ -13714,6 +13773,43 @@ export type DeleteParentReferenceResponses = {
 };
 
 export type DeleteParentReferenceResponse = DeleteParentReferenceResponses[keyof DeleteParentReferenceResponses];
+
+export type UpgradeTenantSubscriptionData = {
+  /**
+   * The unique identifiers of the tenants to be upgraded.
+   */
+  body?: TenantSubscriptionUpgradeInternal;
+  path: {
+    /**
+     * Tenant ID.
+     */
+    tenant_id: string;
+  };
+  query?: never;
+  url: '/api/internal/v1/tenantadm/tenants/{tenant_id}/upgrade';
+};
+
+export type UpgradeTenantSubscriptionErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type UpgradeTenantSubscriptionError = UpgradeTenantSubscriptionErrors[keyof UpgradeTenantSubscriptionErrors];
+
+export type UpgradeTenantSubscriptionResponses = {
+  /**
+   * Tenant successfully assigned to service provider.
+   */
+  204: void;
+};
+
+export type UpgradeTenantSubscriptionResponse = UpgradeTenantSubscriptionResponses[keyof UpgradeTenantSubscriptionResponses];
 
 export type TenantInfoData = {
   body?: never;
