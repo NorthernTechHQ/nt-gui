@@ -5404,6 +5404,30 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
+  /api/management/v2/devauth/devices/:id/flags:
+    put:
+      operationId: Assign device flags
+      security:
+        - ManagementJWT: []
+      summary: Assign device feature flags.
+      tags:
+        - Device_Authentication_Management API
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceFlags'
+      responses:
+        '204':
+          description: Device flags updated successfully
+        '400':
+          $ref: '#/components/responses/InvalidRequestError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /api/management/v2/devauth/devices/count:
     get:
       operationId: DeviceAuth Management Count Devices
@@ -9249,6 +9273,33 @@ paths:
           content: {}
         '404':
           $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/internal/v1/tenantadm/tenants/{tenant_id}/upgrade:
+    post:
+      tags:
+        - Tenants_APIs_Tenantadm Internal
+      summary: Upgrade tenant subscription
+      operationId: Upgrade tenant subscription
+      parameters:
+        - name: tenant_id
+          in: path
+          description: Tenant ID.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The unique identifiers of the tenants to be upgraded.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantSubscriptionUpgradeInternal'
+      responses:
+        '204':
+          description: Tenant successfully assigned to service provider.
+          content: {}
+        '400':
+          $ref: '#/components/responses/InvalidRequestError'
         '500':
           $ref: '#/components/responses/InternalServerError'
   /api/management/v1/tenantadm/user/tenant:
@@ -13198,6 +13249,17 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    TooManyRequestsError:
+      description: Client has made too many requests.
+      headers:
+        Retry-After:
+          description: Number of seconds until the client may retry.
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
     Error:
       description: Error descriptor.
@@ -16712,6 +16774,12 @@ components:
           type: boolean
       example:
         data: iot-hub device-id/module-id
+    DeviceFlags:
+      type: object
+      properties:
+        test_device:
+          description: Enables shorter polling interval for testing/evaluation.
+          type: boolean
     Device:
       type: object
       properties:
@@ -16756,6 +16824,8 @@ components:
             - standard
             - micro
             - system
+        flags:
+          $ref: '#/components/schemas/DeviceFlags'
     Count:
       description: Counter type
       type: object
@@ -18085,6 +18155,21 @@ components:
               - action: POST
                 uri: /api/devices/v1/deployments/device/deployments/next
                 min_interval_sec: 60
+    TenantSubscriptionUpgradeInternal:
+      type: object
+      description: Upgrade tenant subscription.
+      required:
+        - subscription_type
+        - subscription_token
+      properties:
+        subscription_type:
+          type: string
+          description: Type of subscription.
+          enum:
+            - azure
+        subscription_token:
+          type: string
+          description: Subscription token.
     Addon:
       type: object
       properties:
