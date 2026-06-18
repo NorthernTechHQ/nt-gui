@@ -57,7 +57,7 @@ export const deriveDeploymentGroup = ({ filter, group, groups = [], name }: Depl
   group || (groups.length === 1 && !isUUID(name)) ? groups[0] : filter?.name;
 
 type ReceivedDeployment = BackendDeploymentV1 | BackendDeploymentV2;
-const transformDeployments = (deployments: ReceivedDeployment[], deploymentsById: Record<string, Deployment>) =>
+export const transformDeployments = (deployments: ReceivedDeployment[], deploymentsById: Record<string, Deployment>) =>
   deployments.sort(customSort(true, 'created')).reduce<{ deploymentIds: string[]; deployments: Record<string, Deployment> }>(
     (accu, item) => {
       const filter = item.filter;
