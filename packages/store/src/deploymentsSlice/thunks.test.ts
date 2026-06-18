@@ -35,6 +35,7 @@ import {
   resetDeviceDeployments,
   saveDeltaDeploymentsConfig,
   setDeploymentsState,
+  transformDeployments,
   updateDeploymentControlMap
 } from './thunks';
 
@@ -442,5 +443,28 @@ describe('deployment actions', () => {
       expect(storeActions.length).toEqual(expectedActions.length);
       expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
     });
+  });
+});
+
+describe('transformDeployments', () => {
+  const baseDeployment = defaultState.deployments.byId.d2;
+
+  it('preserves the raw name when a deployment name is not a valid URI component', () => {
+    // Regression test: a deployment whose name contains an invalid percent-escape (e.g. a
+    // trailing '%2', which is a '%' followed by a single digit rather than two hex digits)
+    // made decodeURIComponent throw URIError. As transformDeployments runs inside
+    // getDeploymentsByStatus without a catch, that rejected the whole action and broke the
+    // entire deployments list for the tenant.
+    const malformedName = 'app_1.2.3.45.6.7%2';
+    const deployments = [{ ...baseDeployment, id: 'malformed', name: malformedName }] as unknown as Parameters<typeof transformDeployments>[0];
+    const { deployments: result, deploymentIds } = transformDeployments(deployments, {});
+    expect(deploymentIds).toEqual(['malformed']);
+    expect(result.malformed.name).toEqual(malformedName);
+  });
+
+  it('still decodes valid percent-encoded deployment names', () => {
+    const deployments = [{ ...baseDeployment, id: 'encoded', name: 'release%20v1' }] as unknown as Parameters<typeof transformDeployments>[0];
+    const { deployments: result } = transformDeployments(deployments, {});
+    expect(result.encoded.name).toEqual('release v1');
   });
 });

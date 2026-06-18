@@ -57,7 +57,17 @@ export const deriveDeploymentGroup = ({ filter, group, groups = [], name }: Depl
   group || (groups.length === 1 && !isUUID(name)) ? groups[0] : filter?.name;
 
 type ReceivedDeployment = BackendDeploymentV1 | BackendDeploymentV2;
-const transformDeployments = (deployments: ReceivedDeployment[], deploymentsById: Record<string, Deployment>) =>
+// a deployment name can legitimately contain a bare '%' or an otherwise invalid escape (e.g. a
+// trailing '%2') that decodeURIComponent rejects with a URIError. Falling back to the raw name
+// keeps a single bad name from rejecting getDeploymentsByStatus and breaking the entire list.
+const decodeDeploymentName = (name: string) => {
+  try {
+    return decodeURIComponent(name);
+  } catch {
+    return name;
+  }
+};
+export const transformDeployments = (deployments: ReceivedDeployment[], deploymentsById: Record<string, Deployment>) =>
   deployments.sort(customSort(true, 'created')).reduce<{ deploymentIds: string[]; deployments: Record<string, Deployment> }>(
     (accu, item) => {
       const filter = item.filter;
@@ -68,7 +78,7 @@ const transformDeployments = (deployments: ReceivedDeployment[], deploymentsById
         // TODO: explicitly set filter term types to address scope type mismatch in deployment specs
         // @ts-expect-error: type misalignment in filter terms type
         filter: filter ? { ...filter, name: filter.name ?? filter.id, filters: mapTermsToFilters(filter.terms) } : undefined,
-        name: decodeURIComponent(item.name)
+        name: decodeDeploymentName(item.name)
       };
       // deriving the group in a second step to potentially make use of the merged data from the existing group state + the decoded name
       deployment = { ...deployment, group: deriveDeploymentGroup(deployment) };
