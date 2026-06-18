@@ -8502,6 +8502,46 @@ paths:
           description: The removal of tenant data was successful.
         '500':
           $ref: '#/components/responses/InternalServerError'
+  /api/internal/v1/iot-manager/tenants/{tenantId}/auth:
+    post:
+      tags:
+        - IoT_Manager_Internal API
+      operationId: IoTManager Internal Preauthorize Device
+      summary: Pre-authorize an IoT device for a given tenant.
+      parameters:
+        - in: path
+          name: tenantId
+          schema:
+            type: string
+          required: true
+          description: ID of the tenant the device belongs to.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - external_id
+                - id_data
+                - pubkey
+              properties:
+                external_id:
+                  type: string
+                  description: External identity used by cloud providers.
+                id_data:
+                  type: object
+                  description: Custom ID data that matches the reported properties in the device twin.
+                pubkey:
+                  type: string
+                  description: The public key of the device.
+      responses:
+        '204':
+          description: Device pre-authorization was successful.
+        '400':
+          $ref: '#/components/responses/InvalidRequestError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /api/internal/v1/iot-manager/tenants/{tenantId}/devices/{deviceId}:
     delete:
       tags:
@@ -9055,8 +9095,7 @@ paths:
                 name: Acme
                 tenant_token: wGypZL/J5mDakDq1CjL2hCfNcF8zEYcz
         '401':
-          description: Verification failed.
-          content: {}
+          $ref: '#/components/responses/UnauthorizedError'
         '500':
           $ref: '#/components/responses/InternalServerError'
   /api/internal/v1/tenantadm/tenants/{id}/status:
