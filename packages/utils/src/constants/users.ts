@@ -242,14 +242,18 @@ export const uiPermissionsByArea = {
   },
   releases: {
     endpoints: [
-      { path: /\/(deployments\/artifacts|deployments\/deployments\/releases)/i, types: [PermissionTypes.Get], uiPermissions: [uiPermissionsById.read] },
       {
-        path: /\/(deployments\/artifacts|deployments\/deployments\/releases)/i,
+        path: /\/(deployments\/artifacts|deployments\/deployments\/releases|deployments\/software)/i,
+        types: [PermissionTypes.Get],
+        uiPermissions: [uiPermissionsById.read]
+      },
+      {
+        path: /\/(deployments\/artifacts|deployments\/deployments\/releases|deployments\/software)/i,
         types: [PermissionTypes.Post, PermissionTypes.Put],
         uiPermissions: [uiPermissionsById.read, uiPermissionsById.upload]
       },
       {
-        path: /\/(deployments\/artifacts|deployments\/deployments\/releases)/i,
+        path: /\/(deployments\/artifacts|deployments\/deployments\/releases|deployments\/software)/i,
         types: [PermissionTypes.Delete],
         uiPermissions: [uiPermissionsById.read, uiPermissionsById.manage]
       }
