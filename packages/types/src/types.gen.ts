@@ -12855,6 +12855,55 @@ export type IoTManagerInternalDeleteTenantResponses = {
 
 export type IoTManagerInternalDeleteTenantResponse = IoTManagerInternalDeleteTenantResponses[keyof IoTManagerInternalDeleteTenantResponses];
 
+export type IoTManagerInternalPreauthorizeDeviceData = {
+  body: {
+    /**
+     * External identity used by cloud providers.
+     */
+    external_id: string;
+    /**
+     * Custom ID data that matches the reported properties in the device twin.
+     */
+    id_data: {
+      [key: string]: unknown;
+    };
+    /**
+     * The public key of the device.
+     */
+    pubkey: string;
+  };
+  path: {
+    /**
+     * ID of the tenant the device belongs to.
+     */
+    tenantId: string;
+  };
+  query?: never;
+  url: '/api/internal/v1/iot-manager/tenants/{tenantId}/auth';
+};
+
+export type IoTManagerInternalPreauthorizeDeviceErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type IoTManagerInternalPreauthorizeDeviceError = IoTManagerInternalPreauthorizeDeviceErrors[keyof IoTManagerInternalPreauthorizeDeviceErrors];
+
+export type IoTManagerInternalPreauthorizeDeviceResponses = {
+  /**
+   * Device pre-authorization was successful.
+   */
+  204: void;
+};
+
+export type IoTManagerInternalPreauthorizeDeviceResponse = IoTManagerInternalPreauthorizeDeviceResponses[keyof IoTManagerInternalPreauthorizeDeviceResponses];
+
 export type IoTManagerInternalDecommissionDeviceData = {
   body?: never;
   path: {
@@ -13480,9 +13529,9 @@ export type VerifyTenantTokenData = {
 
 export type VerifyTenantTokenErrors = {
   /**
-   * Verification failed.
+   * Unauthorized.
    */
-  401: unknown;
+  401: Error;
   /**
    * Internal Server Error.
    */
