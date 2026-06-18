@@ -659,7 +659,8 @@ export const permissionSets = [
       { action: 'http', object: { type: 'GET', value: commonEndpoints.artifactDetails } },
       { action: 'http', object: { type: 'PUT', value: commonEndpoints.artifactDetails } },
       { action: 'http', object: { type: 'DELETE', value: commonEndpoints.artifactDetails } },
-      { action: 'http', object: { type: 'GET', value: '^/api/management/v1/deployments/artifacts/[^/]+/download' } }
+      { action: 'http', object: { type: 'GET', value: '^/api/management/v1/deployments/artifacts/[^/]+/download' } },
+      { action: 'http', object: { type: 'GET', value: '^/api/management/v1alpha1/deployments/software' } }
     ]
   },
   {
@@ -781,7 +782,8 @@ export const permissionSets = [
     permissions: [
       { action: 'http', object: { type: 'GET', value: commonEndpoints.artifacts } },
       { action: 'http', object: { type: 'GET', value: commonEndpoints.artifactDetails } },
-      { action: 'http', object: { type: 'GET', value: '^/api/management/v1/deployments/artifacts/[^/]+/download' } }
+      { action: 'http', object: { type: 'GET', value: '^/api/management/v1/deployments/artifacts/[^/]+/download' } },
+      { action: 'http', object: { type: 'GET', value: '^/api/management/v1alpha1/deployments/software' } }
     ]
   },
   {
@@ -794,6 +796,7 @@ export const permissionSets = [
       { action: 'http', object: { type: 'any', value: '^/api/management/(v[1-9])/deployments/config/.*' } },
       { action: 'http', object: { type: 'any', value: '^/api/management/(v[1-9])/deployments/deployments/.*' } },
       { action: 'http', object: { type: 'any', value: '^/api/management/(v[1-9])/deployments/deployments/releases/.*' } },
+      { action: 'http', object: { type: 'GET', value: '^/api/management/v1alpha1/deployments/*' } },
       { action: 'http', object: { type: 'any', value: '^/api/management/(v[1-9])/devauth/.*' } },
       { action: 'http', object: { type: 'any', value: '^/api/management/(v[1-9])/deviceconfig/.*' } },
       { action: 'http', object: { type: 'any', value: '^/api/management/(v[1-9])/deviceconnect/.*' } },
