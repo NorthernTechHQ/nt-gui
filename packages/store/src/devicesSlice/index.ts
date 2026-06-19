@@ -124,6 +124,7 @@ export type DeviceSliceType = {
   groups: DeviceGroups;
   limits: DeviceTierLimits;
   reports: DeviceReport[];
+  testDeviceCount: number;
   total: number;
 };
 export const initialState: DeviceSliceType = {
@@ -172,6 +173,7 @@ export const initialState: DeviceSliceType = {
   reports: [
     // { items: [{ key: "someKey", count: 42  }], otherCount: 123, total: <otherCount + itemsCount> }
   ],
+  testDeviceCount: 0,
   total: 0,
   limits: {
     standard: 0,
@@ -289,6 +291,9 @@ export const devicesSlice = createSlice({
     },
     setDeviceLimits: (state, action: PayloadAction<DeviceTierLimits>) => {
       state.limits = action.payload;
+    },
+    setTestDeviceCount: (state, action: PayloadAction<number>) => {
+      state.testDeviceCount = action.payload;
     },
     receivedDevice: (state, action: PayloadAction<{ id: string } & Partial<Device>>) => {
       state.byId[action.payload.id] = {
