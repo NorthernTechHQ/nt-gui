@@ -382,7 +382,8 @@ export type DeploymentStatus = {
     | 'pause_before_committing'
     | 'success'
     | 'failure'
-    | 'already-installed';
+    | 'already-installed'
+    | 'incompatible_tier';
   /**
    * Additional state information
    */
@@ -754,7 +755,8 @@ export const DeploymentDeviceStatus = {
   NOARTIFACT: 'noartifact',
   ARTIFACT_TOO_BIG: 'artifact_too_big',
   ALREADY_INSTALLED: 'already-installed',
-  DECOMMISSIONED: 'decommissioned'
+  DECOMMISSIONED: 'decommissioned',
+  INCOMPATIBLE_TIER: 'incompatible_tier'
 } as const;
 
 export type DeploymentDeviceStatus = (typeof DeploymentDeviceStatus)[keyof typeof DeploymentDeviceStatus];
@@ -1555,6 +1557,10 @@ export type Statistics = {
    * Number of deployments paused before commit phase.
    */
   pause_before_committing: number;
+  /**
+   * Number of deployments skipped due to device tier and software type incompatibility.
+   */
+  incompatible_tier: number;
 };
 
 export type DeploymentStatistics = {
@@ -5793,7 +5799,8 @@ export type DeploymentsInternalListDeploymentsForADeviceData = {
       | 'decommissioned'
       | 'pause'
       | 'active'
-      | 'finished';
+      | 'finished'
+      | 'incompatible_tier';
     /**
      * Starting page.
      */
@@ -9535,9 +9542,20 @@ export type DeviceAuthManagementSetAuthenticationStatusResponse =
 
 export type AssignDeviceFlagsData = {
   body?: DeviceFlags;
-  path?: never;
+  headers?: {
+    /**
+     * A request identification
+     */
+    'X-MEN-RequestID'?: string;
+  };
+  path: {
+    /**
+     * Device identifier.
+     */
+    id: string;
+  };
   query?: never;
-  url: '/api/management/v2/devauth/devices/:id/flags';
+  url: '/api/management/v2/devauth/devices/{id}/flags';
 };
 
 export type AssignDeviceFlagsErrors = {
