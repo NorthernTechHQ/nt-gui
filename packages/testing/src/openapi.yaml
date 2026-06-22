@@ -1421,6 +1421,7 @@ paths:
               - pause
               - active
               - finished
+              - incompatible_tier
             type: string
         - description: Starting page.
           in: query
@@ -1854,6 +1855,7 @@ paths:
                     pause_before_installing: 1
                     pause_before_rebooting: 1
                     pause_before_committing: 1
+                    incompatible_tier: 0
                 - id: 0c13a0e6-6b63-475d-8260-ee42a590e8ff
                   stats:
                     success: 3
@@ -1869,6 +1871,7 @@ paths:
                     pause_before_installing: 1
                     pause_before_rebooting: 1
                     pause_before_committing: 1
+                    incompatible_tier: 0
               schema:
                 items:
                   $ref: '#/components/schemas/DeploymentStatusStatisticsList200ResponseInner'
@@ -2097,6 +2100,7 @@ paths:
                 pause_before_installing: 1
                 pause_before_rebooting: 1
                 pause_before_committing: 1
+                incompatible_tier: 0
               schema:
                 $ref: '#/components/schemas/Statistics'
           description: OK
@@ -5404,7 +5408,7 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  /api/management/v2/devauth/devices/:id/flags:
+  /api/management/v2/devauth/devices/{id}/flags:
     put:
       operationId: Assign device flags
       security:
@@ -5412,6 +5416,14 @@ paths:
       summary: Assign device feature flags.
       tags:
         - Device_Authentication_Management API
+      parameters:
+        - name: id
+          in: path
+          description: Device identifier.
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/RequestId'
       requestBody:
         content:
           application/json:
@@ -13889,6 +13901,7 @@ components:
             - success
             - failure
             - already-installed
+            - incompatible_tier
           type: string
         substate:
           description: Additional state information
@@ -14520,6 +14533,7 @@ components:
         - artifact_too_big
         - already-installed
         - decommissioned
+        - incompatible_tier
       type: string
     DeviceWithImageImageMeta:
       properties:
@@ -15546,6 +15560,7 @@ components:
           pause_before_installing: 0
           pause_before_rebooting: 0
           pause_before_committing: 0
+          incompatible_tier: 0
         id: id
       properties:
         id:
@@ -15715,6 +15730,7 @@ components:
         pause_before_installing: 0
         pause_before_rebooting: 0
         pause_before_committing: 0
+        incompatible_tier: 0
       properties:
         success:
           description: Number of successful deployments.
@@ -15755,11 +15771,16 @@ components:
         pause_before_committing:
           description: Number of deployments paused before commit phase.
           type: integer
+        incompatible_tier:
+          description: Number of deployments skipped due to device tier and software type incompatibility.
+          type: integer
+          default: 0
       required:
         - aborted
         - already-installed
         - downloading
         - failure
+        - incompatible_tier
         - installing
         - noartifact
         - artifact_too_big
