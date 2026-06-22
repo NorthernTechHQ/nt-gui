@@ -18,7 +18,7 @@ import type { RootState } from '../store';
 
 export const getDocsVersion = (state: RootState) => state.app.docsVersion;
 export const getFeatures = (state: RootState) => state.app.features;
-export const getFullVersionInformation = (state: RootState) => state.app.versionInformation;
+export const getVersionInformation = (state: RootState) => state.app.versionInformation;
 export const getSearchState = (state: RootState) => state.app.searchState;
 export const getUploads = (state: RootState) => state.app.uploadsById;
 export const getSnackbar = (state: RootState) => state.app.snackbar;
@@ -35,7 +35,5 @@ export const getAppInitDone = (state: RootState) => state.app.appInitDone;
 
 export const getIsUploading = createSelector([getUploads], uploadsById => !!Object.keys(uploadsById).length);
 export const getSearchedDevices = createSelector([getSearchState], ({ deviceIds }) => deviceIds);
-export const getVersionInformation = createSelector([getFullVersionInformation, getFeatures], ({ version, ...remainder }, { isHosted }) =>
-  isHosted && version !== 'next' ? remainder : { ...remainder }
-);
-export const getIsPreview = createSelector([getFullVersionInformation], ({ version }) => versionCompare(version, 'next') > -1);
+
+export const getIsPreview = createSelector([getVersionInformation], ({ version }) => versionCompare(version, 'next') > -1);
