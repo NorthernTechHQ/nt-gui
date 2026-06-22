@@ -68,6 +68,8 @@ format:
 
 test:
   stage: test
+  tags:
+    - k8s
   needs: []
   tags:
     - k8s
@@ -77,6 +79,8 @@ test:
 
 build:
   stage: build
+  tags:
+    - k8s
   needs: []
   tags:
     - k8s
