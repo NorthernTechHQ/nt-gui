@@ -11,9 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-/*eslint import/namespace: ['error', { allowComputed: true }]*/
-import { Link } from 'react-router';
-
 import { act, defaultState } from '@/testUtils';
 import { inventoryDevice } from '@northern.tech/testing/requestHandlers/deviceHandlers';
 import { mockAbortController } from '@northern.tech/testing/setupTests';
@@ -80,18 +77,6 @@ const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
 const mockFile = { name: defaultState.releases.byId.r1.name, size: 1234 } as File;
-
-const groupUpdateSuccess = 'The group was updated successfully';
-const groupUpdateSuccessMessage = { autoHideDuration: 5000, message: 'The group was updated successfully' };
-const getGroupSuccessNotification = groupName => ({
-  ...groupUpdateSuccessMessage,
-  message: (
-    <>
-      {groupUpdateSuccess} - <Link to={`/devices?inventory=group:eq:${groupName}`}>click here</Link> to see it.
-    </>
-  ),
-  preventClickToCopy: true
-});
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { attributes, check_in_time, updated_ts, ...expectedDevice } = defaultState.devices.byId.a1;
@@ -659,9 +644,8 @@ describe('static grouping related actions', () => {
       { type: actions.addGroup.type, payload: { groupName, group: { deviceIds: [], total: 0, filters: [] } } },
       { type: setDeviceListState.pending.type },
       { type: actions.setDeviceListState.type, payload: { ...defaultState.devices.deviceList, deviceIds: [], setOnly: true } },
-      { type: getGroups.pending.type },
-      { type: appActions.setSnackbar.type, payload: getGroupSuccessNotification(groupName) },
       { type: setDeviceListState.fulfilled.type },
+      { type: getGroups.pending.type },
       { type: actions.receivedGroups.type, payload: { testGroup: defaultState.devices.groups.byId.testGroup } },
       { type: getDevicesByStatus.pending.type },
       defaultResults.receiveDefaultDevice,
@@ -809,7 +793,6 @@ describe('dynamic grouping related actions', () => {
         payload: { groupName, group: { filters: [{ key: 'group', operator: '$nin', scope: 'system', value: ['testGroup'] }] } }
       },
       { type: actions.setDeviceFilters.type, payload: [] },
-      { type: appActions.setSnackbar.type, payload: getGroupSuccessNotification(groupName) },
       { type: getDynamicGroups.pending.type },
       defaultResults.receivedDynamicGroups,
       { type: getDynamicGroups.fulfilled.type },
@@ -851,7 +834,6 @@ describe('dynamic grouping related actions', () => {
       { type: addDynamicGroup.pending.type },
       { type: actions.addGroup.type, payload: { groupName, group: { filters: [] } } },
       { type: actions.setDeviceFilters.type, payload: defaultState.devices.groups.byId.testGroupDynamic.filters },
-      { type: appActions.setSnackbar.type, payload: groupUpdateSuccessMessage },
       { type: getDynamicGroups.pending.type },
       defaultResults.receivedDynamicGroups,
       { type: getDynamicGroups.fulfilled.type },
