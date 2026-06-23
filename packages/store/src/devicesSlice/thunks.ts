@@ -11,9 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-/*eslint import/namespace: ['error', { allowComputed: true }]*/
-import { Link } from 'react-router';
-
 import type {
   Attribute,
   Device as BackendDevice,
@@ -171,23 +168,6 @@ export const removeDevicesFromGroup = createAppAsyncThunk(
     )
 );
 
-const getGroupNotification = (newGroup: string, selectedGroup?: string) => {
-  const successMessage = 'The group was updated successfully';
-  if (newGroup === selectedGroup) {
-    return { message: successMessage, autoHideDuration: TIMEOUTS.fiveSeconds };
-  }
-  return {
-    action: '',
-    autoHideDuration: TIMEOUTS.fiveSeconds,
-    message: (
-      <>
-        {successMessage} - <Link to={`/devices?inventory=group:eq:${newGroup}`}>click here</Link> to see it.
-      </>
-    ),
-    preventClickToCopy: true
-  };
-};
-
 export const addStaticGroup = createAppAsyncThunk(
   `${sliceName}/addStaticGroup`,
   ({ group, devices }: { devices: Device[]; group: string }, { dispatch, getState }) =>
@@ -200,13 +180,10 @@ export const addStaticGroup = createAppAsyncThunk(
               groupName: group
             })
           )
-        ).then(() =>
-          Promise.all([
-            dispatch(setDeviceListState({ setOnly: true })),
-            dispatch(getGroups()),
-            dispatch(setSnackbar(getGroupNotification(group, getState().devices.groups.selectedGroup)))
-          ])
-        )
+        ).then(async () => {
+          await dispatch(setDeviceListState({ setOnly: true })).unwrap();
+          await dispatch(getGroups()).unwrap();
+        })
       )
       .catch(err => commonErrorHandler(err, `Group could not be updated:`, dispatch))
 );
@@ -276,13 +253,10 @@ export const addDynamicGroup = createAppAsyncThunk(
               }
             })
           )
-        ).then(() => {
+        ).then(async () => {
           const { cleanedFilters } = getGroupFilters(groupName, getState().devices.groups);
-          return Promise.all([
-            dispatch(actions.setDeviceFilters(cleanedFilters)),
-            dispatch(setSnackbar(getGroupNotification(groupName, getState().devices.groups.selectedGroup))),
-            dispatch(getDynamicGroups())
-          ]);
+          dispatch(actions.setDeviceFilters(cleanedFilters));
+          await dispatch(getDynamicGroups()).unwrap();
         })
       )
       .catch(err => commonErrorHandler(err, `Group could not be updated:`, dispatch))
