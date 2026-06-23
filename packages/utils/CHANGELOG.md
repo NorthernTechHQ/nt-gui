@@ -1,5 +1,27 @@
 ---
-## 0.11.1 - 2026-06-03
+## 0.12.0 - 2026-06-23
+
+
+### Features
+
+#### Utils
+
+
+- *(utils)* Added rbac support for software releases & manifests endpoint
+
+ ([625d5bb](https://github.com/NorthernTechHQ/nt-gui/commit/625d5bb2a147c37a7b192a8b06cca39d9effd012))  by @mzedel
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/utils-0.11.1 - 2026-06-04
 
 
 ### Bug fixes
