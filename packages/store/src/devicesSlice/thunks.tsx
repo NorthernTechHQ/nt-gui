@@ -546,6 +546,16 @@ export const getDeviceLimits = createAppAsyncThunk(`${sliceName}/getDeviceLimit`
   GeneralApi.get(`${deviceAuthV2}/limits/devices`).then(res => dispatch(actions.setDeviceLimits(res.data)))
 );
 
+export const getTestDeviceCount = createAppAsyncThunk(`${sliceName}/getTestDeviceCount`, async (_, { dispatch }) => {
+  const res = await GeneralApi.post(`${inventoryApiUrlV2}/filters/search`, {
+    page: 1,
+    per_page: 1,
+    filters: [{ scope: 'system', attribute: 'test_device', type: DEVICE_FILTERING_OPTIONS.$eq.key, value: 'true' }],
+    attributes: [{ scope: 'identity', attribute: 'status' }]
+  }).catch(err => commonErrorHandler(err, `Retrieving test device count failed:`, dispatch, commonErrorFallback));
+  return dispatch(actions.setTestDeviceCount(Number(res.headers[headerNames.total])));
+});
+
 type SetDeviceListStatePayload = {
   fetchAuth?: boolean;
   forceRefresh?: boolean;
@@ -1043,6 +1053,21 @@ export const setDeviceTags = createAppAsyncThunk(
             ])
           );
       })
+);
+
+export const setTestDeviceStatus = createAppAsyncThunk(
+  `${sliceName}/setTestDeviceStatus`,
+  ({ deviceId, test_device }: { deviceId: string; test_device: boolean }, { dispatch }) =>
+    GeneralApi.put(`${deviceAuthV2}/devices/${deviceId}/flags`, { test_device })
+      .catch(err => commonErrorHandler(err, `There was an error setting test status for device ${deviceId}.`, dispatch, 'Please check your connection.'))
+      .then(() =>
+        Promise.all([
+          dispatch(setSnackbar('Device updated successfully')),
+          dispatch(actions.receivedDevice({ id: deviceId, flags: { test_device } })), // optimistic
+          dispatch(getDeviceById(deviceId)),
+          dispatch(getTestDeviceCount())
+        ])
+      )
 );
 
 type DeviceTwinPayload = { deviceId: string; integration: Integration };

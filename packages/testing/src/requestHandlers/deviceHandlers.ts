@@ -118,6 +118,9 @@ const searchHandler = validated(async ({ request }) => {
     if (filters.find(filter => filter.scope === 'monitor' && ['failed_last_update', 'alerts', 'auth_request'].includes(filter.attribute))) {
       return new HttpResponse(JSON.stringify([inventoryDevice]), { headers: { [headerNames.total]: 4 } });
     }
+    if (filters.find(filter => filter.scope === 'system' && filter.attribute === 'test_device')) {
+      return new HttpResponse(JSON.stringify([inventoryDevice]), { headers: { [headerNames.total]: 3 } });
+    }
     return new HttpResponse(JSON.stringify([]), { headers: { [headerNames.total]: 0 } });
   }
   let deviceList = Array.from({ length: mockApiResponses.devices.byStatus[status].total }, (_, index) => ({
@@ -189,6 +192,12 @@ export const deviceHandlers = [
       return HttpResponse.json(tags);
     })
   ),
+  http.put(`${deviceAuthV2}/devices/:deviceId/flags`, ({ params: { deviceId } }) => {
+    if (!mockApiResponses.devices.byId[deviceId]) {
+      return new HttpResponse(null, { status: 506 });
+    }
+    return new HttpResponse(null, { status: 204 });
+  }),
   http.get(`${inventoryApiUrl}/groups`, () => {
     const groups = Object.entries(mockApiResponses.devices.groups.byId).reduce((accu, [groupName, group]) => {
       if (!group.id) {

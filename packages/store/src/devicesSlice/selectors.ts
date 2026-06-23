@@ -36,6 +36,7 @@ export const getSortedFilteringAttributes = createSelector([getFilteringAttribut
   identityAttributes: [...filteringAttributes.identityAttributes, 'id']
 }));
 export const getDeviceLimits = (state: RootState) => state.devices.limits;
+export const getTestDeviceCount = (state: RootState) => state.devices.testDeviceCount;
 const getFilteringAttributesLimit = (state: RootState) => state.devices.filteringAttributesLimit;
 
 export const getDeviceIdentityAttributes = createSelector(

@@ -57,6 +57,7 @@ import {
   getReportDataWithoutBackendSupport,
   getSessionDetails,
   getSystemDevices,
+  getTestDeviceCount,
   preauthDevice,
   removeDevicesFromGroup,
   removeDynamicGroup,
@@ -67,6 +68,7 @@ import {
   setDeviceListState,
   setDeviceTags,
   setDeviceTwin,
+  setTestDeviceStatus,
   triggerDeviceUpdate,
   updateDeviceAuth,
   updateDevicesAuth,
@@ -297,6 +299,19 @@ describe('overall device information retrieval', () => {
       { type: getDeviceLimits.fulfilled.type }
     ];
     await store.dispatch(getDeviceLimits());
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+
+  it('should allow test device count retrieval', async () => {
+    const store = mockStore({ ...defaultState });
+    const expectedActions = [
+      { type: getTestDeviceCount.pending.type },
+      { type: actions.setTestDeviceCount.type, payload: 3 },
+      { type: getTestDeviceCount.fulfilled.type }
+    ];
+    await store.dispatch(getTestDeviceCount());
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -1082,6 +1097,26 @@ describe('device config ', () => {
       { type: setDeviceTags.fulfilled.type }
     ];
     await store.dispatch(setDeviceTags({ deviceId: defaultState.devices.byId.a1.id, tags: { something: 'asdl' } }));
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+  it('should refresh the device and the test device count when setting test status', async () => {
+    const store = mockStore({ ...defaultState });
+    const { attributes, id } = defaultState.devices.byId.a1;
+    const expectedActions = [
+      { type: setTestDeviceStatus.pending.type },
+      { type: appActions.setSnackbar.type, payload: 'Device updated successfully' },
+      { type: actions.receivedDevice.type, payload: { id, flags: { test_device: false } } },
+      { type: getDeviceById.pending.type },
+      { type: getTestDeviceCount.pending.type },
+      { type: actions.receivedDevice.type, payload: { attributes, id } },
+      { type: getDeviceById.fulfilled.type },
+      { type: actions.setTestDeviceCount.type, payload: 3 },
+      { type: getTestDeviceCount.fulfilled.type },
+      { type: setTestDeviceStatus.fulfilled.type }
+    ];
+    await store.dispatch(setTestDeviceStatus({ deviceId: id, test_device: false }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
