@@ -1,5 +1,33 @@
 ---
-## 0.13.2 - 2026-06-15
+## 0.13.3 - 2026-06-23
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Openapi spec update
+
+ ([e1b5520](https://github.com/NorthernTechHQ/nt-gui/commit/e1b5520dd4c1531df1aeb32a2c8ad304a1c665e5))  by @mender-test-bot
+
+
+
+- *(testing)* Added rbac support for software releases & manifests endpoint
+
+ ([1068a18](https://github.com/NorthernTechHQ/nt-gui/commit/1068a18ca8ac44774a59252e01ec436024b36ef5))  by @mzedel
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/testing-0.13.2 - 2026-06-15
 
 
 ### Bug fixes
