@@ -1,5 +1,54 @@
 ---
-## 0.36.3 - 2026-06-15
+## 0.37.0 - 2026-06-23
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Guard deployment name decoding against invalid escapes
+
+([ME-682](https://northerntech.atlassian.net/browse/ME-682)) ([13792a1](https://github.com/NorthernTechHQ/nt-gui/commit/13792a12ad8c5929553e9d4acddd6b28a838ddac))  by @nickanderson
+
+
+
+
+
+
+  A deployment name containing a bare '%' or an incomplete escape (e.g. a
+  trailing '%2') made decodeURIComponent throw, rejecting getDeploymentsByStatus
+  and breaking the whole deployments list. Fall back to the raw name when it
+  isn't a valid URI component.
+
+- *(store)* Fixed version information indirection that prevented new version info from getting shown
+
+ ([1a7e4a6](https://github.com/NorthernTechHQ/nt-gui/commit/1a7e4a6f9db4bd2d1e8a9485acf1eb5b603a3a64))  by @mzedel
+
+
+
+
+
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added test device flag support
+
+([MEN-9584](https://northerntech.atlassian.net/browse/MEN-9584)) ([5148f27](https://github.com/NorthernTechHQ/nt-gui/commit/5148f2724414be73a8b5b951967ff86d8d549766))  by @mineralsfree
+
+
+
+
+
+
+
+
+
+## @northern.tech/store-0.36.3 - 2026-06-15
 
 
 ### Bug fixes
