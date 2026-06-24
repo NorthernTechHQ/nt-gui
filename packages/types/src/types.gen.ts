@@ -482,7 +482,6 @@ export type MetadataAny = {
 };
 
 /**
- * Deprecated: Please use `metadata` instead.
  * A list of objects of unknown structure as this is dependent
  * of update type (also custom defined by user)
  *
@@ -1610,7 +1609,6 @@ export type DeploymentDeviceStatusGet = (typeof DeploymentDeviceStatusGet)[keyof
 export type UploadArtifactRequest2 = {
   /**
    * Size of the artifact file in bytes.
-   * DEPRECATED: _since Mon Apr 6 2020_ Size is determined from uploaded content.
    *
    *
    * @deprecated
@@ -2156,16 +2154,12 @@ export type DeltaJobDetailsItem = DeltaJobsListItem & {
   /**
    * Target release name
    *
-   * Deprecated: contains the same information as to_version.
-   *
    *
    * @deprecated
    */
   to_release?: string;
   /**
    * Source release name
-   *
-   * Deprecated: contains the same information as from_version.
    *
    *
    * @deprecated
