@@ -1678,10 +1678,10 @@ paths:
         Returns a filtered collection of deployments in the system,
         including active and historical. If both 'status' and 'query' are
         not specified, all devices are listed.
-
-        DEPRECATED: _since Mon Oct 21 2024_ we deprecated the endpoint due to an issue with the "search" query
-          behavior. Please use the v2 /deployments/deployments endpoint instead.
-          In the new endpoint, we replaced search parameter with the "id" and "name" parameters.
+      x-deprecated-description: |
+        _since Mon Oct 21 2024_ we deprecated the endpoint due to an issue with the "search" query
+        behavior. Please use the v2 /deployments/deployments endpoint instead.
+        In the new endpoint, we replaced search parameter with the "id" and "name" parameters.
       operationId: Deployments V1 List Deployments
       parameters:
         - description: Deployment status filter.
@@ -2119,6 +2119,10 @@ paths:
   /api/management/v1/deployments/deployments/{deployment_id}/devices:
     get:
       deprecated: true
+      x-deprecated-description: |
+        _since Wed May 19 2021_ this end-point is deprecated because it doesn't support
+        pagination and will be removed in the future, please use the
+        /deployments/{deployment_id}/devices/list end-point instead.
       operationId: List All Devices in Deployment
       parameters:
         - description: Deployment identifier.
@@ -2145,9 +2149,7 @@ paths:
       security:
         - ManagementJWT: []
       summary: |
-        DEPRECATED: _since Wed May 19 2021_ this end-point is deprecated because it doesn't support
-        pagination and will be removed in the future, please use the
-        /deployments/{deployment_id}/devices/list end-point instead.
+        please use the /deployments/{deployment_id}/devices/list end-point instead.
       tags:
         - Deployments_Management API
   /api/management/v1/deployments/deployments/{deployment_id}/devices/list:
@@ -2422,8 +2424,8 @@ paths:
       deprecated: true
       description: |
         Returns a collection of releases, allows filtering by release name.
-
-        DEPRECATED: _since Wed May 19 2021_ this end-point is deprecated because it doesn't support
+      x-deprecated-description: |
+        _since Wed May 19 2021_ this end-point is deprecated because it doesn't support
         pagination and will be removed in the future, please use the
         /deployments/releases/list end-point instead.
       operationId: List Releases
@@ -2563,8 +2565,8 @@ paths:
       description: |
         Returns a collection of releases, allows filtering by release name and sorting
         by name or last modification date.
-
-        DEPRECATED: _since Sep 24 2023_ due to a mismatch in the capitalization of the fields of the response
+      x-deprecated-description: |
+        _since Sep 24 2023_ due to a mismatch in the capitalization of the fields of the response
         body and lack of support for advanced filters and sorting, we have deprecated this
         endpoint. Please use the v2 /deployments/releases end-point instead.
       operationId: Deployments V1 List Releases with pagination
@@ -2741,8 +2743,8 @@ paths:
       deprecated: true
       description: |
         Returns a collection of all artifacts.
-
-        DEPRECATED: _since Oct 18 2021_ this end-point is deprecated because it doesn't support
+      x-deprecated-description: |
+        _since Oct 18 2021_ this end-point is deprecated because it doesn't support
         pagination and will be removed in the future, please use the
         /artifacts/list end-point instead.
       operationId: List Artifacts
@@ -2830,8 +2832,8 @@ paths:
       deprecated: true
       description: |
         Returns a collection of all artifacts.
-
-        DEPRECATED: _since Tue Jul 22 2025_ we deprecated the endpoint due to performance issues.
+      x-deprecated-description: |
+        _since Tue Jul 22 2025_ we deprecated the endpoint due to performance issues.
         Please use the v2 /artifacts endpoint instead.
         In the new endpoint, we support exact and prefix matching for the various fields
       operationId: Deployments V1 List Artifacts with pagination
@@ -5497,7 +5499,9 @@ paths:
     get:
       deprecated: true
       description: |
-        DEPRECATED: _since Tue Oct 21 2025_ we deprecated the endpoint due to a change in device limits. Please use the v2 /devauth/limits/devices endpoint instead.
+        Get Device Limit
+      x-deprecated-description: |
+        _since Tue Oct 21 2025_ we deprecated the endpoint due to a change in device limits. Please use the v2 /devauth/limits/devices endpoint instead.
       operationId: DeviceAuth Management Get Device Limit
       security:
         - ManagementJWT: []
@@ -11853,7 +11857,10 @@ paths:
       tags:
         - User_Administration_Management API
       summary: List existing roles
+      deprecated: true
       description: |
+        List Roles
+      x-deprecated-description: |
         This endpoint is deprecated. Please use /api/management/v2/useradm/roles
         togheter with /api/management/v2/useradm/permission_sets instead.
       operationId: List Roles v1
@@ -11871,7 +11878,6 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         '500':
           $ref: '#/components/responses/InternalServerError'
-      deprecated: true
       security:
         - ManagementJWT: []
       x-mender-plan:
@@ -11880,7 +11886,10 @@ paths:
       tags:
         - User_Administration_Management API
       summary: Create role
+      deprecated: true
       description: |
+        Create Role
+      x-deprecated-description: |
         This endpoint is deprecated. Please use /api/management/v2/useradm/roles
         togheter with /api/management/v2/useradm/permission_sets instead.
       operationId: Create Role v1
@@ -11906,7 +11915,6 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         '500':
           $ref: '#/components/responses/InternalServerError'
-      deprecated: true
       security:
         - ManagementJWT: []
       x-mender-plan:
@@ -11916,8 +11924,10 @@ paths:
       tags:
         - User_Administration_Management API
       summary: Get role information
+      deprecated: true
       description: |
         Returns role information.
+      x-deprecated-description: |
         This endpoint is deprecated. Please use /api/management/v2/useradm/roles/{id}
         togheter with /api/management/v2/useradm/permission_sets/{id} instead.
       operationId: Show Role v1
@@ -11945,7 +11955,6 @@ paths:
                 $ref: '#/components/schemas/Error'
         '500':
           $ref: '#/components/responses/InternalServerError'
-      deprecated: true
       security:
         - ManagementJWT: []
       x-mender-plan:
@@ -11954,7 +11963,10 @@ paths:
       tags:
         - User_Administration_Management API
       summary: Update role description and list of permissions.
+      deprecated: true
       description: |
+        Update Role
+      x-deprecated-description: |
         This endpoint is deprecated. Please use /api/management/v2/useradm/roles/{id}
         togheter with /api/management/v2/useradm/permission_sets/{id} instead.
       operationId: Update Role v1
@@ -11989,7 +12001,6 @@ paths:
                 $ref: '#/components/schemas/Error'
         '500':
           $ref: '#/components/responses/InternalServerError'
-      deprecated: true
       security:
         - ManagementJWT: []
       x-mender-plan:
@@ -11998,7 +12009,10 @@ paths:
       tags:
         - User_Administration_Management API
       summary: Remove role from the system
+      deprecated: true
       description: |
+        Delete Role
+      x-deprecated-description: |
         This endpoint is deprecated. Please use /api/management/v2/useradm/roles/{id}
         togheter with /api/management/v2/useradm/permission_sets/{id} instead.
       operationId: Delete Role v1
@@ -12017,7 +12031,6 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         '500':
           $ref: '#/components/responses/InternalServerError'
-      deprecated: true
       security:
         - ManagementJWT: []
       x-mender-plan:
@@ -14051,9 +14064,10 @@ components:
     MetadataAnyDeprecated:
       deprecated: true
       description: |
-        Deprecated: Please use `metadata` instead.
         A list of objects of unknown structure as this is dependent
         of update type (also custom defined by user)
+      x-deprecated-description: |
+        _since Wed Oct 29 2025_ this object is deprecated. Please use `metadata` instead.
       items:
         type: object
       type: array
@@ -15860,11 +15874,12 @@ components:
     UploadArtifactRequest:
       properties:
         size:
-          description: |
-            Size of the artifact file in bytes.
-            DEPRECATED: _since Mon Apr 6 2020_ Size is determined from uploaded content.
           format: long
           deprecated: true
+          description: |
+            Size of the artifact file in bytes.
+          x-deprecated-description: |
+            Deprecated _since Mon Apr 6 2020_; Size is determined from uploaded content.
           type: integer
         description:
           type: string
@@ -16669,19 +16684,19 @@ components:
         - type: object
           properties:
             to_release:
-              deprecated: true
               type: string
+              deprecated: true
               description: |
                 Target release name
-
-                Deprecated: contains the same information as to_version.
+              x-deprecated-description: |
+                _since Wed Dec 03 2025_ this field is deprecated; contains the same information as to_version.
             from_release:
-              deprecated: true
               type: string
+              deprecated: true
               description: |
                 Source release name
-
-                Deprecated: contains the same information as from_version.
+              x-deprecated-description: |
+                _since Wed Dec 03 2025_ this field is deprecated; contains the same information as from_version.
             exit_code:
               type: number
               description: |
