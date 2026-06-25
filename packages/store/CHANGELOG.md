@@ -1,5 +1,47 @@
 ---
-## 0.37.0 - 2026-06-23
+## 0.38.0 - 2026-06-25
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added a pure software fetch thunk
+
+([MEN-9212](https://northerntech.atlassian.net/browse/MEN-9212)) ([d8a5abc](https://github.com/NorthernTechHQ/nt-gui/commit/d8a5abc18d0b4bea140b5840d97cf20c9ed73f0b))  by @mineralsfree
+
+
+
+
+
+
+
+
+### Refactor
+
+#### Store
+
+
+- *(store)* Removed notification handling on group creation & defer to application to handle it
+
+([MEN-9872](https://northerntech.atlassian.net/browse/MEN-9872)) ([85b65b5](https://github.com/NorthernTechHQ/nt-gui/commit/85b65b58a410779677ad302d1505cc3dd3cb5f5e))  by @mzedel
+
+
+
+
+- *(store)* Let device thunks filenames reflect absence of react components
+
+ ([eadc1a6](https://github.com/NorthernTechHQ/nt-gui/commit/eadc1a6f4781c1a1a827a41fbe767b06aa46c15c))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/store-0.37.0 - 2026-06-23
 
 
 ### Bug fixes
