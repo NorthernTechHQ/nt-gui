@@ -792,6 +792,17 @@ export const getSoftware = createAppAsyncThunk(
   }
 );
 
+export const getSoftwareList = createAppAsyncThunk(
+  `${sliceName}/getSoftwareList`,
+  async (passedConfig: Partial<SoftwareList> | undefined = {}, { dispatch }) => {
+    const { data: receivedSoftware = [], headers = {} } = await softwareListRetrieval(passedConfig).catch(err =>
+      commonErrorHandler(err, 'There was an error while listing software', dispatch)
+    );
+    const total = headers[headerNames.total] ? Number(headers[headerNames.total]) : 0;
+    return { software: receivedSoftware, total };
+  }
+);
+
 export const setSoftwareListState = createAppAsyncThunk(
   `${sliceName}/setSoftwareListState`,
   async (selectionState: Partial<SoftwareList>, { dispatch, getState }) => {
