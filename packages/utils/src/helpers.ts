@@ -16,7 +16,6 @@ import dayjs from 'dayjs';
 import durationPlugin from 'dayjs/plugin/duration.js';
 import type { DurationUnitType } from 'dayjs/plugin/duration.js';
 import utc from 'dayjs/plugin/utc.js';
-import pluralize from 'pluralize';
 import Cookies from 'universal-cookie';
 
 dayjs.extend(durationPlugin);
@@ -355,18 +354,6 @@ export const standardizePhases = (phases: NewDeploymentPhase[] | UiDeploymentPha
     }
     return standardizedPhase;
   });
-
-export const getSnackbarMessage = (skipped: number, done: number) => {
-  pluralize.addIrregularRule('its', 'their');
-  const skipText = skipped
-    ? `${skipped} ${pluralize('devices', skipped)} ${pluralize('have', skipped)} more than one pending authset. Expand ${pluralize(
-        'this',
-        skipped
-      )} ${pluralize('device', skipped)} to individually adjust ${pluralize('their', skipped)} authorization status. `
-    : '';
-  const doneText = done ? `${done} ${pluralize('device', done)} ${pluralize('was', done)} updated successfully. ` : '';
-  return `${doneText}${skipText}`;
-};
 
 type SoftwareInformationEntry = [string, DeviceAttribute];
 
