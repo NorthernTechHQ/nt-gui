@@ -35,6 +35,7 @@ import {
   getRelease,
   getReleases,
   getSoftware,
+  getSoftwareList,
   getUpdateTypes,
   removeArtifact,
   removeManifest,
@@ -788,6 +789,15 @@ describe('software actions', () => {
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+  it('should retrieve a filtered list of software', async () => {
+    const store = mockStore({ ...defaultState });
+    const { software, total } = await store.dispatch(getSoftwareList({ perPage: 1, sort: { direction: 'desc', key: 'modified' } })).unwrap();
+    expect(Array.isArray(software)).toBeTruthy();
+    expect(software.length).toBeTruthy();
+    expect(total).toEqual(1000);
+    const storeActions = store.getActions();
+    expect(storeActions.map(({ type }) => type)).toEqual([getSoftwareList.pending.type, getSoftwareList.fulfilled.type]);
   });
   it('should update software list state and trigger fetch on change', async () => {
     const store = mockStore({ ...defaultState });
