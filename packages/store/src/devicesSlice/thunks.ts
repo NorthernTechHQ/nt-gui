@@ -29,7 +29,7 @@ import type {
   SortCriteria,
   Status
 } from '@northern.tech/types/MenderTypes';
-import { attributeDuplicateFilter, dateRangeToUnix, deepCompare, getSnackbarMessage } from '@northern.tech/utils/helpers';
+import { attributeDuplicateFilter, dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
 import { isCancel } from 'axios';
 import pluralize from 'pluralize';
 import { v4 as uuid } from 'uuid';
@@ -337,7 +337,8 @@ const reduceReceivedDevices = (devices: ReceivedDevice[], ids: string[], state: 
       device.created_ts = getEarliestTs(getEarliestTs(system.created_ts, device.created_ts), stateDevice.created_ts);
       device.updated_ts = device.attributes ? device.updated_ts : stateDevice.updated_ts;
       device.isNew = new Date(device.created_ts) > new Date(state.app.newThreshold);
-      device.isOffline = new Date(device.check_in_time_rounded) < new Date(state.app.offlineThreshold) || device.check_in_time_rounded === undefined;
+      const lastCheckIn = device.check_in_time_exact ?? device.check_in_time_rounded;
+      device.isOffline = new Date(lastCheckIn) < new Date(state.app.offlineThreshold) || lastCheckIn === undefined;
       // all the other mapped attributes return as empty objects if there are no attributes to map, but identity will be initialized with an empty state
       // for device_type and artifact_name, potentially overwriting existing info, so rely on stored information instead if there are no attributes
       device.attributes = device.attributes ? { ...storedAttributes, ...inventory } : storedAttributes;
@@ -881,12 +882,31 @@ export const getDevicesWithAuth = createAppAsyncThunk(`${sliceName}/getDevicesWi
   return receivedDevices as ReceivedDevice[];
 });
 
+const getSnackbarMessage = (skipped: number, done: number, failed: number = 0) => {
+  pluralize.addIrregularRule('its', 'their');
+  const skipText = skipped
+    ? `${skipped} ${pluralize('devices', skipped)} ${pluralize('have', skipped)} more than one pending authset. Expand ${pluralize(
+        'this',
+        skipped
+      )} ${pluralize('device', skipped)} to individually adjust ${pluralize('their', skipped)} authorization status. `
+    : '';
+  const failedText = failed ? `${failed} ${pluralize('device', failed)} could not be updated. You may have reached your device limit. ` : '';
+  const doneText = done ? `${done} ${pluralize('device', done)} ${pluralize('was', done)} updated successfully. ` : '';
+  return `${doneText}${skipText}${failedText}`;
+};
+
 export const updateDeviceAuth = createAppAsyncThunk(
   `${sliceName}/updateDeviceAuth`,
   ({ deviceId, authId, status }: { authId: string; deviceId: string; status: Status['status'] }, { dispatch, getState }) =>
     GeneralApi.put(`${deviceAuthV2}/devices/${deviceId}/auth/${authId}/status`, { status })
       .then(() => Promise.all([dispatch(getDeviceAuth(deviceId)), dispatch(setSnackbar('Device authorization status was updated successfully'))]))
-      .catch(err => commonErrorHandler(err, 'There was a problem updating the device authorization status:', dispatch))
+      .catch(err => {
+        const errorContext =
+          err.response?.status === 422
+            ? 'Device limit reached: You have reached your limit of accepted devices.'
+            : 'There was a problem updating the device authorization status:';
+        return commonErrorHandler(err, errorContext, dispatch);
+      })
       .then(() => Promise.resolve(dispatch(actions.maybeUpdateDevicesByStatus({ deviceId, authId }))))
       .finally(() => dispatch(setDeviceListState({ refreshTrigger: !getDeviceListState(getState()).refreshTrigger })))
 );
@@ -911,18 +931,22 @@ export const updateDevicesAuth = createAppAsyncThunk(
           .catch(err => commonErrorHandler(err, 'The action was stopped as there was a problem updating a device authorization status: ', dispatch, '', false));
       });
       return Promise.allSettled(deviceAuthUpdates).then(results => {
-        const { skipped, count } = results.reduce(
+        const { skipped, failed, count } = results.reduce(
           (accu, item) => {
             if (item.status === 'rejected') {
-              accu.skipped = accu.skipped + 1;
+              if (item.reason) {
+                accu.failed = accu.failed + 1;
+              } else {
+                accu.skipped = accu.skipped + 1;
+              }
             } else {
               accu.count = accu.count + 1;
             }
             return accu;
           },
-          { skipped: 0, count: 0 }
+          { skipped: 0, failed: 0, count: 0 }
         );
-        const message = getSnackbarMessage(skipped, count);
+        const message = getSnackbarMessage(skipped, count, failed);
         // break if an error occurs, display status up til this point before error message
         return dispatch(setSnackbar(message));
       });
