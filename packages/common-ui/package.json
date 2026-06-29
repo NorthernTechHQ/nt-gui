@@ -80,7 +80,7 @@
     "tsdown": "^0.22.2",
     "vitest": "^4.1.8"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@mdi/js": "^7.x",
     "@mui/icons-material": "^9.x",
     "@mui/material": "^9.x",
