@@ -48,7 +48,7 @@
     "tsdown": "^0.22.2",
     "vitest": "^4.1.8"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@northern.tech/types": "*",
     "dayjs": "^1.x",
     "msgpack5": "^6.x",
