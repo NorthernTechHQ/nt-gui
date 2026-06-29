@@ -49,7 +49,7 @@
     "typescript": "6.0.3",
     "vitest": "^4.1.8"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@mui/icons-material": "^9.x",
     "@mui/material": "^9.x",
     "@mui/x-tree-view": "^9.x",
