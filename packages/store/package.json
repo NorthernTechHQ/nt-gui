@@ -132,7 +132,7 @@
     "tsdown": "^0.22.2",
     "vitest": "^4.1.8"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@emotion/react": "^11.x",
     "@emotion/styled": "^11.x",
     "@mdi/js": "^7.x",
@@ -148,7 +148,7 @@
     "react": "^19.x",
     "react-dom": "^19.x",
     "react-redux": "^9.x",
-    "react-router": "^7.x",
+    "react-router": "^8.x",
     "universal-cookie": "^8.x",
     "validator": "^13.x"
   }
