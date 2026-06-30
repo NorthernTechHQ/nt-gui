@@ -1,5 +1,42 @@
 ---
-## 0.13.3 - 2026-06-23
+## 0.14.0 - 2026-06-30
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Openapi spec update
+
+ ([1169146](https://github.com/NorthernTechHQ/nt-gui/commit/116914680686db73c39ee0e44ab0284fb54df15a))  by @mender-test-bot
+
+
+
+
+
+
+
+### Features
+
+#### Testing
+
+
+- *(testing)* Reclassify dependencies as peers to reduce duplicate installations & related issues
+
+ ([a63eb71](https://github.com/NorthernTechHQ/nt-gui/commit/a63eb71aa7af4d7a7a38db036d639903c0639a8f))  by @mzedel
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/testing-0.13.3 - 2026-06-23
 
 
 ### Bug fixes
