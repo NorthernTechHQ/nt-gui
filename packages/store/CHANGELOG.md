@@ -1,5 +1,47 @@
 ---
-## 0.38.0 - 2026-06-25
+## 0.39.0 - 2026-06-30
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Reconsider device offline state based on most recently updated backend value
+
+([MEN-9906](https://northerntech.atlassian.net/browse/MEN-9906)) ([0ac8588](https://github.com/NorthernTechHQ/nt-gui/commit/0ac8588a107b45b714981705f009d5882bf9961f))  by @mzedel
+
+
+
+
+- *(store)* Give clearer feedback when device limits are reached during auth set change attempts
+
+([MEN-9595](https://northerntech.atlassian.net/browse/MEN-9595)) ([a3234bb](https://github.com/NorthernTechHQ/nt-gui/commit/a3234bb33161f4fe81574fded54add3264ceda23))  by @mzedel
+
+
+
+
+
+
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Reclassify dependencies as peers to reduce duplicate installations & related issues
+
+ ([e5938a4](https://github.com/NorthernTechHQ/nt-gui/commit/e5938a4e01335e5279bb5c3836602694ee01eb3e))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/store-0.38.0 - 2026-06-25
 
 
 ### Features
