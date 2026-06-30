@@ -1,4 +1,59 @@
 ---
+## 0.6.0 - 2026-06-30
+
+
+### Bug fixes
+
+#### Common
+
+
+- *(common)* Ensured mui 9 compatibility
+
+ ([586b2b0](https://github.com/NorthernTechHQ/nt-gui/commit/586b2b00b8c13407844cd6d753816718c5edfca6))  by @mzedel
+
+
+
+- *(common)* Switched to react-router instead of react-router-dom
+
+ ([885e903](https://github.com/NorthernTechHQ/nt-gui/commit/885e903444761998d577345764481441cad12f44))  by @mineralsfree
+
+
+
+
+
+
+#### Testing
+
+
+- *(testing)* Fixed ts errors to enable type checked usage
+
+ ([1ecaba0](https://github.com/NorthernTechHQ/nt-gui/commit/1ecaba038c2e492a625de85ab4a8264e06ceff7d))  by @mzedel
+
+
+
+
+
+
+
+### Features
+
+#### Common
+
+
+- *(common)* Reclassify dependencies as peers to reduce duplicate installations & related issues
+
+ ([875072f](https://github.com/NorthernTechHQ/nt-gui/commit/875072fb6a961cdd6e66ed7634ce5d66455eeb07))  by @mzedel
+
+
+
+
+
+
+
+### Security
+
+
+
 ## @northern.tech/common-ui-0.8.1 - 2025-11-12
 
 
@@ -15,6 +70,8 @@
 
 
 
+
+
 ### Features
 
 #### Common
@@ -23,6 +80,8 @@
 - *(common)* Added mui component overview to ease seeing theme impact
 
  ([5f8cb5a](https://github.com/NorthernTechHQ/nt-gui/commit/5f8cb5a8e3041280ee45eb00ad4c45618e80004c))  by @mzedel
+
+
 
 
 
@@ -45,6 +104,8 @@
  ([d52a3d7](https://github.com/NorthernTechHQ/nt-gui/commit/d52a3d7dae5199b83f0e73dd3a6c10cf30118bb3))  by @mzedel
 
 
+
+
   - common + common-ui affected as well, not mentioned due to scope policy
 
 
@@ -64,9 +125,13 @@
 
  ([5211d3c](https://github.com/NorthernTechHQ/nt-gui/commit/5211d3c39947e5374858eb92358fdaa7ac3a1a91))  by @mzedel
 
+
+
 - *(common)* Fixed an issue that prevent seeing sessiondetails for portforwarding auditlog entries
 
  ([367d7f6](https://github.com/NorthernTechHQ/nt-gui/commit/367d7f669b208706f0a45816c5198567e7914d8d))  by @mzedel
+
+
 
 
 
@@ -80,6 +145,8 @@
 - *(common-ui)* Removed mender specific components
 
  ([82eec5d](https://github.com/NorthernTechHQ/nt-gui/commit/82eec5d63642cae8f8a9cb24d2fd15379c61ff28))  by @mzedel
+
+
 
 
 
@@ -125,12 +192,16 @@
 
 
 
+
+
 #### Common/auditlogs
 
 
 - *(common/auditlogs)* Fixed an issue with the auditlogs that prevented updating the window url after initialization
 
  ([63e08f4](https://github.com/NorthernTechHQ/nt-gui/commit/63e08f4eaf1c106d8634451517314e84b882f9a5))  by @aleksandrychev
+
+
 
 
   aligned with Mender code
@@ -163,6 +234,8 @@
  ([bd56eff](https://github.com/NorthernTechHQ/nt-gui/commit/bd56eff96b4d7a4f708bf2fa04aad911462bed51))  by @aleksandrychev
 
 
+
+
   use cjs for require and js for ESM
 
 
@@ -189,6 +262,8 @@
 
 
 
+
+
 ### Features
 
 
@@ -204,6 +279,8 @@
 - *(common)* Include dist folder in package output
 
  ([7e78bcb](https://github.com/NorthernTechHQ/nt-gui/commit/7e78bcb329710ee569dda5b7d86b733a61e01801))  by @aleksandrychev
+
+
 
 
 
