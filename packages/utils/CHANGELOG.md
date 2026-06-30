@@ -1,5 +1,24 @@
 ---
-## 0.12.0 - 2026-06-23
+## 0.13.0 - 2026-06-30
+
+
+### Features
+
+#### Utils
+
+
+- *(utils)* Reclassify dependencies as peers to reduce duplicate installations & related issues
+
+ ([bc38f6f](https://github.com/NorthernTechHQ/nt-gui/commit/bc38f6f684614a205afe7a668da6702f539bbd87))  by @mzedel
+
+
+
+
+
+
+
+
+## @northern.tech/utils-0.12.0 - 2026-06-23
 
 
 ### Features
