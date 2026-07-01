@@ -51,7 +51,7 @@
   },
   "peerDependencies": {
     "@mui/icons-material": "^9.x",
-    "@mui/material": "^9.x",
+    "@mui/material": "^9.1.2",
     "@mui/x-tree-view": "^9.x",
     "@northern.tech/common-ui": "*",
     "@northern.tech/store": "*",

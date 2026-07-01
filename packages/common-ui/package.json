@@ -83,7 +83,7 @@
   "peerDependencies": {
     "@mdi/js": "^7.x",
     "@mui/icons-material": "^9.x",
-    "@mui/material": "^9.x",
+    "@mui/material": "^9.1.2",
     "@mui/x-date-pickers": "^9.x",
     "@northern.tech/store": "*",
     "@northern.tech/utils": "*",
