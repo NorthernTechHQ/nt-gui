@@ -50,6 +50,6 @@
     "tsdown": "^0.22.2"
   },
   "dependencies": {
-    "@mui/material": "^9.x"
+    "@mui/material": "^9.1.2"
   }
 }
