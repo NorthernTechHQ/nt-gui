@@ -26,12 +26,14 @@ import { expect, it, vi } from 'vitest';
 import { actions as appActions } from './appSlice';
 import { getSessionInfo } from './auth';
 import { EXTERNAL_PROVIDER, timeUnits } from './commonConstants';
-import { DEVICE_STATES } from './constants';
+import { DEVICE_STATES, locations } from './constants';
 import { expectedOnboardingActions } from './onboardingSlice/thunks.test';
 import { actions as organizationActions } from './organizationSlice';
-import { useAppInit } from './storehooks';
+import { parseEnvironmentInfo, useAppInit } from './storehooks';
 import { getUserOrganization } from './thunks';
 import { actions as userActions } from './usersSlice';
+
+const oldHostname = window.location.hostname;
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
@@ -159,4 +161,25 @@ it('should trigger the offline threshold migration dialog', async () => {
   const storeActions = store.getActions();
   const notificationAction = storeActions.find(action => action.type === userActions.setShowStartupNotification.type);
   expect(notificationAction.payload).toBeTruthy();
+});
+it('should treat hosted domains and their subdomains as hosted, except per-PR preview deployments', async () => {
+  const expectations = [
+    { hostname: locations.us.location, isHosted: true },
+    { hostname: locations.eu.location, isHosted: true },
+    { hostname: locations.cn.location, isHosted: true },
+    // staging and other subdomains of a hosted domain are valid hosted instances
+    { hostname: `staging.${locations.us.location}`, isHosted: true },
+    { hostname: `testing.staging.${locations.us.location}`, isHosted: true },
+    // per-PR preview deployments (leading <component>-pr-<number> label) must not be treated as hosted
+    { hostname: `os-pr-2012.staging.${locations.us.location}`, isHosted: false },
+    { hostname: 'localhost', isHosted: false }
+  ];
+  for (const { hostname, isHosted } of expectations) {
+    window.location.hostname = hostname;
+    const store = mockStore({ ...defaultState, app: { ...defaultState.app, features: { ...defaultState.app.features, isHosted: false } } });
+    await store.dispatch(parseEnvironmentInfo());
+    const setFeaturesAction = store.getActions().find(action => action.type === appActions.setFeatures.type);
+    expect(setFeaturesAction.payload.isHosted).toBe(isHosted);
+  }
+  window.location.hostname = oldHostname;
 });

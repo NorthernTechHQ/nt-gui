@@ -20,7 +20,7 @@ import Cookies from 'universal-cookie';
 
 import storeActions from './actions';
 import { getSessionInfo } from './auth';
-import { DEPLOYMENT_STATES, DEVICE_STATES, TIMEOUTS, timeUnits } from './constants';
+import { DEPLOYMENT_STATES, DEVICE_STATES, TIMEOUTS, locations, timeUnits } from './constants';
 import type { DeviceSliceType } from './devicesSlice';
 import {
   getDevicesByStatus as getDevicesByStatusSelector,
@@ -62,6 +62,13 @@ const cookies = new Cookies();
 dayjs.extend(durationDayJs);
 
 const { setDeviceListState, setFirstLoginAfterSignup, setTooltipsState, setShowStartupNotification } = storeActions;
+
+// a host is hosted when it is one of the known hosted domains or a subdomain of one (e.g. staging.hosted.mender.io),
+// except for per-PR preview deployments whose leading label looks like <component>-pr-<number> (e.g. os-pr-2012.staging.hosted.mender.io)
+const hostedDomains = Object.values(locations).map(({ location }) => location);
+const isPreviewDeployment = (hostname: string) => /^[^.]+-pr-\d+\./.test(hostname);
+const isHostedHostname = (hostname: string) =>
+  !isPreviewDeployment(hostname) && hostedDomains.some(domain => hostname === domain || hostname.endsWith(`.${domain}`));
 
 const featureFlags = [
   'hasAiEnabled',
@@ -111,7 +118,7 @@ export const parseEnvironmentInfo = createAppAsyncThunk(`app/parseEnvironmentInf
     environmentData = environmentDatas.reduce((accu, flag) => ({ ...accu, [flag]: mender_environment[flag] || appState[flag as keyof typeof appState] }), {});
     environmentFeatures = {
       ...featureFlags.reduce<FeatureFlagsState>((accu, flag) => ({ ...accu, [flag]: stringToBoolean(features[flag]) }), {}),
-      isHosted: stringToBoolean(features.isHosted) || window.location.hostname.includes('hosted.mender.io')
+      isHosted: stringToBoolean(features.isHosted) || isHostedHostname(window.location.hostname)
     };
     onboardingComplete = !environmentFeatures.isHosted || stringToBoolean(disableOnboarding) || onboardingComplete;
     versionInfo = {
