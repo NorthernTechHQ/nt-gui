@@ -54,7 +54,7 @@ export const typography = {
     fontFamily: typographyTokens?.variables['fontFamily (mono)'].values[themeMode]
   },
   code2: {
-    fontSize: '0.875 rem',
+    fontSize: '0.875rem',
     fontFamily: typographyTokens?.variables['fontFamily (mono)'].values[themeMode]
   }
 };
