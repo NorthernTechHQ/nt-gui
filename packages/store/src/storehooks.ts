@@ -26,7 +26,6 @@ import {
   getDevicesByStatus as getDevicesByStatusSelector,
   getFeatures,
   getGlobalSettings as getGlobalSettingsSelector,
-  getIsEnterprise,
   getIsServiceProvider,
   getOfflineThresholdSettings,
   getOnboardingState as getOnboardingStateSelector,
@@ -136,6 +135,25 @@ export const parseEnvironmentInfo = createAppAsyncThunk(`app/parseEnvironmentInf
   ]);
 });
 
+// probes the organization endpoint to classify the deployment: reaching it means the deployment is multitenant,
+// which - when not hosted - identifies an on-prem enterprise installation, while an unreachable endpoint identifies
+// a single-tenant OS installation. hosted deployments keep their plan-derived enterprise status (getIsEnterprise).
+// must run after parseEnvironmentInfo so the final isHosted value is available in the store.
+export const probeOrganizationCapabilities = createAppAsyncThunk(`app/probeOrganizationCapabilities`, (_, { dispatch, getState }) =>
+  dispatch(getUserOrganization())
+    .unwrap()
+    .then(() => {
+      if (!getFeatures(getState()).isHosted) {
+        dispatch(storeActions.setFeatures({ hasMultitenancy: true, isEnterprise: true }));
+      }
+    })
+    .catch(() => {
+      if (!getFeatures(getState()).isHosted) {
+        dispatch(storeActions.setFeatures({ hasMultitenancy: false, isEnterprise: false }));
+      }
+    })
+);
+
 type OnboardingState = {
   complete?: boolean;
   showTips?: boolean | null;
@@ -164,8 +182,7 @@ const maybeAddOnboardingTasks = ({ devicesByStatus, dispatch, onboardingState, t
 export const useAppInit = (userId: string | undefined): { coreInitDone: boolean } => {
   const dispatch = useAppDispatch();
   const [coreInitDone, setCoreInitDone] = useState(false);
-  const isEnterprise = useAppSelector(getIsEnterprise);
-  const { hasMultitenancy, isHosted } = useAppSelector(getFeatures);
+  const { hasMultitenancy } = useAppSelector(getFeatures);
   const devicesByStatus = useAppSelector(getDevicesByStatusSelector);
   const onboardingState = useAppSelector(getOnboardingStateSelector);
   const { columnSelection = [], trackingConsentGiven: hasTrackingEnabled, tooltips = {} } = useAppSelector(getUserSettingsSelector);
@@ -177,19 +194,19 @@ export const useAppInit = (userId: string | undefined): { coreInitDone: boolean 
   const coreInitRunning = useRef(false);
   const fullInitRunning = useRef(false);
 
-  const retrieveCoreData = useCallback((): Promise<unknown[]> => {
-    const tasks: Promise<unknown>[] = [
-      dispatch(parseEnvironmentInfo()).unwrap(),
-      dispatch(getUserSettings()).unwrap(),
-      dispatch(getGlobalSettings()).unwrap(),
-      Promise.resolve(dispatch(setFirstLoginAfterSignup(stringToBoolean(cookies.get('firstLoginAfterSignup')))))
-    ];
-    const multitenancy = hasMultitenancy || isHosted || isEnterprise;
-    if (multitenancy) {
-      tasks.push(dispatch(getUserOrganization()).unwrap());
-    }
-    return Promise.all(tasks);
-  }, [dispatch, hasMultitenancy, isHosted, isEnterprise]);
+  const retrieveCoreData = useCallback(
+    (): Promise<unknown[]> =>
+      Promise.all([
+        // parse the environment first so isHosted is set before the organization probe classifies the deployment type
+        dispatch(parseEnvironmentInfo())
+          .unwrap()
+          .then(() => dispatch(probeOrganizationCapabilities()).unwrap()),
+        dispatch(getUserSettings()).unwrap(),
+        dispatch(getGlobalSettings()).unwrap(),
+        Promise.resolve(dispatch(setFirstLoginAfterSignup(stringToBoolean(cookies.get('firstLoginAfterSignup')))))
+      ]),
+    [dispatch]
+  );
 
   const retrieveAppData = useCallback((): Promise<unknown[] | unknown> => {
     if (isServiceProvider) {
