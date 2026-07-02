@@ -1,5 +1,27 @@
 ---
-## 0.16.6 - 2026-06-09
+## 0.16.7 - 2026-07-02
+
+
+### Bug fixes
+
+#### Themes
+
+
+- *(themes)* Fixed css typo in font defention
+
+ ([eb443a5](https://github.com/NorthernTechHQ/nt-gui/commit/eb443a5bba68247ca788889f1c5497418beb3125))  by @mineralsfree
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/themes-0.16.6 - 2026-06-09
 
 
 ### Bug fixes
