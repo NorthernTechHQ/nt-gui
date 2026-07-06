@@ -47,7 +47,7 @@
   },
   "peerDependencies": {
     "@emotion/jest": "^11.x",
-    "@mui/material": "^9.x",
+    "@mui/material": "^9.2.0",
     "@northern.tech/utils": "*",
     "@reduxjs/toolkit": "^2.x",
     "@testing-library/react": "^16.x",
