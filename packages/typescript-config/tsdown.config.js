@@ -5,7 +5,9 @@ export const config = {
   dts: true,
   entry: ['src/**/*.{js,jsx,ts,tsx}', '!src/**/*.test.{js,jsx,ts,tsx}', '!src/**/*.stories.{js,jsx,ts,tsx}'],
   sourcemap: true,
-  skipNodeModulesBundle: true,
+  deps: {
+    skipNodeModulesBundle: true
+  },
   clean: true,
   loader: {
     '.js': 'jsx',

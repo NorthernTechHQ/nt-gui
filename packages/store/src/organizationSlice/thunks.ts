@@ -616,17 +616,15 @@ export const deleteSsoConfig = createAppAsyncThunk(`${sliceName}/deleteSsoConfig
     })
 );
 
-export const getSsoConfigById = createAppAsyncThunk(
-  `${sliceName}/getSsoConfigById`,
-  (config: SSOConfig, { dispatch }): Promise<SSOConfig> =>
-    Api.get<string>(`${ssoIdpApiUrlv1}/${config.id}`)
-      .catch(err => dispatch(ssoConfigActionErrorHandler(err, 'read')))
-      .then(({ data, headers }: AxiosResponse<GetIdpSamlOrOpenIdConnectMetadataForTheTenantResponse>): Promise<SSOConfig> => {
-        const sso = Object.values(SSO_TYPES).find(({ contentType }) => contentType === headers['content-type']);
-        return sso
-          ? Promise.resolve({ ...config, config: data, type: sso.id as unknown as SSOConfig['type'] } as SSOConfig)
-          : Promise.reject('Unsupported SSO config content type.');
-      })
+export const getSsoConfigById = createAppAsyncThunk(`${sliceName}/getSsoConfigById`, (config: SSOConfig, { dispatch }): Promise<SSOConfig> =>
+  Api.get<string>(`${ssoIdpApiUrlv1}/${config.id}`)
+    .catch(err => dispatch(ssoConfigActionErrorHandler(err, 'read')))
+    .then(({ data, headers }: AxiosResponse<GetIdpSamlOrOpenIdConnectMetadataForTheTenantResponse>): Promise<SSOConfig> => {
+      const sso = Object.values(SSO_TYPES).find(({ contentType }) => contentType === headers['content-type']);
+      return sso
+        ? Promise.resolve({ ...config, config: data, type: sso.id as unknown as SSOConfig['type'] } as SSOConfig)
+        : Promise.reject('Unsupported SSO config content type.');
+    })
 );
 
 export const getSsoConfigs = createAppAsyncThunk(`${sliceName}/getSsoConfigs`, (_, { dispatch }) =>

@@ -1,7 +1,7 @@
 import defineConfig, { config } from '@northern.tech/typescript-config/tsdown.config';
 
 export default defineConfig({
-  publicDir: 'public',
+  copy: [{ from: 'public', to: 'dist', flatten: false }],
   loader: {
     ...config.loader,
     '.yaml': 'text'
