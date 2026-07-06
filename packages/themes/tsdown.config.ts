@@ -13,6 +13,6 @@ const lessPlugin = () => ({
 
 export default defineConfig({
   dts: { entry: ['src/**/*.{ts,tsx}'] },
-  publicDir: 'public',
+  copy: [{ from: 'public', to: 'dist', flatten: false }],
   plugins: [lessPlugin()]
 });
