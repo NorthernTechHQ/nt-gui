@@ -42,7 +42,7 @@
     "tsdown": "^0.22.2"
   },
   "dependencies": {
-    "js-yaml": "^5.1.0",
+    "js-yaml": "^5.2.0",
     "openapi-backend": "^5.x"
   },
   "peerDependencies": {
