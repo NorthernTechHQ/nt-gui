@@ -210,10 +210,6 @@ each(@directions, .(@direction) {
 .fadeInSlow {
   .animation(fadein 0.8s 1);
 }
-.fadeOutSlow {
-  .opacity(0);
-  .transition(opacity 0.6s linear);
-}
 
 /* Navigation */
 .navLink {
@@ -374,10 +370,6 @@ each(@directions, .(@direction) {
     border: 1px solid @lightergrey;
     border-radius: 5px;
   }
-  .os-list img {
-    height: 80px;
-    margin: @defaultGutterWidth;
-  }
 }
 
 .onboard-tip {
@@ -489,18 +481,6 @@ table thead.clickable tr > th:first-child {
   .rotateX(180deg);
 }
 
-.file-details {
-  padding: 10px @defaultGutterWidth 2 * @defaultGutterWidth;
-  width: 100%;
-  border-radius: 4px;
-  margin: 10px 3px 20px 0;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  position: relative;
-}
-.file-meta {
-  padding: 0 16px;
-}
-
 .code {
   font-family: monospace;
   border: 1px solid @lightgrey;
@@ -597,11 +577,6 @@ div:focus {
   position: relative;
   overflow: visible;
 
-  .MuiButton-contained.oauth-provider {
-    background-color: @defaultBackground;
-    color: @text;
-    margin: 0 10px;
-  }
   .help-text,
   p.help-text {
     color: rgba(66, 66, 66, 0.6);
@@ -668,8 +643,7 @@ div:focus {
 
 /* tables */
 .deviceListRow,
-.deviceListItem,
-.deployment-item {
+.deviceListItem {
   border-bottom: 1px solid @bordercolor;
   height: 3 * @defaultGutterWidth;
   min-height: 3 * @defaultGutterWidth;
@@ -748,24 +722,6 @@ div:focus {
       white-space: initial;
     }
   }
-}
-
-.monitoring-alert {
-  display: grid;
-  grid-template-columns: min-content minmax(400px, 8fr) 100px min-content minmax(100px, max-content) 1fr;
-  column-gap: @defaultGutterWidth;
-  align-items: center;
-  margin: 0 @defaultGutterWidth;
-  max-width: 900px;
-}
-
-.log-line {
-  display: grid;
-  grid-template-columns: 20px 40px 1fr 26px;
-  column-gap: 10px;
-  align-items: center;
-  min-height: 1.75rem;
-  margin-left: 2px;
 }
 
 .grouplist div span {
