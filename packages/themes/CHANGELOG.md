@@ -1,5 +1,25 @@
 ---
-## 0.16.7 - 2026-07-02
+## 0.16.8 - 2026-07-06
+
+
+### Bug fixes
+
+#### Themes
+
+
+- *(themes)* Removed dashboard related styles
+
+([MEN-9312](https://northerntech.atlassian.net/browse/MEN-9312)) ([18becb5](https://github.com/NorthernTechHQ/nt-gui/commit/18becb5387b214613c215c35a398aa2e6c19dc1c))  by @mineralsfree
+
+
+
+
+
+
+
+
+
+## @northern.tech/themes-0.16.7 - 2026-07-02
 
 
 ### Bug fixes
