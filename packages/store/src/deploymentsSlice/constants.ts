@@ -26,6 +26,7 @@ export const deploymentSubstates = {
   installing: 'installing',
   noartifact: 'noartifact',
   artifact_too_big: 'artifact_too_big',
+  incompatible_tier: 'incompatible_tier',
   pause_before_committing: 'pause_before_committing',
   pause_before_installing: 'pause_before_installing',
   pause_before_rebooting: 'pause_before_rebooting',
@@ -48,7 +49,13 @@ export const deploymentStatesToSubstates: DeploymentSubstateMapping = {
   inprogress: [deploymentSubstates.downloading, deploymentSubstates.installing, deploymentSubstates.rebooting],
   paused: [deploymentSubstates.pause_before_installing, deploymentSubstates.pause_before_rebooting, deploymentSubstates.pause_before_committing],
   pending: [deploymentSubstates.pending],
-  successes: [deploymentSubstates.success, deploymentSubstates.alreadyInstalled, deploymentSubstates.noartifact, deploymentSubstates.artifact_too_big]
+  successes: [
+    deploymentSubstates.success,
+    deploymentSubstates.alreadyInstalled,
+    deploymentSubstates.noartifact,
+    deploymentSubstates.artifact_too_big,
+    deploymentSubstates.incompatible_tier
+  ]
 };
 
 export const deploymentStatesToSubstatesWithSkipped: DeploymentSubstateMapping = {
@@ -59,7 +66,8 @@ export const deploymentStatesToSubstatesWithSkipped: DeploymentSubstateMapping =
     deploymentSubstates.noartifact,
     deploymentSubstates.artifact_too_big,
     deploymentSubstates.alreadyInstalled,
-    deploymentSubstates.decommissioned
+    deploymentSubstates.decommissioned,
+    deploymentSubstates.incompatible_tier
   ],
   successes: [deploymentSubstates.success]
 };
