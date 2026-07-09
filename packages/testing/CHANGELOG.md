@@ -1,5 +1,27 @@
 ---
-## 0.14.0 - 2026-06-30
+## 0.14.1 - 2026-07-09
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Fixed deployment retries value type in the msw
+
+ ([feccc39](https://github.com/NorthernTechHQ/nt-gui/commit/feccc39bfdbf8e1167d2d12230abeb6df795c49c))  by @mineralsfree
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/testing-0.14.0 - 2026-06-30
 
 
 ### Bug fixes
