@@ -1,5 +1,43 @@
 ---
-## 0.39.0 - 2026-06-30
+## 0.40.0 - 2026-07-09
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Aligned deployment mock with types
+
+ ([53577c1](https://github.com/NorthernTechHQ/nt-gui/commit/53577c1af9d1a02bbd7d4680484e4c0afab40b44))  by @mineralsfree
+
+
+
+
+
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added incompatible tier to deployment substates
+
+([MEN-9631](https://northerntech.atlassian.net/browse/MEN-9631)) ([ce3e58b](https://github.com/NorthernTechHQ/nt-gui/commit/ce3e58b6ae9677dcebe4ae0d4a66ab9609753215))  by @mineralsfree
+
+
+
+
+
+
+
+
+### Security
+
+
+
+## @northern.tech/store-0.39.0 - 2026-06-30
 
 
 ### Bug fixes
