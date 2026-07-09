@@ -249,14 +249,8 @@ export const groupDeploymentStats = (deployment: Partial<Deployment>, withSkippe
   const { statistics = {} } = deployment;
   const { status = {} } = statistics;
   const stats = { ...defaultStats, ...status };
-  let result: DeploymentStats = { inprogress: 0, paused: 0, pending: 0, successes: 0, failures: 0 };
-  let groupStates = deploymentStatesToSubstates;
-  if (withSkipped) {
-    groupStates = deploymentStatesToSubstatesWithSkipped;
-    result.skipped = statCollector(groupStates.skipped!, stats);
-  }
-  result = {
-    ...result,
+  const groupStates = withSkipped ? deploymentStatesToSubstatesWithSkipped : deploymentStatesToSubstates;
+  const result: DeploymentStats = {
     // don't include 'pending' as inprogress, as all remaining devices will be pending - we don't discriminate based on phase membership
     inprogress: statCollector(groupStates.inprogress, stats),
     pending: statCollector(groupStates.pending, stats),
@@ -264,6 +258,9 @@ export const groupDeploymentStats = (deployment: Partial<Deployment>, withSkippe
     failures: statCollector(groupStates.failures, stats),
     paused: statCollector(groupStates.paused, stats)
   };
+  if (withSkipped) {
+    result.skipped = statCollector(groupStates.skipped!, stats);
+  }
   return result;
 };
 
