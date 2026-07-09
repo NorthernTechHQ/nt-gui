@@ -112,7 +112,7 @@ export const mockState = {
       status: 'inprogress',
       active: true,
       device_count: 100,
-      retries: '0',
+      retries: 0,
       type: 'software'
     }
   },
