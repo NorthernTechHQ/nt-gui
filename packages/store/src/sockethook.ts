@@ -14,14 +14,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { blobToString, byteArrayToString } from '@northern.tech/utils/helpers';
-import msgpack5 from 'msgpack5';
+import { Packr } from 'msgpackr';
 import Cookies from 'universal-cookie';
 
 import { DEVICE_MESSAGE_PROTOCOLS as MessageProtocols, DEVICE_MESSAGE_TYPES as MessageTypes, TIMEOUTS, apiUrl } from './constants';
 
 const cookies = new Cookies();
 
-const MessagePack = msgpack5();
+// plain maps + omitted undefined fields keep the wire format compatible with the deviceconnect backend
+const MessagePack = new Packr({ skipValues: [undefined], useRecords: false });
 
 type UseSessionProps = {
   onClose: (event: CloseEvent) => void;
@@ -57,7 +58,7 @@ export const useSession = ({ onClose, onHealthCheckFailed, onMessageReceived, on
       return;
     }
     const proto_header = { proto: MessageProtocols.Shell, typ, sid: socketRef.current.sessionId, props };
-    const encodedData = MessagePack.encode({ hdr: proto_header, body });
+    const encodedData = MessagePack.pack({ hdr: proto_header, body });
     socketRef.current.send(encodedData);
   }, []);
 
@@ -81,7 +82,7 @@ export const useSession = ({ onClose, onHealthCheckFailed, onMessageReceived, on
         const {
           hdr: { props = {} as Record<string, string | number>, proto, sid, typ },
           body
-        } = MessagePack.decode(data as Buffer) as {
+        } = MessagePack.unpack(new Uint8Array(data as ArrayBuffer)) as {
           body: Uint8Array;
           hdr: { props: Record<string, string | number>; proto: number; sid: string; typ: string };
         };
