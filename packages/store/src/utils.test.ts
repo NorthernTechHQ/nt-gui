@@ -18,11 +18,13 @@ import { describe, expect, it } from 'vitest';
 import { DARK_MODE, LIGHT_MODE } from './constants';
 import {
   generateDeploymentGroupDetails,
+  getAttributeScopeLabel,
   groupDeploymentDevicesStats,
   groupDeploymentStats,
   isDarkMode,
   mapDeviceAttributes,
-  parseSubscriptionPreview
+  parseSubscriptionPreview,
+  stripOrchestratorManifestPrefix
 } from './utils';
 
 describe('mapDeviceAttributes function', () => {
@@ -253,5 +255,27 @@ describe('subscription utils', () => {
     expect(result.micro.amount).toEqual(3200);
     expect(result.standard.addons.configure).toEqual(1000);
     expect(result.standard.addons.troubleshoot).toEqual(2000);
+  });
+});
+describe('stripOrchestratorManifestPrefix function', () => {
+  it('strips the orchestrator manifest prefix', () => {
+    expect(stripOrchestratorManifestPrefix('mender-orchestrator-manifest.component_type')).toEqual('component_type');
+  });
+  it('leaves other keys untouched', () => {
+    expect(stripOrchestratorManifestPrefix('component_type')).toEqual('component_type');
+    expect(stripOrchestratorManifestPrefix('rootfs-image.version')).toEqual('rootfs-image.version');
+  });
+});
+describe('getAttributeScopeLabel function', () => {
+  it('labels system scope attributes as default', () => {
+    expect(getAttributeScopeLabel({ key: 'created_ts', scope: 'system' })).toEqual('default');
+  });
+  it('labels orchestrator manifest inventory attributes as system', () => {
+    expect(getAttributeScopeLabel({ key: 'mender-orchestrator-manifest.component_type', scope: 'inventory' })).toEqual('system');
+  });
+  it('keeps other scopes as they are', () => {
+    expect(getAttributeScopeLabel({ key: 'artifact_name', scope: 'inventory' })).toEqual('inventory');
+    expect(getAttributeScopeLabel({ key: 'mac', scope: 'identity' })).toEqual('identity');
+    expect(getAttributeScopeLabel({ key: 'mender-orchestrator-manifest.component_type', scope: 'tags' })).toEqual('tags');
   });
 });

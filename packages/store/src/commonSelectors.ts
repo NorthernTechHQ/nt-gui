@@ -19,7 +19,7 @@ import dayjs from 'dayjs';
 
 import { ADDONS, PLANS, defaultReports } from './appSlice/constants';
 import { getFeatures, getSearchedDevices } from './appSlice/selectors';
-import { DEVICE_LIST_MAXIMUM_LENGTH, UNGROUPED_GROUP } from './commonConstants';
+import { ATTRIBUTE_SCOPE_LABELS, DEVICE_LIST_MAXIMUM_LENGTH, UNGROUPED_GROUP } from './commonConstants';
 import { ALL_DEVICES, ATTRIBUTE_SCOPES, DEVICE_ISSUE_OPTIONS, rolesById, rolesByName, serviceProviderRolesById, uiPermissionsById } from './constants';
 import type { Role } from './constants';
 import type { Deployment } from './deploymentsSlice';
@@ -41,7 +41,7 @@ import {
   getUserSettings,
   getUserSettingsInitialized
 } from './usersSlice/selectors';
-import { listItemMapper, mapUserRolesToUiPermissions } from './utils';
+import { getAttributeScopeLabel, listItemMapper, mapUserRolesToUiPermissions, stripOrchestratorManifestPrefix } from './utils';
 
 export const getIsEnterprise = createSelector(
   [getOrganization, getFeatures],
@@ -137,25 +137,46 @@ export const getFilterAttributes = createSelector(
   ({ previousFilters }, { identityAttributes, inventoryAttributes, systemAttributes, tagAttributes }) => {
     const deviceNameAttribute = { key: 'name', value: 'Name', scope: ATTRIBUTE_SCOPES.tags, category: ATTRIBUTE_SCOPES.tags, priority: 1 };
     const deviceIdAttribute = { key: 'id', value: 'Device ID', scope: ATTRIBUTE_SCOPES.identity, category: ATTRIBUTE_SCOPES.identity, priority: 1 };
-    const checkInAttribute = { key: 'check_in_time', value: 'Latest activity', scope: ATTRIBUTE_SCOPES.system, category: ATTRIBUTE_SCOPES.system, priority: 4 };
+    const checkInAttribute = {
+      key: 'check_in_time',
+      value: 'Latest activity',
+      scope: ATTRIBUTE_SCOPES.system,
+      category: ATTRIBUTE_SCOPE_LABELS.default,
+      priority: 4
+    };
     const updateAttribute = { ...checkInAttribute, key: 'updated_ts', value: 'Last inventory update' };
-    const firstRequestAttribute = { key: 'created_ts', value: 'First request', scope: ATTRIBUTE_SCOPES.system, category: ATTRIBUTE_SCOPES.system, priority: 4 };
+    const firstRequestAttribute = {
+      key: 'created_ts',
+      value: 'First request',
+      scope: ATTRIBUTE_SCOPES.system,
+      category: ATTRIBUTE_SCOPE_LABELS.default,
+      priority: 4
+    };
     const attributes = [
       ...previousFilters.map(item => ({
         ...item,
-        value: deviceIdAttribute.key === item.key ? deviceIdAttribute.value : item.key,
+        value: deviceIdAttribute.key === item.key ? deviceIdAttribute.value : stripOrchestratorManifestPrefix(item.key),
         category: 'recently used',
         priority: 0
       })),
       deviceNameAttribute,
       deviceIdAttribute,
       ...identityAttributes.map(item => ({ key: item, value: item, scope: ATTRIBUTE_SCOPES.identity, category: ATTRIBUTE_SCOPES.identity, priority: 1 })),
-      ...inventoryAttributes.map(item => ({ key: item, value: item, scope: ATTRIBUTE_SCOPES.inventory, category: ATTRIBUTE_SCOPES.inventory, priority: 2 })),
+      ...inventoryAttributes.map(item => {
+        const category = getAttributeScopeLabel({ key: item, scope: ATTRIBUTE_SCOPES.inventory });
+        return {
+          key: item,
+          value: stripOrchestratorManifestPrefix(item),
+          scope: ATTRIBUTE_SCOPES.inventory,
+          category,
+          priority: category === ATTRIBUTE_SCOPES.inventory ? 2 : 3
+        };
+      }),
       ...tagAttributes.map(item => ({ key: item, value: item, scope: ATTRIBUTE_SCOPES.tags, category: ATTRIBUTE_SCOPES.tags, priority: 3 })),
       checkInAttribute,
       updateAttribute,
       firstRequestAttribute,
-      ...systemAttributes.map(item => ({ key: item, value: item, scope: ATTRIBUTE_SCOPES.system, category: ATTRIBUTE_SCOPES.system, priority: 4 }))
+      ...systemAttributes.map(item => ({ key: item, value: item, scope: ATTRIBUTE_SCOPES.system, category: ATTRIBUTE_SCOPE_LABELS.default, priority: 4 }))
     ];
     return attributeDuplicateFilter(attributes, 'key');
   }
