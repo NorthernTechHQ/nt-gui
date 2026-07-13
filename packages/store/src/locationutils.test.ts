@@ -282,6 +282,46 @@ describe('locationutils', () => {
       });
       expect(search).toEqual('inventory=some:eq:thing&inventory=group:eq:Unassigned');
     });
+
+    it('uses working utilties - parseDeviceQuery handles relabeled scope params', () => {
+      const { filters } = parseDeviceQuery(
+        new URLSearchParams('?default=created_ts:eq:123&system=mender-orchestrator-manifest.component_type:eq:rtos&inventory=some:eq:thing')
+      );
+      expect(filters).toEqual([
+        { key: 'some', operator: '$eq', scope: 'inventory', value: 'thing' },
+        { key: 'mender-orchestrator-manifest.component_type', operator: '$eq', scope: 'inventory', value: 'rtos' },
+        { key: 'created_ts', operator: '$eq', scope: 'system', value: '123' }
+      ]);
+    });
+    it('uses working utilties - parseDeviceQuery parses legacy system scope urls', () => {
+      const { filters } = parseDeviceQuery(new URLSearchParams('?system=created_ts:eq:123'));
+      expect(filters).toEqual([{ key: 'created_ts', operator: '$eq', scope: 'system', value: '123' }]);
+    });
+    it('uses working utilties - parseDeviceQuery keeps orchestrator manifest filters under the inventory param working', () => {
+      const { filters } = parseDeviceQuery(new URLSearchParams('?inventory=mender-orchestrator-manifest.component_type:eq:rtos'));
+      expect(filters).toEqual([{ key: 'mender-orchestrator-manifest.component_type', operator: '$eq', scope: 'inventory', value: 'rtos' }]);
+    });
+    it('uses working utilties - formatDeviceSearch serializes filters under relabeled scope params', () => {
+      const search = formatDeviceSearch({
+        filters: [
+          { key: 'created_ts', operator: '$eq', scope: 'system', value: '123' },
+          { key: 'mender-orchestrator-manifest.component_type', operator: '$eq', scope: 'inventory', value: 'rtos' },
+          { key: 'some', value: 'thing' }
+        ],
+        pageState: {}
+      });
+      expect(search).toEqual('inventory=some:eq:thing&system=mender-orchestrator-manifest.component_type:eq:rtos&default=created_ts:eq:123');
+    });
+    it('uses working utilties - device search urls round-trip with relabeled scope params', () => {
+      const filters = [
+        { key: 'created_ts', operator: '$eq', scope: 'system', value: '123' },
+        { key: 'mender-orchestrator-manifest.component_type', operator: '$eq', scope: 'inventory', value: 'rtos' }
+      ];
+      const search = formatDeviceSearch({ filters, pageState: {} });
+      const { filters: parsed } = parseDeviceQuery(new URLSearchParams(`?${search}`));
+      expect(parsed).toEqual(expect.arrayContaining(filters));
+      expect(parsed).toHaveLength(filters.length);
+    });
   });
 
   describe('releases', () => {

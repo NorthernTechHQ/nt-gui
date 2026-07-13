@@ -18,16 +18,19 @@ import type { FilterOperator, PaginationOptions, SortOptions } from './constants
 import {
   ALL_DEVICES,
   ATTRIBUTE_SCOPES,
+  ATTRIBUTE_SCOPE_LABELS,
   AUDIT_LOGS_TYPES,
   DEPLOYMENT_ROUTES,
   DEPLOYMENT_STATES,
   DEPLOYMENT_TYPES,
   DEVICE_FILTERING_OPTIONS,
   DEVICE_LIST_DEFAULTS,
+  ORCHESTRATOR_MANIFEST_ATTRIBUTE_PREFIX,
   UNGROUPED_GROUP,
   emptyFilter
 } from './constants';
 import type { DeviceFilter } from './devicesSlice';
+import { getAttributeScopeLabel } from './utils';
 
 const SEPARATOR = ':';
 
@@ -47,14 +50,18 @@ const commonFields: Record<string, FieldConfig> = {
   open: { parse: Boolean, select: defaultSelector, target: 'open' }
 };
 
-type ScopeConfig = { delimiter: string; filters: DeviceFilter[] };
+// filters are serialized under a query param named after their displayed scope label instead of the internal scope
+const filterScopeParams = [...Object.values(ATTRIBUTE_SCOPES), ATTRIBUTE_SCOPE_LABELS.default];
 
-const scopes: Record<Scope, ScopeConfig> = {
-  identity: { delimiter: 'identity', filters: [] },
-  inventory: { delimiter: 'inventory', filters: [] },
-  monitor: { delimiter: 'monitor', filters: [] },
-  system: { delimiter: 'system', filters: [] },
-  tags: { delimiter: 'tags', filters: [] }
+const scopeFromParam = (param: string, key: string): Scope => {
+  if (param === ATTRIBUTE_SCOPE_LABELS.default) {
+    return ATTRIBUTE_SCOPES.system;
+  }
+  if (param === ATTRIBUTE_SCOPE_LABELS.system) {
+    // a plain key under the system param stems from a legacy url, where system still referred to the internal scope
+    return key.startsWith(ORCHESTRATOR_MANIFEST_ATTRIBUTE_PREFIX) ? ATTRIBUTE_SCOPES.inventory : ATTRIBUTE_SCOPES.system;
+  }
+  return param as Scope;
 };
 
 export type PageState = Partial<PaginationOptions> & {
@@ -115,7 +122,7 @@ const legacyDeviceQueryParse = (
   filteringAttributes: FilteringAttributes
 ): { filters: ScopedFilters; params: URLSearchParams } => {
   const params = new URLSearchParams(searchParams);
-  const result: ScopedFilters = Object.keys(scopes).reduce((accu, scope) => ({ ...accu, [scope]: [] }), {} as ScopedFilters);
+  const result: ScopedFilters = { identity: [], inventory: [], monitor: [], system: [], tags: [] };
   if (params.get('group')) {
     result.inventory.push({
       ...emptyFilter,
@@ -147,22 +154,20 @@ const legacyDeviceQueryParse = (
 
 const scopedFilterParse = (searchParams: URLSearchParams): { filters: ScopedFilters; params: URLSearchParams } => {
   const params = new URLSearchParams(searchParams);
-  const filters = Object.keys(scopes).reduce<ScopedFilters>(
-    (accu, scope) => {
-      accu[scope] = [];
-      if (!params.has(scope)) {
-        return accu;
-      }
-      accu[scope] = params.getAll(scope).map(scopedQuery => {
+  const filters = filterScopeParams.reduce<ScopedFilters>(
+    (accu, param) => {
+      params.getAll(param).forEach(scopedQuery => {
         const items = scopedQuery.split(SEPARATOR);
         // URLSearchParams will automatically decode any URI encoding present in the query string, thus we have to also handle queries with a SEPARATOR separately
-        return { ...emptyFilter, scope, key: items[0], operator: `$${items[1]}` as FilterOperator, value: items.slice(2).join(SEPARATOR) };
+        const key = items[0];
+        const scope = scopeFromParam(param, key);
+        accu[scope].push({ ...emptyFilter, scope, key, operator: `$${items[1]}` as FilterOperator, value: items.slice(2).join(SEPARATOR) });
       });
       return accu;
     },
     { identity: [], inventory: [], monitor: [], system: [], tags: [] }
   );
-  Object.keys(scopes).forEach(scope => params.delete(scope));
+  filterScopeParams.forEach(param => params.delete(param));
   return { filters, params };
 };
 
@@ -189,7 +194,7 @@ export const parseDeviceQuery = (searchParams: URLSearchParams, extraProps: Pars
   const refersOldStyleAttributes = Object.values(filteringAttributes).some(scopeValues =>
     (scopeValues as string[]).some(scopedValue => queryParams.get(scopedValue))
   );
-  if ((refersOldStyleAttributes && !Object.keys(scopes).some(scope => queryParams.get(scope))) || queryParams.get('group')) {
+  if ((refersOldStyleAttributes && !filterScopeParams.some(param => queryParams.get(param))) || queryParams.get('group')) {
     const { filters, params } = legacyDeviceQueryParse(queryParams, filteringAttributes);
     scopedFilters = filters;
     queryParams = params;
@@ -259,16 +264,15 @@ const stripFilterOperator = (operator: string): string => operator.replaceAll('$
 
 const formatFilters = (filters: DeviceFilter[]): string[] => {
   const result = filters
-    // group all filters by their scope to get a more organized result
-    .reduce<Record<Scope, Set<string>>>(
+    // group all filters by their url param to get a more organized result
+    .reduce<Record<string, Set<string>>>(
       (accu, filter) => {
         const { scope = ATTRIBUTE_SCOPES.inventory, operator = '$eq' } = filter;
-        accu[scope].add(
-          `${scopes[scope].delimiter}=${filter.key}${SEPARATOR}${stripFilterOperator(operator)}${SEPARATOR}${encodeURIComponent(filter.value as string)}`
-        );
+        const param = getAttributeScopeLabel({ key: filter.key, scope });
+        accu[param].add(`${param}=${filter.key}${SEPARATOR}${stripFilterOperator(operator)}${SEPARATOR}${encodeURIComponent(filter.value as string)}`);
         return accu;
       },
-      Object.keys(scopes).reduce((accu, item) => ({ ...accu, [item]: new Set<string>() }), {} as Record<Scope, Set<string>>)
+      filterScopeParams.reduce((accu, item) => ({ ...accu, [item]: new Set<string>() }), {} as Record<string, Set<string>>)
     );
   // boil it all down to a single line containing all filters
   return Object.values(result)
