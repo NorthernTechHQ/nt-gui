@@ -2659,12 +2659,12 @@ export type DBusSubsystem = {
  * Mixed arrays are not allowed.
  *
  */
-export type AttributeValue = string | number | Array<string> | Array<number>;
+export type AttributeValueRequest = string | number | Array<string> | Array<number>;
 
 /**
  * Attribute descriptor.
  */
-export type DeviceAttribute = {
+export type DeviceAttributeRequest = {
   /**
    * A human readable, unique attribute ID, e.g. 'device_type', 'ip_addr', 'cpu_load', etc.
    *
@@ -2674,7 +2674,7 @@ export type DeviceAttribute = {
    * Attribute description.
    */
   description?: string;
-  value: AttributeValue;
+  value: AttributeValueRequest;
 };
 
 export type DeviceNew = {
@@ -2689,7 +2689,7 @@ export type DeviceNew = {
   /**
    * A list of attribute descriptors.
    */
-  attributes?: Array<Attribute>;
+  attributes?: Array<AttributeRequest>;
 };
 
 /**
@@ -2727,7 +2727,7 @@ export type DevicesInGroupsReq = {
   groups: Array<string>;
 };
 
-export type Attribute = DeviceAttribute & {
+export type AttributeRequest = DeviceAttributeRequest & {
   scope: Scope;
   /**
    * The date and time of last tag update in RFC3339 format.
@@ -2737,56 +2737,6 @@ export type Attribute = DeviceAttribute & {
    */
   timestamp?: string;
 };
-
-export type InternalDeviceInventory = {
-  /**
-   * Mender-assigned unique ID.
-   */
-  id?: string;
-  /**
-   * Timestamp of the most recent attribute update.
-   */
-  updated_ts?: string;
-  /**
-   * A list of attribute descriptors.
-   */
-  attributes?: Array<InternalAttribute>;
-};
-
-/**
- * Attribute descriptor.
- */
-export type InternalAttribute = {
-  /**
-   * A human readable, unique attribute ID, e.g. 'device_type', 'ip_addr', 'cpu_load', etc.
-   *
-   */
-  name: string;
-  /**
-   * Attribute description.
-   */
-  description?: string;
-  value: InternalAttributeValue;
-  scope: Scope;
-  /**
-   * The date and time of last tag update in RFC3339 format.
-   *
-   * Only applicable when scope is `tags`.
-   *
-   */
-  timestamp?: string;
-};
-
-/**
- * The current value of the attribute.
- *
- * Attribute type is implicit, inferred from the JSON type.
- *
- * Supported types: number, string, array of numbers, array of strings.
- * Mixed arrays are not allowed.
- *
- */
-export type InternalAttributeValue = boolean | string | number | Array<string> | Array<number>;
 
 /**
  * Error descriptor.
@@ -2920,6 +2870,56 @@ export type SearchParams = {
 };
 
 /**
+ * The current value of the attribute.
+ *
+ * Attribute type is implicit, inferred from the JSON type.
+ *
+ * Supported types: boolean, number, string, array of numbers, array of strings.
+ * Mixed arrays are not allowed.
+ *
+ */
+export type AttributeValueResponse = boolean | string | number | Array<string> | Array<number>;
+
+/**
+ * Attribute descriptor.
+ */
+export type AttributeResponse = {
+  /**
+   * A human readable, unique attribute ID, e.g. 'device_type', 'ip_addr', 'cpu_load', etc.
+   *
+   */
+  name: string;
+  /**
+   * Attribute description.
+   */
+  description?: string;
+  value: AttributeValueResponse;
+  scope: Scope;
+  /**
+   * The date and time of last tag update in RFC3339 format.
+   *
+   * Only applicable when scope is `tags`.
+   *
+   */
+  timestamp?: string;
+};
+
+export type DeviceInventoryResponse = {
+  /**
+   * Mender-assigned unique ID.
+   */
+  id?: string;
+  /**
+   * Timestamp of the most recent attribute update.
+   */
+  updated_ts?: string;
+  /**
+   * A list of attribute descriptors.
+   */
+  attributes?: Array<AttributeResponse>;
+};
+
+/**
  * Filter definition
  */
 export type Filter = {
@@ -2969,21 +2969,6 @@ export type Group = {
   group: string;
 };
 
-export type DeviceInventory = {
-  /**
-   * Mender-assigned unique ID.
-   */
-  id?: string;
-  /**
-   * Timestamp of the most recent attribute update.
-   */
-  updated_ts?: string;
-  /**
-   * A list of attribute descriptors.
-   */
-  attributes?: Array<Attribute>;
-};
-
 /**
  * Filterable attribute
  */
@@ -3011,6 +2996,21 @@ export type FilterDefinition = {
    * List of filter predicates, chained with boolean AND operators to build the search condition definition.
    */
   terms?: Array<FilterPredicate>;
+};
+
+export type DeviceInventoryRequest = {
+  /**
+   * Mender-assigned unique ID.
+   */
+  id?: string;
+  /**
+   * Timestamp of the most recent attribute update.
+   */
+  updated_ts?: string;
+  /**
+   * A list of attribute descriptors.
+   */
+  attributes?: Array<AttributeRequest>;
 };
 
 export type NewDeviceInternalProvisionTypeInternal = {
@@ -4205,6 +4205,20 @@ export type OwnUserUpdate = {
 };
 
 /**
+ * Update user information.
+ */
+export type EmailUpdateRequest = {
+  /**
+   * New email address.
+   */
+  email?: string;
+  /**
+   * Current password.
+   */
+  current_password?: string;
+};
+
+/**
  * Personal Access Token Request.
  */
 export type PersonalAccessTokenRequest = {
@@ -4302,6 +4316,13 @@ export type EmailVerificationCompletion = {
   secret_hash: string;
 };
 
+export type EmailChangeCompletion = {
+  /**
+   * The verification token sent to the user's new email.
+   */
+  secret_hash: string;
+};
+
 /**
  * Metadata structure.
  */
@@ -4334,6 +4355,21 @@ export type RoleV1 = {
   description?: string;
   permissions?: Array<RolePermission>;
   permission_sets_with_scope?: Array<PermissionSetWithScope>;
+};
+
+export type PendingEmailChange = {
+  /**
+   * The new email address awaiting verification.
+   */
+  new_email: string;
+  /**
+   * The timestamp when the email change request was initiated.
+   */
+  created_ts: string;
+  /**
+   * The timestamp when the pending request will expire.
+   */
+  valid_until: string;
 };
 
 /**
@@ -4403,6 +4439,20 @@ export type FeedbackAi = {
    * The device ID where this feedback was triggered for context.
    */
   device_id: string;
+};
+
+/**
+ * Update user information.
+ */
+export type OwnUserUpdateV2 = {
+  /**
+   * New password.
+   */
+  password?: string;
+  /**
+   * Current password.
+   */
+  current_password?: string;
 };
 
 /**
@@ -9562,6 +9612,10 @@ export type AssignDeviceFlagsErrors = {
    */
   404: Error;
   /**
+   * Request cannot be fulfilled e.g. due to exceeded limit on maximum test devices.
+   */
+  422: Error;
+  /**
    * Client has made too many requests.
    */
   429: Error;
@@ -11235,7 +11289,7 @@ export type AssignAttributesData = {
    *
    * A list of attribute descriptors.
    */
-  body: Array<DeviceAttribute>;
+  body: Array<DeviceAttributeRequest>;
   path?: never;
   query?: never;
   url: '/api/devices/v1/inventory/device/attributes';
@@ -11271,7 +11325,7 @@ export type ReplaceAttributesData = {
    *
    * A list of attribute descriptors.
    */
-  body: Array<DeviceAttribute>;
+  body: Array<DeviceAttributeRequest>;
   path?: never;
   query?: never;
   url: '/api/devices/v1/inventory/device/attributes';
@@ -11531,7 +11585,7 @@ export type UpdateInventoryForADeviceData = {
   /**
    * A list of attribute descriptors.
    */
-  body: Array<Attribute>;
+  body: Array<AttributeRequest>;
   headers?: {
     /**
      * Skips updating the device if modified after the given RFC1123 timestamp.
@@ -11584,7 +11638,7 @@ export type UpdateInventoryForADeviceScopeWiseData = {
   /**
    * A list of attribute descriptors.
    */
-  body: Array<Attribute>;
+  body: Array<AttributeRequest>;
   headers?: {
     /**
      * Skips updating the device if modified after the given RFC1123 timestamp.
@@ -11812,7 +11866,7 @@ export type InventoryInternalV2SearchDeviceInventoriesResponses = {
    *
    * Successful response.
    */
-  200: Array<InternalDeviceInventory>;
+  200: Array<DeviceInventoryResponse>;
 };
 
 export type InventoryInternalV2SearchDeviceInventoriesResponse =
@@ -11917,7 +11971,7 @@ export type ListDeviceInventoriesResponses = {
    *
    * Successful response.
    */
-  200: Array<DeviceInventory>;
+  200: Array<DeviceInventoryResponse>;
 };
 
 export type ListDeviceInventoriesResponse = ListDeviceInventoriesResponses[keyof ListDeviceInventoriesResponses];
@@ -11981,7 +12035,7 @@ export type GetDeviceInventoryResponses = {
   /**
    * Successful response - the device was found.
    */
-  200: DeviceInventory;
+  200: DeviceInventoryResponse;
 };
 
 export type GetDeviceInventoryResponse = GetDeviceInventoryResponses[keyof GetDeviceInventoryResponses];
@@ -12487,7 +12541,7 @@ export type InventoryV2SearchDeviceInventoriesResponses = {
    *
    * Successful response.
    */
-  200: Array<DeviceInventory>;
+  200: Array<DeviceInventoryResponse>;
 };
 
 export type InventoryV2SearchDeviceInventoriesResponse = InventoryV2SearchDeviceInventoriesResponses[keyof InventoryV2SearchDeviceInventoriesResponses];
@@ -12715,7 +12769,7 @@ export type ExecuteFilterResponses = {
    *
    * Successful response.
    */
-  200: Array<DeviceInventory>;
+  200: Array<DeviceInventoryResponse>;
 };
 
 export type ExecuteFilterResponse = ExecuteFilterResponses[keyof ExecuteFilterResponses];
@@ -16421,6 +16475,155 @@ export type UpdateOwnUserDataResponses = {
 
 export type UpdateOwnUserDataResponse = UpdateOwnUserDataResponses[keyof UpdateOwnUserDataResponses];
 
+export type GetPendingEmailChangeRequestData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/management/v1/useradm/users/me/email-change/pending';
+};
+
+export type GetPendingEmailChangeRequestErrors = {
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type GetPendingEmailChangeRequestError = GetPendingEmailChangeRequestErrors[keyof GetPendingEmailChangeRequestErrors];
+
+export type GetPendingEmailChangeRequestResponses = {
+  /**
+   * A pending email change request exists for the current user.
+   */
+  200: PendingEmailChange;
+  /**
+   * No pending email change request exists.
+   */
+  204: void;
+};
+
+export type GetPendingEmailChangeRequestResponse = GetPendingEmailChangeRequestResponses[keyof GetPendingEmailChangeRequestResponses];
+
+export type InitiateEmailChangeRequestData = {
+  /**
+   * Updated user data.
+   */
+  body: EmailUpdateRequest;
+  path?: never;
+  query?: never;
+  url: '/api/management/v1/useradm/users/me/email-change/start';
+};
+
+export type InitiateEmailChangeRequestErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * Not Found.
+   */
+  404: Error;
+  /**
+   * An email change request for the user already exist.
+   *
+   */
+  409: Error;
+  /**
+   * The request data was structurally valid but failed business rules.
+   * See the response body for specific validation errors.
+   *
+   */
+  422: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type InitiateEmailChangeRequestError = InitiateEmailChangeRequestErrors[keyof InitiateEmailChangeRequestErrors];
+
+export type InitiateEmailChangeRequestResponses = {
+  /**
+   * The request has been accepted
+   */
+  202: unknown;
+};
+
+export type CompleteEmailChangeData = {
+  /**
+   * The secret hash required to verify and complete the email change.
+   */
+  body: EmailChangeCompletion;
+  path?: never;
+  query?: never;
+  url: '/api/management/v1/useradm/users/email-change/complete';
+};
+
+export type CompleteEmailChangeErrors = {
+  /**
+   * The secret hash was invalid, not found, or has expired.
+   *
+   */
+  400: Error;
+  /**
+   * The request could not be completed due to a conflict with the current state of the resource.
+   *
+   */
+  409: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type CompleteEmailChangeError = CompleteEmailChangeErrors[keyof CompleteEmailChangeErrors];
+
+export type CompleteEmailChangeResponses = {
+  /**
+   * The email has been successfully updated and verified.
+   */
+  204: void;
+};
+
+export type CompleteEmailChangeResponse = CompleteEmailChangeResponses[keyof CompleteEmailChangeResponses];
+
+export type CancelEmailChangeRequestData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/management/v1/useradm/users/me/email-change/cancel';
+};
+
+export type CancelEmailChangeRequestErrors = {
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type CancelEmailChangeRequestError = CancelEmailChangeRequestErrors[keyof CancelEmailChangeRequestErrors];
+
+export type CancelEmailChangeRequestResponses = {
+  /**
+   * The pending email change request has been successfully cancelled.
+   */
+  204: void;
+};
+
+export type CancelEmailChangeRequestResponse = CancelEmailChangeRequestResponses[keyof CancelEmailChangeRequestResponses];
+
 export type Enable2FaData = {
   body?: never;
   path: {
@@ -17881,6 +18084,52 @@ export type UserFeedbackResponses = {
 };
 
 export type UserFeedbackResponse = UserFeedbackResponses[keyof UserFeedbackResponses];
+
+export type UseradmV2UpdateOwnUserDataData = {
+  /**
+   * Updated user data.
+   */
+  body: OwnUserUpdateV2;
+  path?: never;
+  query?: never;
+  url: '/api/management/v2/useradm/users/me';
+};
+
+export type UseradmV2UpdateOwnUserDataErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * Not Found.
+   */
+  404: Error;
+  /**
+   * The request data was structurally valid but failed business rules.
+   * See the response body for specific validation errors.
+   *
+   */
+  422: unknown;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type UseradmV2UpdateOwnUserDataError = UseradmV2UpdateOwnUserDataErrors[keyof UseradmV2UpdateOwnUserDataErrors];
+
+export type UseradmV2UpdateOwnUserDataResponses = {
+  /**
+   * User information updated.
+   */
+  204: void;
+};
+
+export type UseradmV2UpdateOwnUserDataResponse = UseradmV2UpdateOwnUserDataResponses[keyof UseradmV2UpdateOwnUserDataResponses];
 
 export type WorkflowsCheckLivelinessData = {
   body?: never;
