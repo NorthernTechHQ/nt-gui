@@ -1,5 +1,25 @@
 ---
-## 0.40.0 - 2026-07-09
+## 0.41.0 - 2026-07-13
+
+
+### Features
+
+#### Store
+
+
+- *(store)* Added new email change endpoints
+
+([MEN-9950](https://northerntech.atlassian.net/browse/MEN-9950)) ([feda139](https://github.com/NorthernTechHQ/nt-gui/commit/feda139cc1eeab79fbf7490a66d4204c337eeb9e))  by @mineralsfree
+
+
+
+
+
+
+
+
+
+## @northern.tech/store-0.40.0 - 2026-07-09
 
 
 ### Bug fixes
