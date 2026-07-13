@@ -15,7 +15,17 @@
 import { APPLICATION_JWT_CONTENT_TYPE, useradmApiUrl, useradmApiUrlv2 } from '@northern.tech/utils/constants';
 import { HttpResponse, http } from 'msw';
 
-import { accessTokens, defaultPassword, userId as defaultUserId, mockApiResponses, permissionSets, rbacRoles, testSsoId, token } from '../mockData';
+import {
+  accessTokens,
+  defaultPassword,
+  userId as defaultUserId,
+  mockApiResponses,
+  pendingEmailChange,
+  permissionSets,
+  rbacRoles,
+  testSsoId,
+  token
+} from '../mockData';
 import { validated } from './validation';
 
 export const userHandlers = [
@@ -218,6 +228,25 @@ export const userHandlers = [
       return new HttpResponse(null, { status: secret_hash === 'superSecret' ? 200 : 576 });
     })
   ),
+  http.get(`${useradmApiUrl}/users/me/email-change/pending`, () => HttpResponse.json(pendingEmailChange)),
+  http.post(
+    `${useradmApiUrl}/users/me/email-change/start`,
+    validated(async ({ request }) => {
+      const { email, current_password } = await request.json();
+      if (current_password === 'bad_password') {
+        return new HttpResponse(null, { status: 401 });
+      }
+      return new HttpResponse(null, { status: email ? 202 : 579 });
+    })
+  ),
+  http.post(
+    `${useradmApiUrl}/users/email-change/complete`,
+    validated(async ({ request }) => {
+      const { secret_hash } = await request.json();
+      return new HttpResponse(null, { status: secret_hash === 'superSecret' ? 204 : 400 });
+    })
+  ),
+  http.post(`${useradmApiUrl}/users/me/email-change/cancel`, () => new HttpResponse(null, { status: 204 })),
   http.get(`${useradmApiUrlv2}/permission_sets`, () => HttpResponse.json(permissionSets)),
   http.post(
     `${useradmApiUrl}/users/:userId/assign`,

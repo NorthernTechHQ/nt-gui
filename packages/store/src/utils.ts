@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { Attribute, AttributeFilterPredicate, DeviceWithImage, FilterV2, InvoiceLineItem, Scope } from '@northern.tech/types/MenderTypes';
+import type { AttributeFilterPredicate, AttributeResponse, DeviceWithImage, FilterV2, InvoiceLineItem, Scope } from '@northern.tech/types/MenderTypes';
 import { duplicateFilter, yes } from '@northern.tech/utils/helpers';
 import type { AxiosError } from 'axios';
 
@@ -301,7 +301,7 @@ type DeviceAttributeMap = {
   tags: Record<string, string>;
 };
 
-export const mapDeviceAttributes = (attributes: Attribute[] = []): DeviceAttributeMap =>
+export const mapDeviceAttributes = (attributes: AttributeResponse[] = []): DeviceAttributeMap =>
   attributes.reduce<DeviceAttributeMap>(
     (accu, attribute) => {
       if (!(attribute.value && attribute.name) && attribute.scope === ATTRIBUTE_SCOPES.inventory) {

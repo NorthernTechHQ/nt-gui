@@ -12,12 +12,12 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import type {
-  Attribute,
+  AttributeResponse,
   Device as BackendDevice,
   Filter as BackendFilter,
   ConnectionState,
   DeviceConfiguration,
-  DeviceInventory,
+  DeviceInventoryResponse,
   DeviceState,
   DeviceTierLimits,
   DeviceWithImage,
@@ -314,7 +314,7 @@ export const selectGroup = createAppAsyncThunk<unknown, { filters?: DeviceFilter
 
 const getEarliestTs = (dateA = '', dateB = '') => (!dateA || !dateB ? dateA || dateB : dateA < dateB ? dateA : dateB);
 
-type ReceivedDevice = BackendDevice & DeviceInventory & Omit<DeviceWithImage, 'status'>;
+type ReceivedDevice = BackendDevice & DeviceInventoryResponse & Omit<DeviceWithImage, 'status'>;
 const reduceReceivedDevices = (devices: ReceivedDevice[], ids: string[], state: RootState, status?: DeviceAuthState) =>
   devices.reduce(
     (accu, device: any) => {
@@ -697,7 +697,7 @@ export const searchDevices = createAppAsyncThunk(
 );
 
 const ATTRIBUTE_LIST_CUTOFF = 100;
-const attributeReducer = (attributes: Attribute[] = []) =>
+const attributeReducer = (attributes: AttributeResponse[] = []) =>
   attributes.slice(0, ATTRIBUTE_LIST_CUTOFF).reduce(
     (accu, { name, scope }) => {
       if (!accu[scope]) {

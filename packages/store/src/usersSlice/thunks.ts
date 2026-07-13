@@ -11,7 +11,14 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { PermissionSetWithScope, PersonalAccessToken, RolePermission, RolePermissionObject } from '@northern.tech/types/MenderTypes';
+import type {
+  EmailUpdateRequest,
+  PendingEmailChange,
+  PermissionSetWithScope,
+  PersonalAccessToken,
+  RolePermission,
+  RolePermissionObject
+} from '@northern.tech/types/MenderTypes';
 import { duplicateFilter, extractErrorMessage, isEmpty } from '@northern.tech/utils/helpers';
 import { clearAllRetryTimers } from '@northern.tech/utils/retrytimer';
 import dayjs from 'dayjs';
@@ -242,6 +249,30 @@ export const verifyEmailComplete = createAppAsyncThunk(`${sliceName}/verifyEmail
   GeneralApi.post(`${useradmApiUrl}/auth/verify-email/complete`, { secret_hash })
     .catch(err => rejectWithValue({ status: err.response?.status, data: err.response?.data }))
     .finally(() => Promise.resolve(dispatch(getUser(OWN_USER_ID))))
+);
+
+export const getPendingEmailChange = createAppAsyncThunk(`${sliceName}/getPendingEmailChange`, (_, { rejectWithValue }) =>
+  GeneralApi.get<PendingEmailChange>(`${useradmApiUrl}/users/me/email-change/pending`)
+    .then(({ data }) => data || null)
+    .catch(e => rejectWithValue(e))
+);
+
+export const initiateEmailChange = createAppAsyncThunk(`${sliceName}/initiateEmailChange`, (emailUpdate: EmailUpdateRequest, { dispatch }) =>
+  GeneralApi.post(`${useradmApiUrl}/users/me/email-change/start`, emailUpdate).catch(err =>
+    commonErrorHandler(err, 'An error occurred starting the email change process:', dispatch)
+  )
+);
+
+export const completeEmailChange = createAppAsyncThunk(`${sliceName}/completeEmailChange`, (secret_hash: string, { dispatch, rejectWithValue }) =>
+  GeneralApi.post(`${useradmApiUrl}/users/email-change/complete`, { secret_hash })
+    .catch(err => rejectWithValue({ status: err.response?.status, data: err.response?.data }))
+    .finally(() => Promise.resolve(dispatch(getUser(OWN_USER_ID))))
+);
+
+export const cancelEmailChange = createAppAsyncThunk(`${sliceName}/cancelEmailChange`, (_, { dispatch }) =>
+  GeneralApi.post(`${useradmApiUrl}/users/me/email-change/cancel`).catch(err =>
+    commonErrorHandler(err, 'An error occurred cancelling the email change request:', dispatch)
+  )
 );
 
 export const verify2FA = createAppAsyncThunk(`${sliceName}/verify2FA`, (tfaData: { token2fa: string }, { dispatch }) =>

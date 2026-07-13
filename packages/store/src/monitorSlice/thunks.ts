@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import type { DeviceFilter } from '@/src/devicesSlice';
-import type { Alert, DeviceInventory, MonitorConfiguration } from '@northern.tech/types/MenderTypes';
+import type { Alert, DeviceInventoryResponse, MonitorConfiguration } from '@northern.tech/types/MenderTypes';
 
 import { actions, sliceName } from '.';
 import storeActions from '../actions';
@@ -83,7 +83,7 @@ export const getIssueCountsByType = createAppAsyncThunk(
       selectedIssues: [type],
       status
     });
-    const res = await Api.post<DeviceInventory[]>(`${inventoryApiUrlV2}/filters/search`, {
+    const res = await Api.post<DeviceInventoryResponse[]>(`${inventoryApiUrlV2}/filters/search`, {
       page: 1,
       per_page: 1,
       filters: filterTerms,

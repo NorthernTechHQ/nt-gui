@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { defaultState } from '@/testUtils';
-import { accessTokens, defaultPassword, receivedPermissionSets, receivedRoles, testSsoId, userId } from '@northern.tech/testing/mockData';
+import { accessTokens, defaultPassword, pendingEmailChange, receivedPermissionSets, receivedRoles, testSsoId, userId } from '@northern.tech/testing/mockData';
 import { act } from '@testing-library/react';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
@@ -28,6 +28,8 @@ import { setOfflineThreshold } from '../thunks';
 import { USER_LOGOUT } from './constants';
 import {
   addUserToCurrentTenant,
+  cancelEmailChange,
+  completeEmailChange,
   confirmOAuthLink,
   createRole,
   createUser,
@@ -38,6 +40,7 @@ import {
   generateToken,
   get2FAQRCode,
   getGlobalSettings,
+  getPendingEmailChange,
   getPermissionSets,
   getRoles,
   getTokens,
@@ -45,6 +48,7 @@ import {
   getUserList,
   getUserSettings,
   initializeSelf,
+  initiateEmailChange,
   loginUser,
   logoutUser,
   passwordResetComplete,
@@ -193,6 +197,46 @@ describe('user actions', () => {
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
     await expect(store.dispatch(verifyEmailComplete('ohNo')).unwrap()).rejects.toBeTruthy();
+  });
+  it('should allow retrieving a pending email change request', async () => {
+    vi.clearAllMocks();
+    const store = mockStore({ ...defaultState });
+    const result = await store.dispatch(getPendingEmailChange()).unwrap();
+    expect(result).toEqual(pendingEmailChange);
+  });
+  it('should allow initiating an email change', async () => {
+    vi.clearAllMocks();
+    const expectedActions = [{ type: initiateEmailChange.pending.type }, { type: initiateEmailChange.fulfilled.type }];
+    const store = mockStore({ ...defaultState });
+    await store.dispatch(initiateEmailChange({ email: 'new_email@acme.com', current_password: defaultPassword }));
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+  it('should allow completing an email change', async () => {
+    vi.clearAllMocks();
+    const expectedActions = [
+      { type: completeEmailChange.pending.type },
+      { type: getUser.pending.type },
+      { type: actions.receivedUser.type, payload: defaultState.users.byId[userId] },
+      ...commonUserRetrievalActions,
+      { type: completeEmailChange.fulfilled.type }
+    ];
+    const store = mockStore({ ...defaultState });
+    await store.dispatch(completeEmailChange('superSecret'));
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+    await expect(store.dispatch(completeEmailChange('ohNo')).unwrap()).rejects.toBeTruthy();
+  });
+  it('should allow cancelling an email change request', async () => {
+    vi.clearAllMocks();
+    const expectedActions = [{ type: cancelEmailChange.pending.type }, { type: cancelEmailChange.fulfilled.type }];
+    const store = mockStore({ ...defaultState });
+    await store.dispatch(cancelEmailChange());
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
   it('should allow logging in', async () => {
     vi.clearAllMocks();
