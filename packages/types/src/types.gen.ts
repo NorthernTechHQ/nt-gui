@@ -16564,7 +16564,7 @@ export type CompleteEmailChangeData = {
   body: EmailChangeCompletion;
   path?: never;
   query?: never;
-  url: '/api/management/v1/useradm/users/email-change/complete';
+  url: '/api/management/v1/useradm/users/me/email-change/complete';
 };
 
 export type CompleteEmailChangeErrors = {
