@@ -1,5 +1,46 @@
 ---
-## 0.14.1 - 2026-07-09
+## 0.15.0 - 2026-07-13
+
+
+### Bug fixes
+
+#### Testing
+
+
+- *(testing)* Openapi spec update
+
+ ([5b4e418](https://github.com/NorthernTechHQ/nt-gui/commit/5b4e418dc301657339d0cf95e719750277faf521))  by @mender-test-bot
+
+
+
+- *(testing)* Adjusted email endpoint
+
+ ([fb907a3](https://github.com/NorthernTechHQ/nt-gui/commit/fb907a31fb097858a3b337c0624dedb71beed257))  by @mineralsfree
+
+
+
+
+
+
+
+### Features
+
+#### Testing
+
+
+- *(testing)* Added new email change handlers in msw
+
+([MEN-9950](https://northerntech.atlassian.net/browse/MEN-9950)) ([0d51830](https://github.com/NorthernTechHQ/nt-gui/commit/0d518301b1e5b81058e6ed35cabba8dc79c7cd32))  by @mineralsfree
+
+
+
+
+
+
+
+
+
+## @northern.tech/testing-0.14.1 - 2026-07-09
 
 
 ### Bug fixes
