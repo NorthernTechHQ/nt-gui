@@ -240,7 +240,7 @@ export const userHandlers = [
     })
   ),
   http.post(
-    `${useradmApiUrl}/users/email-change/complete`,
+    `${useradmApiUrl}/users/me/email-change/complete`,
     validated(async ({ request }) => {
       const { secret_hash } = await request.json();
       return new HttpResponse(null, { status: secret_hash === 'superSecret' ? 204 : 400 });
