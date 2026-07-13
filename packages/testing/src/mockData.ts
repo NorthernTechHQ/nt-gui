@@ -65,6 +65,12 @@ export const accessTokens = [
   { id: 'some-id-2', expiration_date: '2022-06-02T11:11:21.725Z', last_used: '2022-06-02T11:05:21.725Z', name: 'some-name-2' }
 ];
 
+export const pendingEmailChange = {
+  new_email: 'new_email@acme.com',
+  created_ts: '2019-01-13T07:25:00.000Z',
+  valid_until: '2019-01-13T08:25:00.000Z'
+};
+
 export const webhookEvents = [
   {
     id: '1',
