@@ -1,5 +1,24 @@
 ---
-## 0.41.0 - 2026-07-13
+## 0.41.1 - 2026-07-13
+
+
+### Bug fixes
+
+#### Store
+
+
+- *(store)* Adjusted email endpoint
+
+ ([9f7e17d](https://github.com/NorthernTechHQ/nt-gui/commit/9f7e17d1e488d31d7f7d454873147d1581eef8f3))  by @mineralsfree
+
+
+
+
+
+
+
+
+## @northern.tech/store-0.41.0 - 2026-07-13
 
 
 ### Features
