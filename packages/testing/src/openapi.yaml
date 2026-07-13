@@ -11793,7 +11793,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - ManagementJWT: []
-  /api/management/v1/useradm/users/email-change/complete:
+  /api/management/v1/useradm/users/me/email-change/complete:
     post:
       tags:
         - User_Administration_Management API
