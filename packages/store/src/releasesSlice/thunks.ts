@@ -16,7 +16,7 @@ import type {
   ArtifactUpdateV1,
   DeltaJobDetailsItem,
   DeltaJobsListItem,
-  DeviceInventory,
+  DeviceInventoryResponse,
   Manifest,
   ManifestUpdate,
   ReleaseUpdate,
@@ -112,7 +112,7 @@ export const getArtifactInstallCount = createAppAsyncThunk(`${sliceName}/getArti
   const { filterTerms } = convertDeviceListStateToFilters({
     filters: [{ ...emptyFilter, key: attribute, value: version!, scope: 'inventory' }]
   });
-  return GeneralApi.post<DeviceInventory[]>(`${inventoryApiUrlV2}/filters/search`, {
+  return GeneralApi.post<DeviceInventoryResponse[]>(`${inventoryApiUrlV2}/filters/search`, {
     page: 1,
     per_page: 1,
     filters: filterTerms,
