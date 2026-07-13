@@ -264,7 +264,7 @@ export const initiateEmailChange = createAppAsyncThunk(`${sliceName}/initiateEma
 );
 
 export const completeEmailChange = createAppAsyncThunk(`${sliceName}/completeEmailChange`, (secret_hash: string, { dispatch, rejectWithValue }) =>
-  GeneralApi.post(`${useradmApiUrl}/users/email-change/complete`, { secret_hash })
+  GeneralApi.post(`${useradmApiUrl}/users/me/email-change/complete`, { secret_hash })
     .catch(err => rejectWithValue({ status: err.response?.status, data: err.response?.data }))
     .finally(() => Promise.resolve(dispatch(getUser(OWN_USER_ID))))
 );
