@@ -38,6 +38,7 @@ export type UiPermissionsDefinition = Readonly<{
   groups: Record<string, string[]>;
   releases: Record<string, string[]>;
   tenantManagement: string[];
+  tokenManagement: string[];
   userManagement: string[];
 }>;
 
@@ -56,6 +57,7 @@ export const emptyUiPermissions: UiPermissionsDefinition = Object.freeze({
   groups: Object.freeze({}),
   releases: Object.freeze({}),
   tenantManagement: [],
+  tokenManagement: [],
   userManagement: []
 });
 
@@ -117,6 +119,7 @@ const permissionSetIds = {
   ManageDevices: 'ManageDevices',
   ManageReleases: 'ManageReleases',
   ManageTenants: 'ManageTenants',
+  ManageTokens: 'ManageTokens',
   ManageUsers: 'ManageUsers',
   ReadAuditLogs: 'ReadAuditLogs',
   ReadDevices: 'ReadDevices',
@@ -163,6 +166,7 @@ export const uiPermissionsById = {
       groups: permissionSetIds.ManageDevices,
       releases: permissionSetIds.ManageReleases,
       tenantManagement: permissionSetIds.ManageTenants,
+      tokenManagement: permissionSetIds.ManageTokens,
       userManagement: permissionSetIds.ManageUsers
     },
     title: 'Manage',
@@ -305,6 +309,7 @@ export const rolesById: Record<string, Role> = Object.freeze({
       deployments: uiPermissionsByArea.deployments.uiPermissions.map(permissionMapper),
       groups: { [ALL_DEVICES]: uiPermissionsByArea.groups.uiPermissions.map(permissionMapper) },
       releases: { [ALL_RELEASES]: uiPermissionsByArea.releases.uiPermissions.map(permissionMapper) },
+      tokenManagement: [uiPermissionsById.manage.value],
       userManagement: uiPermissionsByArea.userManagement.uiPermissions.map(permissionMapper)
     }
   },
@@ -319,6 +324,7 @@ export const rolesById: Record<string, Role> = Object.freeze({
       deployments: [uiPermissionsById.read.value],
       groups: { [ALL_DEVICES]: [uiPermissionsById.read.value] },
       releases: { [ALL_RELEASES]: [uiPermissionsById.read.value] },
+      tokenManagement: [uiPermissionsById.manage.value],
       userManagement: [uiPermissionsById.read.value]
     }
   },
@@ -330,7 +336,8 @@ export const rolesById: Record<string, Role> = Object.freeze({
     permissions: [],
     uiPermissions: {
       ...emptyUiPermissions,
-      releases: { [ALL_RELEASES]: uiPermissionsByArea.releases.uiPermissions.map(permissionMapper) }
+      releases: { [ALL_RELEASES]: uiPermissionsByArea.releases.uiPermissions.map(permissionMapper) },
+      tokenManagement: [uiPermissionsById.manage.value]
     }
   },
   [staticRolesByName.deploymentsManager]: {
@@ -342,7 +349,8 @@ export const rolesById: Record<string, Role> = Object.freeze({
       ...emptyUiPermissions,
       deployments: uiPermissionsByArea.deployments.uiPermissions.map(permissionMapper),
       groups: { [ALL_DEVICES]: [uiPermissionsById.deploy.value, uiPermissionsById.read.value] },
-      releases: { [ALL_RELEASES]: [uiPermissionsById.read.value] }
+      releases: { [ALL_RELEASES]: [uiPermissionsById.read.value] },
+      tokenManagement: [uiPermissionsById.manage.value]
     }
   },
   [staticRolesByName.terminalAccess]: {
@@ -352,7 +360,8 @@ export const rolesById: Record<string, Role> = Object.freeze({
     permissions: [],
     uiPermissions: {
       ...emptyUiPermissions,
-      groups: { [ALL_DEVICES]: [uiPermissionsById.connect.value] }
+      groups: { [ALL_DEVICES]: [uiPermissionsById.connect.value] },
+      tokenManagement: [uiPermissionsById.manage.value]
     }
   }
 });
@@ -388,6 +397,8 @@ export const defaultPermissionSets: Record<string, Omit<PermissionSet, 'permissi
   [permissionSetIds.Basic]: {
     name: permissionSetIds.Basic,
     result: {
+      // the personal access token endpoints are currently part of the Basic set; drop this once they move to ManageTokens
+      tokenManagement: [uiPermissionsById.manage.value],
       // this is needed to prevent the detailed permissions of the basic permission set from being interpreted as allowing read & management access to user endpoints
       userManagement: [uiPermissionsById.read.value]
     }
@@ -396,6 +407,12 @@ export const defaultPermissionSets: Record<string, Omit<PermissionSet, 'permissi
     name: permissionSetIds.SuperUser,
     result: {
       ...rolesById[staticRolesByName.admin].uiPermissions
+    }
+  },
+  [permissionSetIds.ManageTokens]: {
+    name: permissionSetIds.ManageTokens,
+    result: {
+      tokenManagement: [uiPermissionsById.manage.value]
     }
   },
   [permissionSetIds.ManageUsers]: {

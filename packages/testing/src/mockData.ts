@@ -160,6 +160,7 @@ export const adminUserCapabilities = {
   canDeploy: true,
   canManageDevices: true,
   canManageReleases: true,
+  canManageTokens: true,
   canManageUsers: true,
   canReadDeployments: true,
   canReadDevices: true,
@@ -871,7 +872,8 @@ export const rbacRoles = [
     permission_sets_with_scope: [
       { ...defaultPermissionSets.ReadReleases },
       { ...defaultPermissionSets.ManageReleases },
-      { ...defaultPermissionSets.UploadArtifacts }
+      { ...defaultPermissionSets.UploadArtifacts },
+      { ...defaultPermissionSets.ManageTokens }
     ]
   },
   {
@@ -967,6 +969,7 @@ const expectedParsedRoles = {
         [ALL_RELEASES]: [uiPermissionsById.manage.value, uiPermissionsById.upload.value, uiPermissionsById.read.value]
       },
       tenantManagement: [uiPermissionsById.read.value, uiPermissionsById.manage.value],
+      tokenManagement: [uiPermissionsById.manage.value],
       userManagement: [uiPermissionsById.read.value, uiPermissionsById.manage.value]
     }
   }
