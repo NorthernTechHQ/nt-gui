@@ -3998,9 +3998,26 @@ export type TenantIdName = {
 
 export type TenantsIdName = Array<TenantIdName>;
 
+export type PendingEmailChange = {
+  /**
+   * The new email address awaiting verification.
+   */
+  new_email: string;
+  /**
+   * The timestamp when the email change request was initiated.
+   */
+  created_ts: string;
+  /**
+   * The timestamp when the pending request will expire.
+   */
+  valid_until: string;
+};
+
 export type UserWithTenantInfo = User &
   TenantInfo & {
     tenants?: TenantsIdName;
+  } & {
+    pending_email_change_request?: PendingEmailChange;
   };
 
 /**
@@ -4355,21 +4372,6 @@ export type RoleV1 = {
   description?: string;
   permissions?: Array<RolePermission>;
   permission_sets_with_scope?: Array<PermissionSetWithScope>;
-};
-
-export type PendingEmailChange = {
-  /**
-   * The new email address awaiting verification.
-   */
-  new_email: string;
-  /**
-   * The timestamp when the email change request was initiated.
-   */
-  created_ts: string;
-  /**
-   * The timestamp when the pending request will expire.
-   */
-  valid_until: string;
 };
 
 /**
