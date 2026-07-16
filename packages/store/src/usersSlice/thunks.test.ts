@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { defaultState } from '@/testUtils';
-import { accessTokens, defaultPassword, pendingEmailChange, receivedPermissionSets, receivedRoles, testSsoId, userId } from '@northern.tech/testing/mockData';
+import { accessTokens, defaultPassword, receivedPermissionSets, receivedRoles, testSsoId, userId } from '@northern.tech/testing/mockData';
 import { act } from '@testing-library/react';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
@@ -198,11 +198,11 @@ describe('user actions', () => {
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
     await expect(store.dispatch(verifyEmailComplete('ohNo')).unwrap()).rejects.toBeTruthy();
   });
-  it('should allow retrieving a pending email change request', async () => {
+  it('should return no pending email change request by default', async () => {
     vi.clearAllMocks();
     const store = mockStore({ ...defaultState });
     const result = await store.dispatch(getPendingEmailChange()).unwrap();
-    expect(result).toEqual(pendingEmailChange);
+    expect(result).toBeNull();
   });
   it('should allow initiating an email change', async () => {
     vi.clearAllMocks();
