@@ -15,17 +15,7 @@
 import { APPLICATION_JWT_CONTENT_TYPE, useradmApiUrl, useradmApiUrlv2 } from '@northern.tech/utils/constants';
 import { HttpResponse, http } from 'msw';
 
-import {
-  accessTokens,
-  defaultPassword,
-  userId as defaultUserId,
-  mockApiResponses,
-  pendingEmailChange,
-  permissionSets,
-  rbacRoles,
-  testSsoId,
-  token
-} from '../mockData';
+import { accessTokens, defaultPassword, userId as defaultUserId, mockApiResponses, permissionSets, rbacRoles, testSsoId, token } from '../mockData';
 import { validated } from './validation';
 
 export const userHandlers = [
@@ -228,7 +218,7 @@ export const userHandlers = [
       return new HttpResponse(null, { status: secret_hash === 'superSecret' ? 200 : 576 });
     })
   ),
-  http.get(`${useradmApiUrl}/users/me/email-change/pending`, () => HttpResponse.json(pendingEmailChange)),
+  http.get(`${useradmApiUrl}/users/me/email-change/pending`, () => new HttpResponse(null, { status: 204 })),
   http.post(
     `${useradmApiUrl}/users/me/email-change/start`,
     validated(async ({ request }) => {
