@@ -1,6 +1,6 @@
 {
   "name": "@northern.tech/store",
-  "version": "0.41.2",
+  "version": "0.41.3",
   "license": "Apache-2.0",
   "private": false,
   "publishConfig": {
