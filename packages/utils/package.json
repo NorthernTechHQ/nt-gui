@@ -51,7 +51,6 @@
   "peerDependencies": {
     "@northern.tech/types": "*",
     "dayjs": "^1.x",
-    "msgpack5": "^6.x",
     "pluralize": "^8.x",
     "react": "^19.x",
     "react-dom": "^19.x",
