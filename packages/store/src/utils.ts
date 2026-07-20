@@ -18,11 +18,13 @@ import type { AxiosError } from 'axios';
 import type { DeviceIssueOptionKey, FilterOperator, Role } from './constants';
 import {
   ATTRIBUTE_SCOPES,
+  ATTRIBUTE_SCOPE_LABELS,
   DARK_MODE,
   DEPLOYMENT_STATES,
   DEVICE_FILTERING_OPTIONS,
   DEVICE_ISSUE_OPTIONS,
   DEVICE_LIST_MAXIMUM_LENGTH,
+  ORCHESTRATOR_MANIFEST_ATTRIBUTE_PREFIX,
   TIMEOUTS,
   defaultStats,
   deploymentDisplayStates,
@@ -137,6 +139,19 @@ const filterCompare = (filter: DeviceFilter, item: DeviceFilter): boolean =>
 export const filtersFilter = (item: DeviceFilter, index: number, array: DeviceFilter[]): boolean => {
   const firstIndex = array.findIndex(filter => filterCompare(filter, item));
   return firstIndex === index;
+};
+
+export const stripOrchestratorManifestPrefix = (key: string) =>
+  key.startsWith(ORCHESTRATOR_MANIFEST_ATTRIBUTE_PREFIX) ? key.substring(ORCHESTRATOR_MANIFEST_ATTRIBUTE_PREFIX.length) : key;
+
+export const getAttributeScopeLabel = ({ key = '', scope }: { key?: string; scope?: string }) => {
+  if (scope === ATTRIBUTE_SCOPES.system) {
+    return ATTRIBUTE_SCOPE_LABELS.default;
+  }
+  if (scope === ATTRIBUTE_SCOPES.inventory && key.startsWith(ORCHESTRATOR_MANIFEST_ATTRIBUTE_PREFIX)) {
+    return ATTRIBUTE_SCOPE_LABELS.system;
+  }
+  return scope ?? '';
 };
 
 export const stripUndefined = <T extends Record<string, unknown>>(obj: T): Partial<T> =>

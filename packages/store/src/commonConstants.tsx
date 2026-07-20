@@ -51,6 +51,15 @@ export interface IdAttribute {
 }
 export const defaultIdAttribute: Readonly<IdAttribute> = Object.freeze({ attribute: 'id', scope: ATTRIBUTE_SCOPES.identity });
 
+export const ORCHESTRATOR_MANIFEST_ATTRIBUTE_PREFIX = 'mender-orchestrator-manifest.';
+
+// displayed labels for attribute scopes that diverge from the internal scope values: the system scope shows as
+// `default`, while orchestrator manifest attributes (inventory scope) show as `system`
+export const ATTRIBUTE_SCOPE_LABELS = {
+  default: 'default',
+  system: 'system'
+} as const;
+
 export const productOrder = ['micro', 'standard', 'system'];
 
 export const credentialTypes = {
