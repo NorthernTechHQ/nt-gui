@@ -22,7 +22,7 @@ process.on('unhandledRejection', err => {
 });
 
 // Setup requests interception
-const server = setupServer(...handlers);
+export const server = setupServer(...handlers);
 
 beforeAll(async () => {
   await server.listen({ onUnhandledRequest: 'error' });
