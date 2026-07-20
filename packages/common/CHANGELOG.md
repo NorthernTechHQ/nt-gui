@@ -1,5 +1,5 @@
 ---
-## 0.6.0 - 2026-07-15
+## @northern.tech/common-0.6.0 - 2026-07-20
 
 
 
@@ -15,6 +15,7 @@
 
 - Ensured mui 9 compatibility
 - Switched to react-router instead of react-router-dom
+- Updated terminal message decoder dependency
 #### testing
 
 - Fixed ts errors to enable type checked usage
@@ -39,7 +40,8 @@
 - Bump the production-dependencies group with 8 updates
 - Bump the development-dependencies group across 1 directory with 9 updates
 - Bump the development-dependencies group with 16 updates
-- Bump @mui/material in the mui group across 1 directory## @northern.tech/common-ui-0.8.1 - 2025-11-12
+- Bump @mui/material in the mui group across 1 directory
+## @northern.tech/common-ui-0.8.1 - 2025-11-12
 
 
 
@@ -61,7 +63,8 @@
 - Bump the development-dependencies group with 16 updates
 - Bump the production-dependencies group across 1 directory with 16 updates
 - Bump the development-dependencies group with 12 updates
-- Bump the production-dependencies group across 1 directory with 14 updates## @northern.tech/common-0.3.1 - 2025-08-22
+- Bump the production-dependencies group across 1 directory with 14 updates
+## @northern.tech/common-0.3.1 - 2025-08-22
 
 
 
@@ -69,7 +72,8 @@
 
 #### store
 
-- Fixed imports of esm unfriendly packages## @northern.tech/common-0.3.0 - 2025-08-14
+- Fixed imports of esm unfriendly packages
+## @northern.tech/common-0.3.0 - 2025-08-14
 
 
 
@@ -90,7 +94,8 @@
 
 
 - Bump the mui group across 1 directory with 4 updates
-- Bump the development-dependencies group across 1 directory with 9 updates## @northern.tech/common-ui-0.5.1 - 2025-05-27
+- Bump the development-dependencies group across 1 directory with 9 updates
+## @northern.tech/common-ui-0.5.1 - 2025-05-27
 
 
 
@@ -98,7 +103,8 @@
 
 
 - Bump the development-dependencies group across 1 directory with 16 updates
-- Bump the production-dependencies group across 1 directory with 16 updates## @northern.tech/common-ui-0.5.0 - 2025-03-11
+- Bump the production-dependencies group across 1 directory with 16 updates
+## @northern.tech/common-ui-0.5.0 - 2025-03-11
 
 
 
@@ -106,14 +112,16 @@
 
 
 - Bump the development-dependencies group with 15 updates
-- Bump the production-dependencies group across 1 directory with 11 updates## @northern.tech/common-ui-0.2.4 - 2025-02-14
+- Bump the production-dependencies group across 1 directory with 11 updates
+## @northern.tech/common-ui-0.2.4 - 2025-02-14
 
 
 
 ### Bug fixes
 
 
-- Re-expanded react version ranges## @northern.tech/common-0.2.3 - 2025-02-05
+- Re-expanded react version ranges
+## @northern.tech/common-0.2.3 - 2025-02-05
 
 
 
@@ -129,14 +137,16 @@
 ### Dependency updates
 
 
-- Bump the development-dependencies group across 1 directory with 14 updates## @northern.tech/common-ui-0.3.1 - 2025-01-31
+- Bump the development-dependencies group across 1 directory with 14 updates
+## @northern.tech/common-ui-0.3.1 - 2025-01-31
 
 
 
 ### Dependency updates
 
 
-- Bump the production-dependencies group across 1 directory with 18 updates## @northern.tech/common-0.2.2 - 2024-12-10
+- Bump the production-dependencies group across 1 directory with 18 updates
+## @northern.tech/common-0.2.2 - 2024-12-10
 
 
 
@@ -152,7 +162,8 @@
 
 
 - Bump the development-dependencies group across 1 directory with 12 updates
-- Bump the production-dependencies group across 1 directory with 17 updates## @northern.tech/common-ui-0.3.0 - 2024-12-10
+- Bump the production-dependencies group across 1 directory with 17 updates
+## @northern.tech/common-ui-0.3.0 - 2024-12-10
 
 
 
@@ -165,7 +176,8 @@
 
 #### common/auditlogs
 
-- Fixed AUDIT_LOGS_TYPES import from store## @northern.tech/common-ui-0.2.1 - 2024-12-10
+- Fixed AUDIT_LOGS_TYPES import from store
+## @northern.tech/common-ui-0.2.1 - 2024-12-10
 
 
 
@@ -173,7 +185,8 @@
 
 #### common
 
-- Include dist folder in package output## @northern.tech/common-0.2.0 - 2024-12-04
+- Include dist folder in package output
+## @northern.tech/common-0.2.0 - 2024-12-04
 
 
 
@@ -196,4 +209,5 @@
 | Ticket |
 |---|
 | [ENT-12150](https://northerntech.atlassian.net/browse/ENT-12150) |
+
 ---
