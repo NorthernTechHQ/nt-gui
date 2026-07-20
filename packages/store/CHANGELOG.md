@@ -1,1763 +1,976 @@
 ---
-## 0.41.1 - 2026-07-13
+## 0.41.2 - 2026-07-15
+
 
 
 ### Bug fixes
 
-#### Store
+#### store
 
+- Filter test device count by accepted devices ([MEN-9959](https://northerntech.atlassian.net/browse/MEN-9959))
 
-- *(store)* Adjusted email endpoint
+---
+### All tickets resolved in this release
 
- ([9f7e17d](https://github.com/NorthernTechHQ/nt-gui/commit/9f7e17d1e488d31d7f7d454873147d1581eef8f3))  by @mineralsfree
-
-
-
-
-
-
-
-
-## @northern.tech/store-0.41.0 - 2026-07-13
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Added new email change endpoints
-
-([MEN-9950](https://northerntech.atlassian.net/browse/MEN-9950)) ([feda139](https://github.com/NorthernTechHQ/nt-gui/commit/feda139cc1eeab79fbf7490a66d4204c337eeb9e))  by @mineralsfree
+| Ticket |
+|---|
+| [MEN-9959](https://northerntech.atlassian.net/browse/MEN-9959) |
+## @northern.tech/store-0.41.1 - 2026-07-13
 
 
 
+### Bug fixes
+
+#### store
+
+- Adjusted email endpoint## @northern.tech/store-0.41.0 - 2026-07-13
 
 
 
+### New features
 
+#### store
 
+- Added new email change endpoints ([MEN-9950](https://northerntech.atlassian.net/browse/MEN-9950))
 
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-9950](https://northerntech.atlassian.net/browse/MEN-9950) |
 ## @northern.tech/store-0.40.0 - 2026-07-09
 
 
+
+### New features
+
+#### store
+
+- Added incompatible tier to deployment substates ([MEN-9631](https://northerntech.atlassian.net/browse/MEN-9631))
+
 ### Bug fixes
 
-#### Store
+#### store
+
+- Aligned deployment mock with types
+
+### Dependency updates
 
 
-- *(store)* Aligned deployment mock with types
+- Bump the development-dependencies group with 16 updates
 
- ([53577c1](https://github.com/NorthernTechHQ/nt-gui/commit/53577c1af9d1a02bbd7d4680484e4c0afab40b44))  by @mineralsfree
+---
+### All tickets resolved in this release
 
-
-
-
-
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Added incompatible tier to deployment substates
-
-([MEN-9631](https://northerntech.atlassian.net/browse/MEN-9631)) ([ce3e58b](https://github.com/NorthernTechHQ/nt-gui/commit/ce3e58b6ae9677dcebe4ae0d4a66ab9609753215))  by @mineralsfree
-
-
-
-
-
-
-
-
-### Security
-
-
-
+| Ticket |
+|---|
+| [MEN-9631](https://northerntech.atlassian.net/browse/MEN-9631) |
 ## @northern.tech/store-0.39.0 - 2026-06-30
 
 
+
+### New features
+
+#### store
+
+- Reclassify dependencies as peers to reduce duplicate installations & related issues
+
 ### Bug fixes
 
-#### Store
+#### store
 
+- Reconsider device offline state based on most recently updated backend value ([MEN-9906](https://northerntech.atlassian.net/browse/MEN-9906))
+- Give clearer feedback when device limits are reached during auth set change attempts ([MEN-9595](https://northerntech.atlassian.net/browse/MEN-9595))
 
-- *(store)* Reconsider device offline state based on most recently updated backend value
+---
+### All tickets resolved in this release
 
-([MEN-9906](https://northerntech.atlassian.net/browse/MEN-9906)) ([0ac8588](https://github.com/NorthernTechHQ/nt-gui/commit/0ac8588a107b45b714981705f009d5882bf9961f))  by @mzedel
-
-
-
-
-- *(store)* Give clearer feedback when device limits are reached during auth set change attempts
-
-([MEN-9595](https://northerntech.atlassian.net/browse/MEN-9595)) ([a3234bb](https://github.com/NorthernTechHQ/nt-gui/commit/a3234bb33161f4fe81574fded54add3264ceda23))  by @mzedel
-
-
-
-
-
-
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Reclassify dependencies as peers to reduce duplicate installations & related issues
-
- ([e5938a4](https://github.com/NorthernTechHQ/nt-gui/commit/e5938a4e01335e5279bb5c3836602694ee01eb3e))  by @mzedel
-
-
-
-
-
-
-
-
+| Ticket |
+|---|
+| [MEN-9906](https://northerntech.atlassian.net/browse/MEN-9906) |
+| [MEN-9595](https://northerntech.atlassian.net/browse/MEN-9595) |
 ## @northern.tech/store-0.38.0 - 2026-06-25
 
 
-### Features
 
-#### Store
+### New features
 
+#### store
 
-- *(store)* Added a pure software fetch thunk
+- Added a pure software fetch thunk ([MEN-9212](https://northerntech.atlassian.net/browse/MEN-9212))
 
-([MEN-9212](https://northerntech.atlassian.net/browse/MEN-9212)) ([d8a5abc](https://github.com/NorthernTechHQ/nt-gui/commit/d8a5abc18d0b4bea140b5840d97cf20c9ed73f0b))  by @mineralsfree
+### Improvements
 
+#### store
 
+- Removed notification handling on group creation & defer to application to handle it ([MEN-9872](https://northerntech.atlassian.net/browse/MEN-9872))
+- Let device thunks filenames reflect absence of react components
 
+---
+### All tickets resolved in this release
 
-
-
-
-
-### Refactor
-
-#### Store
-
-
-- *(store)* Removed notification handling on group creation & defer to application to handle it
-
-([MEN-9872](https://northerntech.atlassian.net/browse/MEN-9872)) ([85b65b5](https://github.com/NorthernTechHQ/nt-gui/commit/85b65b58a410779677ad302d1505cc3dd3cb5f5e))  by @mzedel
-
-
-
-
-- *(store)* Let device thunks filenames reflect absence of react components
-
- ([eadc1a6](https://github.com/NorthernTechHQ/nt-gui/commit/eadc1a6f4781c1a1a827a41fbe767b06aa46c15c))  by @mzedel
-
-
-
-
-
-
-
-
+| Ticket |
+|---|
+| [MEN-9872](https://northerntech.atlassian.net/browse/MEN-9872) |
+| [MEN-9212](https://northerntech.atlassian.net/browse/MEN-9212) |
 ## @northern.tech/store-0.37.0 - 2026-06-23
 
 
+
+### New features
+
+#### store
+
+- Added test device flag support ([MEN-9584](https://northerntech.atlassian.net/browse/MEN-9584))
+
 ### Bug fixes
 
-#### Store
+#### store
 
+- Guard deployment name decoding against invalid escapes ([ME-682](https://northerntech.atlassian.net/browse/ME-682))
+- Fixed version information indirection that prevented new version info from getting shown
 
-- *(store)* Guard deployment name decoding against invalid escapes
+---
+### All tickets resolved in this release
 
-([ME-682](https://northerntech.atlassian.net/browse/ME-682)) ([13792a1](https://github.com/NorthernTechHQ/nt-gui/commit/13792a12ad8c5929553e9d4acddd6b28a838ddac))  by @nickanderson
-
-
-
-
-
-
-  A deployment name containing a bare '%' or an incomplete escape (e.g. a
-  trailing '%2') made decodeURIComponent throw, rejecting getDeploymentsByStatus
-  and breaking the whole deployments list. Fall back to the raw name when it
-  isn't a valid URI component.
-
-- *(store)* Fixed version information indirection that prevented new version info from getting shown
-
- ([1a7e4a6](https://github.com/NorthernTechHQ/nt-gui/commit/1a7e4a6f9db4bd2d1e8a9485acf1eb5b603a3a64))  by @mzedel
-
-
-
-
-
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Added test device flag support
-
-([MEN-9584](https://northerntech.atlassian.net/browse/MEN-9584)) ([5148f27](https://github.com/NorthernTechHQ/nt-gui/commit/5148f2724414be73a8b5b951967ff86d8d549766))  by @mineralsfree
-
-
-
-
-
-
-
-
-
+| Ticket |
+|---|
+| [ME-682](https://northerntech.atlassian.net/browse/ME-682) |
+| [MEN-9584](https://northerntech.atlassian.net/browse/MEN-9584) |
 ## @northern.tech/store-0.36.3 - 2026-06-15
 
 
+
+### Improvements
+
+#### gui
+
+- Unified delayed data refresh pattern
+
 ### Bug fixes
 
-#### Store
+#### store
+
+- Provide a better context for software & manifest retrieval failures ([MEN-9853](https://northerntech.atlassian.net/browse/MEN-9853))
+- Fixed an issue that prevented showing device distribution information w/ multiple groups ([MEN-9856](https://northerntech.atlassian.net/browse/MEN-9856))
+- Retrieve manifest tag list more frequently to have newly added tags reflected w/o reload ([MEN-9849](https://northerntech.atlassian.net/browse/MEN-9849))
+- Retrieve release tag list on release changes to reflected new tags w/o reload
+
+### Dependency updates
 
 
-- *(store)* Provide a better context for software & manifest retrieval failures
+- Bump the production-dependencies group with 8 updates
+- Bump the development-dependencies group across 1 directory with 9 updates
+- Bump the mui group across 1 directory with 4 updates
 
-([MEN-9853](https://northerntech.atlassian.net/browse/MEN-9853)) ([2eb74de](https://github.com/NorthernTechHQ/nt-gui/commit/2eb74de14e1a19c8f489c52698ab6d84df1a2978))  by @mzedel
+---
+### All tickets resolved in this release
 
-
-
-
-- *(store)* Fixed an issue that prevented showing device distribution information w/ multiple groups
-
-([MEN-9856](https://northerntech.atlassian.net/browse/MEN-9856)) ([6e1ee8b](https://github.com/NorthernTechHQ/nt-gui/commit/6e1ee8b964a146f5faffd4e73567089349ff35ff))  by @mzedel
-
-
-
-
-
-  prior only general device information was checked, not the value of the attribute the widget is configured for
-
-- *(store)* Retrieve manifest tag list more frequently to have newly added tags reflected w/o reload
-
-([MEN-9849](https://northerntech.atlassian.net/browse/MEN-9849)) ([c8dd41b](https://github.com/NorthernTechHQ/nt-gui/commit/c8dd41bcacc32590163283b62208524dc8d69856))  by @mzedel
-
-
-
-
-- *(store)* Retrieve release tag list on release changes to reflected new tags w/o reload
-
- ([84eeb1a](https://github.com/NorthernTechHQ/nt-gui/commit/84eeb1a77b0a80aaa10d2cfd1ffda7d0a95d121b))  by @mzedel
-
-
-
-
-
-
-
-### Refactor
-
-#### Gui
-
-
-- *(gui)* Unified delayed data refresh pattern
-
- ([18ce7e2](https://github.com/NorthernTechHQ/nt-gui/commit/18ce7e2335bfc214b782565e3873392ea178acf6))  by @mzedel
-
-
-
-
-  to rely on a single fire & forget approach across thunks
-
-
-
-
-
-### Security
-
-
-
+| Ticket |
+|---|
+| [MEN-9853](https://northerntech.atlassian.net/browse/MEN-9853) |
+| [MEN-9856](https://northerntech.atlassian.net/browse/MEN-9856) |
+| [MEN-9849](https://northerntech.atlassian.net/browse/MEN-9849) |
 ## @northern.tech/store-0.36.2 - 2026-06-04
 
 
+
 ### Bug fixes
 
-#### Store
+#### store
+
+- Simplified version info to only rely on server repo tag if available
+- Switched to react-router instead of react-router-dom
+
+### Dependency updates
 
 
-- *(store)* Simplified version info to only rely on server repo tag if available
+- Bump the development-dependencies group with 11 updates
+- Bump the production-dependencies group across 1 directory with 23 updates## @northern.tech/store-0.36.1 - 2026-05-28
 
- ([35b70d9](https://github.com/NorthernTechHQ/nt-gui/commit/35b70d981ef9be32dddb26942d05612611f83314))  by @mzedel
-
-
-
-- *(store)* Switched to react-router instead of react-router-dom
-
- ([0794900](https://github.com/NorthernTechHQ/nt-gui/commit/0794900afdc2e02402940d6b781c1b7bc1b700c6))  by @mineralsfree
-
-
-
-
-
-
-
-### Security
-
-
-
-## @northern.tech/store-0.36.1 - 2026-05-28
 
 
 ### Bug fixes
 
-#### Store
+#### store
 
-
-- *(store)* Switched to name_prefix in software retrieval
-
- ([c67940f](https://github.com/NorthernTechHQ/nt-gui/commit/c67940f9c0e80bcc73ec90979e8c496ea4953f08))  by @mineralsfree
+- Switched to name_prefix in software retrieval## @northern.tech/store-0.36.0 - 2026-05-28
 
 
 
+### New features
 
+#### store
 
-
-
-
-## @northern.tech/store-0.36.0 - 2026-05-28
-
+- Added a way to check for release existence to prevent misleading links in manifests ([MEN-9669](https://northerntech.atlassian.net/browse/MEN-9669))
 
 ### Bug fixes
 
-#### Store
+#### store
 
+- Added support for tags, kind and type filtering for software thunk
 
-- *(store)* Added support for tags, kind and type filtering for software thunk
+---
+### All tickets resolved in this release
 
- ([a0756ac](https://github.com/NorthernTechHQ/nt-gui/commit/a0756acc610c5cadd91c81a4df0d7ad94c2284a8))  by @mineralsfree
-
-
-
-
-
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Added a way to check for release existence to prevent misleading links in manifests
-
-([MEN-9669](https://northerntech.atlassian.net/browse/MEN-9669)) ([030cfa7](https://github.com/NorthernTechHQ/nt-gui/commit/030cfa7676d468e828d7d829e983261d050516c1))  by @mzedel
-
-
-
-
-
-
-
-
-
+| Ticket |
+|---|
+| [MEN-9669](https://northerntech.atlassian.net/browse/MEN-9669) |
 ## @northern.tech/store-0.35.0 - 2026-05-27
 
 
+
+### New features
+
+#### store
+
+- Added support for uniform deployment phase definition history ([MEN-9001](https://northerntech.atlassian.net/browse/MEN-9001))
+- Added support for tag based manifest filtering ([MEN-9560](https://northerntech.atlassian.net/browse/MEN-9560))
+
 ### Bug fixes
 
-#### Store
+#### store
 
+- Wait for timeout before resolving
+- Pass undefined when empty string passed to software endpoint
+- Let external device integrations get refreshed on integration removal as well
 
-- *(store)* Wait for timeout before resolving
+---
+### All tickets resolved in this release
 
- ([97368f2](https://github.com/NorthernTechHQ/nt-gui/commit/97368f2b4ab65558ac64b998e592353fdab3e9a4))  by @mineralsfree
-
-
-
-- *(store)* Pass undefined when empty string passed to software endpoint
-
- ([dd604c9](https://github.com/NorthernTechHQ/nt-gui/commit/dd604c9a4d79569efc36ae55c8d8be613f167660))  by @mineralsfree
-
-
-
-- *(store)* Let external device integrations get refreshed on integration removal as well
-
- ([0ba6783](https://github.com/NorthernTechHQ/nt-gui/commit/0ba67839e74eb53a9a32b9badeadef4033e2a3ad))  by @mzedel
-
-
-
-
-
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Added support for uniform deployment phase definition history
-
-([MEN-9001](https://northerntech.atlassian.net/browse/MEN-9001)) ([becd6a1](https://github.com/NorthernTechHQ/nt-gui/commit/becd6a18b5621d802701a651efbe0b368105948d))  by @mzedel
-
-
-
-
-- *(store)* Added support for tag based manifest filtering
-
-([MEN-9560](https://northerntech.atlassian.net/browse/MEN-9560)) ([578016f](https://github.com/NorthernTechHQ/nt-gui/commit/578016fe4a551b16c532d599e073738f8b8a8bd9))  by @mzedel
-
-
-
-
-
-
-
-
-
+| Ticket |
+|---|
+| [MEN-9001](https://northerntech.atlassian.net/browse/MEN-9001) |
+| [MEN-9560](https://northerntech.atlassian.net/browse/MEN-9560) |
 ## @northern.tech/store-0.34.0 - 2026-05-20
 
 
-### Features
 
-#### Store
+### New features
 
+#### store
 
-- *(store)* Let default deployment retries setting no longer be defined on deployment creation
+- Let default deployment retries setting no longer be defined on deployment creation ([MEN-8723](https://northerntech.atlassian.net/browse/MEN-8723))
+- Added OAuth linking endpoint ([MEN-8205](https://northerntech.atlassian.net/browse/MEN-8205))
 
-([MEN-8723](https://northerntech.atlassian.net/browse/MEN-8723)) ([7a02998](https://github.com/NorthernTechHQ/nt-gui/commit/7a029986ee8313613c663916442551f8a5ed623c))  by @mzedel
+---
+### All tickets resolved in this release
 
-
-
-
-- *(store)* Added OAuth linking endpoint
-
-([MEN-8205](https://northerntech.atlassian.net/browse/MEN-8205)) ([0095b24](https://github.com/NorthernTechHQ/nt-gui/commit/0095b243b7641ee855a4806d339d96ab2ea6ac69))  by @mineralsfree
-
-
-
-
-
-
-
-
-
+| Ticket |
+|---|
+| [MEN-8723](https://northerntech.atlassian.net/browse/MEN-8723) |
+| [MEN-8205](https://northerntech.atlassian.net/browse/MEN-8205) |
 ## @northern.tech/store-0.33.0 - 2026-05-19
 
 
-### Bug fixes
 
-#### Store
+### New features
 
+#### store
 
-- *(store)* Propagate the error message when uploading manifest file
+- Added support for software list retrieval
+- Added support for manifest meta data manipulation
 
- ([236d1b9](https://github.com/NorthernTechHQ/nt-gui/commit/236d1b9119da86f4236a5069611a7a1e6cffb3ea))  by @mineralsfree
+### Improvements
 
+#### store
 
-
-
-
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Added support for software list retrieval
-
- ([7cf592b](https://github.com/NorthernTechHQ/nt-gui/commit/7cf592b11dd8ea6180a8ea10417f5b50661adfa0))  by @mzedel
-
-
-
-- *(store)* Added support for manifest meta data manipulation
-
- ([f1e687b](https://github.com/NorthernTechHQ/nt-gui/commit/f1e687bb9bcccabf4d92afd7965c44b43515e383))  by @mzedel
-
-
-
-
-
-
-
-### Refactor
-
-#### Store
-
-
-- *(store)* Optimized existence focused selectors to avoid single software processing
-
- ([6ec9813](https://github.com/NorthernTechHQ/nt-gui/commit/6ec981321b147e738813e1902244405efa85cf61))  by @mzedel
-
-
-
-
-  - favor collated data instead
-
-
-
-
-
-
-## @northern.tech/store-0.32.0 - 2026-05-13
-
+- Optimized existence focused selectors to avoid single software processing
 
 ### Bug fixes
 
-#### Store
+#### store
 
+- Propagate the error message when uploading manifest file## @northern.tech/store-0.32.0 - 2026-05-13
 
-- *(store)* Ensured mui 9 compatibility
 
- ([75e943d](https://github.com/NorthernTechHQ/nt-gui/commit/75e943d728723a27bc8b7eb375b690bd30daa69f))  by @mzedel
 
+### New features
 
+#### store
 
-- *(store)* Ensured software tags handling is done consistently
+- Extended support for manifest handling
+- Added initial support for software based artifact handling
+- Added support for uniform phase deployment processing
 
- ([9289ec7](https://github.com/NorthernTechHQ/nt-gui/commit/9289ec7c38e1ff4ffa83f588c7009be9e4955dea))  by @mzedel
+### Bug fixes
 
+#### store
 
+- Ensured mui 9 compatibility
+- Ensured software tags handling is done consistently
 
+### Dependency updates
 
 
+- Bump the production-dependencies group with 18 updates
+- Bump the development-dependencies group across 1 directory with 15 updates
+- Bump the mui group across 1 directory with 4 updates## @northern.tech/store-0.31.0 - 2026-04-21
 
 
-### Features
 
-#### Store
+### New features
 
+#### store
 
-- *(store)* Extended support for manifest handling
+- Added support for manifest artifacts ([MEN-9411](https://northerntech.atlassian.net/browse/MEN-9411))
+- Added manifest benefit information to show for plan nudges ([MEN-9411](https://northerntech.atlassian.net/browse/MEN-9411))
 
- ([ea36d38](https://github.com/NorthernTechHQ/nt-gui/commit/ea36d380786aefc3099290a1a8b02ed68ce55934))  by @mzedel
+### Improvements
 
+#### store
 
+- Let tab handling reflect changed release page focus
 
-- *(store)* Added initial support for software based artifact handling
+---
+### All tickets resolved in this release
 
- ([e40200a](https://github.com/NorthernTechHQ/nt-gui/commit/e40200a48546d3954309445ce38bfc5ba2370c84))  by @mzedel
-
-
-
-- *(store)* Added support for uniform phase deployment processing
-
- ([af3aa60](https://github.com/NorthernTechHQ/nt-gui/commit/af3aa6004d873e80fc85466d720749b2de7a50dc))  by @mzedel
-
-
-
-
-
-
-
-### Security
-
-
-
-## @northern.tech/store-0.31.0 - 2026-04-21
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Added support for manifest artifacts
-
-([MEN-9411](https://northerntech.atlassian.net/browse/MEN-9411)) ([ff6a544](https://github.com/NorthernTechHQ/nt-gui/commit/ff6a544ef23db6c6910c58de6d34f5fe29ed570f))  by @mzedel
-
-
-
-
-
-  - including manifest state retrieval functionality
-
-- *(store)* Added manifest benefit information to show for plan nudges
-
-([MEN-9411](https://northerntech.atlassian.net/browse/MEN-9411)) ([7142eb0](https://github.com/NorthernTechHQ/nt-gui/commit/7142eb084cca5412eda3d2951647c78ad11e2cde))  by @mzedel
-
-
-
-
-
-
-
-
-### Refactor
-
-#### Store
-
-
-- *(store)* Let tab handling reflect changed release page focus
-
- ([2625c20](https://github.com/NorthernTechHQ/nt-gui/commit/2625c208f04eb306831e70d0c49dfb9a032ae212))  by @mzedel
-
-
-
-
-  - it's less tied to releases only, but spans multiple software types
-
-
-
-
-
-
+| Ticket |
+|---|
+| [MEN-9411](https://northerntech.atlassian.net/browse/MEN-9411) |
 ## @northern.tech/store-0.30.2 - 2026-04-17
 
 
+
 ### Bug fixes
 
-#### Store
+#### store
 
+- Cleaned up sent properties in thunks and tests ([QA-1539](https://northerntech.atlassian.net/browse/QA-1539))
 
-- *(store)* Cleaned up sent properties in thunks and tests
+---
+### All tickets resolved in this release
 
-([QA-1539](https://northerntech.atlassian.net/browse/QA-1539)) ([3d29ee4](https://github.com/NorthernTechHQ/nt-gui/commit/3d29ee4897abe2189d1b0bb121bf24e8c1fa5f86))  by @mineralsfree
-
-
-
-
-
-
-
-
-
+| Ticket |
+|---|
+| [QA-1539](https://northerntech.atlassian.net/browse/QA-1539) |
 ## @northern.tech/store-0.30.1 - 2026-04-15
 
 
-### Bug fixes
 
-#### Store
+### Improvements
 
+#### store
 
-- *(store)* Fixed faulty serialization check exemption
-
- ([9f99800](https://github.com/NorthernTechHQ/nt-gui/commit/9f99800a77093ad9fe26434b6e1be0dd48a03939))  by @mzedel
-
-
-
-- *(store)* Fixed faulty type export type annotation
-
- ([27c2b24](https://github.com/NorthernTechHQ/nt-gui/commit/27c2b245df9e9521ea0e289f5ac9a36b6a19fd5c))  by @mzedel
-
-
-
-- *(store)* Extended store type coverage to ease store root type coverage
-
- ([7897282](https://github.com/NorthernTechHQ/nt-gui/commit/789728220a1d1c5b6cb8b4f3c2bb360c7a0811e7))  by @mzedel
-
-
-
-
-
-
-
-### Refactor
-
-#### Store
-
-
-- *(store)* Made store init slightly more redux thunk compliant
-
- ([f26f7df](https://github.com/NorthernTechHQ/nt-gui/commit/f26f7dfdf1270967db75c14eafd60054fb3d6662))  by @mzedel
-
-
-
-
-  - to extend & clear up type coverage + clarify api data dependencies
-
-- *(store)* Made some more thunks rely on async structure + clear value returns
-
- ([8d69a58](https://github.com/NorthernTechHQ/nt-gui/commit/8d69a58848990a9363741342bca540b50dc20cd1))  by @mzedel
-
-
-
-
-  - primarily to allow a clear return type, trying to balance error handling by keeping it close to the api call instead of a try/catch block
-
-
-
-
-
-### Security
-
-
-
-## @northern.tech/store-0.30.0 - 2026-03-30
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Allow easier caller access of retrieved artifact url w/o relying on store processing
-
- ([3b6a2de](https://github.com/NorthernTechHQ/nt-gui/commit/3b6a2dec496e878b2172eb9396835095c4564aac))  by @mzedel
-
-
-
-
-
-
-
-
-## @northern.tech/store-0.29.0 - 2026-03-20
-
+- Made store init slightly more redux thunk compliant
+- Made some more thunks rely on async structure + clear value returns
 
 ### Bug fixes
 
-#### Store
+#### store
+
+- Fixed faulty serialization check exemption
+- Fixed faulty type export type annotation
+- Extended store type coverage to ease store root type coverage
+
+- Migrated package bundling to tsdown
+
+### Dependency updates
 
 
-- *(store)* Added ai log analysis timeout override to support slow analysis
-
- ([5e48da4](https://github.com/NorthernTechHQ/nt-gui/commit/5e48da426d9bdfd4c0a92e19c2b6f5190d2ca2d1))  by @mzedel
-
-
-
-
-
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Let artifacts, releases & manifests share an understandable path
-
-([MEN-9413](https://northerntech.atlassian.net/browse/MEN-9413)) ([de7b474](https://github.com/NorthernTechHQ/nt-gui/commit/de7b474d9103847e1a94df4a6b61f8330ce1f272))  by @mzedel
+- Bump the production-dependencies group across 1 directory with 16 updates
+- Bump the development-dependencies group across 1 directory with 15 updates## @northern.tech/store-0.30.0 - 2026-03-30
 
 
 
+### New features
+
+#### store
+
+- Allow easier caller access of retrieved artifact url w/o relying on store processing## @northern.tech/store-0.29.0 - 2026-03-20
 
 
 
+### New features
 
+#### store
 
-### Refactor
+- Let artifacts, releases & manifests share an understandable path ([MEN-9413](https://northerntech.atlassian.net/browse/MEN-9413))
 
-#### Store
+### Improvements
 
+#### store
 
-- *(store)* Removed reliance on jwt content to detect potential session token info deviation
+- Removed reliance on jwt content to detect potential session token info deviation
 
- ([8226e79](https://github.com/NorthernTechHQ/nt-gui/commit/8226e7919322dd02d6e5d90955c2903ab43557fa))  by @mzedel
+### Bug fixes
 
+#### store
 
+- Added ai log analysis timeout override to support slow analysis
 
+---
+### All tickets resolved in this release
 
-
-
-
-
+| Ticket |
+|---|
+| [MEN-9413](https://northerntech.atlassian.net/browse/MEN-9413) |
 ## @northern.tech/store-0.28.0 - 2026-03-12
 
 
-### Features
 
-#### Store
+### New features
 
+#### store
 
-- *(store)* Added a selector for enabled tiers
+- Added a selector for enabled tiers ([MEN-9465](https://northerntech.atlassian.net/browse/MEN-9465))
 
-([MEN-9465](https://northerntech.atlassian.net/browse/MEN-9465)) ([24cc1d6](https://github.com/NorthernTechHQ/nt-gui/commit/24cc1d614174b013f07a1fb009d3be0a07a9c11e))  by @mineralsfree
+---
+### All tickets resolved in this release
 
-
-
-
-
-
-
-
-
+| Ticket |
+|---|
+| [MEN-9465](https://northerntech.atlassian.net/browse/MEN-9465) |
 ## @northern.tech/store-0.27.0 - 2026-03-12
 
 
+
+### New features
+
+#### store
+
+- Let device/release selections no longer persist when navigating to a new page ([MEN-9293](https://northerntech.atlassian.net/browse/MEN-9293))
+- Added `artifact_too_big` to deployment substates ([MEN-9456](https://northerntech.atlassian.net/browse/MEN-9456))
+
 ### Bug fixes
 
-#### Store
+#### store
 
+- Fixed a 2fa nudge issue for oauth users ([MEN-9417](https://northerntech.atlassian.net/browse/MEN-9417))
 
-- *(store)* Fixed a 2fa nudge issue for oauth users
+---
+### All tickets resolved in this release
 
-([MEN-9417](https://northerntech.atlassian.net/browse/MEN-9417)) ([e48797b](https://github.com/NorthernTechHQ/nt-gui/commit/e48797b3e0e561700e9a9b3b15f79b37cb768513))  by @mineralsfree
-
-
-
-
-
-
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Let device/release selections no longer persist when navigating to a new page
-
-([MEN-9293](https://northerntech.atlassian.net/browse/MEN-9293)) ([212aa7d](https://github.com/NorthernTechHQ/nt-gui/commit/212aa7dc74cffa601aadb7537fbfd703bd2dd76e))  by @mzedel
-
-
-
-
-- *(store)* Added `artifact_too_big` to deployment substates
-
-([MEN-9456](https://northerntech.atlassian.net/browse/MEN-9456)) ([2655bd1](https://github.com/NorthernTechHQ/nt-gui/commit/2655bd193338852d51d733da94aa9f6daf295731))  by @frodeha
-
-
-
-
-
-
-
-
-
+| Ticket |
+|---|
+| [MEN-9417](https://northerntech.atlassian.net/browse/MEN-9417) |
+| [MEN-9293](https://northerntech.atlassian.net/browse/MEN-9293) |
+| [MEN-9456](https://northerntech.atlassian.net/browse/MEN-9456) |
 ## @northern.tech/store-0.26.1 - 2026-03-10
 
 
+
 ### Bug fixes
 
-#### Store
+#### store
 
+- Fixed tenant creation endpoint ([MEN-8880](https://northerntech.atlassian.net/browse/MEN-8880))
 
-- *(store)* Fixed tenant creation endpoint
+---
+### All tickets resolved in this release
 
-([MEN-8880](https://northerntech.atlassian.net/browse/MEN-8880)) ([2b722f7](https://github.com/NorthernTechHQ/nt-gui/commit/2b722f78b66dcda4ea7c3515fa08c6efc21974aa))  by @mineralsfree
-
-
-
-
-
-
-
-
-
+| Ticket |
+|---|
+| [MEN-8880](https://northerntech.atlassian.net/browse/MEN-8880) |
 ## @northern.tech/store-0.26.0 - 2026-03-09
 
 
-### Features
 
-#### Store
+### New features
 
+#### store
 
-- *(store)* Propagated the email verification error to UI
+- Propagated the email verification error to UI ([MEN-9260](https://northerntech.atlassian.net/browse/MEN-9260))
 
-([MEN-9260](https://northerntech.atlassian.net/browse/MEN-9260)) ([01cd656](https://github.com/NorthernTechHQ/nt-gui/commit/01cd656c12c65cd6ae0ad7bcc8c6741d77aa3953))  by @mineralsfree
+---
+### All tickets resolved in this release
 
-
-
-
-
-
-
-
-
+| Ticket |
+|---|
+| [MEN-9260](https://northerntech.atlassian.net/browse/MEN-9260) |
 ## @northern.tech/store-0.25.0 - 2026-03-09
 
 
-### Features
 
-#### Store
+### New features
 
+#### store
 
-- *(store)* Allowed deployments search to find devices using configured id attribute too
+- Allowed deployments search to find devices using configured id attribute too## @northern.tech/store-0.24.1 - 2026-03-06
 
- ([e79e858](https://github.com/NorthernTechHQ/nt-gui/commit/e79e85863d563ca72a292bcdf114eddca7e2fff1))  by @mzedel
-
-
-
-
-
-
-
-
-## @northern.tech/store-0.24.1 - 2026-03-06
 
 
 ### Bug fixes
 
 
+- Moved edit limits request transformation to store utils ([MEN-8880](https://northerntech.atlassian.net/browse/MEN-8880))
 
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-8880](https://northerntech.atlassian.net/browse/MEN-8880) |
 ## @northern.tech/store-0.24.0 - 2026-03-05
 
 
-### Features
 
-#### Store
+### New features
 
+#### store
 
-- *(store)* Added tiers support to sp tenant
-
- ([c4ee281](https://github.com/NorthernTechHQ/nt-gui/commit/c4ee28110f3bed770dc1c378295a074fc8b9964d))  by @mineralsfree
+- Added tiers support to sp tenant## @northern.tech/store-0.23.0 - 2026-03-02
 
 
 
+### New features
 
+#### store
 
-
-
-
-## @northern.tech/store-0.23.0 - 2026-03-02
-
+- Added support for orchestrator manifests feature flag ([MEN-9399](https://northerntech.atlassian.net/browse/MEN-9399))
 
 ### Bug fixes
 
-#### Store
+#### store
+
+- Ensured successful email activation is cleaned up after ([MEN-9419](https://northerntech.atlassian.net/browse/MEN-9419))
+
+### Dependency updates
 
 
-- *(store)* Ensured successful email activation is cleaned up after
+- Bump the development-dependencies group with 9 updates
+- Bump the production-dependencies group with 13 updates
 
-([MEN-9419](https://northerntech.atlassian.net/browse/MEN-9419)) ([6562bdf](https://github.com/NorthernTechHQ/nt-gui/commit/6562bdf0896c254e10e91e5736b7713ac2f1a0a5))  by @mzedel
+---
+### All tickets resolved in this release
 
-
-
-
-
-  - this prevents duplicate verification attempts which cause confusing errors in the UI
-
-
-
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Added support for orchestrator manifests feature flag
-
-([MEN-9399](https://northerntech.atlassian.net/browse/MEN-9399)) ([c084fce](https://github.com/NorthernTechHQ/nt-gui/commit/c084fce1b0acf947ad88ee33779a8184a324f821))  by @mzedel
-
-
-
-
-
-
-
-
-### Security
-
-
-
+| Ticket |
+|---|
+| [MEN-9399](https://northerntech.atlassian.net/browse/MEN-9399) |
+| [MEN-9419](https://northerntech.atlassian.net/browse/MEN-9419) |
 ## @northern.tech/store-0.22.0 - 2026-02-18
 
 
-### Bug fixes
 
-#### Store
-
-
-- *(store)* Removed mender client links
-
-([QA-1468](https://northerntech.atlassian.net/browse/QA-1468)) ([2beda54](https://github.com/NorthernTechHQ/nt-gui/commit/2beda543ae4f0254b44ff7f7a0261abea5eb72d4))  by @mineralsfree
-
-
-
+### Breaking changes
 
 - *(store)* Let deployments search rely on non-deprecated endpoint
 
- ([06dab26](https://github.com/NorthernTechHQ/nt-gui/commit/06dab26bde2a307f73439fa4ff16935dcc1d6c48))  by @mzedel
-  - **BREAKING**: let deployments search rely on non-deprecated endpoint
+### New features
 
+#### store
 
+- Added dynamic group fetching thunk ([ME-550](https://northerntech.atlassian.net/browse/ME-550))
 
+### Bug fixes
 
-  - this will lead to different results for the same input as the prior endpoint would also consider a deployments description or artifact name
+#### store
 
-- *(store)* Fixed the order of the plans when parsing products
+- Removed mender client links ([QA-1468](https://northerntech.atlassian.net/browse/QA-1468))
+- Fixed the order of the plans when parsing products
 
- ([2474b35](https://github.com/NorthernTechHQ/nt-gui/commit/2474b35555f86c90e7a10799dbfe4adb38ede0bf))  by @mineralsfree
+---
+### All tickets resolved in this release
 
-
-
-
-
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Added dynamic group fetching thunk
-
-([ME-550](https://northerntech.atlassian.net/browse/ME-550)) ([582bde8](https://github.com/NorthernTechHQ/nt-gui/commit/582bde89be5849f86ebcf052139081603f5d3043))  by @mineralsfree
-
-
-
-
-
-
-
-
-
+| Ticket |
+|---|
+| [ME-550](https://northerntech.atlassian.net/browse/ME-550) |
+| [QA-1468](https://northerntech.atlassian.net/browse/QA-1468) |
 ## @northern.tech/store-0.21.0 - 2026-02-10
 
 
+
+### New features
+
+#### store
+
+- Added product retrieval and parsing ([MEN-9277](https://northerntech.atlassian.net/browse/MEN-9277))
+- Updated subscription preview parsing to support per-tier addons ([MEN-9277](https://northerntech.atlassian.net/browse/MEN-9277))
+
 ### Bug fixes
 
-#### Store
+#### store
 
+- Let subscription page handle products retrieval to prevent erroneous on-prem requests
 
-- *(store)* Let subscription page handle products retrieval to prevent erroneous on-prem requests
+---
+### All tickets resolved in this release
 
- ([a9e89ae](https://github.com/NorthernTechHQ/nt-gui/commit/a9e89ae3dca67163400756497f30fefb50daeab7))  by @mzedel
-
-
-
-
-
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Added product retrieval and parsing
-
-([MEN-9277](https://northerntech.atlassian.net/browse/MEN-9277)) ([62c5a6c](https://github.com/NorthernTechHQ/nt-gui/commit/62c5a6c0b59d37e86c481c305f6dd677a030aca2))  by @mineralsfree
-
-
-
-
-- *(store)* Updated subscription preview parsing to support per-tier addons
-
-([MEN-9277](https://northerntech.atlassian.net/browse/MEN-9277)) ([c798295](https://github.com/NorthernTechHQ/nt-gui/commit/c79829521585d9a812fc1e38ae15b09b48156908))  by @mineralsfree
-
-
-
-
-
-
-
-
-
+| Ticket |
+|---|
+| [MEN-9277](https://northerntech.atlassian.net/browse/MEN-9277) |
 ## @northern.tech/store-0.19.2 - 2026-02-02
 
 
+
 ### Bug fixes
 
-#### Store
+#### store
+
+- Remove reports when associated group is removed
+- Updated the add-ons description ([MEN-9275](https://northerntech.atlassian.net/browse/MEN-9275))
+- Handle the empty reports case
+- Aligned auditlogs hint visibility to correct plan
+
+### Dependency updates
 
 
-- *(store)* Remove reports when associated group is removed
+- Bump the production-dependencies group with 16 updates
 
- ([bbbc095](https://github.com/NorthernTechHQ/nt-gui/commit/bbbc0950318d3838be7d559268d0eac70b0d72da))  by @mineralsfree
+---
+### All tickets resolved in this release
 
-
-
-- *(store)* Updated the add-ons description
-
-([MEN-9275](https://northerntech.atlassian.net/browse/MEN-9275)) ([f386747](https://github.com/NorthernTechHQ/nt-gui/commit/f3867474c7abd6cf433d30abedfef0e3e42bdb62))  by @mineralsfree
-
-
-
-
-- *(store)* Handle the empty reports case
-
- ([7c2b038](https://github.com/NorthernTechHQ/nt-gui/commit/7c2b0385d7c3a8ff3e05b76727bba15322ac96f3))  by @mineralsfree
-
-
-
-- *(store)* Aligned auditlogs hint visibility to correct plan
-
- ([4f5bd8f](https://github.com/NorthernTechHQ/nt-gui/commit/4f5bd8f4745f0215c1f0011e5f7bd6d6e1f0a904))  by @mzedel
-
-
-
-
-
-
-
-### Security
-
-
-
+| Ticket |
+|---|
+| [MEN-9275](https://northerntech.atlassian.net/browse/MEN-9275) |
 ## @northern.tech/store-0.19.1 - 2026-01-27
 
 
+
 ### Bug fixes
 
-#### Store
+#### store
 
+- Fixed an issue that would require re-login when relying on sso in some situations ([ME-365](https://northerntech.atlassian.net/browse/ME-365))
 
-- *(store)* Fixed an issue that would require re-login when relying on sso in some situations
+---
+### All tickets resolved in this release
 
-([ME-365](https://northerntech.atlassian.net/browse/ME-365)) ([653f009](https://github.com/NorthernTechHQ/nt-gui/commit/653f00968941af9d508e7d44fa394789f30583f7))  by @mzedel
-
-
-
-
-
-
-
-
-
+| Ticket |
+|---|
+| [ME-365](https://northerntech.atlassian.net/browse/ME-365) |
 ## @northern.tech/store-0.18.0 - 2026-01-23
 
 
+
+### New features
+
+#### store
+
+- Allowed finer grained navigation event handling
+
 ### Bug fixes
 
-#### Store
+#### store
 
-
-- *(store)* Aligned faulty update type mock w/ api response reality
-
- ([9de44da](https://github.com/NorthernTechHQ/nt-gui/commit/9de44dad6735a411c21fef7728c2cc00048bbf70))  by @mzedel
+- Aligned faulty update type mock w/ api response reality## @northern.tech/store-0.17.0 - 2026-01-21
 
 
 
+### New features
 
+#### store
 
+- Added security alert dismission timestamp ([MEN-9095](https://northerntech.atlassian.net/browse/MEN-9095))
 
+---
+### All tickets resolved in this release
 
-### Features
-
-#### Store
-
-
-- *(store)* Allowed finer grained navigation event handling
-
- ([77f32b1](https://github.com/NorthernTechHQ/nt-gui/commit/77f32b1460b9b69ab875f22bb7583c77fef2a4c0))  by @mzedel
-
-
-
-
-
-
-
-
-## @northern.tech/store-0.17.0 - 2026-01-21
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Added security alert dismission timestamp
-
-([MEN-9095](https://northerntech.atlassian.net/browse/MEN-9095)) ([30abe5a](https://github.com/NorthernTechHQ/nt-gui/commit/30abe5ab61e2754919fc9ccb67503c7ad20a8f72))  by @mineralsfree
-
-
-
-
-
-
-
-
-
+| Ticket |
+|---|
+| [MEN-9095](https://northerntech.atlassian.net/browse/MEN-9095) |
 ## @northern.tech/store-0.16.0 - 2026-01-15
 
 
-### Features
 
-#### Store
+### New features
 
+#### store
 
-- *(store)* Added support for feature flag to revert new theme
+- Added support for feature flag to revert new theme
+- Added device limit stats selector ([MEN-8882](https://northerntech.atlassian.net/browse/MEN-8882))
 
- ([49e43a2](https://github.com/NorthernTechHQ/nt-gui/commit/49e43a25e2226798fbb29be3350de154d0565509))  by @mzedel
+---
+### All tickets resolved in this release
 
-
-
-- *(store)* Added device limit stats selector
-
-([MEN-8882](https://northerntech.atlassian.net/browse/MEN-8882)) ([ec730e5](https://github.com/NorthernTechHQ/nt-gui/commit/ec730e5b389da6edb2f9213eaeb372f4c2847382))  by @mineralsfree
-
-
-
-
-
-
-
-
-
+| Ticket |
+|---|
+| [MEN-8882](https://northerntech.atlassian.net/browse/MEN-8882) |
 ## @northern.tech/store-0.14.0 - 2026-01-08
 
 
-### Features
 
-#### Store
+### New features
 
+#### store
 
-- *(store)* Added feature flag for MCU
+- Added feature flag for MCU ([MEN-9205](https://northerntech.atlassian.net/browse/MEN-9205))
 
-([MEN-9205](https://northerntech.atlassian.net/browse/MEN-9205)) ([5a66d7e](https://github.com/NorthernTechHQ/nt-gui/commit/5a66d7e18690c4048b785a57af86f9bdd5fa1a9e))  by @mineralsfree
-
-
+### Dependency updates
 
 
+- Bump the development-dependencies group across 1 directory with 11 updates
+- Bump the production-dependencies group across 1 directory with 22 updates
 
+---
+### All tickets resolved in this release
 
-
-
-### Security
-
-
-
+| Ticket |
+|---|
+| [MEN-9205](https://northerntech.atlassian.net/browse/MEN-9205) |
 ## @northern.tech/store-0.13.0 - 2025-12-15
 
 
-### Features
 
-#### Store
+### New features
 
+#### store
 
-- *(store)* Made slice types available consistently
-
- ([77c506e](https://github.com/NorthernTechHQ/nt-gui/commit/77c506ea6f6b536c5ed243d7ab2b82ff0489626f))  by @mzedel
-
+- Made slice types available consistently
+- Made use of combined device counts endpoint & adjusted related tracking state## @northern.tech/store-0.12.0 - 2025-12-08
 
 
 
-  - and aligned them slightly along the way
+### New features
 
-- *(store)* Made use of combined device counts endpoint & adjusted related tracking state
+#### store
 
- ([4d0bb34](https://github.com/NorthernTechHQ/nt-gui/commit/4d0bb34af23d726019e4b7d906701c9bc2b60c60))  by @mzedel
-
-
-
-
-
-
-
-
-## @northern.tech/store-0.12.0 - 2025-12-08
-
+- Added firstLoginTimestamp for feedback form delay ([MEN-8896](https://northerntech.atlassian.net/browse/MEN-8896))
 
 ### Bug fixes
 
-#### Store
+#### store
+
+- Do not encode empty msgpack fixmap on close
+
+### Dependency updates
 
 
-- *(store)* Do not encode empty msgpack fixmap on close
+- Bump the production-dependencies group with 13 updates
 
- ([8349f07](https://github.com/NorthernTechHQ/nt-gui/commit/8349f07784f29e40d57dcd0f17ec26c31b490ff4))  by @alfrunes
+---
+### All tickets resolved in this release
 
-
-
-
-
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Added firstLoginTimestamp for feedback form delay
-
-([MEN-8896](https://northerntech.atlassian.net/browse/MEN-8896)) ([00d2612](https://github.com/NorthernTechHQ/nt-gui/commit/00d26124d4774a94b1dfd3a9f56c104e5feb0083))  by @mineralsfree
-
-
-
-
-
-
-
-
-### Security
-
-
-
+| Ticket |
+|---|
+| [MEN-8896](https://northerntech.atlassian.net/browse/MEN-8896) |
 ## @northern.tech/store-0.11.0 - 2025-12-02
 
 
+
+### New features
+
+#### store
+
+- Added support for tiered device limits
+- Added mcu onboarding support ([MEN-8583](https://northerntech.atlassian.net/browse/MEN-8583))
+
 ### Bug fixes
 
-#### Store
+#### store
 
+- Ensured initialization skips enterprise/ hosted information when on os only
+- Let device limits only be considered if they are set
 
-- *(store)* Ensured initialization skips enterprise/ hosted information when on os only
+---
+### All tickets resolved in this release
 
- ([e66e3a9](https://github.com/NorthernTechHQ/nt-gui/commit/e66e3a9d20f1ff5b23bbe345226495db51c0b976))  by @mzedel
-
-
-
-- *(store)* Let device limits only be considered if they are set
-
- ([f3c381f](https://github.com/NorthernTechHQ/nt-gui/commit/f3c381f88f2831b72456fd1ea6e51d33baeed7ff))  by @mzedel
-
-
-
-
-  - tier separated handling for negative infinity/ limit of -1 will have to be situation dependent in the application
-
-
-
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Added support for tiered device limits
-
- ([97eb3bb](https://github.com/NorthernTechHQ/nt-gui/commit/97eb3bb8b37b9270dd411a003cbb6fd761701d4b))  by @mzedel
-
-
-
-- *(store)* Added mcu onboarding support
-
-([MEN-8583](https://northerntech.atlassian.net/browse/MEN-8583)) ([7b5f6f0](https://github.com/NorthernTechHQ/nt-gui/commit/7b5f6f0021f21f4465f416da87157e42e23e356b))  by @mineralsfree
-
-
-
-
-
-
-
-
-
+| Ticket |
+|---|
+| [MEN-8583](https://northerntech.atlassian.net/browse/MEN-8583) |
 ## @northern.tech/store-0.9.0 - 2025-11-04
 
 
+
+### New features
+
+#### store
+
+- Let store rely on newer backend type definitions
+
 ### Bug fixes
 
-#### Store
+#### store
+
+- Aligned chinese Mender deployment location w/ reality
+- Rectified user setting selector confusion w/ global settings to align w/ Mender
+- Aligned type usage w/ updated backend specs
+- Adopted reintroduced delta job related types
+- Fixed an issue that prevented getting detailed delta gen information
+- Fixed an issue that prevented updating sso settings for existing configs
+- Removed duplicated yes function to ease vitest usage
+
+### Dependency updates
 
 
-- *(store)* Aligned chinese Mender deployment location w/ reality
+- Bump the development-dependencies group with 12 updates
+- Bump the production-dependencies group across 1 directory with 14 updates## @northern.tech/store-0.5.3 - 2025-10-02
 
- ([0cc8161](https://github.com/NorthernTechHQ/nt-gui/commit/0cc81618bfb41e4ad8c9bfbe1205949b24edde7e))  by @mzedel
-
-
-
-- *(store)* Rectified user setting selector confusion w/ global settings to align w/ Mender
-
- ([bca8f1a](https://github.com/NorthernTechHQ/nt-gui/commit/bca8f1aca73218c0ff3820027b306eb42a1172f8))  by @mzedel
-
-
-
-- *(store)* Aligned type usage w/ updated backend specs
-
- ([3af8a38](https://github.com/NorthernTechHQ/nt-gui/commit/3af8a3869041defac33d6651729537fd438cc109))  by @mzedel
-
-
-
-- *(store)* Adopted reintroduced delta job related types
-
- ([8722498](https://github.com/NorthernTechHQ/nt-gui/commit/8722498acca64d4771980cd78f308e2d04a2d627))  by @mzedel
-
-
-
-- *(store)* Fixed an issue that prevented getting detailed delta gen information
-
- ([093f711](https://github.com/NorthernTechHQ/nt-gui/commit/093f7119cf2d4322adfc2d352f7a90876ef78241))  by @mzedel
-
-
-
-- *(store)* Fixed an issue that prevented updating sso settings for existing configs
-
- ([5d2b9e3](https://github.com/NorthernTechHQ/nt-gui/commit/5d2b9e33c0744a8e88cdefa4d05f985f6c7783e5))  by @mzedel
-
-
-
-- *(store)* Removed duplicated yes function to ease vitest usage
-
- ([6b31671](https://github.com/NorthernTechHQ/nt-gui/commit/6b316712000a879b5bc9db8207eb464ceb722a16))  by @mzedel
-
-
-
-
-  - `yes` now needs to be a named function to be usable in vitest hooks
-
-
-
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Let store rely on newer backend type definitions
-
- ([5ade1e1](https://github.com/NorthernTechHQ/nt-gui/commit/5ade1e12697c5edf61b205f1720761e586596a88))  by @mzedel
-
-
-
-
-
-
-
-### Security
-
-
-
-## @northern.tech/store-0.5.3 - 2025-10-02
 
 
 ### Bug fixes
 
-#### Store
+#### store
+
+- Aligned store interactions w/ current Mender
+
+### Dependency updates
 
 
-- *(store)* Aligned store interactions w/ current Mender
+- Bump the development-dependencies group with 16 updates
+- Bump the production-dependencies group across 1 directory with 16 updates## @northern.tech/store-0.5.2 - 2025-08-26
 
- ([3a27287](https://github.com/NorthernTechHQ/nt-gui/commit/3a27287df37b8935cefaf89a8f50a1a1c10d0e2f))  by @mzedel
-
-
-
-
-
-
-
-### Security
-
-
-
-## @northern.tech/store-0.5.2 - 2025-08-26
 
 
 ### Bug fixes
 
-#### Store
+#### store
 
+- Aligned store w/ mender to remove demo features
+- Aligned snackbar open state automation w/ mender## @northern.tech/store-0.5.1 - 2025-08-24
 
-- *(store)* Aligned store w/ mender to remove demo features
-
- ([81512d2](https://github.com/NorthernTechHQ/nt-gui/commit/81512d2925cce055d1f8fc4fc66877824b1372a1))  by @mzedel
-
-
-
-
-  + align deployment stats
-
-- *(store)* Aligned snackbar open state automation w/ mender
-
- ([a78beaa](https://github.com/NorthernTechHQ/nt-gui/commit/a78beaade61972a836c03b47b79510b14e4b5d77))  by @mzedel
-
-
-
-
-
-
-
-
-## @northern.tech/store-0.5.1 - 2025-08-24
 
 
 ### Bug fixes
 
-#### Store
+#### store
 
-
-- *(store)* Aligned license report location w/ mender
-
- ([294b140](https://github.com/NorthernTechHQ/nt-gui/commit/294b14054fa97cdb80a4d7d15759f6223aa177f2))  by @mzedel
-
-
-
-- *(store)* Additional adjustment for esm compatibility
-
- ([3808f01](https://github.com/NorthernTechHQ/nt-gui/commit/3808f01e4a8c379e63a599a74c92ffa08e56ead4))  by @mzedel
+- Aligned license report location w/ mender
+- Additional adjustment for esm compatibility## @northern.tech/store-0.5.0 - 2025-08-22
 
 
 
+### New features
+
+#### store
+
+- Added email existence checking thunk to centralize msw handling
+
+### Bug fixes
+
+#### store
+
+- Fixed imports of esm unfriendly packages
+- Removed country flags as their exported ref was not usable externally
+- Synced app state selectors w/ mender## @northern.tech/store-0.4.0 - 2025-08-14
 
 
 
+### New features
+
+#### store
+
+- Made use of types package instead
+- Colocated mock data with slices they correspond to
+#### types
+
+- Added base types package meant for nt-gui internal use
+
+### Improvements
+
+#### store,common-ui
+
+- Switched package internal imports to relative locations - to remove path mapping differences in vitest vs. tsup
+
+### Dependency updates
 
 
-## @northern.tech/store-0.5.0 - 2025-08-22
+- Bump the production-dependencies group across 1 directory with 11 updates
+- Bump the production-dependencies group across 1 directory with 16 updates
+- Bump the mui group across 1 directory with 4 updates## @northern.tech/store-0.3.4 - 2025-02-14
+
+
+
+### New features
+
+#### utils,store
+
+- Moved store focused utils to store package
+
+### Bug fixes
+
+#### common,store
+
+- Fixed references to now moved utility functions
+#### store
+
+- Aligned onboarding handling with removed onboardingmanager
+- Aligned dependencies with referenced packages
+- Aligned sorting behaviour with type expectation & single sorting function
+
+- Re-expanded react version ranges## @northern.tech/store-0.3.3 - 2025-01-31
+
 
 
 ### Bug fixes
 
-#### Store
+#### store
 
+- Removed reliance on test config in package code
+- Added missing type for device data retrieval
 
-- *(store)* Fixed imports of esm unfriendly packages
+### Dependency updates
 
- ([d52a3d7](https://github.com/NorthernTechHQ/nt-gui/commit/d52a3d7dae5199b83f0e73dd3a6c10cf30118bb3))  by @mzedel
 
+- Bump the production-dependencies group across 1 directory with 18 updates## @northern.tech/store-0.3.2 - 2024-12-13
 
-
-
-  - common + common-ui affected as well, not mentioned due to scope policy
-
-- *(store)* Removed country flags as their exported ref was not usable externally
-
- ([4a12781](https://github.com/NorthernTechHQ/nt-gui/commit/4a12781e8e02efb1f465c5f7034789058c3ab927))  by @mzedel
-
-
-
-- *(store)* Synced app state selectors w/ mender
-
- ([eff0a98](https://github.com/NorthernTechHQ/nt-gui/commit/eff0a98e1a72029cf8f7872682d6c9957d486f91))  by @mzedel
-
-
-
-
-
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Added email existence checking thunk to centralize msw handling
-
- ([a587361](https://github.com/NorthernTechHQ/nt-gui/commit/a5873617f28bf2f29c48dcc176f676d01d3e168f))  by @mzedel
-
-
-
-
-
-
-
-
-## @northern.tech/store-0.4.0 - 2025-08-14
-
-
-### Features
-
-#### Store
-
-
-- *(store)* Made use of types package instead
-
- ([2474698](https://github.com/NorthernTechHQ/nt-gui/commit/2474698b27b9c61a0201e4ee2671a39b5305339e))  by @mzedel
-
-
-
-- *(store)* Colocated mock data with slices they correspond to
-
- ([5f452c4](https://github.com/NorthernTechHQ/nt-gui/commit/5f452c423bb7a6c6565ab89bdea68ef445c951f6))  by @mzedel
-
-
-
-
-
-
-
-#### Types
-
-
-- *(types)* Added base types package meant for nt-gui internal use
-
- ([b8f8282](https://github.com/NorthernTechHQ/nt-gui/commit/b8f8282552de39dc291a9d03b0281d984a2d0067))  by @mzedel
-
-
-
-
-
-
-
-### Refactor
-
-#### Store,common-ui
-
-
-- *(store,common-ui)* Switched package internal imports to relative locations - to remove path mapping differences in vitest vs. tsup
-
- ([38f6fd8](https://github.com/NorthernTechHQ/nt-gui/commit/38f6fd8fc6b72caaf03f87bf2e7e9a9167aca6f0))  by @mzedel
-
-
-
-
-
-
-
-### Security
-
-
-### Refac
-
-
-
-## @northern.tech/store-0.3.4 - 2025-02-14
 
 
 ### Bug fixes
 
-#### Common,store
+#### store
 
+- Fixed end date filters out today's entries in the Audit log and Devices## @northern.tech/store-0.3.1 - 2024-12-10
 
-- *(common,store)* Fixed references to now moved utility functions
-
- ([73e9f33](https://github.com/NorthernTechHQ/nt-gui/commit/73e9f33d77c0c5773f05b3f0344d8f7350c62e8f))  by @mzedel
-
-
-
-
-
-
-#### Store
-
-
-- *(store)* Aligned onboarding handling with removed onboardingmanager
-
- ([cf5ea53](https://github.com/NorthernTechHQ/nt-gui/commit/cf5ea5339e88f3767c25358221f52060941363e4))  by @mzedel
-
-
-
-- *(store)* Aligned dependencies with referenced packages
-
- ([182dedd](https://github.com/NorthernTechHQ/nt-gui/commit/182dedd8a4a1f81ed4f22bf9e345bc0e4f73cc2d))  by @mzedel
-
-
-
-- *(store)* Aligned sorting behaviour with type expectation & single sorting function
-
- ([f9d71d4](https://github.com/NorthernTechHQ/nt-gui/commit/f9d71d411907d3ba0106c2c7da4a6f46e5ac2cb0))  by @mzedel
-
-
-
-
-
-
-
-### Features
-
-#### Utils,store
-
-
-- *(utils,store)* Moved store focused utils to store package
-
- ([9a98222](https://github.com/NorthernTechHQ/nt-gui/commit/9a982226b1668632bcbb6be382bb4b2ce8d8fe14))  by @mzedel
-
-
-
-
-
-
-
-
-## @northern.tech/store-0.3.3 - 2025-01-31
-
-
-### Bug fixes
-
-#### Store
-
-
-- *(store)* Removed reliance on test config in package code
-
- ([106415a](https://github.com/NorthernTechHQ/nt-gui/commit/106415a590755e8400ba2b8a99069032fd6f6bcb))  by @mzedel
-
-
-
-- *(store)* Added missing type for device data retrieval
-
- ([3b33c43](https://github.com/NorthernTechHQ/nt-gui/commit/3b33c4380f6cf47688452319ef0bf88554179eef))  by @mzedel
-
-
-
-
-
-
-
-### Security
-
-
-
-## @northern.tech/store-0.3.2 - 2024-12-13
-
-
-### Bug fixes
-
-#### Store
-
-
-- *(store)* Fixed end date filters out today's entries in the Audit log and Devices
-
- ([aee3e80](https://github.com/NorthernTechHQ/nt-gui/commit/aee3e8053fe5744b99ab7432662c21c3fea38331))  by @aleksandrychev
-
-
-
-
-
-
-
-
-## @northern.tech/store-0.3.1 - 2024-12-10
 
 
 ### Bug fixes
 
 
-### Security
+- Aligned helptips location after migration to common-ui
+- Fixed linter setup after dependency updates & removed now unused override
+
+### Dependency updates
+
+
+- Bump the production-dependencies group across 1 directory with 17 updates## @northern.tech/store-0.3.0 - 2024-12-10
 
 
 
-## @northern.tech/store-0.3.0 - 2024-12-10
+### New features
 
+
+- Made packages work with mender build + most tests
 
 ### Bug fixes
 
-#### Store
+#### store
 
+- Fixed an issue that caused version information to be parsed wrong
+- Reintroduced locations definition to allow build to pass## @northern.tech/store-0.2.1 - 2024-11-15
 
-- *(store)* Fixed an issue that caused version information to be parsed wrong
-
- ([bcba9da](https://github.com/NorthernTechHQ/nt-gui/commit/bcba9da4b8b29d27481f17383af66cf791b36bd8))  by @mzedel
-
-
-
-- *(store)* Reintroduced locations definition to allow build to pass
-
- ([48da257](https://github.com/NorthernTechHQ/nt-gui/commit/48da2579d6941a020493521d83d7c41fb5c75f2b))  by @mzedel
-
-
-
-
-
-
-
-### Features
-
-
-
-## @northern.tech/store-0.2.1 - 2024-11-15
 
 
 ### Bug fixes
 
 
-
-## @northern.tech/store-0.2.0 - 2024-11-15
-
-
-### Features
+- Aligned compile targets & platform for relevant packages
+- Fixed store package export## @northern.tech/store-0.2.0 - 2024-11-15
 
 
 
-## @northern.tech/store-0.1.3 - 2024-11-15
+### New features
+
+
+- Aligned store code with mender-server repository## @northern.tech/store-0.1.3 - 2024-11-15
+
 
 
 ### Bug fixes
 
-#### Store
+#### store
 
+- Fixed type generation issue bypassing type only files## @northern.tech/store-0.1.1 - 2024-11-06
 
-- *(store)* Fixed type generation issue bypassing type only files
-
- ([7b8add6](https://github.com/NorthernTechHQ/nt-gui/commit/7b8add6703b06fd1b45fb27dff8c86b29cc98eaf))  by @mzedel
-
-
-
-
-
-
-
-
-## @northern.tech/store-0.1.1 - 2024-11-06
 
 
 ### Bug fixes
 
 
-
-## @northern.tech/store-0.1.0 - 2024-11-05
-
-
-### Features
+- Allowed more flexible dependency versions## @northern.tech/store-0.1.0 - 2024-11-05
 
 
 
+### New features
+
+
+- Basic repository setup ([ENT-12150](https://northerntech.atlassian.net/browse/ENT-12150))
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [ENT-12150](https://northerntech.atlassian.net/browse/ENT-12150) |
 ---
