@@ -917,7 +917,7 @@ paths:
             schema:
               $ref: '#/components/schemas/CheckUpdateRequest'
         description: |
-          Request which describes the artifact(s) installed on the devices and the suppported features. The device_provides attribute contains a key-value map of strings which describes the artifact(s) installed on the device and the device itself. It is used to determine the next deployment. The keys device_type and artifact_name are mandatory, additional free-form key-value pairs can be specified.
+          Request which describes the artifact(s) installed on the devices and the supported features. The device_provides attribute contains a key-value map of strings which describes the artifact(s) installed on the device and the device itself. It is used to determine the next deployment. The keys device_type and artifact_name are mandatory, additional free-form key-value pairs can be specified.
         required: true
       responses:
         '200':
@@ -1631,7 +1631,7 @@ paths:
       responses:
         '204':
           content: {}
-          description: Status updated sucessfully.
+          description: Status updated successfully.
         '400':
           $ref: '#/components/responses/InvalidRequestError'
         '500':
@@ -1642,7 +1642,7 @@ paths:
   /api/internal/v1/deployments/tenants/{tenant_id}/devices/deployments/last:
     post:
       description: |
-        Return the status of the last unsucessful device deployment.
+        Return the status of the last unsuccessful device deployment.
       operationId: Get last device deployment status
       parameters:
         - description: Tenant identifier.
@@ -1668,7 +1668,7 @@ paths:
           $ref: '#/components/responses/InvalidRequestError'
         '500':
           $ref: '#/components/responses/InternalServerError'
-      summary: Get status of the last device devployment
+      summary: Get status of the last device deployment
       tags:
         - Deployments_Internal_API_Internal API
   /api/management/v1/deployments/deployments:
@@ -4429,7 +4429,7 @@ paths:
             default: status:asc
       responses:
         '200':
-          description: Succesful query
+          description: Successful query
           content:
             application/json:
               schema:
@@ -6361,7 +6361,7 @@ paths:
           required: false
           schema:
             type: integer
-          description: Time in millisconds to sleep between the subsequent playback data writes.
+          description: Time in milliseconds to sleep between the subsequent playback data writes.
         - in: header
           name: Connection
           schema:
@@ -7052,7 +7052,7 @@ paths:
             type: string
       responses:
         '204':
-          description: Tenant data was removed successfuly.
+          description: Tenant data was removed successfully.
           content: {}
         '500':
           $ref: '#/components/responses/InternalServerError'
@@ -7927,7 +7927,7 @@ paths:
                   updated_count:
                     type: integer
                     description: |
-                      Number of devices for which the group was cleared sucessfully.
+                      Number of devices for which the group was cleared successfully.
                 description: |
                   JSON object listing how many devices were updated.
               example:
@@ -8028,7 +8028,7 @@ paths:
                   updated_count:
                     type: integer
                     description: |
-                      Number of devices for which the group was cleared sucessfully.
+                      Number of devices for which the group was cleared successfully.
                 description: |
                   JSON object listing how many devices were updated.
               example:
@@ -8585,7 +8585,7 @@ paths:
           description: ID of the target device.
       responses:
         '202':
-          description: The device decomissioning event was accepted and will be processed asynchronously.
+          description: The device decommissioning event was accepted and will be processed asynchronously.
         '500':
           $ref: '#/components/responses/InternalServerError'
   /api/internal/v1/iot-manager/tenants/{tenantId}/bulk/devices/status/{status}:
@@ -9170,7 +9170,7 @@ paths:
             type: string
         - name: include_children
           in: query
-          description: Boolean flag to include children tenants, if included will result in another db call quering all the tenants with parent tenant id set to the tenant in question.
+          description: Boolean flag to include children tenants, if included will result in another db call querying all the tenants with parent tenant id set to the tenant in question.
           schema:
             type: boolean
       responses:
@@ -9215,7 +9215,7 @@ paths:
           $ref: '#/components/responses/NotFound'
         '409':
           description: |
-            The tenant cannot be updated becaues of a conflict.
+            The tenant cannot be updated because of a conflict.
           content:
             application/json:
               schema:
@@ -9676,9 +9676,9 @@ paths:
     post:
       tags:
         - Tenants_APIs_v2_Tenantadm Management v2
-      summary: Preview an upcomming invoice
+      summary: Preview an upcoming invoice
       description: |
-        Requests a preview to view an upcomming invoice with an optional subscription change request.
+        Requests a preview to view an upcoming invoice with an optional subscription change request.
         The SubscriptionRequest is optional.
       operationId: Preview invoice
       requestBody:
@@ -9926,7 +9926,7 @@ paths:
           $ref: '#/components/responses/InvalidRequestError'
         '401':
           description: |
-            Recaptcha verififaction failed.
+            Recaptcha verification failed.
           content:
             application/json:
               schema:
@@ -10055,7 +10055,7 @@ paths:
           $ref: '#/components/responses/InvalidRequestError'
         '401':
           description: |
-            Recaptcha verififaction failed.
+            Recaptcha verification failed.
           content:
             application/json:
               schema:
@@ -11700,6 +11700,13 @@ paths:
       tags:
         - User_Administration_Management API
       summary: Update own user information
+      deprecated: true
+      x-deprecated-description: |
+        _since Thu Jul 24 2026_ this endpoint is deprecated. Please use
+        PUT /api/management/v2/useradm/users/me instead. Unlike this v1 endpoint,
+        the v2 endpoint does not accept the `email` field and only updates the
+        password (together with `current_password`). To change the account's email
+        address, use /api/management/v1/useradm/users/me/email-change/start instead.
       operationId: Update Own User Data
       requestBody:
         description: Updated user data.
@@ -11984,7 +11991,7 @@ paths:
         List Roles
       x-deprecated-description: |
         This endpoint is deprecated. Please use /api/management/v2/useradm/roles
-        togheter with /api/management/v2/useradm/permission_sets instead.
+        together with /api/management/v2/useradm/permission_sets instead.
       operationId: List Roles v1
       responses:
         '200':
@@ -12013,7 +12020,7 @@ paths:
         Create Role
       x-deprecated-description: |
         This endpoint is deprecated. Please use /api/management/v2/useradm/roles
-        togheter with /api/management/v2/useradm/permission_sets instead.
+        together with /api/management/v2/useradm/permission_sets instead.
       operationId: Create Role v1
       requestBody:
         description: New role data.
@@ -12051,7 +12058,7 @@ paths:
         Returns role information.
       x-deprecated-description: |
         This endpoint is deprecated. Please use /api/management/v2/useradm/roles/{id}
-        togheter with /api/management/v2/useradm/permission_sets/{id} instead.
+        together with /api/management/v2/useradm/permission_sets/{id} instead.
       operationId: Show Role v1
       parameters:
         - name: id
@@ -12090,7 +12097,7 @@ paths:
         Update Role
       x-deprecated-description: |
         This endpoint is deprecated. Please use /api/management/v2/useradm/roles/{id}
-        togheter with /api/management/v2/useradm/permission_sets/{id} instead.
+        together with /api/management/v2/useradm/permission_sets/{id} instead.
       operationId: Update Role v1
       parameters:
         - name: id
@@ -12136,7 +12143,7 @@ paths:
         Delete Role
       x-deprecated-description: |
         This endpoint is deprecated. Please use /api/management/v2/useradm/roles/{id}
-        togheter with /api/management/v2/useradm/permission_sets/{id} instead.
+        together with /api/management/v2/useradm/permission_sets/{id} instead.
       operationId: Delete Role v1
       parameters:
         - name: id
@@ -12402,7 +12409,7 @@ paths:
                 $ref: '#/components/schemas/Error'
         '422':
           description: |
-            Maximum number of Personal Acess Tokens reached for this user.
+            Maximum number of Personal Access Tokens reached for this user.
           content:
             application/json:
               schema:
@@ -14008,7 +14015,7 @@ components:
         info:
           $ref: '#/components/schemas/ArtifactInfo'
         signed:
-          description: Idicates if artifact is signed or not.
+          description: Indicates if artifact is signed or not.
           type: boolean
         updates:
           items:
@@ -14192,7 +14199,7 @@ components:
         Information about update type.
       properties:
         type:
-          description: Note that for emtpy Artifacts, the type is 'null'
+          description: Note that for empty Artifacts, the type is 'null'
           type: string
       type: object
     UpdateFile:
@@ -14646,7 +14653,7 @@ components:
       x-go-name: InternalUploadArtifactRequest
       properties:
         artifact_id:
-          description: Artifact ID, optional; the server generates a randome one if not provided.
+          description: Artifact ID, optional; the server generates a random one if not provided.
           type: string
         size:
           description: Size of the artifact file in bytes.
@@ -14720,7 +14727,7 @@ components:
         info:
           $ref: '#/components/schemas/ArtifactInfo'
         signed:
-          description: Idicates if artifact is signed or not.
+          description: Indicates if artifact is signed or not.
           type: boolean
         updates:
           items:
@@ -15122,7 +15129,7 @@ components:
         autogenerate_delta:
           default: false
           description: |
-            The flag idicating if the autogeneration of delta artifacts is enabled for a given deployment.
+            The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
           type: boolean
       required:
         - artifact_name
@@ -15170,7 +15177,7 @@ components:
         autogenerate_delta:
           default: false
           description: |
-            The flag idicating if the autogeneration of delta artifacts is enabled for a given deployment.
+            The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
           type: boolean
       required:
         - artifact_name
@@ -15258,7 +15265,7 @@ components:
           type: integer
         initial_device_count:
           description: |
-            In case of dynamic deployments this is a number of devices targeted initially (maching the filter at the moment of deployment creation).
+            In case of dynamic deployments this is a number of devices targeted initially (matching the filter at the moment of deployment creation).
           type: integer
         dynamic:
           description: |
@@ -15276,7 +15283,7 @@ components:
           type: string
         autogenerate_delta:
           description: |
-            The flag idicating if the autogeneration of delta artifacts is enabled for a given deployment.
+            The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
           type: boolean
         statistics:
           $ref: '#/components/schemas/DeploymentStatistics'
@@ -15452,7 +15459,7 @@ components:
         info:
           $ref: '#/components/schemas/ArtifactInfo'
         signed:
-          description: Idicates if artifact is signed or not.
+          description: Indicates if artifact is signed or not.
           type: boolean
         updates:
           items:
@@ -15869,7 +15876,7 @@ components:
       properties:
         start_ts:
           description: |
-            Start time stamp for the deploment of the first phase.
+            Start time stamp for the deployment of the first phase.
             If unset, the deployment starts immediately.
           format: date-time
           type: string
@@ -16374,7 +16381,7 @@ components:
         info:
           $ref: '#/components/schemas/ArtifactInfo'
         signed:
-          description: Idicates if artifact is signed or not.
+          description: Indicates if artifact is signed or not.
           type: boolean
         updates:
           items:
@@ -16658,7 +16665,7 @@ components:
           type: integer
         initial_device_count:
           description: |
-            In case of dynamic deployments this is a number of devices targeted initially (maching the filter at the moment of deployment creation).
+            In case of dynamic deployments this is a number of devices targeted initially (matching the filter at the moment of deployment creation).
           type: integer
         dynamic:
           description: |
@@ -16678,7 +16685,7 @@ components:
           type: string
         autogenerate_delta:
           description: |
-            The flag idicating if the autogeneration of delta artifacts is enabled for a given deployment.
+            The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
           type: boolean
         statistics:
           $ref: '#/components/schemas/DeploymentStatistics'
@@ -16736,7 +16743,7 @@ components:
         autogenerate_delta:
           default: false
           description: |
-            The flag idicating if the autogeneration of delta artifacts is enabled for a given deployment.
+            The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
           type: boolean
       required:
         - artifact_name
@@ -16817,7 +16824,7 @@ components:
             - success
             - failed
           description: |
-            Gneration status
+            Generation status
       example:
         id: bb2a1d7f-a275-4045-be54-ec701f11659c
         delta_job_id: 67e4310d82ba0eead4e41cbf
@@ -17042,7 +17049,7 @@ components:
             $ref: '#/components/schemas/AuthSet'
         decommissioning:
           type: boolean
-          description: Devices that are part of ongoing decomissioning process will return True
+          description: Devices that are part of ongoing decommissioning process will return True
         external_id:
           $ref: '#/components/schemas/ExternalIdentity'
         tier:
@@ -17233,7 +17240,7 @@ components:
           $ref: '#/components/schemas/AlertSubject'
         timestamp:
           description: |
-            Time and date when the alert occured
+            Time and date when the alert occurred
           type: string
           format: date-time
       required:
@@ -17879,7 +17886,7 @@ components:
             $ref: '#/components/schemas/FilterPredicate'
         sort:
           type: array
-          description: List of ordered sort criterias
+          description: List of ordered sort criteria
           items:
             $ref: '#/components/schemas/SortCriteria'
         attributes:
@@ -18140,7 +18147,7 @@ components:
           description: |
             An array of scopes for the integration. Currently we support deviceauth
             and inventory scopes. The former will match the events related to a device
-            state (accepted, decomissioned), while the latter the inventory changed event.
+            state (accepted, decommissioned), while the latter the inventory changed event.
       required:
         - provider
         - credentials
@@ -18353,7 +18360,7 @@ components:
           description: Maximum number of allowed child tenants
         suspend_at:
           type: string
-          description: Planned suspention date and time, in ISO8601 format.
+          description: Planned suspension date and time, in ISO8601 format.
         customer_id:
           type: string
         subscription_id:
@@ -19396,7 +19403,7 @@ components:
             description: Role name
         send_reset_password:
           type: boolean
-          description: Flag indicating wether to trigger password reset on user creation.
+          description: Flag indicating whether to trigger password reset on user creation.
         sso:
           type: array
           description: SSO login schemes.
@@ -19711,7 +19718,7 @@ components:
             description: Role name
         send_reset_password:
           type: boolean
-          description: Flag indicating wether to trigger password reset on user creation.
+          description: Flag indicating whether to trigger password reset on user creation.
       description: New user descriptor.
       example:
         email: user@acme.com
