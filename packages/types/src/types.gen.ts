@@ -334,7 +334,7 @@ export type Artifact = {
   device_types_compatible: Array<string>;
   info?: ArtifactInfo;
   /**
-   * Idicates if artifact is signed or not.
+   * Indicates if artifact is signed or not.
    */
   signed?: boolean;
   updates?: Array<Update>;
@@ -458,7 +458,7 @@ export type ArtifactInfo = {
  */
 export type ArtifactTypeInfo = {
   /**
-   * Note that for emtpy Artifacts, the type is 'null'
+   * Note that for empty Artifacts, the type is 'null'
    */
   type?: string;
 };
@@ -709,7 +709,7 @@ export type GetBinaryDeltaConfigurations200ResponseInner = {
 
 export type UploadArtifactRequest = {
   /**
-   * Artifact ID, optional; the server generates a randome one if not provided.
+   * Artifact ID, optional; the server generates a random one if not provided.
    */
   artifact_id?: string;
   /**
@@ -775,7 +775,7 @@ export type DeviceWithImageImageMetaArtifact = {
   device_types_compatible?: Array<string>;
   info?: ArtifactInfo;
   /**
-   * Idicates if artifact is signed or not.
+   * Indicates if artifact is signed or not.
    */
   signed?: boolean;
   updates?: Array<Update>;
@@ -1032,7 +1032,7 @@ export type NewDeploymentTypeManagement = {
     [key: string]: unknown;
   };
   /**
-   * The flag idicating if the autogeneration of delta artifacts is enabled for a given deployment.
+   * The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
    *
    */
   autogenerate_delta?: boolean;
@@ -1065,7 +1065,7 @@ export type NewDeploymentForGroup = {
     [key: string]: unknown;
   };
   /**
-   * The flag idicating if the autogeneration of delta artifacts is enabled for a given deployment.
+   * The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
    *
    */
   autogenerate_delta?: boolean;
@@ -1133,7 +1133,7 @@ export type DeploymentV1 = {
    */
   max_devices?: number;
   /**
-   * In case of dynamic deployments this is a number of devices targeted initially (maching the filter at the moment of deployment creation).
+   * In case of dynamic deployments this is a number of devices targeted initially (matching the filter at the moment of deployment creation).
    *
    */
   initial_device_count?: number;
@@ -1150,7 +1150,7 @@ export type DeploymentV1 = {
    */
   configuration?: string;
   /**
-   * The flag idicating if the autogeneration of delta artifacts is enabled for a given deployment.
+   * The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
    *
    */
   autogenerate_delta?: boolean;
@@ -1228,7 +1228,7 @@ export type ArtifactV1 = {
   device_types_compatible: Array<string>;
   info?: ArtifactInfo;
   /**
-   * Idicates if artifact is signed or not.
+   * Indicates if artifact is signed or not.
    */
   signed?: boolean;
   updates?: Array<Update>;
@@ -1489,7 +1489,7 @@ export type DeploymentPhase = DeploymentPhaseSpec & DeploymentBatchSizeSpec;
  */
 export type DeploymentUniformPhaseSpec = {
   /**
-   * Start time stamp for the deploment of the first phase.
+   * Start time stamp for the deployment of the first phase.
    * If unset, the deployment starts immediately.
    *
    */
@@ -1830,7 +1830,7 @@ export type ArtifactV2 = {
   device_types_compatible: Array<string>;
   info?: ArtifactInfo;
   /**
-   * Idicates if artifact is signed or not.
+   * Indicates if artifact is signed or not.
    */
   signed?: boolean;
   updates?: Array<Update>;
@@ -2013,7 +2013,7 @@ export type DeploymentV2 = {
    */
   max_devices?: number;
   /**
-   * In case of dynamic deployments this is a number of devices targeted initially (maching the filter at the moment of deployment creation).
+   * In case of dynamic deployments this is a number of devices targeted initially (matching the filter at the moment of deployment creation).
    *
    */
   initial_device_count?: number;
@@ -2031,7 +2031,7 @@ export type DeploymentV2 = {
    */
   configuration?: string;
   /**
-   * The flag idicating if the autogeneration of delta artifacts is enabled for a given deployment.
+   * The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
    *
    */
   autogenerate_delta?: boolean;
@@ -2069,7 +2069,7 @@ export type NewDeploymentV2TypeManagement = {
     [key: string]: unknown;
   };
   /**
-   * The flag idicating if the autogeneration of delta artifacts is enabled for a given deployment.
+   * The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
    *
    */
   autogenerate_delta?: boolean;
@@ -2144,7 +2144,7 @@ export type DeltaJobsListItem = {
    */
   total_time?: string;
   /**
-   * Gneration status
+   * Generation status
    *
    */
   status?: 'pending' | 'queued' | 'success' | 'failed';
@@ -2312,7 +2312,7 @@ export type Device = {
   check_in_time?: string;
   auth_sets?: Array<AuthSet>;
   /**
-   * Devices that are part of ongoing decomissioning process will return True
+   * Devices that are part of ongoing decommissioning process will return True
    */
   decommissioning?: boolean;
   external_id?: ExternalIdentity;
@@ -2464,7 +2464,7 @@ export type PostAlert = {
   level: 'OK' | 'CRITICAL';
   subject: AlertSubject;
   /**
-   * Time and date when the alert occured
+   * Time and date when the alert occurred
    *
    */
   timestamp: string;
@@ -2860,7 +2860,7 @@ export type SearchParams = {
    */
   filters?: Array<FilterPredicate>;
   /**
-   * List of ordered sort criterias
+   * List of ordered sort criteria
    */
   sort?: Array<SortCriteria>;
   /**
@@ -3043,7 +3043,7 @@ export type Integration = {
   /**
    * An array of scopes for the integration. Currently we support deviceauth
    * and inventory scopes. The former will match the events related to a device
-   * state (accepted, decomissioned), while the latter the inventory changed event.
+   * state (accepted, decommissioned), while the latter the inventory changed event.
    *
    */
   scopes?: Array<'deviceauth' | 'inventory'>;
@@ -3231,7 +3231,7 @@ export type TenantUpdateInternal = {
    */
   max_child_tenants?: string;
   /**
-   * Planned suspention date and time, in ISO8601 format.
+   * Planned suspension date and time, in ISO8601 format.
    */
   suspend_at?: string;
   customer_id?: string;
@@ -3957,7 +3957,7 @@ export type User = {
    */
   roles?: Array<string>;
   /**
-   * Flag indicating wether to trigger password reset on user creation.
+   * Flag indicating whether to trigger password reset on user creation.
    */
   send_reset_password?: boolean;
   /**
@@ -4176,7 +4176,7 @@ export type UserNew = {
    */
   roles?: Array<string>;
   /**
-   * Flag indicating wether to trigger password reset on user creation.
+   * Flag indicating whether to trigger password reset on user creation.
    */
   send_reset_password?: boolean;
 };
@@ -5276,7 +5276,7 @@ export type FetchConfigurationResponse = FetchConfigurationResponses[keyof Fetch
 
 export type CheckUpdateData = {
   /**
-   * Request which describes the artifact(s) installed on the devices and the suppported features. The device_provides attribute contains a key-value map of strings which describes the artifact(s) installed on the device and the device itself. It is used to determine the next deployment. The keys device_type and artifact_name are mandatory, additional free-form key-value pairs can be specified.
+   * Request which describes the artifact(s) installed on the devices and the supported features. The device_provides attribute contains a key-value map of strings which describes the artifact(s) installed on the device and the device itself. It is used to determine the next deployment. The keys device_type and artifact_name are mandatory, additional free-form key-value pairs can be specified.
    *
    */
   body: CheckUpdateRequest;
@@ -6077,7 +6077,7 @@ export type UpdateDeltaJobStatusError = UpdateDeltaJobStatusErrors[keyof UpdateD
 
 export type UpdateDeltaJobStatusResponses = {
   /**
-   * Status updated sucessfully.
+   * Status updated successfully.
    */
   204: void;
 };
@@ -8421,7 +8421,7 @@ export type ListServerSideBinaryDeltaGenerationJobsError = ListServerSideBinaryD
 
 export type ListServerSideBinaryDeltaGenerationJobsResponses = {
   /**
-   * Succesful query
+   * Successful query
    */
   200: Array<DeltaJobsListItem>;
 };
@@ -10821,7 +10821,7 @@ export type DeviceConnectManagementPlaybackData = {
   };
   query?: {
     /**
-     * Time in millisconds to sleep between the subsequent playback data writes.
+     * Time in milliseconds to sleep between the subsequent playback data writes.
      */
     sleep_ms?: number;
   };
@@ -11495,7 +11495,7 @@ export type DeleteTenantSpecificDataError = DeleteTenantSpecificDataErrors[keyof
 
 export type DeleteTenantSpecificDataResponses = {
   /**
-   * Tenant data was removed successfuly.
+   * Tenant data was removed successfully.
    */
   204: void;
 };
@@ -12328,7 +12328,7 @@ export type RemoveAGroupResponses = {
    */
   200: {
     /**
-     * Number of devices for which the group was cleared sucessfully.
+     * Number of devices for which the group was cleared successfully.
      *
      */
     updated_count: number;
@@ -12376,7 +12376,7 @@ export type RemoveDevicesFromGroupResponses = {
    */
   200: {
     /**
-     * Number of devices for which the group was cleared sucessfully.
+     * Number of devices for which the group was cleared successfully.
      *
      */
     updated_count: number;
@@ -12999,7 +12999,7 @@ export type IoTManagerInternalDecommissionDeviceError = IoTManagerInternalDecomm
 
 export type IoTManagerInternalDecommissionDeviceResponses = {
   /**
-   * The device decomissioning event was accepted and will be processed asynchronously.
+   * The device decommissioning event was accepted and will be processed asynchronously.
    */
   202: unknown;
 };
@@ -13697,7 +13697,7 @@ export type ShowTenantData = {
   };
   query?: {
     /**
-     * Boolean flag to include children tenants, if included will result in another db call quering all the tenants with parent tenant id set to the tenant in question.
+     * Boolean flag to include children tenants, if included will result in another db call querying all the tenants with parent tenant id set to the tenant in question.
      */
     include_children?: boolean;
   };
@@ -13751,7 +13751,7 @@ export type UpdateTenantErrors = {
    */
   404: Error;
   /**
-   * The tenant cannot be updated becaues of a conflict.
+   * The tenant cannot be updated because of a conflict.
    *
    */
   409: Error;
@@ -14547,7 +14547,7 @@ export type SignUpErrors = {
    */
   400: Error;
   /**
-   * Recaptcha verififaction failed.
+   * Recaptcha verification failed.
    *
    */
   401: Error;
@@ -14626,7 +14626,7 @@ export type CreateTrialAccountErrors = {
    */
   400: Error;
   /**
-   * Recaptcha verififaction failed.
+   * Recaptcha verification failed.
    *
    */
   401: Error;
@@ -17224,7 +17224,7 @@ export type CreatePersonalAccessTokenErrors = {
    */
   409: Error;
   /**
-   * Maximum number of Personal Acess Tokens reached for this user.
+   * Maximum number of Personal Access Tokens reached for this user.
    *
    */
   422: Error;
