@@ -525,10 +525,7 @@ export const getTestDeviceCount = createAppAsyncThunk(`${sliceName}/getTestDevic
   const res = await GeneralApi.post(`${inventoryApiUrlV2}/filters/search`, {
     page: 1,
     per_page: 1,
-    filters: [
-      { scope: 'system', attribute: 'test_device', type: DEVICE_FILTERING_OPTIONS.$eq.key, value: 'true' },
-      { scope: 'identity', attribute: 'status', type: DEVICE_FILTERING_OPTIONS.$eq.key, value: DEVICE_STATES.accepted }
-    ],
+    filters: [{ scope: 'system', attribute: 'test_device', type: DEVICE_FILTERING_OPTIONS.$eq.key, value: 'true' }],
     attributes: [{ scope: 'identity', attribute: 'status' }]
   }).catch(err => commonErrorHandler(err, `Retrieving test device count failed:`, dispatch, commonErrorFallback));
   return dispatch(actions.setTestDeviceCount(Number(res.headers[headerNames.total])));
