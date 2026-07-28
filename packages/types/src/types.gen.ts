@@ -2252,6 +2252,12 @@ export type DeviceTierLimits = {
    *
    */
   system: number;
+  /**
+   * The number of test devices that can be accepted by the tenant.
+   * A value of -1 means that an unlimited amount of test devices can be accepted.
+   *
+   */
+  test: number;
 };
 
 /**
