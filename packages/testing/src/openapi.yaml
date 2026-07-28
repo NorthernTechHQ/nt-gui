@@ -4659,10 +4659,12 @@ paths:
                     standard: 100
                     micro: 1000
                     system: 10
+                    test: 0
                   58be8208dd77460001fe0d79:
                     standard: 10
                     micro: 0
                     system: 1
+                    test: 10
         '400':
           $ref: '#/components/responses/InvalidRequestError'
         '500':
@@ -16961,14 +16963,21 @@ components:
           description: |
             The number of system tier devices that can be accepted by the tenant.
             A value of -1 means that an unlimited amount of system tier devices can be accepted.
+        test:
+          type: integer
+          description: |
+            The number of test devices that can be accepted by the tenant.
+            A value of -1 means that an unlimited amount of test devices can be accepted.
       required:
         - standard
         - micro
         - system
+        - test
       example:
         standard: 100
         micro: 1000
         system: 10
+        test: 0
     DeviceLimit:
       description: Limit definition
       type: object
