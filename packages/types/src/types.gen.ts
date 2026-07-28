@@ -2252,6 +2252,12 @@ export type DeviceTierLimits = {
    *
    */
   system: number;
+  /**
+   * The number of test devices that can be accepted by the tenant.
+   * A value of -1 means that an unlimited amount of test devices can be accepted.
+   *
+   */
+  test: number;
 };
 
 /**
@@ -2281,7 +2287,7 @@ export type ExternalIdentity = {
    * Status flag.
    */
   active?: boolean;
-  [key: string]: unknown | string | boolean | undefined;
+  [key: string]: unknown;
 };
 
 export type DeviceFlags = {
@@ -4153,7 +4159,7 @@ export type LoginOptions = {
   no_expiry?: boolean;
   /**
    * Two factor authentication token, required if two factor authentication is
-   * enabled and tenant's plan is Professional or Enterprise.
+   *   enabled and tenant's plan is Professional or Enterprise.
    *
    */
   token2fa?: string;
