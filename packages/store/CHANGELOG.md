@@ -1,5 +1,5 @@
 ---
-## 0.41.2 - 2026-07-15
+## 0.41.3 - 2026-07-29
 
 
 
@@ -7,7 +7,33 @@
 
 #### store
 
+- Update the email pending email thunk test ([MEN-9251](https://northerntech.atlassian.net/browse/MEN-9251))
+- Revert system scope URL handling ([MEN-9796](https://northerntech.atlassian.net/browse/MEN-9796))
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-9251](https://northerntech.atlassian.net/browse/MEN-9251) |
+| [MEN-9796](https://northerntech.atlassian.net/browse/MEN-9796) |
+
+## @northern.tech/store-0.41.2 - 2026-07-20
+
+
+
+### New features
+
+#### store
+
+- Rename system attributes to default ([MEN-9796](https://northerntech.atlassian.net/browse/MEN-9796))
+
+### Bug fixes
+
+#### store
+
 - Filter test device count by accepted devices ([MEN-9959](https://northerntech.atlassian.net/browse/MEN-9959))
+- Updated terminal message decoder dependency
 
 ---
 ### All tickets resolved in this release
@@ -15,6 +41,8 @@
 | Ticket |
 |---|
 | [MEN-9959](https://northerntech.atlassian.net/browse/MEN-9959) |
+| [MEN-9796](https://northerntech.atlassian.net/browse/MEN-9796) |
+
 ## @northern.tech/store-0.41.1 - 2026-07-13
 
 
@@ -23,7 +51,8 @@
 
 #### store
 
-- Adjusted email endpoint## @northern.tech/store-0.41.0 - 2026-07-13
+- Adjusted email endpoint
+## @northern.tech/store-0.41.0 - 2026-07-13
 
 
 
@@ -39,6 +68,7 @@
 | Ticket |
 |---|
 | [MEN-9950](https://northerntech.atlassian.net/browse/MEN-9950) |
+
 ## @northern.tech/store-0.40.0 - 2026-07-09
 
 
@@ -66,6 +96,7 @@
 | Ticket |
 |---|
 | [MEN-9631](https://northerntech.atlassian.net/browse/MEN-9631) |
+
 ## @northern.tech/store-0.39.0 - 2026-06-30
 
 
@@ -90,6 +121,7 @@
 |---|
 | [MEN-9906](https://northerntech.atlassian.net/browse/MEN-9906) |
 | [MEN-9595](https://northerntech.atlassian.net/browse/MEN-9595) |
+
 ## @northern.tech/store-0.38.0 - 2026-06-25
 
 
@@ -114,6 +146,7 @@
 |---|
 | [MEN-9872](https://northerntech.atlassian.net/browse/MEN-9872) |
 | [MEN-9212](https://northerntech.atlassian.net/browse/MEN-9212) |
+
 ## @northern.tech/store-0.37.0 - 2026-06-23
 
 
@@ -138,6 +171,7 @@
 |---|
 | [ME-682](https://northerntech.atlassian.net/browse/ME-682) |
 | [MEN-9584](https://northerntech.atlassian.net/browse/MEN-9584) |
+
 ## @northern.tech/store-0.36.3 - 2026-06-15
 
 
@@ -172,6 +206,7 @@
 | [MEN-9853](https://northerntech.atlassian.net/browse/MEN-9853) |
 | [MEN-9856](https://northerntech.atlassian.net/browse/MEN-9856) |
 | [MEN-9849](https://northerntech.atlassian.net/browse/MEN-9849) |
+
 ## @northern.tech/store-0.36.2 - 2026-06-04
 
 
@@ -187,7 +222,8 @@
 
 
 - Bump the development-dependencies group with 11 updates
-- Bump the production-dependencies group across 1 directory with 23 updates## @northern.tech/store-0.36.1 - 2026-05-28
+- Bump the production-dependencies group across 1 directory with 23 updates
+## @northern.tech/store-0.36.1 - 2026-05-28
 
 
 
@@ -195,7 +231,8 @@
 
 #### store
 
-- Switched to name_prefix in software retrieval## @northern.tech/store-0.36.0 - 2026-05-28
+- Switched to name_prefix in software retrieval
+## @northern.tech/store-0.36.0 - 2026-05-28
 
 
 
@@ -217,6 +254,7 @@
 | Ticket |
 |---|
 | [MEN-9669](https://northerntech.atlassian.net/browse/MEN-9669) |
+
 ## @northern.tech/store-0.35.0 - 2026-05-27
 
 
@@ -243,6 +281,7 @@
 |---|
 | [MEN-9001](https://northerntech.atlassian.net/browse/MEN-9001) |
 | [MEN-9560](https://northerntech.atlassian.net/browse/MEN-9560) |
+
 ## @northern.tech/store-0.34.0 - 2026-05-20
 
 
@@ -261,6 +300,7 @@
 |---|
 | [MEN-8723](https://northerntech.atlassian.net/browse/MEN-8723) |
 | [MEN-8205](https://northerntech.atlassian.net/browse/MEN-8205) |
+
 ## @northern.tech/store-0.33.0 - 2026-05-19
 
 
@@ -282,7 +322,8 @@
 
 #### store
 
-- Propagate the error message when uploading manifest file## @northern.tech/store-0.32.0 - 2026-05-13
+- Propagate the error message when uploading manifest file
+## @northern.tech/store-0.32.0 - 2026-05-13
 
 
 
@@ -306,7 +347,8 @@
 
 - Bump the production-dependencies group with 18 updates
 - Bump the development-dependencies group across 1 directory with 15 updates
-- Bump the mui group across 1 directory with 4 updates## @northern.tech/store-0.31.0 - 2026-04-21
+- Bump the mui group across 1 directory with 4 updates
+## @northern.tech/store-0.31.0 - 2026-04-21
 
 
 
@@ -329,6 +371,7 @@
 | Ticket |
 |---|
 | [MEN-9411](https://northerntech.atlassian.net/browse/MEN-9411) |
+
 ## @northern.tech/store-0.30.2 - 2026-04-17
 
 
@@ -345,6 +388,7 @@
 | Ticket |
 |---|
 | [QA-1539](https://northerntech.atlassian.net/browse/QA-1539) |
+
 ## @northern.tech/store-0.30.1 - 2026-04-15
 
 
@@ -370,7 +414,8 @@
 
 
 - Bump the production-dependencies group across 1 directory with 16 updates
-- Bump the development-dependencies group across 1 directory with 15 updates## @northern.tech/store-0.30.0 - 2026-03-30
+- Bump the development-dependencies group across 1 directory with 15 updates
+## @northern.tech/store-0.30.0 - 2026-03-30
 
 
 
@@ -378,7 +423,8 @@
 
 #### store
 
-- Allow easier caller access of retrieved artifact url w/o relying on store processing## @northern.tech/store-0.29.0 - 2026-03-20
+- Allow easier caller access of retrieved artifact url w/o relying on store processing
+## @northern.tech/store-0.29.0 - 2026-03-20
 
 
 
@@ -406,6 +452,7 @@
 | Ticket |
 |---|
 | [MEN-9413](https://northerntech.atlassian.net/browse/MEN-9413) |
+
 ## @northern.tech/store-0.28.0 - 2026-03-12
 
 
@@ -422,6 +469,7 @@
 | Ticket |
 |---|
 | [MEN-9465](https://northerntech.atlassian.net/browse/MEN-9465) |
+
 ## @northern.tech/store-0.27.0 - 2026-03-12
 
 
@@ -447,6 +495,7 @@
 | [MEN-9417](https://northerntech.atlassian.net/browse/MEN-9417) |
 | [MEN-9293](https://northerntech.atlassian.net/browse/MEN-9293) |
 | [MEN-9456](https://northerntech.atlassian.net/browse/MEN-9456) |
+
 ## @northern.tech/store-0.26.1 - 2026-03-10
 
 
@@ -463,6 +512,7 @@
 | Ticket |
 |---|
 | [MEN-8880](https://northerntech.atlassian.net/browse/MEN-8880) |
+
 ## @northern.tech/store-0.26.0 - 2026-03-09
 
 
@@ -479,6 +529,7 @@
 | Ticket |
 |---|
 | [MEN-9260](https://northerntech.atlassian.net/browse/MEN-9260) |
+
 ## @northern.tech/store-0.25.0 - 2026-03-09
 
 
@@ -487,7 +538,8 @@
 
 #### store
 
-- Allowed deployments search to find devices using configured id attribute too## @northern.tech/store-0.24.1 - 2026-03-06
+- Allowed deployments search to find devices using configured id attribute too
+## @northern.tech/store-0.24.1 - 2026-03-06
 
 
 
@@ -502,6 +554,7 @@
 | Ticket |
 |---|
 | [MEN-8880](https://northerntech.atlassian.net/browse/MEN-8880) |
+
 ## @northern.tech/store-0.24.0 - 2026-03-05
 
 
@@ -510,7 +563,8 @@
 
 #### store
 
-- Added tiers support to sp tenant## @northern.tech/store-0.23.0 - 2026-03-02
+- Added tiers support to sp tenant
+## @northern.tech/store-0.23.0 - 2026-03-02
 
 
 
@@ -539,6 +593,7 @@
 |---|
 | [MEN-9399](https://northerntech.atlassian.net/browse/MEN-9399) |
 | [MEN-9419](https://northerntech.atlassian.net/browse/MEN-9419) |
+
 ## @northern.tech/store-0.22.0 - 2026-02-18
 
 
@@ -567,6 +622,7 @@
 |---|
 | [ME-550](https://northerntech.atlassian.net/browse/ME-550) |
 | [QA-1468](https://northerntech.atlassian.net/browse/QA-1468) |
+
 ## @northern.tech/store-0.21.0 - 2026-02-10
 
 
@@ -590,6 +646,7 @@
 | Ticket |
 |---|
 | [MEN-9277](https://northerntech.atlassian.net/browse/MEN-9277) |
+
 ## @northern.tech/store-0.19.2 - 2026-02-02
 
 
@@ -614,6 +671,7 @@
 | Ticket |
 |---|
 | [MEN-9275](https://northerntech.atlassian.net/browse/MEN-9275) |
+
 ## @northern.tech/store-0.19.1 - 2026-01-27
 
 
@@ -630,6 +688,7 @@
 | Ticket |
 |---|
 | [ME-365](https://northerntech.atlassian.net/browse/ME-365) |
+
 ## @northern.tech/store-0.18.0 - 2026-01-23
 
 
@@ -644,7 +703,8 @@
 
 #### store
 
-- Aligned faulty update type mock w/ api response reality## @northern.tech/store-0.17.0 - 2026-01-21
+- Aligned faulty update type mock w/ api response reality
+## @northern.tech/store-0.17.0 - 2026-01-21
 
 
 
@@ -660,6 +720,7 @@
 | Ticket |
 |---|
 | [MEN-9095](https://northerntech.atlassian.net/browse/MEN-9095) |
+
 ## @northern.tech/store-0.16.0 - 2026-01-15
 
 
@@ -677,6 +738,7 @@
 | Ticket |
 |---|
 | [MEN-8882](https://northerntech.atlassian.net/browse/MEN-8882) |
+
 ## @northern.tech/store-0.14.0 - 2026-01-08
 
 
@@ -699,6 +761,7 @@
 | Ticket |
 |---|
 | [MEN-9205](https://northerntech.atlassian.net/browse/MEN-9205) |
+
 ## @northern.tech/store-0.13.0 - 2025-12-15
 
 
@@ -708,7 +771,8 @@
 #### store
 
 - Made slice types available consistently
-- Made use of combined device counts endpoint & adjusted related tracking state## @northern.tech/store-0.12.0 - 2025-12-08
+- Made use of combined device counts endpoint & adjusted related tracking state
+## @northern.tech/store-0.12.0 - 2025-12-08
 
 
 
@@ -735,6 +799,7 @@
 | Ticket |
 |---|
 | [MEN-8896](https://northerntech.atlassian.net/browse/MEN-8896) |
+
 ## @northern.tech/store-0.11.0 - 2025-12-02
 
 
@@ -759,6 +824,7 @@
 | Ticket |
 |---|
 | [MEN-8583](https://northerntech.atlassian.net/browse/MEN-8583) |
+
 ## @northern.tech/store-0.9.0 - 2025-11-04
 
 
@@ -785,7 +851,8 @@
 
 
 - Bump the development-dependencies group with 12 updates
-- Bump the production-dependencies group across 1 directory with 14 updates## @northern.tech/store-0.5.3 - 2025-10-02
+- Bump the production-dependencies group across 1 directory with 14 updates
+## @northern.tech/store-0.5.3 - 2025-10-02
 
 
 
@@ -799,7 +866,8 @@
 
 
 - Bump the development-dependencies group with 16 updates
-- Bump the production-dependencies group across 1 directory with 16 updates## @northern.tech/store-0.5.2 - 2025-08-26
+- Bump the production-dependencies group across 1 directory with 16 updates
+## @northern.tech/store-0.5.2 - 2025-08-26
 
 
 
@@ -808,7 +876,8 @@
 #### store
 
 - Aligned store w/ mender to remove demo features
-- Aligned snackbar open state automation w/ mender## @northern.tech/store-0.5.1 - 2025-08-24
+- Aligned snackbar open state automation w/ mender
+## @northern.tech/store-0.5.1 - 2025-08-24
 
 
 
@@ -817,7 +886,8 @@
 #### store
 
 - Aligned license report location w/ mender
-- Additional adjustment for esm compatibility## @northern.tech/store-0.5.0 - 2025-08-22
+- Additional adjustment for esm compatibility
+## @northern.tech/store-0.5.0 - 2025-08-22
 
 
 
@@ -833,7 +903,8 @@
 
 - Fixed imports of esm unfriendly packages
 - Removed country flags as their exported ref was not usable externally
-- Synced app state selectors w/ mender## @northern.tech/store-0.4.0 - 2025-08-14
+- Synced app state selectors w/ mender
+## @northern.tech/store-0.4.0 - 2025-08-14
 
 
 
@@ -858,7 +929,8 @@
 
 - Bump the production-dependencies group across 1 directory with 11 updates
 - Bump the production-dependencies group across 1 directory with 16 updates
-- Bump the mui group across 1 directory with 4 updates## @northern.tech/store-0.3.4 - 2025-02-14
+- Bump the mui group across 1 directory with 4 updates
+## @northern.tech/store-0.3.4 - 2025-02-14
 
 
 
@@ -879,7 +951,8 @@
 - Aligned dependencies with referenced packages
 - Aligned sorting behaviour with type expectation & single sorting function
 
-- Re-expanded react version ranges## @northern.tech/store-0.3.3 - 2025-01-31
+- Re-expanded react version ranges
+## @northern.tech/store-0.3.3 - 2025-01-31
 
 
 
@@ -893,7 +966,8 @@
 ### Dependency updates
 
 
-- Bump the production-dependencies group across 1 directory with 18 updates## @northern.tech/store-0.3.2 - 2024-12-13
+- Bump the production-dependencies group across 1 directory with 18 updates
+## @northern.tech/store-0.3.2 - 2024-12-13
 
 
 
@@ -901,7 +975,8 @@
 
 #### store
 
-- Fixed end date filters out today's entries in the Audit log and Devices## @northern.tech/store-0.3.1 - 2024-12-10
+- Fixed end date filters out today's entries in the Audit log and Devices
+## @northern.tech/store-0.3.1 - 2024-12-10
 
 
 
@@ -914,7 +989,8 @@
 ### Dependency updates
 
 
-- Bump the production-dependencies group across 1 directory with 17 updates## @northern.tech/store-0.3.0 - 2024-12-10
+- Bump the production-dependencies group across 1 directory with 17 updates
+## @northern.tech/store-0.3.0 - 2024-12-10
 
 
 
@@ -928,7 +1004,8 @@
 #### store
 
 - Fixed an issue that caused version information to be parsed wrong
-- Reintroduced locations definition to allow build to pass## @northern.tech/store-0.2.1 - 2024-11-15
+- Reintroduced locations definition to allow build to pass
+## @northern.tech/store-0.2.1 - 2024-11-15
 
 
 
@@ -936,14 +1013,16 @@
 
 
 - Aligned compile targets & platform for relevant packages
-- Fixed store package export## @northern.tech/store-0.2.0 - 2024-11-15
+- Fixed store package export
+## @northern.tech/store-0.2.0 - 2024-11-15
 
 
 
 ### New features
 
 
-- Aligned store code with mender-server repository## @northern.tech/store-0.1.3 - 2024-11-15
+- Aligned store code with mender-server repository
+## @northern.tech/store-0.1.3 - 2024-11-15
 
 
 
@@ -951,14 +1030,16 @@
 
 #### store
 
-- Fixed type generation issue bypassing type only files## @northern.tech/store-0.1.1 - 2024-11-06
+- Fixed type generation issue bypassing type only files
+## @northern.tech/store-0.1.1 - 2024-11-06
 
 
 
 ### Bug fixes
 
 
-- Allowed more flexible dependency versions## @northern.tech/store-0.1.0 - 2024-11-05
+- Allowed more flexible dependency versions
+## @northern.tech/store-0.1.0 - 2024-11-05
 
 
 
@@ -973,4 +1054,5 @@
 | Ticket |
 |---|
 | [ENT-12150](https://northerntech.atlassian.net/browse/ENT-12150) |
+
 ---
