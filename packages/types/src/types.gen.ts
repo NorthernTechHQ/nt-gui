@@ -2287,7 +2287,7 @@ export type ExternalIdentity = {
    * Status flag.
    */
   active?: boolean;
-  [key: string]: unknown | string | boolean | undefined;
+  [key: string]: unknown;
 };
 
 export type DeviceFlags = {
@@ -12808,6 +12808,48 @@ export type GetStatisticsResponses = {
 };
 
 export type GetStatisticsResponse = GetStatisticsResponses[keyof GetStatisticsResponses];
+
+export type GetSystemComponentsData = {
+  body?: never;
+  path: {
+    /**
+     * Device identifier.
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/api/management/v2alpha1/inventory/devices/{id}/components';
+};
+
+export type GetSystemComponentsErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Not Found.
+   */
+  404: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type GetSystemComponentsError = GetSystemComponentsErrors[keyof GetSystemComponentsErrors];
+
+export type GetSystemComponentsResponses = {
+  /**
+   * System Components
+   *
+   * Maps system component IDs to it's attributes
+   */
+  200: {
+    [key: string]: Array<AttributeResponse>;
+  };
+};
+
+export type GetSystemComponentsResponse = GetSystemComponentsResponses[keyof GetSystemComponentsResponses];
 
 export type IoTManagerInternalCheckHealthData = {
   body?: never;
