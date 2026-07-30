@@ -67,6 +67,8 @@ tags:
     x-displayName: Management API
   - name: Device_inventory_filters_and_search_Management API
     x-displayName: Management API
+  - name: Inventory_v2alpha1_Management API
+    x-displayName: Management API
   - name: IoT_Manager_Internal API
     x-displayName: Internal API
   - name: IoT_Manager_Management API
@@ -8452,6 +8454,51 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - ManagementJWT: []
+  /api/management/v2alpha1/inventory/devices/{id}/components:
+    get:
+      tags:
+        - Inventory_v2alpha1_Management API
+      summary: Get system device components
+      operationId: Get System Components
+      parameters:
+        - name: id
+          in: path
+          description: Device identifier.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                title: System Components
+                description: Maps system component IDs to it's attributes
+                type: object
+                additionalProperties:
+                  type: array
+                  description: A list of attributes belonging to this component.
+                  items:
+                    $ref: '#/components/schemas/AttributeResponse'
+              example:
+                R123:
+                  - scope: inventory
+                    name: component_type
+                    value: rtos
+                  - scope: inventory
+                    name: version
+                    value: v1
+        '400':
+          $ref: '#/components/responses/InvalidRequestError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - ManagementJWT: []
+      x-mender-plan:
+        - enterprise
   /api/internal/v1/iot-manager/health:
     get:
       tags:
@@ -20260,6 +20307,9 @@ x-tagGroups:
     tags:
       - Device_inventory_filters_and_search_Internal API
       - Device_inventory_filters_and_search_Management API
+  - name: Inventory v2alpha1
+    tags:
+      - Inventory_v2alpha1_Management API
   - name: IoT Manager
     tags:
       - IoT_Manager_Internal API
