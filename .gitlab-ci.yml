@@ -157,10 +157,9 @@ release:
   id_tokens:
     NPM_ID_TOKEN:
       aud: "npm:registry.npmjs.org"
-    SIGSTORE_ID_TOKEN:
-      aud: sigstore
   before_script:
     - apt-get update && apt-get install -y jq
+    # TODO remove together with the NPM_AUTH_TOKEN variable once OIDC publishing is confirmed
     - echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
   script:
     - npm ci
@@ -180,7 +179,7 @@ release:
           echo "INFO - ${PKG_NAME}@${PKG_VERSION} already published, skipping";
         else
           echo "INFO - publishing ${PKG_NAME}@${PKG_VERSION}";
-          npm publish;
+          npm publish --provenance=false --loglevel verbose;
         fi
         cd ../..;
       done
