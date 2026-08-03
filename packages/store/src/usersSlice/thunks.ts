@@ -228,12 +228,7 @@ export const passwordResetComplete = createAppAsyncThunk(
   ({ secretHash, newPassword }: PasswordResetPayload, { dispatch }) =>
     GeneralApi.post(`${useradmApiUrl}/auth/password-reset/complete`, { secret_hash: secretHash, password: newPassword }).catch((err = {}) => {
       const { error, response = {} } = err;
-      let errorMsg = '';
-      if (response.status == 400) {
-        errorMsg = 'the link you are using expired or the request is not valid, please try again.';
-      } else {
-        errorMsg = error;
-      }
+      const errorMsg = response.status == 400 ? 'the link you are using expired or the request is not valid, please try again.' : error;
       dispatch(setSnackbar('The password reset request cannot be processed: ' + errorMsg));
       return Promise.reject(err);
     })
