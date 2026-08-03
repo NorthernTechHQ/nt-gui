@@ -42,12 +42,12 @@
     "tsdown": "^0.22.2"
   },
   "dependencies": {
-    "js-yaml": "^5.2.2",
-    "openapi-backend": "^5.18.0"
+    "js-yaml": "^5.x",
+    "openapi-backend": "^5.x"
   },
   "peerDependencies": {
     "@emotion/jest": "^11.x",
-    "@mui/material": "^9.2.0",
+    "@mui/material": "^9.x",
     "@northern.tech/utils": "*",
     "@reduxjs/toolkit": "^2.x",
     "@testing-library/react": "^16.x",
