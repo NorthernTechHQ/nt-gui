@@ -17,6 +17,7 @@
     "base.js"
   ],
   "dependencies": {
+    "@eslint/js": "^10.x",
     "@typescript-eslint/eslint-plugin": "^8.x",
     "@typescript-eslint/parser": "^8.x",
     "eslint-config-prettier": "^10.x",
@@ -29,6 +30,9 @@
     "eslint-plugin-storybook": "^10.x",
     "globals": "^17.x",
     "typescript-eslint": "^8.x"
+  },
+  "peerDependencies": {
+    "eslint": "^10.x"
   },
   "devDependencies": {
     "tsdown": "^0.22.2"
