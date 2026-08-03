@@ -19,6 +19,7 @@ import durationDayJs from 'dayjs/plugin/duration.js';
 import Cookies from 'universal-cookie';
 
 import storeActions from './actions';
+import actions from './actions';
 import { getSessionInfo } from './auth';
 import { DEPLOYMENT_STATES, DEVICE_STATES, TIMEOUTS, locations, timeUnits } from './constants';
 import type { DeviceSliceType } from './devicesSlice';
@@ -229,6 +230,8 @@ export const useAppInit = (userId: string | undefined): { coreInitDone: boolean 
     if (hasMultitenancy) {
       tasks.push(dispatch(getDeviceLimits()));
       tasks.push(dispatch(getRoles()));
+    } else {
+      tasks.push(Promise.resolve(dispatch(actions.setDeviceLimits({ micro: 0, standard: -1, system: 0 }))));
     }
     return Promise.all(tasks);
   }, [dispatch, hasMultitenancy, isServiceProvider]);
