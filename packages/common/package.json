@@ -35,19 +35,19 @@
   },
   "type": "module",
   "devDependencies": {
-    "@mui/x-date-pickers": "^9.7.0",
+    "@mui/x-date-pickers": "^9.10.1",
     "@northern.tech/eslint-config": "*",
     "@northern.tech/testing": "*",
     "@northern.tech/typescript-config": "*",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.x",
-    "@vitejs/plugin-react": "^6.0.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.0.5",
     "eslint": "9.39.1",
-    "jsdom": "29.1.1",
-    "msw": "^2.14.6",
+    "jsdom": "30.0.1",
+    "msw": "^2.15.0",
     "tsdown": "^0.22.2",
-    "typescript": "6.0.3",
-    "vitest": "^4.1.9"
+    "typescript": "7.0.2",
+    "vitest": "^4.1.10"
   },
   "peerDependencies": {
     "@mui/icons-material": "^9.x",
