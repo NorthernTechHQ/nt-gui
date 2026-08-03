@@ -14,7 +14,8 @@ const config: StorybookConfig = {
       ...config,
       define: { 'process.env': {} }
     };
-  }
+  },
+  addons: ['msw-storybook-addon']
 };
 
 export default config;

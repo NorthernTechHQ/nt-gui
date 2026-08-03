@@ -74,7 +74,7 @@ const mswHandlers = logsNumber => [
             ...mockedEvents,
             ...Array.from({ length: paginatedItems - mockedEventsLength }, (_, i) => ({
               ...mockedEvents[0],
-              time: new Date(new Date(mockedEvents[0].time).getTime() + ++i * 60000).toISOString()
+              time: new Date(new Date(mockedEvents[0].time).getTime() + (i + 1) * 60000).toISOString()
             }))
           ];
 

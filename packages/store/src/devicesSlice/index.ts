@@ -287,7 +287,7 @@ export const devicesSlice = createSlice({
     },
     setDevicesCountByStatus: (state, action: PayloadAction<{ countsPerTier: DeviceTierLimits; status: DeviceAuthState }>) => {
       const { countsPerTier, status } = action.payload;
-      state.byStatus[status].counts = { ...countsPerTier, total: Object.values(countsPerTier).reduce((accu, tieredCount) => (accu += tieredCount), 0) };
+      state.byStatus[status].counts = { ...countsPerTier, total: Object.values(countsPerTier).reduce((accu, tieredCount) => accu + tieredCount, 0) };
     },
     setDeviceLimits: (state, action: PayloadAction<DeviceTierLimits>) => {
       state.limits = action.payload;

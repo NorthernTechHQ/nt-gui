@@ -1,9 +1,7 @@
 import type { Preview } from '@storybook/react-vite';
-import { initialize as initializeMSW, mswLoader } from 'msw-storybook-addon';
+import { mswLoader } from 'msw-storybook-addon/csf3';
 
 import { defaultProduct, defaultTheme, globalProductType, globalThemeType, withMuiTheme } from './utils/themeUtils';
-
-initializeMSW();
 
 const preview: Preview = {
   parameters: {
@@ -28,7 +26,7 @@ const preview: Preview = {
     theme: globalThemeType
   },
   initialGlobals: { theme: defaultTheme, product: defaultProduct },
-  loaders: [mswLoader],
+  loaders: [mswLoader()],
   tags: ['autodocs']
 };
 

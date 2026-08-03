@@ -15,7 +15,7 @@
 import { Code } from '@northern.tech/common-ui/CopyCode';
 
 const FallbackComponent = ({ item }) => {
-  let content = '';
+  let content;
   try {
     content = JSON.stringify(item, null, 2);
   } catch (error) {

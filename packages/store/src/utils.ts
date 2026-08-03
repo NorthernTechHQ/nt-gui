@@ -204,8 +204,8 @@ export const mapUserRolesToUiPermissions = (userRoles: string[], roles: Record<s
 
 export const progress = ({ loaded, total }: { loaded: number; total?: number }): number => {
   if (!total) return 0;
-  let uploadProgress = (loaded / total) * 100;
-  return (uploadProgress = uploadProgress < 50 ? Math.ceil(uploadProgress) : Math.round(uploadProgress));
+  const uploadProgress = (loaded / total) * 100;
+  return uploadProgress < 50 ? Math.ceil(uploadProgress) : Math.round(uploadProgress);
 };
 
 export type ErrorWithResponse = AxiosError<{ error?: { message?: string } | string }> & { error?: string };
