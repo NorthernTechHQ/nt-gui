@@ -8405,7 +8405,7 @@ export type ListServerSideBinaryDeltaGenerationJobsData = {
      */
     sort?: 'status:asc' | 'status:desc' | 'started:asc' | 'started:desc' | 'to_version:asc' | 'to_version:desc' | 'from_version:asc' | 'from_version:desc';
   };
-  url: '/api/management/v2/deployments/releases/delta/jobs';
+  url: '/api/management/v2/deployments/deployments/releases/delta/jobs';
 };
 
 export type ListServerSideBinaryDeltaGenerationJobsErrors = {
@@ -8445,7 +8445,7 @@ export type GetServerSideBinaryDeltaGenerationJobDetailsData = {
     id: string;
   };
   query?: never;
-  url: '/api/management/v2/deployments/releases/delta/jobs/{id}';
+  url: '/api/management/v2/deployments/deployments/releases/delta/jobs/{id}';
 };
 
 export type GetServerSideBinaryDeltaGenerationJobDetailsErrors = {

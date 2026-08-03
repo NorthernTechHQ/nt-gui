@@ -4387,7 +4387,7 @@ paths:
         Lists known artifacts.
       tags:
         - Deployments_v2_Management API
-  /api/management/v2/deployments/releases/delta/jobs:
+  /api/management/v2/deployments/deployments/releases/delta/jobs:
     get:
       operationId: List server side binary delta generation jobs
       tags:
@@ -4444,7 +4444,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  /api/management/v2/deployments/releases/delta/jobs/{id}:
+  /api/management/v2/deployments/deployments/releases/delta/jobs/{id}:
     get:
       operationId: Get server side binary delta generation job details
       tags:
