@@ -2208,6 +2208,13 @@ export type AuthRequest = {
   external_id?: string;
 };
 
+export type UdpateDeviceAuth = {
+  /**
+   * If true, marks the device as provisioned
+   */
+  provisioned?: boolean;
+};
+
 /**
  * External device descriptor
  */
@@ -4191,18 +4198,6 @@ export type UserNew = {
  * Update user information.
  */
 export type UserUpdate = {
-  /**
-   * A unique email address.
-   */
-  email?: string;
-  /**
-   * New password.
-   */
-  password?: string;
-  /**
-   * Current password.
-   */
-  current_password?: string;
   /**
    * List of roles for the user. If not provided existing roles are kept.
    */
@@ -8886,6 +8881,48 @@ export type DeviceAuthInternalDeleteDeviceResponses = {
    */
   201: unknown;
 };
+
+export type UpdateDeviceAuthData = {
+  body: UdpateDeviceAuth;
+  path: {
+    /**
+     * Tenant identifier.
+     */
+    tid: string;
+    /**
+     * Device identifier.
+     */
+    did: string;
+  };
+  query?: never;
+  url: '/api/internal/v1/devauth/tenants/{tid}/devices/{did}';
+};
+
+export type UpdateDeviceAuthErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Not Found.
+   */
+  404: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type UpdateDeviceAuthError = UpdateDeviceAuthErrors[keyof UpdateDeviceAuthErrors];
+
+export type UpdateDeviceAuthResponses = {
+  /**
+   * Success.
+   */
+  204: void;
+};
+
+export type UpdateDeviceAuthResponse = UpdateDeviceAuthResponses[keyof UpdateDeviceAuthResponses];
 
 export type DeviceAuthInternalSetExternalIdentityData = {
   body: ExternalDevice;
