@@ -16,7 +16,8 @@ export const apiRoot = '/api/management';
 export const apiUrl = {
   v1: `${apiRoot}/v1`,
   v1alpha1: `${apiRoot}/v1alpha1`,
-  v2: `${apiRoot}/v2`
+  v2: `${apiRoot}/v2`,
+  v2alpha1: `${apiRoot}/v2alpha1`
 } as const;
 
 export const auditLogsApiUrl = `${apiUrl.v1}/auditlogs`;
@@ -30,6 +31,7 @@ export const deviceConnect = `${apiUrl.v1}/deviceconnect`;
 export const inventoryApiUrl = `${apiUrl.v1}/inventory`;
 export const inventoryApiUrlV1 = inventoryApiUrl;
 export const inventoryApiUrlV2 = `${apiUrl.v2}/inventory`;
+export const inventoryApiUrlV2alpha1 = `${apiUrl.v2alpha1}/inventory`;
 export const iotManagerBaseURL = `${apiUrl.v1}/iot-manager`;
 export const monitorApiUrlv1 = `${apiUrl.v1}/devicemonitor`;
 export const ssoIdpApiUrlv1 = `${apiUrl.v1}/useradm/sso/idp/metadata`;
