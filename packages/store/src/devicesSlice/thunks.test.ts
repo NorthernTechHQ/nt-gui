@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { act, defaultState } from '@/testUtils';
-import { inventoryDevice } from '@northern.tech/testing/requestHandlers/deviceHandlers';
+import { deviceComponents, inventoryDevice } from '@northern.tech/testing/requestHandlers/deviceHandlers';
 import { mockAbortController } from '@northern.tech/testing/setupTests';
 import type { Credentials, Integration, Status } from '@northern.tech/types/MenderTypes';
 import configureMockStore from 'redux-mock-store';
@@ -39,6 +39,7 @@ import {
   getDeviceAttributes,
   getDeviceAuth,
   getDeviceById,
+  getDeviceComponents,
   getDeviceConfig,
   getDeviceConnect,
   getDeviceFileDownloadLink,
@@ -420,6 +421,18 @@ describe('overall device information retrieval', () => {
       { type: getGatewayDevices.fulfilled.type }
     ];
     await store.dispatch(getGatewayDevices(defaultState.devices.byId.a1.id));
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+  it('should allow system device component retrieval', async () => {
+    const store = mockStore({ ...defaultState });
+    const expectedActions = [
+      { type: getDeviceComponents.pending.type },
+      { type: actions.receivedDevice.type, payload: { id: defaultState.devices.byId.a1.id, components: deviceComponents } },
+      { type: getDeviceComponents.fulfilled.type }
+    ];
+    await store.dispatch(getDeviceComponents(defaultState.devices.byId.a1.id));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));

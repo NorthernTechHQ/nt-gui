@@ -21,6 +21,7 @@ import type {
   DeviceState,
   DeviceTierLimits,
   DeviceWithImage,
+  GetSystemComponentsResponse,
   Integration,
   ManagementApiConfiguration,
   NewConfigurationDeployment,
@@ -56,6 +57,7 @@ import {
   headerNames,
   inventoryApiUrl,
   inventoryApiUrlV2,
+  inventoryApiUrlV2alpha1,
   iotManagerBaseURL,
   rootfsImageVersion
 } from '../constants';
@@ -1174,3 +1176,9 @@ export const getGatewayDevices = createAppAsyncThunk(`${sliceName}/getGatewayDev
     return Promise.all(tasks);
   });
 });
+
+export const getDeviceComponents = createAppAsyncThunk(`${sliceName}/getDeviceComponents`, (deviceId: string, { dispatch }) =>
+  GeneralApi.get<GetSystemComponentsResponse>(`${inventoryApiUrlV2alpha1}/devices/${deviceId}/components`)
+    .then(({ data }) => dispatch(actions.receivedDevice({ id: deviceId, components: data })))
+    .catch(err => commonErrorHandler(err, `There was an error retrieving components for device ${deviceId}.`, dispatch, commonErrorFallback))
+);
