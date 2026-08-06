@@ -49,12 +49,10 @@ import {
   getDevicesByStatus,
   getDevicesWithAuth,
   getDynamicGroups,
-  getGatewayDevices,
   getGroupDevices,
   getGroups,
   getReportDataWithoutBackendSupport,
   getSessionDetails,
-  getSystemDevices,
   getTestDeviceCount,
   preauthDevice,
   removeDevicesFromGroup,
@@ -359,71 +357,6 @@ describe('overall device information retrieval', () => {
     await store.dispatch(getReportDataWithoutBackendSupport(0));
     const storeActions = store.getActions();
     expect(storeActions.some(action => action.type === getAllGroupDevices.pending.type)).toBeTruthy();
-  });
-  it('should allow system devices retrieval', async () => {
-    const store = mockStore({
-      ...defaultState,
-      app: {
-        ...defaultState.app,
-        features: {
-          ...defaultState.app.features,
-          isEnterprise: true
-        }
-      }
-    });
-    const expectedActions = [
-      { type: getSystemDevices.pending.type },
-      {
-        type: actions.receivedDevices.type,
-        payload: {
-          [defaultState.devices.byId.a1.id]: {
-            ...defaultState.devices.byId.a1,
-            systemDeviceIds: [],
-            systemDeviceTotal: 0
-          }
-        }
-      },
-      { type: getSystemDevices.fulfilled.type }
-    ];
-    await store.dispatch(getSystemDevices({ id: defaultState.devices.byId.a1.id, sortOptions: [] }));
-    const storeActions = store.getActions();
-    expect(storeActions.length).toEqual(expectedActions.length);
-    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
-  });
-  it('should allow system devices retrieval', async () => {
-    const gatewayDevice = defaultState.devices.byId.a1;
-    const store = mockStore({
-      ...defaultState,
-      app: {
-        ...defaultState.app,
-        features: {
-          ...defaultState.app.features,
-          isEnterprise: true
-        }
-      },
-      devices: {
-        ...defaultState.devices,
-        byId: {
-          ...defaultState.devices.byId,
-          [gatewayDevice.id]: {
-            ...gatewayDevice,
-            attributes: {
-              ...gatewayDevice.attributes,
-              mender_gateway_system_id: 'gatewaySystem'
-            }
-          }
-        }
-      }
-    });
-    const expectedActions = [
-      { type: getGatewayDevices.pending.type },
-      { type: actions.receivedDevice.type, payload: { id: gatewayDevice.id, gatewayIds: [] } },
-      { type: getGatewayDevices.fulfilled.type }
-    ];
-    await store.dispatch(getGatewayDevices(defaultState.devices.byId.a1.id));
-    const storeActions = store.getActions();
-    expect(storeActions.length).toEqual(expectedActions.length);
-    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
   it('should allow system device component retrieval', async () => {
     const store = mockStore({ ...defaultState });
