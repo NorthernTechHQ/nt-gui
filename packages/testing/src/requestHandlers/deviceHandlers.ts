@@ -21,6 +21,7 @@ import {
   headerNames,
   inventoryApiUrl,
   inventoryApiUrlV2,
+  inventoryApiUrlV2alpha1,
   iotManagerBaseURL
 } from '@northern.tech/utils/constants';
 import { HttpResponse, http } from 'msw';
@@ -77,6 +78,17 @@ export const inventoryDevice = {
   ],
   check_in_time: checkInTimeExact,
   updated_ts: updatedTime
+};
+
+export const deviceComponents = {
+  R123: [
+    { name: 'component_type', value: 'rtos', scope: 'inventory' },
+    { name: 'version', value: 'v1', scope: 'inventory' }
+  ],
+  R456: [
+    { name: 'component_type', value: 'rtos', scope: 'inventory' },
+    { name: 'version', value: 'v2', scope: 'inventory' }
+  ]
 };
 
 const deviceAttributes = [
@@ -182,6 +194,15 @@ export const deviceHandlers = [
     }
     return new HttpResponse(null, { status: 506 });
   }),
+  http.get(
+    `${inventoryApiUrlV2alpha1}/devices/:deviceId/components`,
+    validated(({ params: { deviceId } }) => {
+      if (mockApiResponses.devices.byId[deviceId]) {
+        return HttpResponse.json(deviceComponents);
+      }
+      return new HttpResponse(null, { status: 507 });
+    })
+  ),
   http.put(
     `${inventoryApiUrl}/devices/:deviceId/tags`,
     validated(async ({ params: { deviceId }, request }) => {

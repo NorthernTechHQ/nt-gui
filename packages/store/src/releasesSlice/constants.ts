@@ -17,3 +17,4 @@ export const currentArtifact = 'artifact_name';
 export const softwareIndicator = '.version';
 export const rootfsImageVersion = 'rootfs-image.version';
 export const softwareTitleMap = { [rootfsImageVersion]: { title: 'Root filesystem', priority: 0, key: rootfsImageVersion } };
+export const rootfsManifestVersion = 'rootfs-image.update-module.mender-orchestrator-manifest.version';

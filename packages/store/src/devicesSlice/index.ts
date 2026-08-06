@@ -12,6 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import type {
+  AttributeResponse,
   Device as BackendDeviceAuth,
   ConnectionState,
   DeviceConfiguration,
@@ -72,10 +73,13 @@ type UiDeviceAttributes = {
   tags?: Record<string, string>;
 };
 
+export type DeviceComponents = Record<string, AttributeResponse[]>;
+
 export type Device = BackendDeviceAuth &
   UiDeviceAttributes & {
     check_in_time_exact?: string;
     check_in_time_rounded?: string;
+    components?: DeviceComponents;
     config?: DeviceConfiguration;
     connect_status?: ConnectionState['status'];
     connect_updated_ts?: string;
