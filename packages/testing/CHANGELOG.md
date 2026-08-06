@@ -1,5 +1,33 @@
 ---
-## 0.15.1 - 2026-07-27
+## 0.16.0 - 2026-08-06
+
+
+
+### New features
+
+#### testing
+
+- Add system components mock and handler ([MEN-9633](https://northerntech.atlassian.net/browse/MEN-9633))
+
+### Bug fixes
+
+#### testing
+
+- Openapi spec update
+
+### Dependency updates
+
+
+- Bump the production-dependencies group with 10 updates
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-9633](https://northerntech.atlassian.net/browse/MEN-9633) |
+
+## @northern.tech/testing-0.15.1 - 2026-07-27
 
 
 
