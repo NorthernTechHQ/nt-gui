@@ -86,7 +86,6 @@ export type Device = BackendDeviceAuth &
     deploymentsCount?: number;
     deviceDeployments?: DeviceDeployment;
     etag?: string;
-    gatewayIds?: string[];
     group?: string;
     id: string;
     isNew?: boolean;

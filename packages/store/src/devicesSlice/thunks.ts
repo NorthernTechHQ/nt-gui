@@ -87,7 +87,6 @@ import {
   mapTermsToFilters,
   progress
 } from '../utils';
-import { emptyFilter } from './constants';
 import {
   getDeviceById as getDeviceByIdSelector,
   getDeviceCountsByStatus,
@@ -105,8 +104,6 @@ const defaultAttributes = [
   { scope: 'identity', attribute: 'status' },
   { scope: 'inventory', attribute: 'artifact_name' },
   { scope: 'inventory', attribute: 'device_type' },
-  { scope: 'inventory', attribute: 'mender_is_gateway' },
-  { scope: 'inventory', attribute: 'mender_gateway_system_id' },
   { scope: 'inventory', attribute: rootfsImageVersion },
   { scope: 'monitor', attribute: 'alerts' },
   { scope: 'system', attribute: 'created_ts' },
@@ -1119,63 +1116,6 @@ const prepareSearchArguments = ({ filters, group, state, status }: { filters?: D
   const attributes = [...defaultAttributes, getIdAttribute(state), ...selectedAttributes];
   return { attributes, filterTerms };
 };
-type GetSystemDevicesPayload = { id: string; page?: number; perPage?: number; sortOptions: SortCriteria[] };
-export const getSystemDevices = createAppAsyncThunk(`${sliceName}/getSystemDevices`, (options: GetSystemDevicesPayload, { dispatch, getState }) => {
-  const { id, page = defaultPage, perPage = defaultPerPage, sortOptions = [] } = options;
-  const state = getState();
-  const { hasFullFiltering } = getTenantCapabilities(state);
-  if (!hasFullFiltering) {
-    return Promise.resolve();
-  }
-  const { attributes: deviceAttributes = {} } = getDeviceByIdSelector(state, id);
-  const { mender_gateway_system_id = '' } = deviceAttributes as { mender_gateway_system_id?: string };
-  const filters: DeviceFilter[] = [
-    { ...emptyFilter, key: 'mender_is_gateway', operator: DEVICE_FILTERING_OPTIONS.$ne.key, value: 'true', scope: 'inventory' },
-    { ...emptyFilter, key: 'mender_gateway_system_id', value: mender_gateway_system_id, scope: 'inventory' }
-  ];
-  const { attributes, filterTerms } = prepareSearchArguments({ filters, state });
-  return GeneralApi.post(`${inventoryApiUrlV2}/filters/search`, {
-    page,
-    per_page: perPage,
-    filters: filterTerms,
-    sort: sortOptions,
-    attributes
-  })
-    .catch(err => commonErrorHandler(err, `There was an error getting system devices device ${id}.`, dispatch, 'Please check your connection.'))
-    .then(({ data, headers }) => {
-      const state = getState();
-      const { devicesById, ids } = reduceReceivedDevices(data, [], state);
-      const device = {
-        ...getDeviceByIdSelector(state, id),
-        systemDeviceIds: ids,
-        systemDeviceTotal: Number(headers[headerNames.total])
-      };
-      return Promise.resolve(dispatch(actions.receivedDevices({ ...devicesById, [id]: device })));
-    });
-});
-
-export const getGatewayDevices = createAppAsyncThunk(`${sliceName}/getGatewayDevices`, (deviceId: string, { dispatch, getState }) => {
-  const state = getState();
-  const { attributes = {} } = getDeviceByIdSelector(state, deviceId);
-  const { mender_gateway_system_id = '' } = attributes as { mender_gateway_system_id?: string };
-  const filters: DeviceFilter[] = [
-    { ...emptyFilter, key: 'id', operator: DEVICE_FILTERING_OPTIONS.$ne.key, value: deviceId, scope: 'identity' },
-    { ...emptyFilter, key: 'mender_is_gateway', value: 'true', scope: 'inventory' },
-    { ...emptyFilter, key: 'mender_gateway_system_id', value: mender_gateway_system_id, scope: 'inventory' }
-  ];
-  const { attributes: attributeSelection, filterTerms } = prepareSearchArguments({ filters, state });
-  return GeneralApi.post(`${inventoryApiUrlV2}/filters/search`, {
-    page: 1,
-    per_page: MAX_PAGE_SIZE,
-    filters: filterTerms,
-    attributes: attributeSelection
-  }).then(({ data }) => {
-    const { ids } = reduceReceivedDevices(data, [], getState());
-    const tasks: Promise<ReturnType<AppDispatch> | unknown>[] = ids.map(deviceId => dispatch(getDeviceInfo(deviceId)));
-    tasks.push(Promise.resolve(dispatch(actions.receivedDevice({ id: deviceId, gatewayIds: ids }))));
-    return Promise.all(tasks);
-  });
-});
 
 export const getDeviceComponents = createAppAsyncThunk(`${sliceName}/getDeviceComponents`, (deviceId: string, { dispatch }) =>
   GeneralApi.get<GetSystemComponentsResponse>(`${inventoryApiUrlV2alpha1}/devices/${deviceId}/components`)
