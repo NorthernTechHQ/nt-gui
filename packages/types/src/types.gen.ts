@@ -2208,6 +2208,13 @@ export type AuthRequest = {
   external_id?: string;
 };
 
+export type UdpateDeviceAuth = {
+  /**
+   * If true, marks the device as provisioned
+   */
+  provisioned?: boolean;
+};
+
 /**
  * External device descriptor
  */
@@ -4192,18 +4199,6 @@ export type UserNew = {
  */
 export type UserUpdate = {
   /**
-   * A unique email address.
-   */
-  email?: string;
-  /**
-   * New password.
-   */
-  password?: string;
-  /**
-   * Current password.
-   */
-  current_password?: string;
-  /**
    * List of roles for the user. If not provided existing roles are kept.
    */
   roles?: Array<string>;
@@ -4378,6 +4373,20 @@ export type RoleV1 = {
   description?: string;
   permissions?: Array<RolePermission>;
   permission_sets_with_scope?: Array<PermissionSetWithScope>;
+};
+
+/**
+ * New user descriptor.
+ */
+export type UserNewV2 = {
+  /**
+   * A unique email address. Non-ascii characters are invalid.
+   */
+  email: string;
+  /**
+   * Optional RBAC roles to assign to the user. Defaults to: RBAC_ROLE_PERMIT_ALL.
+   */
+  roles?: Array<string>;
 };
 
 /**
@@ -8886,6 +8895,48 @@ export type DeviceAuthInternalDeleteDeviceResponses = {
    */
   201: unknown;
 };
+
+export type UpdateDeviceAuthData = {
+  body: UdpateDeviceAuth;
+  path: {
+    /**
+     * Tenant identifier.
+     */
+    tid: string;
+    /**
+     * Device identifier.
+     */
+    did: string;
+  };
+  query?: never;
+  url: '/api/internal/v1/devauth/tenants/{tid}/devices/{did}';
+};
+
+export type UpdateDeviceAuthErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Not Found.
+   */
+  404: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type UpdateDeviceAuthError = UpdateDeviceAuthErrors[keyof UpdateDeviceAuthErrors];
+
+export type UpdateDeviceAuthResponses = {
+  /**
+   * Success.
+   */
+  204: void;
+};
+
+export type UpdateDeviceAuthResponse = UpdateDeviceAuthResponses[keyof UpdateDeviceAuthResponses];
 
 export type DeviceAuthInternalSetExternalIdentityData = {
   body: ExternalDevice;
@@ -17712,6 +17763,46 @@ export type IssueTokenResponses = {
 };
 
 export type IssueTokenResponse = IssueTokenResponses[keyof IssueTokenResponses];
+
+export type CreateUserManagementV2Data = {
+  /**
+   * New user data.
+   */
+  body: UserNewV2;
+  path?: never;
+  query?: never;
+  url: '/api/management/v2/useradm/users';
+};
+
+export type CreateUserManagementV2Errors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * The request data was structurally valid but failed business rules.
+   * See the response body for specific validation errors.
+   *
+   */
+  422: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type CreateUserManagementV2Error = CreateUserManagementV2Errors[keyof CreateUserManagementV2Errors];
+
+export type CreateUserManagementV2Responses = {
+  /**
+   * The user was successfully created.
+   */
+  201: unknown;
+};
 
 export type ListRolesData = {
   body?: never;
