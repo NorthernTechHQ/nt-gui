@@ -1,5 +1,35 @@
 ---
-## 0.41.3 - 2026-07-29
+## 0.42.0 - 2026-08-06
+
+
+
+### New features
+
+#### store
+
+- Add system components endpoint handling ([MEN-9633](https://northerntech.atlassian.net/browse/MEN-9633))
+
+### Bug fixes
+
+#### store
+
+- Only treat non-preview hosted domains as hosted
+- Detect on-prem enterprise by probing the organization endpoint
+- Let os users see a stable dashboard instead of waiting for limit information
+
+### Dependency updates
+
+
+- Bump the development-dependencies group across 1 directory with 22 updates
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-9633](https://northerntech.atlassian.net/browse/MEN-9633) |
+
+## @northern.tech/store-0.41.3 - 2026-07-29
 
 
 
