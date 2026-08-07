@@ -1,160 +1,146 @@
 ---
-## 0.7.1 - 2026-04-17
+## 0.7.2 - 2026-08-07
+
 
 
 ### Bug fixes
 
-#### Eslint-config
+#### eslint-config
+
+- Ensured eslint 10 compatibility
+
+### Dependency updates
 
 
-- *(eslint-config)* Eased out unused vars rule for underscore prefixed vars
-
-([QA-1539](https://northerntech.atlassian.net/browse/QA-1539)) ([87012c6](https://github.com/NorthernTechHQ/nt-gui/commit/87012c66f5d915e9064e11fba63f57ff30a0145b))  by @mineralsfree
-
-
-
-
-
-
-
-
-### Security
+- Bump the production-dependencies group with 18 updates
+- Bump the development-dependencies group across 1 directory with 15 updates
+- Bump the development-dependencies group with 11 updates
+- Bump the production-dependencies group across 1 directory with 23 updates
+- Bump the production-dependencies group with 8 updates
+- Bump the development-dependencies group across 1 directory with 9 updates
+- Bump the production-dependencies group across 1 directory with 9 updates
+- Bump the production-dependencies group with 10 updates
+## @northern.tech/eslint-config-0.7.1 - 2026-04-17
 
 
+
+### Bug fixes
+
+#### eslint-config
+
+- Eased out unused vars rule for underscore prefixed vars ([QA-1539](https://northerntech.atlassian.net/browse/QA-1539))
+
+- Migrated package bundling to tsdown
+
+### Dependency updates
+
+
+- Bump the production-dependencies group with 13 updates
+- Bump the production-dependencies group across 1 directory with 16 updates
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [QA-1539](https://northerntech.atlassian.net/browse/QA-1539) |
 
 ## @northern.tech/eslint-config-0.7.0 - 2026-02-23
 
 
+
 ### Bug fixes
 
-#### Eslint-config
+#### eslint-config
+
+- Fixed eslint configuration
+
+### Dependency updates
 
 
-- *(eslint-config)* Fixed eslint configuration
-
- ([346524b](https://github.com/NorthernTechHQ/nt-gui/commit/346524baf79f6935f8a51ac6ab0f3ae8b8f4136d))  by @mineralsfree
-
-
-
-
-
-
-
-### Security
-
-
-
+- Bump the development-dependencies group across 1 directory with 11 updates
+- Bump the production-dependencies group across 1 directory with 22 updates
 ## @northern.tech/eslint-config-0.6.2 - 2025-11-04
 
 
+
 ### Bug fixes
 
-#### Eslint-config
+#### eslint-config
+
+- Specified config dependency to eslint v9 compatible one
+
+### Dependency updates
 
 
-- *(eslint-config)* Specified config dependency to eslint v9 compatible one
-
- ([5c59d16](https://github.com/NorthernTechHQ/nt-gui/commit/5c59d160fc4b0b7b5f754cfb22a2768e0391653f))  by @mzedel
-
-
-
-
-
-
-
-### Security
-
-
-
+- Bump the production-dependencies group across 1 directory with 16 updates
+- Bump the production-dependencies group across 1 directory with 14 updates
 ## @northern.tech/eslint-config-0.6.1 - 2025-08-22
 
 
+
 ### Bug fixes
 
-#### Eslint-config
+#### eslint-config
 
-
-- *(eslint-config)* Simplified prettier + eslint config to align w/ recommended way
-
- ([394f979](https://github.com/NorthernTechHQ/nt-gui/commit/394f979ba52cd71bf5c00135a481042f8a17b3cc))  by @mzedel
-
-
-
-
-
-
-
-
+- Simplified prettier + eslint config to align w/ recommended way
 ## @northern.tech/eslint-config-0.6.0 - 2025-08-13
 
 
+
+### New features
+
+#### eslint-config
+
+- Updated config to v9 compatible format
+
 ### Bug fixes
 
 
-### Features
+- Relaxed package dependencies to ease updates in dependent projects
 
-#### Eslint-config
-
-
-- *(eslint-config)* Updated config to v9 compatible format
-
- ([879b2f5](https://github.com/NorthernTechHQ/nt-gui/commit/879b2f5aaf34d3335612d3f6a42aeaf5158b2130))  by @mzedel
+### Dependency updates
 
 
-
-
-
-
-
-### Security
-
-
-
+- Bump the production-dependencies group across 1 directory with 11 updates
+- Bump the production-dependencies group across 1 directory with 16 updates
+- Bump the production-dependencies group with 7 updates
+- Bump the production-dependencies group with 10 updates
+- Bump the production-dependencies group with 12 updates
 ## @northern.tech/eslint-config-0.3.0 - 2025-02-14
 
 
-### Features
 
-#### Eslint-config
+### New features
 
+#### eslint-config
 
-- *(eslint-config)* Activated arrow fns lint rule to ensure alignment w/ codebase
+- Activated arrow fns lint rule to ensure alignment w/ codebase
+- Enabled ts member ordering
 
- ([f8fa9c2](https://github.com/NorthernTechHQ/nt-gui/commit/f8fa9c236072bfd78bf89ed5a75db5270f93bc8c))  by @mzedel
-
-
-
-- *(eslint-config)* Enabled ts member ordering
-
- ([8afad86](https://github.com/NorthernTechHQ/nt-gui/commit/8afad86c814f8036be806910bb437c81a672a28b))  by @mzedel
+### Dependency updates
 
 
-
-
-
-
-
-### Security
-
-
-
+- Bump the production-dependencies-eslint-config group
+- Bump the production-dependencies group across 1 directory with 17 updates
+- Bump the production-dependencies group across 1 directory with 18 updates
 ## @northern.tech/eslint-config-0.1.0 - 2024-11-05
 
 
-### Features
 
-#### Eslint-config
+### New features
 
+#### eslint-config
 
-- *(eslint-config)* Extended ruleset to include review suggestions
+- Extended ruleset to include review suggestions
 
- ([7f5d406](https://github.com/NorthernTechHQ/nt-gui/commit/7f5d40677cfd2d396f7e84d2171dfa64b36bfed8))  by @mzedel
+- Basic repository setup ([ENT-12150](https://northerntech.atlassian.net/browse/ENT-12150))
 
+---
+### All tickets resolved in this release
 
-
-
-
-
-
+| Ticket |
+|---|
+| [ENT-12150](https://northerntech.atlassian.net/browse/ENT-12150) |
 
 ---
