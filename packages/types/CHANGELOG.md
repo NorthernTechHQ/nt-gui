@@ -1,5 +1,5 @@
 ---
-## 0.7.8 - 2026-07-15
+## 0.7.9 - 2026-08-07
 
 
 
@@ -7,7 +7,17 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.7.7 - 2026-06-30
+- Types update
+## @northern.tech/types-0.7.8 - 2026-07-15
+
+
+
+### Bug fixes
+
+#### types
+
+- Types update
+## @northern.tech/types-0.7.7 - 2026-06-30
 
 
 
@@ -21,7 +31,8 @@
 
 
 - Bump the development-dependencies group with 11 updates
-- Bump the development-dependencies group across 1 directory with 9 updates## @northern.tech/types-0.7.6 - 2026-05-27
+- Bump the development-dependencies group across 1 directory with 9 updates
+## @northern.tech/types-0.7.6 - 2026-05-27
 
 
 
@@ -29,7 +40,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.7.5 - 2026-05-19
+- Types update
+## @northern.tech/types-0.7.5 - 2026-05-19
 
 
 
@@ -37,7 +49,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.7.4 - 2026-05-13
+- Types update
+## @northern.tech/types-0.7.4 - 2026-05-13
 
 
 
@@ -50,7 +63,8 @@
 ### Dependency updates
 
 
-- Bump the development-dependencies group across 1 directory with 15 updates## @northern.tech/types-0.7.3 - 2026-04-22
+- Bump the development-dependencies group across 1 directory with 15 updates
+## @northern.tech/types-0.7.3 - 2026-04-22
 
 
 
@@ -58,7 +72,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.7.2 - 2026-04-21
+- Types update
+## @northern.tech/types-0.7.2 - 2026-04-21
 
 
 
@@ -66,7 +81,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.7.1 - 2026-04-15
+- Types update
+## @northern.tech/types-0.7.1 - 2026-04-15
 
 
 
@@ -76,7 +92,8 @@
 
 - Types update
 
-- Migrated package bundling to tsdown## @northern.tech/types-0.7.0 - 2026-03-31
+- Migrated package bundling to tsdown
+## @northern.tech/types-0.7.0 - 2026-03-31
 
 
 
@@ -84,7 +101,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.5.0 - 2026-02-02
+- Types update
+## @northern.tech/types-0.5.0 - 2026-02-02
 
 
 
@@ -97,7 +115,8 @@
 ### Dependency updates
 
 
-- Bump the development-dependencies group across 1 directory with 11 updates## @northern.tech/types-0.3.1 - 2025-12-15
+- Bump the development-dependencies group across 1 directory with 11 updates
+## @northern.tech/types-0.3.1 - 2025-12-15
 
 
 
@@ -105,7 +124,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.3.0 - 2025-12-02
+- Types update
+## @northern.tech/types-0.3.0 - 2025-12-02
 
 
 
@@ -113,7 +133,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.2.2 - 2025-10-31
+- Types update
+## @northern.tech/types-0.2.2 - 2025-10-31
 
 
 
@@ -121,7 +142,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.2.1 - 2025-10-30
+- Types update
+## @northern.tech/types-0.2.1 - 2025-10-30
 
 
 
@@ -129,7 +151,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.2.0 - 2025-10-16
+- Types update
+## @northern.tech/types-0.2.0 - 2025-10-16
 
 
 
@@ -137,7 +160,8 @@
 
 #### types
 
-- Made package only rely on types generated from official spec file## @northern.tech/types-0.1.1 - 2025-10-02
+- Made package only rely on types generated from official spec file
+## @northern.tech/types-0.1.1 - 2025-10-02
 
 
 
@@ -145,7 +169,8 @@
 
 #### types
 
-- Cleaned up now unused types## @northern.tech/types-0.1.0 - 2025-08-14
+- Cleaned up now unused types
+## @northern.tech/types-0.1.0 - 2025-08-14
 
 
 
@@ -159,4 +184,5 @@
 
 #### types
 
-- Fixed api type naming conflict---
+- Fixed api type naming conflict
+---
