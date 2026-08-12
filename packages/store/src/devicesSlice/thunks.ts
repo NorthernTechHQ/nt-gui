@@ -19,7 +19,6 @@ import type {
   DeviceConfiguration,
   DeviceInventoryResponse,
   DeviceState,
-  DeviceTierLimits,
   DeviceWithImage,
   GetSystemComponentsResponse,
   Integration,
@@ -35,7 +34,7 @@ import { isCancel } from 'axios';
 import pluralize from 'pluralize';
 import { v4 as uuid } from 'uuid';
 
-import type { Device, DeviceFilter, DeviceGroup, DeviceGroups, DeviceListState, DeviceSelectedAttribute } from '.';
+import type { Device, DeviceFilter, DeviceGroup, DeviceGroups, DeviceListState, DeviceSelectedAttribute, DeviceTierLimits } from '.';
 import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import GeneralApi from '../api/general-api';

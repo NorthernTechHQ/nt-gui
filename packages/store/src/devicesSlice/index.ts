@@ -14,10 +14,10 @@
 import type {
   AttributeResponse,
   Device as BackendDeviceAuth,
+  DeviceTierLimits as BackendDeviceTierLimits,
   ConnectionState,
   DeviceConfiguration,
   DeviceState,
-  DeviceTierLimits,
   MonitorConfiguration,
   Scope,
   SortCriteria,
@@ -34,6 +34,7 @@ import type { DeviceDeployment } from '../deploymentsSlice';
 import type { DeviceAuthState } from './constants';
 
 export const sliceName = 'devices';
+export type DeviceTierLimits = Omit<BackendDeviceTierLimits, 'test'>;
 export type DeviceSelectedAttribute = { attribute: string; scope: string };
 export type DeviceListState = {
   detailsTab: string;
@@ -128,6 +129,7 @@ export type DeviceSliceType = {
   limits: DeviceTierLimits;
   reports: DeviceReport[];
   testDeviceCount: number;
+  testDeviceLimit: number;
   total: number;
 };
 export const initialState: DeviceSliceType = {
@@ -177,6 +179,7 @@ export const initialState: DeviceSliceType = {
     // { items: [{ key: "someKey", count: 42  }], otherCount: 123, total: <otherCount + itemsCount> }
   ],
   testDeviceCount: 0,
+  testDeviceLimit: 0,
   total: 0,
   limits: {
     standard: 0,
@@ -292,8 +295,11 @@ export const devicesSlice = createSlice({
       const { countsPerTier, status } = action.payload;
       state.byStatus[status].counts = { ...countsPerTier, total: Object.values(countsPerTier).reduce((accu, tieredCount) => accu + tieredCount, 0) };
     },
-    setDeviceLimits: (state, action: PayloadAction<DeviceTierLimits>) => {
-      state.limits = action.payload;
+    setDeviceLimits: (state, action: PayloadAction<BackendDeviceTierLimits>) => {
+      const { test, ...tiers } = action.payload;
+      state.limits = tiers;
+      // The test device limit is returned by the tiers endpoint, but we handle it separately.
+      state.testDeviceLimit = test || 0;
     },
     setTestDeviceCount: (state, action: PayloadAction<number>) => {
       state.testDeviceCount = action.payload;

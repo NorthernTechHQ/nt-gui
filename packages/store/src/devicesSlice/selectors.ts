@@ -30,6 +30,7 @@ export const getDeviceListState = (state: RootState) => state.devices.deviceList
 export const getListedDevices = (state: RootState) => state.devices.deviceList.deviceIds;
 export const getFilteringAttributes = (state: RootState) => state.devices.filteringAttributes;
 export const getDeviceFilters = (state: RootState) => state.devices.filters || [];
+export const getTestDeviceLimit = (state: RootState) => state.devices.testDeviceLimit;
 const getFilteringAttributesFromConfig = (state: RootState) => state.devices.filteringAttributesConfig.attributes;
 export const getSortedFilteringAttributes = createSelector([getFilteringAttributes], filteringAttributes => ({
   ...filteringAttributes,
