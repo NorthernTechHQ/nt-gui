@@ -1,5 +1,22 @@
 ---
-## 0.42.0 - 2026-08-06
+## 0.43.0 - 2026-08-12
+
+
+
+### New features
+
+#### store
+
+- Use per-tenant test device limits ([MEN-10015](https://northerntech.atlassian.net/browse/MEN-10015))
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-10015](https://northerntech.atlassian.net/browse/MEN-10015) |
+
+## @northern.tech/store-0.42.0 - 2026-08-06
 
 
 
