@@ -231,7 +231,8 @@ export const useAppInit = (userId: string | undefined): { coreInitDone: boolean 
       tasks.push(dispatch(getDeviceLimits()));
       tasks.push(dispatch(getRoles()));
     } else {
-      tasks.push(Promise.resolve(dispatch(actions.setDeviceLimits({ micro: 0, standard: -1, system: 0 }))));
+      // OS users have unlimited standard and test devices
+      tasks.push(Promise.resolve(dispatch(actions.setDeviceLimits({ micro: 0, standard: -1, system: 0, test: -1 }))));
     }
     return Promise.all(tasks);
   }, [dispatch, hasMultitenancy, isServiceProvider]);
