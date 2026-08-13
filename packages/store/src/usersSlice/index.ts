@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { User as BackendUser, DeploymentPhase, TenantInfo, TenantsIdName } from '@northern.tech/types/MenderTypes';
+import type { User as BackendUser, DeploymentPhase, PersonalAccessToken, TenantInfo, TenantsIdName } from '@northern.tech/types/MenderTypes';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -21,7 +21,7 @@ import type { ReadState } from './constants';
 import { READ_STATES } from './constants';
 
 export const sliceName = 'users';
-export type User = BackendUser & TenantInfo & { tenants?: TenantsIdName };
+export type User = BackendUser & TenantInfo & { tenants?: TenantsIdName } & { tokens?: PersonalAccessToken[] };
 export type UserSession = {
   expiresAt?: string;
   token: string;
