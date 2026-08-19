@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import { auditLogsApiUrl, headerNames, iotManagerBaseURL, ssoIdpApiUrlv1, tenantadmApiUrlv1, tenantadmApiUrlv2 } from '@northern.tech/utils/constants';
+import { auditLogsApiUrl, headerNames, iotManagerBaseURL, ssoIdpApiUrlv1, tenantadmApiUrlv2 } from '@northern.tech/utils/constants';
 import { HttpResponse, http } from 'msw';
 
 import { mockApiResponses, tenants, webhookEvents } from '../mockData';
@@ -129,7 +129,8 @@ const subscriptionBasic = {
 export const organizationHandlers = [
   http.get('/tags.json', () => HttpResponse.json(tagsSample)),
   http.get('/versions.json', () => HttpResponse.json(releasesSample)),
-  http.get(`${tenantadmApiUrlv1}/user/tenant`, () => HttpResponse.json(mockApiResponses.organization.organization)),
+  http.get(`${tenantadmApiUrlv2}/tenants/me`, () => HttpResponse.json(mockApiResponses.organization.organization)),
+  http.get(`${tenantadmApiUrlv2}/tenants/me/token`, () => HttpResponse.json({ tenant_token: mockApiResponses.organization.tenantToken })),
   http.put(
     `${tenantadmApiUrlv2}/tenants/:tenantId/child`,
     validated(() => new HttpResponse(null, { status: 200 }))
