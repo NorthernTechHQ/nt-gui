@@ -455,6 +455,7 @@ export const setSingleReleaseTags = createAppAsyncThunk(
 
 export const setReleaseTags = createAppAsyncThunk(`${sliceName}/setReleaseTags`, ({ name, tags = [] }: { name: string; tags: Tags }, { dispatch }) =>
   dispatch(setSingleReleaseTags({ name, tags }))
+    .unwrap()
     .catch(err => commonErrorHandler(err, `Release tags couldn't be set.`, dispatch))
     .then(() => {
       dispatch(setSnackbar({ message: 'Release tags were set successfully.', autoHideDuration: TIMEOUTS.fiveSeconds, action: '' }));
@@ -465,10 +466,9 @@ export const setReleaseTags = createAppAsyncThunk(`${sliceName}/setReleaseTags`,
 export const setReleasesTags = createAppAsyncThunk(
   `${sliceName}/setReleasesTags`,
   ({ releases, tags = [] }: { releases: Release[]; tags: Tags }, { dispatch }) => {
-    const addRequests = releases.reduce<Promise<ReturnType<AppDispatch> | unknown>[]>((accu, release) => {
-      accu.push(dispatch(setSingleReleaseTags({ name: release.name, tags: [...new Set([...(release.tags ? release.tags : []), ...tags])] })));
-      return accu;
-    }, []);
+    const addRequests = releases.map(release =>
+      dispatch(setSingleReleaseTags({ name: release.name, tags: [...new Set([...(release.tags ?? []), ...tags])] })).unwrap()
+    );
     return Promise.all(addRequests)
       .catch(err => commonErrorHandler(err, `Releases couldn't be tagged.`, dispatch))
       .then(() => {
