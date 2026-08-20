@@ -4815,6 +4815,39 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         '503':
           $ref: '#/components/responses/UnavailableError'
+    patch:
+      operationId: Update device auth
+      tags:
+        - Device_Authentication_Internal API
+      summary: Update the device authentication data
+      parameters:
+        - name: tid
+          in: path
+          description: Tenant identifier.
+          required: true
+          schema:
+            type: string
+        - name: did
+          in: path
+          description: Device identifier.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UdpateDeviceAuth'
+      responses:
+        '204':
+          description: Success.
+        '400':
+          $ref: '#/components/responses/InvalidRequestError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /api/internal/v1/devauth/tenants/{tid}/devices/{did}/external:
     put:
       operationId: DeviceAuth Internal Set external identity
@@ -5544,7 +5577,7 @@ paths:
       operationId: Get Device Limits Per Tier
       security:
         - ManagementJWT: []
-      summary: Obtain limit of accepted devices per tier
+      summary: Obtain device limits information
       tags:
         - Device_Authentication_Management API
       parameters:
@@ -10161,6 +10194,41 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - ManagementJWT: []
+  /api/management/v2/tenantadm/tenants/me/token:
+    get:
+      tags:
+        - Tenants_APIs_v2_Tenantadm Management v2
+      summary: Obtain the tenant token for my tenant
+      description: |
+        Returns the `tenant_token` for the tenant organization associated with the subject claim (user unique ID) in the JWT token. This is a restricted endpoint. The user must be an **Admin user** or a **User  that can manage all devices**. Unauthorized users will receive a 403 Forbidden response.
+      operationId: Get My TenantToken
+      responses:
+        '200':
+          description: The tenant token is successfully returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - tenant_token
+                properties:
+                  tenant_token:
+                    type: string
+                    description: The secure token used by devices to identify and authenticate with the tenant.
+        '401':
+          description: Verification failed.
+          content: {}
+        '403':
+          description: |
+            Forbidden. The user does not have the required permissions (must be Admin  or have permissions to manage all devices) to fetch the tenant token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - ManagementJWT: []
   /api/management/v2/tenantadm/tenants/{id}:
     delete:
       tags:
@@ -12853,6 +12921,45 @@ paths:
           $ref: '#/components/responses/UnavailableError'
       security:
         - ManagementJWT: []
+  /api/management/v2/useradm/users:
+    post:
+      tags:
+        - User_Administration_v2_Management API
+      summary: |
+        Create a new user under the tenant owning the JWT.
+      operationId: Create User Management V2
+      requestBody:
+        description: New user data.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserNewV2'
+        required: true
+      responses:
+        '201':
+          description: The user was successfully created.
+          headers:
+            Location:
+              description: URI for the newly created 'User' resource.
+              schema:
+                type: string
+          content: {}
+        '400':
+          $ref: '#/components/responses/InvalidRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          description: |
+            The request data was structurally valid but failed business rules.
+            See the response body for specific validation errors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - ManagementJWT: []
   /api/management/v2/useradm/roles:
     get:
       tags:
@@ -15241,14 +15348,20 @@ components:
         id: 00a0c91e6-7dec-11d0-a765-f81d4faebf6
         finished: '2016-03-11T13:03:17.063493443Z'
         phases:
-          - batch_size: 5
-          - start_ts: '2020-07-06T17:04:49.114046203+02:00'
-            device_count: 25
-          - batch_size: 15
-          - start_ts: '2020-07-06T18:04:49.114046203+02:00'
-            device_count: 10
-          - start_ts: '2020-07-06T19:04:49.114046203+02:00'
-            device_count: 0
+          - id: '1'
+            batch_size: 5
+            start_ts: '2020-07-06T17:04:49.114046203+02:00'
+            device_count: 5
+            status: finished
+          - id: '2'
+            batch_size: 15
+            start_ts: '2020-07-06T18:04:49.114046203+02:00'
+            device_count: 15
+            status: finished
+          - id: '3'
+            start_ts: '2020-07-06T19:04:49.114046203+02:00'
+            device_count: 80
+            status: finished
         device_count: 100
         retries: 3
       properties:
@@ -15293,7 +15406,14 @@ components:
             type: string
           type: array
         phases:
-          description: An array of deployments phases (if any were defined for the deployment).
+          description: |
+            An array of the deployment's phases, ordered by `start_ts`.
+
+            For a deployment created with an explicit list of `phases`, this is
+            that list together with the current state of every phase.
+
+            For a deployment created with a `uniform_phases` configuration, this
+            is the list of phases generated from that configuration.
           items:
             $ref: '#/components/schemas/DeploymentPhase'
           type: array
@@ -15854,6 +15974,26 @@ components:
         - name
         - type
       type: object
+    DeploymentPhaseStatus:
+      description: |
+        Status of a single deployment phase.
+
+        * `pending` - the phase has not started yet; its `start_ts` is in the
+          future and no device has been assigned to it.
+        * `inprogress` - the phase has started and is still accepting devices;
+          fewer devices than the phase batch size have requested an update.
+        * `finished` - the phase is complete; either its batch size has been
+          reached, or the deployment finished or was aborted before the phase
+          could accept more devices.
+      enum:
+        - pending
+        - inprogress
+        - finished
+      x-enum-varnames:
+        - DEPLOYMENT_PHASE_STATUS_PENDING
+        - DEPLOYMENT_PHASE_STATUS_INPROGRESS
+        - DEPLOYMENT_PHASE_STATUS_FINISHED
+      type: string
     DeploymentPhaseSpec:
       type: object
       description: |
@@ -15870,25 +16010,36 @@ components:
         *NOTE*: Professional plan is only allowed to specify a single phase to
         schedule deployments, this feature is not available for Starter plan.
       example:
-        application/json:
-          id: foo
-          start_ts: '2020-07-06T15:04:49.114046203+02:00'
-          batch_size: 5
-          device_count: 42
+        id: '1'
+        start_ts: '2020-07-06T15:04:49.114046203+02:00'
+        batch_size: 5
+        device_count: 42
+        status: inprogress
       properties:
         id:
-          description: Phase identifier.
+          description: |
+            Phase identifier.
+
+            For a phase generated from a `uniform_phases` configuration, this is
+            the 1-based position of the phase in the rollout, as a string
+            (`"1"`, `"2"`, ...).
           type: string
         start_ts:
           description: |
             Start date of a phase.
             Can be skipped for the first phase of a new deployment definition ('start immediately').
+
+            For a phase generated from a `uniform_phases` configuration, this is
+            always set: the configured `start_ts` plus the configured
+            `time_interval` multiplied by the number of preceding phases.
           format: date-time
           type: string
         device_count:
           description: |
             Number of devices which already requested an update within this phase.
           type: integer
+        status:
+          $ref: '#/components/schemas/DeploymentPhaseStatus'
     DeploymentBatchSizeSpec:
       type: object
       properties:
@@ -15922,6 +16073,11 @@ components:
         Uniform phases configuration describing the rollout pattern
         where `batch_size_devices` number of devices are scheduled for update
         every `time_interval`.
+
+        Only this configuration is submitted when creating a deployment; the
+        phases themselves are generated by the server. A deployment object
+        returned by the API carries both the configuration and the generated
+        phases, in the deployment's `phases` field.
       properties:
         start_ts:
           description: |
@@ -15938,6 +16094,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/DeploymentUniformPhaseSpec'
         - $ref: '#/components/schemas/DeploymentBatchSizeSpec'
+      example:
+        start_ts: '2020-07-06T17:00:00Z'
+        time_interval: 1h
+        batch_size_devices: 25
     Statistics:
       example:
         success: 3
@@ -16639,14 +16799,20 @@ components:
         id: 00a0c91e6-7dec-11d0-a765-f81d4faebf6
         finished: '2016-03-11T13:03:17.063493443Z'
         phases:
-          - batch_size: 5
-          - start_ts: '2020-07-06T17:04:49.114046203+02:00'
+          - id: '1'
+            batch_size: 5
+            start_ts: '2020-07-06T17:04:49.114046203+02:00'
             device_count: 25
-          - batch_size: 15
-          - start_ts: '2020-07-06T18:04:49.114046203+02:00'
-            device_count: 10
-          - start_ts: '2020-07-06T19:04:49.114046203+02:00'
-            device_count: 0
+            status: finished
+          - id: '2'
+            batch_size: 15
+            start_ts: '2020-07-06T18:04:49.114046203+02:00'
+            device_count: 75
+            status: finished
+          - id: '3'
+            start_ts: '2020-07-06T19:04:49.114046203+02:00'
+            device_count: 210
+            status: inprogress
         device_count: 500
         retries: 3
       properties:
@@ -16691,7 +16857,14 @@ components:
             type: string
           type: array
         phases:
-          description: An array of deployments phases (if any were defined for the deployment).
+          description: |
+            An array of the deployment's phases, ordered by `start_ts`.
+
+            For a deployment created with an explicit list of `phases`, this is
+            that list together with the current state of every phase.
+
+            For a deployment created with a `uniform_phases` configuration, this
+            is the list of phases generated from that configuration.
           items:
             $ref: '#/components/schemas/DeploymentPhase'
           type: array
@@ -16971,6 +17144,12 @@ components:
           iyYyh1852rti3Afw4mDxuVSD7sd9ggvYMc0QHIpQNkD4YWOhNiE1AB0zH57VbUYG
           UwIDAQAB
           -----END PUBLIC KEY-----
+    UdpateDeviceAuth:
+      type: object
+      properties:
+        provisioned:
+          type: boolean
+          description: If true, marks the device as provisioned
     ExternalDevice:
       type: object
       description: External device descriptor
@@ -16992,7 +17171,7 @@ components:
         - name
         - provider
     DeviceTierLimits:
-      description: Device limit per tier
+      description: Device limits
       type: object
       properties:
         standard:
@@ -19785,15 +19964,6 @@ components:
     UserUpdate:
       type: object
       properties:
-        email:
-          type: string
-          description: A unique email address.
-        password:
-          type: string
-          description: New password.
-        current_password:
-          type: string
-          description: Current password.
         roles:
           type: array
           description: List of roles for the user. If not provided existing roles are kept.
@@ -19803,12 +19973,9 @@ components:
             description: Role name
       description: Update user information.
       example:
-        email: new_email@acme.com
         roles:
           - RBAC_ROLE_DEPLOY_GROUP_TESTING_DEVICES
           - RBAC_ROLE_READ_ONLY
-        password: new password
-        current_password: old password
     OwnUserUpdate:
       type: object
       properties:
@@ -20015,6 +20182,26 @@ components:
               value:
                 - test
                 - dev
+    UserNewV2:
+      required:
+        - email
+      type: object
+      properties:
+        email:
+          type: string
+          description: A unique email address. Non-ascii characters are invalid.
+        roles:
+          type: array
+          description: 'Optional RBAC roles to assign to the user. Defaults to: RBAC_ROLE_PERMIT_ALL.'
+          items:
+            title: ListOfRoles
+            type: string
+            description: Role name
+      description: New user descriptor.
+      example:
+        email: user@acme.com
+        roles:
+          - RBAC_ROLE_OBSERVER
     Role:
       required:
         - name
