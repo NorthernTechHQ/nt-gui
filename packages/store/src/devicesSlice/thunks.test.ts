@@ -59,6 +59,7 @@ import {
   removeDynamicGroup,
   removeReportsByGroupName,
   removeStaticGroup,
+  searchIdentities,
   selectGroup,
   setDeviceConfig,
   setDeviceListState,
@@ -937,6 +938,19 @@ describe('device retrieval ', () => {
       { type: getDevicesWithAuth.fulfilled.type }
     ];
     await store.dispatch(getDevicesWithAuth([defaultState.devices.byId.a1, defaultState.devices.byId.b1]));
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+  it('should allow searching devices by identity', async () => {
+    const store = mockStore({ ...defaultState });
+    const expectedActions = [{ type: searchIdentities.pending.type }, { type: searchIdentities.fulfilled.type }];
+    const { devices, total } = await store
+      .dispatch(searchIdentities({ attributes: [{ attribute: 'mac', scope: 'identity' }], name: 'mac', scope: 'identity', value_prefix: '00:01:' }))
+      .unwrap();
+    expect(total).toEqual(1);
+    expect(devices).toHaveLength(1);
+    expect(devices[0]).toMatchObject({ id: inventoryDevice.id });
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
