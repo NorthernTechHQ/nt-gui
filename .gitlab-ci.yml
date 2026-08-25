@@ -159,12 +159,6 @@ release:
       aud: "npm:registry.npmjs.org"
   before_script:
     - apt-get update && apt-get install -y jq
-    # TEMP diagnostics: print the OIDC claims npm matches the trusted publisher against.
-    # Payload segment only - the signature is never printed, so this is not a usable credential.
-    - |
-      node -e "console.log(JSON.stringify(JSON.parse(Buffer.from(process.env.NPM_ID_TOKEN.split('.')[1], 'base64url')), null, 2))"
-    # TODO remove together with the NPM_AUTH_TOKEN variable once OIDC publishing is confirmed
-    - echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
   script:
     - npm ci
     - npm run release
