@@ -17,7 +17,7 @@ import { Provider } from 'react-redux';
 import { defaultState } from '@/testUtils';
 import { userId } from '@northern.tech/testing/mockData';
 import { inventoryDevice } from '@northern.tech/testing/requestHandlers/deviceHandlers';
-import { tenantadmApiUrlv1 } from '@northern.tech/utils/constants';
+import { tenantadmApiUrlv2 } from '@northern.tech/utils/constants';
 import { deepCompare } from '@northern.tech/utils/helpers';
 import { renderHook, waitFor } from '@testing-library/react';
 import { HttpResponse, http } from 'msw';
@@ -217,7 +217,7 @@ it('should mark a non-hosted deployment with a reachable organization endpoint a
   expect(setFeaturesActionsFor(storeActions, onPremEnterpriseFeatures)).toHaveLength(1);
 });
 it('should mark a non-hosted deployment as OS when the organization endpoint is unreachable', async () => {
-  server.use(http.get(`${tenantadmApiUrlv1}/user/tenant`, () => new HttpResponse(null, { status: 500 })));
+  server.use(http.get(`${tenantadmApiUrlv2}/tenants/me`, () => new HttpResponse(null, { status: 500 })));
   const store = makeCoreInitStore({ app: { features: { isHosted: false } } });
   const wrapper = ({ children }) => <Provider store={store}>{children}</Provider>;
   const { result } = renderHook(() => useAppInit(userId), { wrapper });

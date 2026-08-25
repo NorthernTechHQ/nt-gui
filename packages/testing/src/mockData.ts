@@ -364,6 +364,7 @@ export const mockApiResponses = {
       plan: 'os',
       trial: false
     },
+    tenantToken: 'aaabbbcccdddeeefff',
     products: [
       {
         name: 'mender_standard',
@@ -652,7 +653,8 @@ export const permissionSets = [
       { action: 'http', object: { type: 'PUT', value: '^/api/management/v1/useradm/2faverify$' } },
       { action: 'http', object: { type: 'POST', value: '^/api/management/v1/useradm/users/me/2fa/(enable|disable)$' } },
       { action: 'http', object: { type: 'GET', value: '^/api/management/(v[1-9])/useradm/roles' } },
-      { action: 'http', object: { type: 'GET', value: '^/api/management/(v[1-9])/tenantadm/user/tenant' } }
+      { action: 'http', object: { type: 'GET', value: '^/api/management/(v[1-9])/tenantadm/user/tenant' } },
+      { action: 'http', object: { type: 'GET', value: '^/api/management/(v[1-9])/tenantadm/tenants/me$' } }
     ]
   },
   {

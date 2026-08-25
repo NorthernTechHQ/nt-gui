@@ -47,6 +47,7 @@ import {
   getSsoConfigById,
   getSsoConfigs,
   getTargetLocation,
+  getTenantToken,
   getTenants,
   getUserOrganization,
   getWebhookEvents,
@@ -173,6 +174,21 @@ describe('organization actions', () => {
       { type: getUserOrganization.fulfilled.type }
     ];
     await store.dispatch(getUserOrganization()).then(() => {
+      const storeActions = store.getActions();
+      expect(storeActions).toHaveLength(expectedActions.length);
+      expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+    });
+  });
+
+  it('should handle tenant token retrieval', async () => {
+    const store = mockStore({ ...defaultState });
+    expect(store.getActions()).toHaveLength(0);
+    const expectedActions = [
+      { type: getTenantToken.pending.type },
+      { type: actions.setOrganization.type, payload: { tenant_token: mockApiResponses.organization.tenantToken } },
+      { type: getTenantToken.fulfilled.type }
+    ];
+    await store.dispatch(getTenantToken()).then(() => {
       const storeActions = store.getActions();
       expect(storeActions).toHaveLength(expectedActions.length);
       expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));

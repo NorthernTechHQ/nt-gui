@@ -53,7 +53,6 @@ import {
   iotManagerBaseURL,
   locations,
   ssoIdpApiUrlv1,
-  tenantadmApiUrlv1,
   tenantadmApiUrlv2
 } from '../constants';
 import { getCurrentUser, getSpLimits, getTenantCapabilities, getTenantsList } from '../selectors';
@@ -418,7 +417,7 @@ export const removeTenant = createAppAsyncThunk(`${sliceName}/editDeviceLimit`, 
     })
 );
 export const getUserOrganization = createAppAsyncThunk(`${sliceName}/getUserOrganization`, (_, { dispatch, getState }) =>
-  Api.get<Tenant>(`${tenantadmApiUrlv1}/user/tenant?tiers=true`).then(res => {
+  Api.get<Tenant>(`${tenantadmApiUrlv2}/tenants/me?tiers=true`).then(res => {
     const { addons, plan, trial } = res.data;
     const { addons: currentAddons, id: currentId, plan: currentPlan, trial: currentTrial } = getOrganization(getState());
     const tasks: ReturnType<AppDispatch>[] = [dispatch(actions.setOrganization(res.data))];
@@ -430,6 +429,12 @@ export const getUserOrganization = createAppAsyncThunk(`${sliceName}/getUserOrga
     }
     return Promise.all(tasks);
   })
+);
+
+export const getTenantToken = createAppAsyncThunk(`${sliceName}/getTenantToken`, (_, { dispatch }) =>
+  Api.get<{ tenant_token: string }>(`${tenantadmApiUrlv2}/tenants/me/token`)
+    .catch(err => commonErrorHandler(err, 'There was an error retrieving your organization token', dispatch, commonErrorFallback))
+    .then(({ data: { tenant_token } }) => dispatch(actions.setOrganization({ tenant_token })))
 );
 
 export const getUserBilling = createAppAsyncThunk(`${sliceName}/getUserBilling`, (_, { dispatch }) =>
