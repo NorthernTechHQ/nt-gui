@@ -188,6 +188,24 @@ release:
         cd ../..;
       done
 
+oidc:probe:
+  stage: release
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/node:24
+  needs: []
+  rules:
+    - when: manual
+      allow_failure: true
+  id_tokens:
+    NPM_ID_TOKEN:
+      aud: "npm:registry.npmjs.org"
+  script:
+    - npm install -g npm@latest
+    - npm --version
+    - |
+      node -e "const c = JSON.parse(Buffer.from(process.env.NPM_ID_TOKEN.split('.')[1], 'base64url')); console.log('runner_environment:', c.runner_environment, '| project_path:', c.project_path, '| ci_config_ref_uri:', c.ci_config_ref_uri)"
+    - cd packages/store
+    - npm publish --dry-run --force --ignore-scripts --provenance=false --loglevel verbose
+
 pages:
   stage: release
   needs:
