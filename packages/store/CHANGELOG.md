@@ -1,5 +1,32 @@
 ---
-## 0.43.0 - 2026-08-12
+## 0.44.0 - 2026-08-25
+
+
+
+### New features
+
+#### store
+
+- Added support for split organization info retrieval ([MEN-9580](https://northerntech.atlassian.net/browse/MEN-9580))
+- Added search endpoint feature flag ([MEN-9831](https://northerntech.atlassian.net/browse/MEN-9831))
+- Add new device search endpoint thunk ([MEN-9831](https://northerntech.atlassian.net/browse/MEN-9831))
+
+### Bug fixes
+
+#### store
+
+- Reject failed software tag updates ([MEN-9986](https://northerntech.atlassian.net/browse/MEN-9986))
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-9986](https://northerntech.atlassian.net/browse/MEN-9986) |
+| [MEN-9580](https://northerntech.atlassian.net/browse/MEN-9580) |
+| [MEN-9831](https://northerntech.atlassian.net/browse/MEN-9831) |
+
+## @northern.tech/store-0.43.0 - 2026-08-12
 
 
 
