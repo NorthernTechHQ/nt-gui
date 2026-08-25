@@ -1,5 +1,36 @@
 ---
-## 0.16.0 - 2026-08-12
+## 0.17.0 - 2026-08-25
+
+
+
+### New features
+
+#### testing
+
+- Aligned organization mocks w/ the tenant token only endpoints
+- Added a mock for new device search endpoint ([MEN-9831](https://northerntech.atlassian.net/browse/MEN-9831))
+
+### Bug fixes
+
+#### testing
+
+- Openapi spec update
+- Removed validation for user edit endpoint
+
+### Dependency updates
+
+
+- Bump js-yaml from 5.2.2 to 5.2.3
+- Bump js-yaml from 5.2.3 to 5.3.0
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-9831](https://northerntech.atlassian.net/browse/MEN-9831) |
+
+## @northern.tech/testing-0.16.0 - 2026-08-12
 
 
 
