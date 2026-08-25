@@ -82,6 +82,7 @@ const featureFlags = [
   'hasManifestsEnabled',
   'hasMonitor',
   'hasMCUEnabled',
+  'hasNewSearch',
   'isEnterprise'
 ] as const;
 

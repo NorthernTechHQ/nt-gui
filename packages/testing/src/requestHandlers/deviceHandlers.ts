@@ -268,6 +268,16 @@ export const deviceHandlers = [
   ),
   http.post(`${inventoryApiUrlV2}/filters/search`, searchHandler),
   http.post(
+    `${inventoryApiUrlV2alpha1}/identities/search`,
+    validated(async ({ request }) => {
+      const { name, scope, value_prefix } = await request.json();
+      if ([name, scope, value_prefix].some(item => !item)) {
+        return new HttpResponse(null, { status: 519 });
+      }
+      return new HttpResponse(JSON.stringify([inventoryDevice]), { headers: { [headerNames.total]: 1 } });
+    })
+  ),
+  http.post(
     `${inventoryApiUrlV2}/filters`,
     validated(async ({ request }) => {
       const { name, terms } = await request.json();

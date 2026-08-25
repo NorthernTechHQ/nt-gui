@@ -111,6 +111,7 @@ export const initialState: AppSliceType = {
     hasManifestsEnabled: false,
     hasMonitor: false,
     hasMCUEnabled: false,
+    hasNewSearch: false,
     isHosted: true,
     isEnterprise: false
   },

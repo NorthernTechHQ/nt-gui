@@ -102,22 +102,21 @@ export const userHandlers = [
       return new HttpResponse(null, { status: 564 });
     })
   ),
-  http.put(
-    `${useradmApiUrl}/users/:userId`,
-    validated(async ({ params: { userId }, request }) => {
-      const { email, password, current_password } = await request.json();
-      if (current_password === 'bad_password') {
-        return new HttpResponse(null, { status: 401 });
-      }
-      if (
-        (mockApiResponses.users.byId[userId] && [email, password].some(value => Object.values(mockApiResponses.users.byId[userId]).includes(value))) ||
-        email === 'test@test.com'
-      ) {
-        return new HttpResponse(null, { status: 200 });
-      }
-      return new HttpResponse(null, { status: 565 });
-    })
-  ),
+  // The validation is removed here due to endpoint no longer accept changing the password and email in enterprise and OpenAPI spec.
+  // This endpoint at this point is still available for OS users.
+  http.put(`${useradmApiUrl}/users/:userId`, async ({ params: { userId }, request }) => {
+    const { email, password, current_password } = await request.json();
+    if (current_password === 'bad_password') {
+      return new HttpResponse(null, { status: 401 });
+    }
+    if (
+      (mockApiResponses.users.byId[userId] && [email, password].some(value => Object.values(mockApiResponses.users.byId[userId]).includes(value))) ||
+      email === 'test@test.com'
+    ) {
+      return new HttpResponse(null, { status: 200 });
+    }
+    return new HttpResponse(null, { status: 565 });
+  }),
   http.delete(
     `${useradmApiUrl}/users/:userId`,
     ({ params: { userId } }) => new HttpResponse(null, { status: mockApiResponses.users.byId[userId] ? 200 : 566 })

@@ -26,6 +26,9 @@ import type {
   NewConfigurationDeployment,
   NewConfigurationDeploymentResponse,
   PreAuthSet,
+  SearchIdentityParams,
+  SearchInventoryByIdentityResponse,
+  SelectAttribute,
   SortCriteria,
   Status
 } from '@northern.tech/types/MenderTypes';
@@ -99,7 +102,7 @@ import {
 const { cleanUpUpload, initUpload, setSnackbar, uploadProgress } = storeActions;
 const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
 
-const defaultAttributes = [
+const defaultAttributes: SelectAttribute[] = [
   { scope: 'identity', attribute: 'status' },
   { scope: 'inventory', attribute: 'artifact_name' },
   { scope: 'inventory', attribute: 'device_type' },
@@ -693,6 +696,17 @@ export const searchDevices = createAppAsyncThunk(
     return { deviceIds: deviceAccu.ids, searchTotal: Number(response.headers[headerNames.total]) };
   }
 );
+
+export const searchIdentities = createAppAsyncThunk(`${sliceName}/searchIdentities`, async (options: SearchIdentityParams, { dispatch }) => {
+  const { attributes: additionalAttributes = [], page = defaultPage, per_page = defaultPerPage, ...remainder } = options;
+  const response = await GeneralApi.post<SearchInventoryByIdentityResponse>(`${inventoryApiUrlV2alpha1}/identities/search`, {
+    ...remainder,
+    attributes: attributeDuplicateFilter([...defaultAttributes, ...additionalAttributes], 'attribute'),
+    page,
+    per_page
+  }).catch(err => commonErrorHandler(err, `devices couldn't be searched.`, dispatch, commonErrorFallback));
+  return { devices: response.data, total: Number(response.headers[headerNames.total]) };
+});
 
 const ATTRIBUTE_LIST_CUTOFF = 100;
 const attributeReducer = (attributes: AttributeResponse[] = []) =>
