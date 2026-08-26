@@ -8516,11 +8516,6 @@ paths:
               description: Total number of devices matched query.
               schema:
                 type: string
-            Link:
-              description: |
-                Standard header used for page navigation, page relations: 'first', 'next' and 'prev'.
-              schema:
-                type: string
           content:
             application/json:
               schema:
@@ -9518,6 +9513,14 @@ paths:
       summary: Obtain information about current tenant
       description: |
         The returned tenant resolves to the owner of the subject claim (user unique ID) in the JWT token.
+      deprecated: true
+      x-deprecated-description: |
+        _since Fri Aug 21 2026_ this endpoint is deprecated. Please use
+        GET /api/management/v2/tenantadm/tenants/me instead. Unlike this v1
+        endpoint, the v2 response omits the `tenant_token` field; the tenant
+        token is available from
+        GET /api/management/v2/tenantadm/tenants/me/token, which is restricted
+        to Admin users and users who can manage all devices.
       operationId: Tenant Info
       parameters:
         - name: tiers
@@ -11691,6 +11694,13 @@ paths:
         - User_Administration_Management API
       summary: |
         Create a new user under the tenant owning the JWT.
+      deprecated: true
+      x-deprecated-description: |
+        _since Fri Aug 21 2026_ this endpoint is deprecated. Please use
+        POST /api/management/v2/useradm/users instead. Unlike this v1 endpoint,
+        the v2 endpoint does not accept the `password` or `send_reset_password`
+        fields; the new user is always sent an invitation email to set their own
+        password.
       operationId: Create User Management
       requestBody:
         description: New user data.
@@ -12173,8 +12183,9 @@ paths:
       description: |
         List Roles
       x-deprecated-description: |
-        This endpoint is deprecated. Please use /api/management/v2/useradm/roles
-        together with /api/management/v2/useradm/permission_sets instead.
+        _since Tue Mar 15 2022_ this endpoint is deprecated. Please use
+        /api/management/v2/useradm/roles together with
+        /api/management/v2/useradm/permission_sets instead.
       operationId: List Roles v1
       responses:
         '200':
@@ -12202,8 +12213,9 @@ paths:
       description: |
         Create Role
       x-deprecated-description: |
-        This endpoint is deprecated. Please use /api/management/v2/useradm/roles
-        together with /api/management/v2/useradm/permission_sets instead.
+        _since Tue Mar 15 2022_ this endpoint is deprecated. Please use
+        /api/management/v2/useradm/roles together with
+        /api/management/v2/useradm/permission_sets instead.
       operationId: Create Role v1
       requestBody:
         description: New role data.
@@ -12240,8 +12252,9 @@ paths:
       description: |
         Returns role information.
       x-deprecated-description: |
-        This endpoint is deprecated. Please use /api/management/v2/useradm/roles/{id}
-        together with /api/management/v2/useradm/permission_sets/{id} instead.
+        _since Tue Mar 15 2022_ this endpoint is deprecated. Please use
+        /api/management/v2/useradm/roles/{id} together with
+        /api/management/v2/useradm/permission_sets/{id} instead.
       operationId: Show Role v1
       parameters:
         - name: id
@@ -12279,8 +12292,9 @@ paths:
       description: |
         Update Role
       x-deprecated-description: |
-        This endpoint is deprecated. Please use /api/management/v2/useradm/roles/{id}
-        together with /api/management/v2/useradm/permission_sets/{id} instead.
+        _since Tue Mar 15 2022_ this endpoint is deprecated. Please use
+        /api/management/v2/useradm/roles/{id} together with
+        /api/management/v2/useradm/permission_sets/{id} instead.
       operationId: Update Role v1
       parameters:
         - name: id
@@ -12325,8 +12339,9 @@ paths:
       description: |
         Delete Role
       x-deprecated-description: |
-        This endpoint is deprecated. Please use /api/management/v2/useradm/roles/{id}
-        together with /api/management/v2/useradm/permission_sets/{id} instead.
+        _since Tue Mar 15 2022_ this endpoint is deprecated. Please use
+        /api/management/v2/useradm/roles/{id} together with
+        /api/management/v2/useradm/permission_sets/{id} instead.
       operationId: Delete Role v1
       parameters:
         - name: id
@@ -18412,6 +18427,7 @@ components:
         per_page:
           description: Number of results per page.
           type: integer
+          maximum: 500
     DeviceInventoryRequest:
       type: object
       properties:
@@ -19846,9 +19862,12 @@ components:
           description: User's password.
         propagate:
           type: boolean
+          deprecated: true
           description: |
-            This parameter is deprecated _since Thu Jul 6 2023_, the propagation
-            of user information to tenantadm is disabled permanently.
+            Propagate user information to tenantadm.
+          x-deprecated-description: |
+            _since Thu Jul 6 2023_ this field is deprecated; the propagation of
+            user information to tenantadm is disabled permanently.
         magic_id:
           type: string
           description: Unique id to allow a user to log in using a magic link
