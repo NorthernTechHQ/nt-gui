@@ -1,0 +1,76 @@
+// renovate.json5 - dependency update configuration for nt-gui
+// See Documentation/dependency-updates.md in mender-qa for the process.
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
+  "extends": [
+    "config:recommended",
+    ":gitSignOff"
+  ],
+
+  // CODEOWNERS assigns frontend for everything here.
+  "reviewersFromCodeOwners": true,
+
+  // fix(deps): <desc> for production deps. Note there is deliberately no
+  // matchPackageNames ["*"] override here, unlike the other repos: this is a
+  // release-please monorepo publishing ten packages, and config:recommended's
+  // :semanticPrefixFixDepsChoreOthers already gives fix for production deps and
+  // chore for dev deps. That is what we want - a prettier-config bump should not
+  // publish a release of every package.
+  "semanticCommits": "enabled",
+  "semanticCommitScope": "deps",
+
+  // Only rebase open PRs when they actually conflict. Rebasing every time the
+  // base branch moves restarts a pipeline for every open PR on each merge.
+  "rebaseWhen": "conflicted",
+
+  "prHourlyLimit": 2,
+  "prConcurrentLimit": 5,
+
+  "baseBranchPatterns": ["main"],
+
+  // Security PRs bypass the schedule and automerge when CI is green.
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "schedule": ["at any time"],
+    "automerge": true,
+    "automergeType": "pr",
+    "labels": ["security"]
+  },
+
+  // Dependabot used versioning-strategy: increase, which is rangeStrategy bump here.
+  "rangeStrategy": "bump",
+
+  "packageRules": [
+    // CI file updates get ci: instead of a deps scope.
+    {
+      "matchManagers": ["gitlabci", "gitlabci-include"],
+      "semanticCommitType": "ci",
+      "semanticCommitScope": ""
+    },
+
+    // The three groups Dependabot used.
+    {
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "development-dependencies"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["dependencies"],
+      "matchPackageNames": ["!/^@emotion/", "!/^@mui/"],
+      "groupName": "production-dependencies"
+    },
+    {
+      "matchPackageNames": ["/^@emotion/", "/^@mui/"],
+      "groupName": "mui"
+    },
+
+    // @northern.tech/* are this monorepo's own published packages - release-please
+    // manages those versions, so Dependabot ignored them and so do we.
+    {
+      "matchPackageNames": ["/^@northern\\.tech//"],
+      "enabled": false
+    }
+  ]
+}
