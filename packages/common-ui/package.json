@@ -91,7 +91,7 @@
     "@xterm/addon-search": "^0.16.x",
     "@xterm/addon-web-links": "^0.12.x",
     "@xterm/xterm": "^6.x",
-    "copy-to-clipboard": "^4.x",
+    "copy-to-clipboard": "^4.0.2",
     "dayjs": "^1.x",
     "generate-password-browser": "^1.x",
     "pluralize": "^8.x",
