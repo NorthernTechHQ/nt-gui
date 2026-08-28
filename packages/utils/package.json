@@ -58,6 +58,6 @@
     "react-redux": "^9.x",
     "react-router": "^8.x",
     "universal-cookie": "^8.x",
-    "validator": "^13.x"
+    "validator": "^13.15.35"
   }
 }
