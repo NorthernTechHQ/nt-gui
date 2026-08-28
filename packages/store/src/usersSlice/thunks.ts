@@ -372,6 +372,17 @@ export const createUser = createAppAsyncThunk(`${sliceName}/createUser`, ({ shou
     .catch(err => userActionErrorHandler(err, 'create', dispatch))
 );
 
+type CreateUserV2Payload = {
+  email: string;
+  roles?: string[];
+};
+
+export const createUserV2 = createAppAsyncThunk(`${sliceName}/createUserV2`, (userData: CreateUserV2Payload, { dispatch }) =>
+  GeneralApi.post(`${useradmApiUrlv2}/users`, stripUndefined(userData))
+    .then(() => Promise.all([dispatch(getUserList()), dispatch(setSnackbar(`The user was added successfully. An email has been sent to ${userData.email}.`))]))
+    .catch(err => userActionErrorHandler(err, 'create', dispatch))
+);
+
 export const removeUser = createAppAsyncThunk(`${sliceName}/removeUser`, (userId: string, { dispatch }) =>
   GeneralApi.delete(`${useradmApiUrl}/users/${userId}`)
     .then(() => Promise.all([dispatch(actions.removedUser(userId)), dispatch(getUserList()), dispatch(setSnackbar(userActions.remove.successMessage))]))

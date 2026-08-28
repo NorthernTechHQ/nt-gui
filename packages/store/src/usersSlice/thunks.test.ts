@@ -33,6 +33,7 @@ import {
   confirmOAuthLink,
   createRole,
   createUser,
+  createUserV2,
   disableUser2fa,
   editRole,
   editUser,
@@ -403,6 +404,23 @@ describe('user actions', () => {
     ];
     const store = mockStore({ ...defaultState });
     await store.dispatch(createUser(createdUser));
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+  it('should allow single user creation through the v2 endpoint', async () => {
+    vi.clearAllMocks();
+    const createdUser = { email: 'a@b.com', roles: ['dyn'] };
+    const expectedActions = [
+      { type: createUserV2.pending.type },
+      { type: getUserList.pending.type },
+      { type: appActions.setSnackbar.type, payload: 'The user was added successfully. An email has been sent to a@b.com.' },
+      { type: actions.receivedUserList.type, payload: defaultState.users.byId },
+      { type: getUserList.fulfilled.type },
+      { type: createUserV2.fulfilled.type }
+    ];
+    const store = mockStore({ ...defaultState });
+    await store.dispatch(createUserV2(createdUser));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
