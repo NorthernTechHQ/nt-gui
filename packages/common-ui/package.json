@@ -69,16 +69,16 @@
     "@northern.tech/eslint-config": "*",
     "@northern.tech/testing": "*",
     "@northern.tech/typescript-config": "*",
-    "@testing-library/jest-dom": "7.0.0",
-    "@testing-library/react": "^16.3.2",
-    "@testing-library/user-event": "14.6.1",
-    "@vitejs/plugin-react": "^6.0.5",
-    "eslint": "^10.8.0",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "14.6.6",
+    "@vitejs/plugin-react": "^6.1.1",
+    "eslint": "^10.9.1",
     "jsdom": "30.0.1",
     "msw": "^2.15.0",
     "redux-mock-store": "1.5.5",
-    "tsdown": "^0.22.2",
-    "vitest": "^4.1.10"
+    "tsdown": "^0.22.14",
+    "vitest": "^4.1.11"
   },
   "peerDependencies": {
     "@mdi/js": "^7.x",

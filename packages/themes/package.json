@@ -44,10 +44,10 @@
     "@northern.tech/eslint-config": "*",
     "@northern.tech/typescript-config": "*",
     "@tsdown/css": "^0.22.14",
-    "@types/node": "26.1.2",
-    "eslint": "^10.8.0",
-    "less": "^4.8.1",
-    "tsdown": "^0.22.2"
+    "@types/node": "26.4.0",
+    "eslint": "^10.9.1",
+    "less": "^4.9.0",
+    "tsdown": "^0.22.14"
   },
   "dependencies": {
     "@mui/material": "^9.x"
