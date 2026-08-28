@@ -54,7 +54,7 @@
     "pluralize": "^8.x",
     "react": "^19.x",
     "react-dom": "^19.x",
-    "react-ga4": "^3.x",
+    "react-ga4": "^3.0.1",
     "react-redux": "^9.x",
     "react-router": "^8.x",
     "universal-cookie": "^8.x",
