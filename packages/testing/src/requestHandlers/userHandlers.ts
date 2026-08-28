@@ -150,6 +150,16 @@ export const userHandlers = [
     `${useradmApiUrl}/roles/:roleId`,
     ({ params: { roleId } }) => new HttpResponse(null, { status: mockApiResponses.users.rolesById[roleId] ? 200 : 569 })
   ),
+  http.post(
+    `${useradmApiUrlv2}/users`,
+    validated(async ({ request }) => {
+      const { email, roles } = await request.json();
+      if (!email || (roles && !roles.every(role => rbacRoles.some(({ name }) => name === role)))) {
+        return new HttpResponse(null, { status: 575 });
+      }
+      return new HttpResponse(null, { status: 201 });
+    })
+  ),
   http.get(`${useradmApiUrlv2}/roles`, () => HttpResponse.json(rbacRoles)),
   http.get(`${useradmApiUrlv2}/roles/:roleId`, async ({ params: { roleId } }) => {
     if (mockApiResponses.users.rolesById[roleId]) {
