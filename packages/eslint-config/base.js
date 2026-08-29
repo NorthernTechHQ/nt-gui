@@ -39,7 +39,7 @@ export const baseConfig = defineConfig(
       'no-console': 'off',
       'no-prototype-builtins': 'off',
       'no-unused-vars': 'off',
-      quotes: ['error', 'single', { allowTemplateLiterals: true }],
+      quotes: ['error', 'single', { allowTemplateLiterals: true, avoidEscape: true }],
       'sonarjs/cognitive-complexity': ['error', 17],
       '@typescript-eslint/ban-ts-comment': 'off',
       '@typescript-eslint/member-ordering': ['error', { default: { order: 'alphabetically-case-insensitive' } }],

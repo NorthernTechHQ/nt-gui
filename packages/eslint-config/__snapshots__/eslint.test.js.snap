@@ -538,6 +538,7 @@ exports[`ESLint Config Integrity > library config matches snapshot 1`] = `
         "single",
         {
           "allowTemplateLiterals": true,
+          "avoidEscape": true,
         },
       ],
       "sonarjs/cognitive-complexity": [
@@ -1088,6 +1089,7 @@ exports[`ESLint Config Integrity > react config matches snapshot 1`] = `
         "single",
         {
           "allowTemplateLiterals": true,
+          "avoidEscape": true,
         },
       ],
       "sonarjs/cognitive-complexity": [
@@ -1730,6 +1732,7 @@ exports[`ESLint Config Integrity > storybook config matches snapshot 1`] = `
         "single",
         {
           "allowTemplateLiterals": true,
+          "avoidEscape": true,
         },
       ],
       "sonarjs/cognitive-complexity": [
