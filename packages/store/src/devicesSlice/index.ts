@@ -20,10 +20,8 @@ import type {
   DeviceState,
   MonitorConfiguration,
   Scope,
-  SortCriteria,
-  Status
+  SortCriteria
 } from '@northern.tech/types/MenderTypes';
-// @ts-nocheck
 import { deepCompare, duplicateFilter } from '@northern.tech/utils/helpers';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -92,7 +90,7 @@ export type Device = BackendDeviceAuth &
     isNew?: boolean;
     isOffline?: boolean;
     monitors?: MonitorConfiguration[];
-    status: Status;
+    status: NonNullable<BackendDeviceAuth['status']>;
     twinsByIntegration?: Record<string, DeviceState & { twinError?: string }>;
   };
 export type DeviceFilter = {

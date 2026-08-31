@@ -513,7 +513,8 @@ export const getDeviceInfo = createAppAsyncThunk(`${sliceName}/getDeviceInfo`, (
 export const getAllDeviceCounts = createAppAsyncThunk(`${sliceName}/getAllDeviceCounts`, (_, { dispatch }) =>
   GeneralApi.get(`${inventoryApiUrlV2}/statistics`).then(({ data }) => {
     const { devices_by_status }: { devices_by_status: Record<DeviceAuthState, DeviceTierLimits> } = data;
-    Object.entries(devices_by_status).map(([status, countsPerTier]) => dispatch(actions.setDevicesCountByStatus({ countsPerTier, status })));
+    const countsByStatus = Object.entries(devices_by_status) as [DeviceAuthState, DeviceTierLimits][];
+    countsByStatus.map(([status, countsPerTier]) => dispatch(actions.setDevicesCountByStatus({ countsPerTier, status })));
     return;
   })
 );

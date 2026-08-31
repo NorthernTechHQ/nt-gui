@@ -58,20 +58,19 @@ export const getDeviceIdentityAttributes = createSelector(
   }
 );
 
-export const getDeviceCountsByStatus = createSelector([getDevicesByStatus], byStatus =>
-  Object.values(DEVICE_STATES).reduce<Record<DeviceAuthState, number>>(
+export const getDeviceCountsByStatus = createSelector([getDevicesByStatus], byStatus => {
+  const countsByState = Object.values(DEVICE_STATES).reduce<Record<DeviceAuthState, number>>(
     (accu, deviceState) => {
       const { counts } = byStatus[deviceState];
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { total, ...tieredCounts } = counts;
-      const count = Object.values(tieredCounts).reduce((accu, countPerTier) => accu + countPerTier, 0);
-      accu[deviceState] = count;
-      accu.total = accu.total + count;
+      accu[deviceState] = Object.values(tieredCounts).reduce((accu, countPerTier) => accu + countPerTier, 0);
       return accu;
     },
-    { total: 0 }
-  )
-);
+    {} as Record<DeviceAuthState, number>
+  );
+  return { ...countsByState, total: Object.values(countsByState).reduce((accu, count) => accu + count, 0) };
+});
 
 export const getDeviceById = createSelector([getDevicesById, (_, deviceId) => deviceId], (devicesById, deviceId = '') => devicesById[deviceId] ?? {});
 
