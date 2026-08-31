@@ -21,6 +21,9 @@ export type DummyType = never;
 
 declare module '@mui/material' {
   interface PaletteOptions extends MuiPaletteOptions {
+    highlight?: {
+      main: string;
+    };
     neutral?: {
       contrastText: string;
       dark: string;
@@ -30,6 +33,9 @@ declare module '@mui/material' {
   }
 
   interface Palette {
+    highlight: {
+      main: string;
+    };
     neutral: {
       contrastText: string;
       dark: string;
