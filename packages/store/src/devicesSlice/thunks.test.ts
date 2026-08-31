@@ -22,7 +22,9 @@ import { describe, expect, it, vi } from 'vitest';
 import { actions } from '.';
 import { actions as appActions } from '../appSlice';
 import { DEVICE_STATES, EXTERNAL_PROVIDER, TIMEOUTS, UNGROUPED_GROUP } from '../constants';
+import type { DeviceAuthState } from '../constants';
 import { actions as deploymentActions } from '../deploymentsSlice';
+import type { RootState } from '../store';
 import { getSingleDeployment, getUserSettings, saveUserSettings } from '../thunks';
 import {
   addDevicesToGroup,
@@ -55,6 +57,7 @@ import {
   getSessionDetails,
   getTestDeviceCount,
   preauthDevice,
+  reduceReceivedDevices,
   removeDevicesFromGroup,
   removeDynamicGroup,
   removeReportsByGroupName,
@@ -954,6 +957,100 @@ describe('device retrieval ', () => {
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+});
+
+describe('reduceReceivedDevices', () => {
+  const newThreshold = '2019-01-10T00:00:00.000Z';
+  const offlineThreshold = '2019-01-12T00:00:00.000Z';
+  const state = {
+    ...defaultState,
+    app: { ...defaultState.app, newThreshold, offlineThreshold }
+  } as unknown as RootState;
+
+  const attributeList = [
+    { name: 'device_type', scope: 'inventory', value: 'raspberrypi4' },
+    { name: 'artifact_name', scope: 'inventory', value: 'test-artifact' },
+    { name: 'status', scope: 'identity', value: DEVICE_STATES.accepted },
+    { name: 'mac', scope: 'identity', value: 'dc:a6:32:12:ad:bf' },
+    { name: 'group', scope: 'system', value: 'testGroup' },
+    { name: 'created_ts', scope: 'system', value: '2019-01-01T06:25:00.000Z' },
+    { name: 'check_in_time', scope: 'system', value: '2019-01-02T00:00:00.000Z' },
+    { name: 'name', scope: 'tags', value: 'testname' },
+    { name: 'alerts', scope: 'monitor', value: 'true' }
+  ];
+
+  it('should map device attributes by scope and merge them with the stored device state', () => {
+    const { devicesById, ids } = reduceReceivedDevices([{ id: 'a1', attributes: attributeList } as any], [], state);
+    expect(ids).toEqual(['a1']);
+    expect(devicesById.a1).toMatchObject({
+      id: 'a1',
+      // the stored inventory attributes are retained, the received ones are merged on top
+      attributes: { artifact_name: 'test-artifact', device_type: ['raspberrypi4'], ipv4_wlan0: '192.168.10.141/24' },
+      group: 'testGroup',
+      identity_data: { mac: 'dc:a6:32:12:ad:bf', status: DEVICE_STATES.accepted },
+      monitor: { alerts: 'true' },
+      status: DEVICE_STATES.accepted,
+      tags: { name: 'testname' },
+      check_in_time_rounded: '2019-01-02T00:00:00.000Z',
+      // no check_in_time in the response, so the stored exact time remains
+      check_in_time_exact: defaultState.devices.byId.a1.check_in_time_exact
+    });
+  });
+
+  it('should retain the stored inventory information for devices received without attributes', () => {
+    const { devicesById } = reduceReceivedDevices([{ id: 'a1', updated_ts: '2019-01-14T09:25:00.000Z' } as any], [], state);
+    expect(devicesById.a1).toMatchObject({
+      attributes: defaultState.devices.byId.a1.attributes,
+      // without attributes the update timestamp of the stored device wins, as the response can't have been an inventory update
+      updated_ts: defaultState.devices.byId.a1.updated_ts
+    });
+  });
+
+  it('should apply an explicitly passed status over the received one', () => {
+    const { devicesById } = reduceReceivedDevices(
+      [{ id: 'a1', attributes: attributeList, status: DEVICE_STATES.accepted } as any],
+      [],
+      state,
+      DEVICE_STATES.pending as DeviceAuthState
+    );
+    expect(devicesById.a1.status).toEqual(DEVICE_STATES.pending);
+  });
+
+  it('should use the earliest known creation timestamp', () => {
+    const { devicesById } = reduceReceivedDevices([{ id: 'a1', attributes: attributeList, created_ts: '2019-01-05T06:25:00.000Z' } as any], [], state);
+    // the system scoped attribute is earlier than both the received and the stored creation date
+    expect(devicesById.a1.created_ts).toEqual('2019-01-01T06:25:00.000Z');
+  });
+
+  it('should determine the new and offline states based on the app thresholds', () => {
+    const { devicesById } = reduceReceivedDevices(
+      [
+        { id: 'newDevice', attributes: [], created_ts: '2019-01-11T00:00:00.000Z', check_in_time: '2019-01-13T00:00:00.000Z' } as any,
+        { id: 'oldDevice', attributes: [], created_ts: '2019-01-01T00:00:00.000Z', check_in_time: '2019-01-11T00:00:00.000Z' } as any
+      ],
+      [],
+      state
+    );
+    expect(devicesById.newDevice).toMatchObject({ isNew: true, isOffline: false });
+    expect(devicesById.oldDevice).toMatchObject({ isNew: false, isOffline: true });
+  });
+
+  it('should treat devices without any check in information as offline', () => {
+    const { devicesById } = reduceReceivedDevices([{ id: 'unknownDevice', attributes: [] } as any], [], state);
+    expect(devicesById.unknownDevice).toMatchObject({ id: 'unknownDevice', isOffline: true });
+    expect(devicesById.unknownDevice.check_in_time_exact).toBeUndefined();
+    expect(devicesById.unknownDevice.check_in_time_rounded).toBeUndefined();
+  });
+
+  it('should collect the device ids on top of the ones passed in', () => {
+    const { devicesById, ids } = reduceReceivedDevices(
+      [{ id: 'a1', attributes: attributeList } as any, { id: 'b1', attributes: attributeList } as any],
+      ['c1'],
+      state
+    );
+    expect(ids).toEqual(['c1', 'a1', 'b1']);
+    expect(Object.keys(devicesById)).toEqual(['a1', 'b1']);
   });
 });
 
