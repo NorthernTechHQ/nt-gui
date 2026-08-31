@@ -43,10 +43,10 @@
   "devDependencies": {
     "@northern.tech/eslint-config": "*",
     "@northern.tech/typescript-config": "*",
-    "eslint": "^10.8.0",
+    "eslint": "^10.9.1",
     "jsdom": "30.0.1",
-    "tsdown": "^0.22.2",
-    "vitest": "^4.1.10"
+    "tsdown": "^0.22.14",
+    "vitest": "^4.1.11"
   },
   "peerDependencies": {
     "@northern.tech/types": "*",
