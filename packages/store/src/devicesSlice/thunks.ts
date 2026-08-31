@@ -19,7 +19,6 @@ import type {
   DeviceConfiguration,
   DeviceInventoryResponse,
   DeviceState,
-  DeviceWithImage,
   GetSystemComponentsResponse,
   Integration,
   ManagementApiConfiguration,
@@ -315,40 +314,46 @@ export const selectGroup = createAppAsyncThunk<unknown, { filters?: DeviceFilter
 
 const getEarliestTs = (dateA = '', dateB = '') => (!dateA || !dateB ? dateA || dateB : dateA < dateB ? dateA : dateB);
 
-type ReceivedDevice = BackendDevice & DeviceInventoryResponse & Omit<DeviceWithImage, 'status'>;
-const reduceReceivedDevices = (devices: ReceivedDevice[], ids: string[], state: RootState, status?: DeviceAuthState) =>
-  devices.reduce(
-    (accu, device: any) => {
-      const stateDevice = getDeviceByIdSelector(state, device.id);
-      const {
-        attributes: storedAttributes = {},
-        identity_data: storedIdentity = {},
-        monitor: storedMonitor = {},
-        tags: storedTags = {},
-        group: storedGroup
-      } = stateDevice;
-      const { identity, inventory, monitor, system = {}, tags } = mapDeviceAttributes(device.attributes);
-      device.tags = { ...storedTags, ...tags };
-      device.group = system.group ?? storedGroup;
-      device.monitor = { ...storedMonitor, ...monitor };
-      device.identity_data = { ...storedIdentity, ...identity, ...(device.identity_data ? device.identity_data : {}) };
-      device.status = status ? status : device.status || identity.status;
-      device.check_in_time_rounded = system.check_in_time ?? stateDevice.check_in_time_rounded;
-      device.check_in_time_exact = device.check_in_time ?? stateDevice.check_in_time_exact;
-      device.created_ts = getEarliestTs(getEarliestTs(system.created_ts, device.created_ts), stateDevice.created_ts);
-      device.updated_ts = device.attributes ? device.updated_ts : stateDevice.updated_ts;
-      device.isNew = new Date(device.created_ts) > new Date(state.app.newThreshold);
-      const lastCheckIn = device.check_in_time_exact ?? device.check_in_time_rounded;
-      device.isOffline = new Date(lastCheckIn) < new Date(state.app.offlineThreshold) || lastCheckIn === undefined;
-      // all the other mapped attributes return as empty objects if there are no attributes to map, but identity will be initialized with an empty state
-      // for device_type and artifact_name, potentially overwriting existing info, so rely on stored information instead if there are no attributes
-      device.attributes = device.attributes ? { ...storedAttributes, ...inventory } : storedAttributes;
-      accu.devicesById[device.id] = { ...stateDevice, ...device };
-      accu.ids.push(device.id);
-      return accu;
-    },
-    { ids, devicesById: {} }
-  );
+type ReceivedDevice = BackendDevice & DeviceInventoryResponse & { id: string };
+const mergeReceivedDevice = (device: ReceivedDevice, state: RootState, status?: DeviceAuthState): Device => {
+  const stateDevice = getDeviceByIdSelector(state, device.id);
+  const {
+    attributes: storedAttributes = {} as Device['attributes'],
+    identity_data: storedIdentity = {},
+    monitor: storedMonitor = {},
+    tags: storedTags = {},
+    group: storedGroup
+  } = stateDevice;
+  const { identity, inventory, monitor, system = {}, tags } = mapDeviceAttributes(device.attributes);
+  const created_ts = getEarliestTs(getEarliestTs(system.created_ts, device.created_ts), stateDevice.created_ts);
+  const check_in_time_rounded = system.check_in_time ?? stateDevice.check_in_time_rounded;
+  const check_in_time_exact = device.check_in_time ?? stateDevice.check_in_time_exact;
+  const lastCheckIn = check_in_time_exact ?? check_in_time_rounded;
+  return {
+    ...stateDevice,
+    ...device,
+    tags: { ...storedTags, ...tags },
+    group: system.group ?? storedGroup,
+    monitor: { ...storedMonitor, ...monitor },
+    identity_data: { ...storedIdentity, ...identity, ...device.identity_data },
+    status: (status || device.status || identity.status) as Device['status'],
+    check_in_time_rounded,
+    check_in_time_exact,
+    created_ts,
+    updated_ts: device.attributes ? device.updated_ts : stateDevice.updated_ts,
+    isNew: new Date(created_ts) > new Date(state.app.newThreshold),
+    isOffline: lastCheckIn === undefined || new Date(lastCheckIn) < new Date(state.app.offlineThreshold),
+    // all the other mapped attributes return as empty objects if there are no attributes to map, but identity will be initialized with an empty state
+    // for device_type and artifact_name, potentially overwriting existing info, so rely on stored information instead if there are no attributes
+    attributes: device.attributes ? { ...storedAttributes, ...inventory } : storedAttributes
+  };
+};
+
+export const reduceReceivedDevices = (devices: ReceivedDevice[], ids: string[], state: RootState, status?: DeviceAuthState) => ({
+  ids: [...ids, ...devices.map(({ id }) => id)],
+  devicesById: Object.fromEntries(devices.map(device => [device.id, mergeReceivedDevice(device, state, status)]))
+});
+
 type getGroupDevicesPayload = {
   group: string;
   page?: number;
@@ -469,8 +474,7 @@ export const getDeviceById = createAppAsyncThunk(`${sliceName}/getDeviceById`, (
               attributes: [
                 { name: 'status', value: 'decomissioned', scope: 'identity' },
                 { name: 'decomissioned', value: 'true', scope: 'inventory' }
-              ],
-              log: false
+              ]
             }
           ],
           [],
@@ -1052,7 +1056,7 @@ export const setDeviceTags = createAppAsyncThunk(
     dispatch(getDeviceById(deviceId))
       .unwrap()
       .then(device => {
-        const headers = device.etag ? { 'If-Match': device.etag } : {};
+        const headers = device?.etag ? { 'If-Match': device.etag } : {};
         const tagList = Object.entries(tags).map(([name, value]) => ({ name, value }));
         const isNameChange = tagList.some(({ name }) => name === 'name');
         return GeneralApi.put(`${inventoryApiUrl}/devices/${deviceId}/tags`, tagList, { headers })
