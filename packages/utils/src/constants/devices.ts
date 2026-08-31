@@ -20,7 +20,7 @@ export const DEVICE_STATES = {
   pending: 'pending',
   preauth: 'preauthorized',
   rejected: 'rejected'
-};
+} as const;
 export const ALL_DEVICE_STATES = 'any';
 
 type FilterOperator = '$eq' | '$ne' | '$gt' | '$gte' | '$lt' | '$lte' | '$ltne' | '$in' | '$nin' | '$exists' | '$nexists' | '$regex';
