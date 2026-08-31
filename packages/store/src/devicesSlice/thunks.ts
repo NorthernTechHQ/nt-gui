@@ -702,7 +702,7 @@ export const searchDevices = createAppAsyncThunk(
   }
 );
 
-export const searchIdentities = createAppAsyncThunk(`${sliceName}/searchIdentities`, async (options: SearchIdentityParams, { dispatch }) => {
+export const searchIdentities = createAppAsyncThunk(`${sliceName}/searchIdentities`, async (options: SearchIdentityParams, { dispatch, getState }) => {
   const { attributes: additionalAttributes = [], page = defaultPage, per_page = defaultPerPage, ...remainder } = options;
   const response = await GeneralApi.post<SearchInventoryByIdentityResponse>(`${inventoryApiUrlV2alpha1}/identities/search`, {
     ...remainder,
@@ -710,7 +710,10 @@ export const searchIdentities = createAppAsyncThunk(`${sliceName}/searchIdentiti
     page,
     per_page
   }).catch(err => commonErrorHandler(err, `devices couldn't be searched.`, dispatch, commonErrorFallback));
-  return { devices: response.data, total: Number(response.headers[headerNames.total]) };
+  return {
+    devices: response.data.map(device => mergeReceivedDevice(device as ReceivedDevice, getState())),
+    total: Number(response.headers[headerNames.total])
+  };
 });
 
 const ATTRIBUTE_LIST_CUTOFF = 100;
