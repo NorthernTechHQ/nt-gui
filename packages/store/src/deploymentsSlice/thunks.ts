@@ -211,13 +211,13 @@ export const createDeployment = createAppAsyncThunk(
           const { phases = [], uniform_phases } = newDeployment as NewDeploymentV2;
           const { previousPhases = [] } = getGlobalSettings(getState());
           const newSettings: any = { hasDeployments: true };
-          if (phases) {
+          if (phases.length || uniform_phases) {
             const standardPhases = standardizePhases(uniform_phases ? [uniform_phases] : phases);
             const prevPhases = previousPhases.map(standardizePhases);
             if (!prevPhases.find(previousPhaseList => previousPhaseList.every(oldPhase => standardPhases.find(phase => deepCompare(phase, oldPhase))))) {
-              prevPhases.push(standardPhases);
+              prevPhases.unshift(standardPhases);
             }
-            newSettings.previousPhases = prevPhases.slice(-1 * MAX_PREVIOUS_PHASES_COUNT);
+            newSettings.previousPhases = prevPhases.slice(0, MAX_PREVIOUS_PHASES_COUNT);
           }
           tasks.push(dispatch(saveGlobalSettings(newSettings)));
         }
