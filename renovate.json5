@@ -38,8 +38,9 @@
     "labels": ["security"]
   },
 
-  // Dependabot used versioning-strategy: increase, which is rangeStrategy bump here.
-  "rangeStrategy": "bump",
+  // to keep the ranges defined for package consumers (e.g. `7.x`), we only "update-lockfile" here
+  // unless the range is exceeded by an update
+  "rangeStrategy": "update-lockfile",
 
   "packageRules": [
     // CI file updates get ci: instead of a deps scope.
