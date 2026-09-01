@@ -14,12 +14,12 @@
 import type {
   ArtifactV1 as BackendArtifactV1,
   ArtifactV2 as BackendArtifactV2,
+  Manifest as BackendManifest,
   ReleaseV1 as BackendReleaseV1,
   ReleaseV2 as BackendReleaseV2,
   Update as BackendUpdate,
   DeltaJobDetailsItem,
   DeltaJobsListItem,
-  Manifest,
   Software,
   Tags
 } from '@northern.tech/types/MenderTypes';
@@ -33,6 +33,8 @@ type Update = Omit<BackendUpdate, 'meta_data'>;
 export type Artifact = Omit<BackendArtifactV1, 'updates'> &
   Omit<BackendArtifactV2, 'updates'> & { installCount?: number; updates?: Array<Update>; url?: string };
 export type Release = BackendReleaseV1 & BackendReleaseV2 & { artifacts: Artifact[]; device_types_compatible: string[]; name: string };
+
+export type Manifest = BackendManifest & { artifact: Omit<BackendArtifactV2, 'updates'> & { updates?: Array<Update>; url?: string } };
 
 export type SoftwareKind = Software['kind'];
 

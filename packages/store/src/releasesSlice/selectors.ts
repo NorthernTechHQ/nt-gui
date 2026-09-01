@@ -11,9 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { Manifest, ReleaseV2, Software } from '@northern.tech/types/MenderTypes';
+import type { ReleaseV2, Software } from '@northern.tech/types/MenderTypes';
 import { createSelector } from '@reduxjs/toolkit';
 
+import type { Manifest } from '.';
 import type { RootState } from '../store';
 import { listItemMapper } from '../utils';
 
