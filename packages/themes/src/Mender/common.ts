@@ -98,6 +98,9 @@ export const colors = {
     700: colorTokens?.variables['cyan (M)']['700'].values[themeMode] || cyan[700],
     800: colorTokens?.variables['cyan (M)']['800'].values[themeMode] || cyan[800],
     900: colorTokens?.variables['cyan (M)']['900'].values[themeMode] || cyan[900]
+  },
+  highlight: {
+    main: '#fff085'
   }
 };
 
