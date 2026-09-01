@@ -1,5 +1,22 @@
 ---
-## 0.45.0 - 2026-08-28
+## 0.45.1 - 2026-09-01
+
+
+
+### Bug fixes
+
+#### store
+
+- Use reduce to enrich device data ([MEN-9831](https://northerntech.atlassian.net/browse/MEN-9831)) ([adb84de](https://github.com/NorthernTechHQ/nt-gui/commit/adb84decf1d65373ede3f9b0973a8651789fa138)) by @mineralsfree
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-9831](https://northerntech.atlassian.net/browse/MEN-9831) |
+
+## @northern.tech/store-0.45.0 - 2026-08-28
 
 
 
