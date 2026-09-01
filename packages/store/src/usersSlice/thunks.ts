@@ -875,6 +875,9 @@ export const getUserSettings = createAppAsyncThunk(`${sliceName}/getUserSettings
     headers: { etag }
   } = await GeneralApi.get<UserSettings>(`${useradmApiUrl}/settings/me`);
   window.sessionStorage.setItem(settingsKeys.initialized, 'true');
+  if (settings.mode) {
+    window.localStorage.setItem(settingsKeys.colorScheme, settings.mode);
+  }
   dispatch(actions.setUserSettings(settings));
   return { etag };
 });
