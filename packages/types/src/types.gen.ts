@@ -4156,9 +4156,10 @@ export type UserNewInternal = {
    */
   password_hash?: string;
   /**
-   * This parameter is deprecated _since Thu Jul 6 2023_, the propagation
-   * of user information to tenantadm is disabled permanently.
+   * Propagate user information to tenantadm.
    *
+   *
+   * @deprecated
    */
   propagate?: boolean;
   /**
