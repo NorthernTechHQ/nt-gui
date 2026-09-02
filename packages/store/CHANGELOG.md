@@ -1,5 +1,31 @@
 ---
-## 0.45.1 - 2026-09-01
+## 0.46.0 - 2026-09-02
+
+
+
+### New features
+
+#### store
+
+- Allow initial theme rendering depend on browser storage until server settings arrive ([f9c3b87](https://github.com/NorthernTechHQ/nt-gui/commit/f9c3b873723ed0d55f98c6d51783d524d917859e)) by @mzedel
+- Made it possible to retrieve signed manifest download urls too ([MEN-10105](https://northerntech.atlassian.net/browse/MEN-10105)) ([371e7d9](https://github.com/NorthernTechHQ/nt-gui/commit/371e7d930543a3a2b71cd78a2ca6a7bc5a77360c)) by @mzedel
+
+### Bug fixes
+
+#### store
+
+- Align deployment phase configuration tracking w/ updated ui ([2ae6144](https://github.com/NorthernTechHQ/nt-gui/commit/2ae6144a0aab4e1f40b23c87891301a0ee464f95)) by @mzedel
+- Align manifest software attribute name w/ client reported value ([MEN-10075](https://northerntech.atlassian.net/browse/MEN-10075)) ([4764f19](https://github.com/NorthernTechHQ/nt-gui/commit/4764f19dbd4b810df324df663b0180dbb7699c52)) by @mzedel
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-10075](https://northerntech.atlassian.net/browse/MEN-10075) |
+| [MEN-10105](https://northerntech.atlassian.net/browse/MEN-10105) |
+
+## @northern.tech/store-0.45.1 - 2026-09-01
 
 
 
