@@ -66,7 +66,7 @@ export const USER_LOGOUT = 'USER_LOGOUT';
 
 export const OWN_USER_ID = 'me';
 
-export const settingsKeys = { initialized: 'settings-initialized' };
+export const settingsKeys = { colorScheme: 'colorScheme', initialized: 'settings-initialized' };
 
 export const READ_STATES = {
   read: 'read',
