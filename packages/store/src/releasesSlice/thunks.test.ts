@@ -203,6 +203,25 @@ describe('release actions', () => {
       expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
     });
   });
+  it('should retrieve the download url for an artifact that is not part of a known release', async () => {
+    const store = mockStore({ ...defaultState });
+    const expectedActions = [
+      { type: getArtifactUrl.pending.type },
+      {
+        type: actions.receiveManifest.type,
+        payload: {
+          ...defaultState.releases.manifestsById.m1000,
+          artifact: { ...defaultState.releases.manifestsById.m1000.artifact, url: 'https://testlocation.com/artifact.mender' }
+        }
+      },
+      { type: getArtifactUrl.fulfilled.type }
+    ];
+    const uri = await store.dispatch(getArtifactUrl('art-m1000')).unwrap();
+    expect(uri).toEqual('https://testlocation.com/artifact.mender');
+    const storeActions = store.getActions();
+    expect(storeActions.length).toEqual(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
   it('should select a release by name', async () => {
     const store = mockStore({ ...defaultState });
     const expectedActions = [

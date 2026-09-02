@@ -17,7 +17,6 @@ import type {
   DeltaJobDetailsItem,
   DeltaJobsListItem,
   DeviceInventoryResponse,
-  Manifest,
   ManifestUpdate,
   ReleaseUpdate,
   ReleaseV1,
@@ -32,7 +31,7 @@ import { isCancel } from 'axios';
 import pluralize from 'pluralize';
 import { v4 as uuid } from 'uuid';
 
-import type { Artifact, ManifestsList, Release, ReleaseSliceType, ReleasesList, SoftwareKind, SoftwareList } from '.';
+import type { Artifact, Manifest, ManifestsList, Release, ReleaseSliceType, ReleasesList, SoftwareKind, SoftwareList } from '.';
 import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import GeneralApi from '../api/general-api';
@@ -99,6 +98,11 @@ const findArtifactIndexInRelease = (releases: Record<string, Release>, id: strin
     { release: null, index: -1 }
   );
 
+const findArtifactInManifest = (manifests: Record<string, Manifest>, id: string) => {
+  const software = Object.values(manifests).find(item => item.artifact?.id === id);
+  return { software, artifact: software?.artifact };
+};
+
 /* Artifacts */
 export const getArtifactInstallCount = createAppAsyncThunk(`${sliceName}/getArtifactInstallCount`, (id: string, { dispatch, getState }) => {
   const { release, index } = findArtifactIndexInRelease(getReleasesById(getState()), id);
@@ -140,21 +144,27 @@ export const getArtifactInstallCount = createAppAsyncThunk(`${sliceName}/getArti
 export const getArtifactUrl = createAppAsyncThunk(`${sliceName}/getArtifactUrl`, async (id: string, { dispatch, getState }) => {
   const response = await GeneralApi.get<ArtifactLink>(`${deploymentsApiUrl}/artifacts/${id}/download`);
   const foundRelease = findArtifactIndexInRelease(getReleasesById(getState()), id);
-  const index = foundRelease.index;
-  let release = foundRelease.release;
-  if (!release || index === -1) {
-    return dispatch(getReleases());
+  const foundManifest = findArtifactInManifest(getManifestsById(getState()), id);
+  const hasFoundSoftware = foundRelease.release ? foundRelease.index > -1 : !!foundManifest.artifact;
+  if (!hasFoundSoftware) {
+    return response.data.uri;
   }
-  const releaseArtifacts = [...release.artifacts];
-  releaseArtifacts[index] = {
-    ...releaseArtifacts[index],
-    url: response.data.uri
-  };
-  release = {
-    ...release,
-    artifacts: releaseArtifacts
-  };
-  await dispatch(actions.receiveRelease(release));
+  if (foundManifest.artifact) {
+    const manifest = foundManifest.software as Manifest;
+    dispatch(actions.receiveManifest({ ...manifest, artifact: { ...foundManifest.artifact, url: response.data.uri } }));
+  } else if (foundRelease.release?.artifacts) {
+    let release = foundRelease.release;
+    const releaseArtifacts = [...release.artifacts];
+    releaseArtifacts[foundRelease.index] = {
+      ...releaseArtifacts[foundRelease.index],
+      url: response.data.uri
+    };
+    release = {
+      ...release,
+      artifacts: releaseArtifacts
+    };
+    dispatch(actions.receiveRelease(release));
+  }
   return response.data.uri;
 });
 
