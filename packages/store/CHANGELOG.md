@@ -1,5 +1,14 @@
 ---
-## 0.46.0 - 2026-09-02
+## 0.46.1 - 2026-09-03
+
+
+
+### Bug fixes
+
+#### store
+
+- Cleanup user preference on logouts off all kinds ([460dcd7](https://github.com/NorthernTechHQ/nt-gui/commit/460dcd70a4292ae3dd182b649dda1611fcd853ff)) by @mzedel
+## @northern.tech/store-0.46.0 - 2026-09-02
 
 
 
