@@ -13,7 +13,7 @@
 //    limitations under the License.
 import Cookies from 'universal-cookie';
 
-import { TIMEOUTS, maxSessionAge } from './constants';
+import { TIMEOUTS, maxSessionAge, settingsKeys } from './constants';
 import type { UserSession } from './usersSlice';
 
 const cookies = new Cookies();
@@ -60,6 +60,7 @@ export const cleanUp = () => {
   cookies.remove('JWT', { path: '/' });
   window.localStorage.removeItem('JWT');
   window.localStorage.removeItem('oauth');
+  window.localStorage.removeItem(settingsKeys.colorScheme);
 };
 
 export const updateMaxAge = ({ expiresAt, token }) => {
