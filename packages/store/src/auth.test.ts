@@ -22,7 +22,7 @@ describe('auth functions', () => {
   it('cleanup removes the JWT token', async () => {
     vi.clearAllMocks();
     cleanUp();
-    expect(window.localStorage.removeItem).toHaveBeenCalledTimes(2);
+    expect(window.localStorage.removeItem).toHaveBeenCalledTimes(3);
   });
   it('updateMaxAge extends the expiration date of the jwt token', async () => {
     vi.clearAllMocks();
