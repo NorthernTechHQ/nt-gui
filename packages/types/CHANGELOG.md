@@ -1,5 +1,5 @@
 ---
-## 0.7.8 - 2026-07-15
+## 0.7.9 - 2026-09-03
 
 
 
@@ -7,7 +7,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.7.7 - 2026-06-30
+- Types update ([89a1356](https://github.com/NorthernTechHQ/nt-gui/commit/89a1356f489bc9784d3d59b5ae8b29be953600da)) by @mender-test-bot
+## @northern.tech/types-0.7.8 - 2026-07-15
 
 
 
@@ -15,13 +16,23 @@
 
 #### types
 
-- Types update
+- Types update ([8adf178](https://github.com/NorthernTechHQ/nt-gui/commit/8adf17876d0520502d8748149993dbb55e2be726)) by @mender-test-bot
+## @northern.tech/types-0.7.7 - 2026-06-30
+
+
+
+### Bug fixes
+
+#### types
+
+- Types update ([97b35ad](https://github.com/NorthernTechHQ/nt-gui/commit/97b35ad3d13c73e6968b53c94825621b70219693)) by @mender-test-bot
 
 ### Dependency updates
 
 
-- Bump the development-dependencies group with 11 updates
-- Bump the development-dependencies group across 1 directory with 9 updates## @northern.tech/types-0.7.6 - 2026-05-27
+- Bump the development-dependencies group with 11 updates ([bfa7337](https://github.com/NorthernTechHQ/nt-gui/commit/bfa7337d11ca6e9eb97638b881589f0df0f42ccb)) by @dependabot[bot]
+- Bump the development-dependencies group across 1 directory with 9 updates ([a0df33c](https://github.com/NorthernTechHQ/nt-gui/commit/a0df33c9e16152e8e0d2acffd694012dacb2948a)) by @dependabot[bot]
+## @northern.tech/types-0.7.6 - 2026-05-27
 
 
 
@@ -29,7 +40,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.7.5 - 2026-05-19
+- Types update ([e2b6a47](https://github.com/NorthernTechHQ/nt-gui/commit/e2b6a474f7a1dc60bbfde250f81ebf2ae637e515)) by @mender-test-bot
+## @northern.tech/types-0.7.5 - 2026-05-19
 
 
 
@@ -37,7 +49,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.7.4 - 2026-05-13
+- Types update ([ae5c922](https://github.com/NorthernTechHQ/nt-gui/commit/ae5c92277d8cf7d2177eb1b9eb01bcfe8e48822e)) by @mender-test-bot
+## @northern.tech/types-0.7.4 - 2026-05-13
 
 
 
@@ -45,12 +58,13 @@
 
 #### types
 
-- Types update
+- Types update ([dca4d71](https://github.com/NorthernTechHQ/nt-gui/commit/dca4d7107e292be3745f6c65c10082f0a4065d93)) by @mender-test-bot
 
 ### Dependency updates
 
 
-- Bump the development-dependencies group across 1 directory with 15 updates## @northern.tech/types-0.7.3 - 2026-04-22
+- Bump the development-dependencies group across 1 directory with 15 updates ([6300680](https://github.com/NorthernTechHQ/nt-gui/commit/630068080fd9a2936344fc80d0536a5f08567ce2)) by @dependabot[bot]
+## @northern.tech/types-0.7.3 - 2026-04-22
 
 
 
@@ -58,7 +72,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.7.2 - 2026-04-21
+- Types update ([e8a5eee](https://github.com/NorthernTechHQ/nt-gui/commit/e8a5eee870202bca8d6933ab5bbf83b319c1edd5)) by @mender-test-bot
+## @northern.tech/types-0.7.2 - 2026-04-21
 
 
 
@@ -66,7 +81,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.7.1 - 2026-04-15
+- Types update ([213c77f](https://github.com/NorthernTechHQ/nt-gui/commit/213c77f4786061f24f3268477d01c3856a1f929e)) by @mender-test-bot
+## @northern.tech/types-0.7.1 - 2026-04-15
 
 
 
@@ -74,17 +90,10 @@
 
 #### types
 
-- Types update
+- Types update ([a0806a5](https://github.com/NorthernTechHQ/nt-gui/commit/a0806a5a4709b435971ea1323723e74e55639fce)) by @mender-test-bot
 
-- Migrated package bundling to tsdown## @northern.tech/types-0.7.0 - 2026-03-31
-
-
-
-### Bug fixes
-
-#### types
-
-- Types update## @northern.tech/types-0.5.0 - 2026-02-02
+- Migrated package bundling to tsdown ([400f54c](https://github.com/NorthernTechHQ/nt-gui/commit/400f54c686c6ea202e8de54f82c64ac5a1a0ac19)) by @mzedel
+## @northern.tech/types-0.7.0 - 2026-03-31
 
 
 
@@ -92,12 +101,22 @@
 
 #### types
 
-- Types update
+- Types update ([52c6298](https://github.com/NorthernTechHQ/nt-gui/commit/52c6298adc613948a879de4fe7012932da8651f4)) by @mender-test-bot
+## @northern.tech/types-0.5.0 - 2026-02-02
+
+
+
+### Bug fixes
+
+#### types
+
+- Types update ([d4b839a](https://github.com/NorthernTechHQ/nt-gui/commit/d4b839af1d193ca39c147418816de431785e3f37)) by @mender-test-bot
 
 ### Dependency updates
 
 
-- Bump the development-dependencies group across 1 directory with 11 updates## @northern.tech/types-0.3.1 - 2025-12-15
+- Bump the development-dependencies group across 1 directory with 11 updates ([1f7d179](https://github.com/NorthernTechHQ/nt-gui/commit/1f7d1796e187d123c3bb7e70d6c30ceeb5d2b8f2)) by @dependabot[bot]
+## @northern.tech/types-0.3.1 - 2025-12-15
 
 
 
@@ -105,7 +124,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.3.0 - 2025-12-02
+- Types update ([543bcb9](https://github.com/NorthernTechHQ/nt-gui/commit/543bcb9d68964c11030331fd545986f24c986a17)) by @mender-test-bot
+## @northern.tech/types-0.3.0 - 2025-12-02
 
 
 
@@ -113,7 +133,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.2.2 - 2025-10-31
+- Types update ([963f3bd](https://github.com/NorthernTechHQ/nt-gui/commit/963f3bd009e413f9d55d501db0e64cac26ab5cbc)) by @mender-test-bot
+## @northern.tech/types-0.2.2 - 2025-10-31
 
 
 
@@ -121,7 +142,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.2.1 - 2025-10-30
+- Types update ([5acb595](https://github.com/NorthernTechHQ/nt-gui/commit/5acb59509876167dd0eea88aff21356f0f5663bf)) by @mender-test-bot
+## @northern.tech/types-0.2.1 - 2025-10-30
 
 
 
@@ -129,7 +151,8 @@
 
 #### types
 
-- Types update## @northern.tech/types-0.2.0 - 2025-10-16
+- Types update ([ac963d3](https://github.com/NorthernTechHQ/nt-gui/commit/ac963d36ad75eba16673c9c688f2aef6ca3f256f)) by @mender-test-bot
+## @northern.tech/types-0.2.0 - 2025-10-16
 
 
 
@@ -137,7 +160,8 @@
 
 #### types
 
-- Made package only rely on types generated from official spec file## @northern.tech/types-0.1.1 - 2025-10-02
+- Made package only rely on types generated from official spec file ([5ed5919](https://github.com/NorthernTechHQ/nt-gui/commit/5ed5919c9e232609cdec9331e5fb5392f3bfa53a)) by @mzedel
+## @northern.tech/types-0.1.1 - 2025-10-02
 
 
 
@@ -145,7 +169,8 @@
 
 #### types
 
-- Cleaned up now unused types## @northern.tech/types-0.1.0 - 2025-08-14
+- Cleaned up now unused types ([6c03c0a](https://github.com/NorthernTechHQ/nt-gui/commit/6c03c0a9f0bd8e1ba19f03bd1317937d23f4c8ae)) by @mzedel
+## @northern.tech/types-0.1.0 - 2025-08-14
 
 
 
@@ -153,10 +178,11 @@
 
 #### types
 
-- Added base types package meant for nt-gui internal use
+- Added base types package meant for nt-gui internal use ([b8f8282](https://github.com/NorthernTechHQ/nt-gui/commit/b8f8282552de39dc291a9d03b0281d984a2d0067)) by @mzedel
 
 ### Bug fixes
 
 #### types
 
-- Fixed api type naming conflict---
+- Fixed api type naming conflict ([95c73a4](https://github.com/NorthernTechHQ/nt-gui/commit/95c73a4a894b3824f7138a9e672f8a91916a1bdf)) by @mzedel
+---
