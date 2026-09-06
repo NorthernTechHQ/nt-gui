@@ -45,7 +45,7 @@
     "@northern.tech/typescript-config": "*",
     "eslint": "^10.8.0",
     "jsdom": "30.0.1",
-    "tsdown": "^0.22.2",
+    "tsdown": "^0.23.0",
     "vitest": "^4.1.10"
   },
   "peerDependencies": {
