@@ -2789,7 +2789,7 @@ paths:
       description: |
         Upload mender artifact. Multipart request with meta and artifact.
         Supports artifact [versions v1, v2, v3](https://docs.mender.io/overview/artifact#versions).
-      operationId: Upload Artifact Deployments Management
+      operationId: Upload Artifact
       requestBody:
         content:
           multipart/form-data:
