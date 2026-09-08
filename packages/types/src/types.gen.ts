@@ -7084,14 +7084,14 @@ export type ListArtifactsResponses = {
 
 export type ListArtifactsResponse = ListArtifactsResponses[keyof ListArtifactsResponses];
 
-export type UploadArtifactDeploymentsManagementData = {
+export type UploadArtifactData = {
   body: UploadArtifactRequest2;
   path?: never;
   query?: never;
   url: '/api/management/v1/deployments/artifacts';
 };
 
-export type UploadArtifactDeploymentsManagementErrors = {
+export type UploadArtifactErrors = {
   /**
    * Invalid Request.
    */
@@ -7111,9 +7111,9 @@ export type UploadArtifactDeploymentsManagementErrors = {
   500: Error;
 };
 
-export type UploadArtifactDeploymentsManagementError = UploadArtifactDeploymentsManagementErrors[keyof UploadArtifactDeploymentsManagementErrors];
+export type UploadArtifactError = UploadArtifactErrors[keyof UploadArtifactErrors];
 
-export type UploadArtifactDeploymentsManagementResponses = {
+export type UploadArtifactResponses = {
   /**
    * Artifact uploaded.
    */
