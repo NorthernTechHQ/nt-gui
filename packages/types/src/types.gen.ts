@@ -1512,6 +1512,13 @@ export type DeploymentPhaseSpec = {
    *
    */
   device_count?: number;
+  /**
+   * Exact number of devices in this phase at the deployment creation.
+   * We provide this field to ease the information of actual number of devices
+   * in a phase in case of a percentage based batch size.
+   *
+   */
+  initial_batch_device_count?: number;
   status?: DeploymentPhaseStatus;
 };
 
@@ -7084,14 +7091,14 @@ export type ListArtifactsResponses = {
 
 export type ListArtifactsResponse = ListArtifactsResponses[keyof ListArtifactsResponses];
 
-export type UploadArtifactDeploymentsManagementData = {
+export type UploadArtifactData = {
   body: UploadArtifactRequest2;
   path?: never;
   query?: never;
   url: '/api/management/v1/deployments/artifacts';
 };
 
-export type UploadArtifactDeploymentsManagementErrors = {
+export type UploadArtifactErrors = {
   /**
    * Invalid Request.
    */
@@ -7111,9 +7118,9 @@ export type UploadArtifactDeploymentsManagementErrors = {
   500: Error;
 };
 
-export type UploadArtifactDeploymentsManagementError = UploadArtifactDeploymentsManagementErrors[keyof UploadArtifactDeploymentsManagementErrors];
+export type UploadArtifactError = UploadArtifactErrors[keyof UploadArtifactErrors];
 
-export type UploadArtifactDeploymentsManagementResponses = {
+export type UploadArtifactResponses = {
   /**
    * Artifact uploaded.
    */
