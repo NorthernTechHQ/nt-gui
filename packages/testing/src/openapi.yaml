@@ -2789,7 +2789,7 @@ paths:
       description: |
         Upload mender artifact. Multipart request with meta and artifact.
         Supports artifact [versions v1, v2, v3](https://docs.mender.io/overview/artifact#versions).
-      operationId: Upload Artifact Deployments Management
+      operationId: Upload Artifact
       requestBody:
         content:
           multipart/form-data:
@@ -16118,6 +16118,12 @@ components:
         device_count:
           description: |
             Number of devices which already requested an update within this phase.
+          type: integer
+        initial_batch_device_count:
+          description: |
+            Exact number of devices in this phase at the deployment creation.
+            We provide this field to ease the information of actual number of devices
+            in a phase in case of a percentage based batch size.
           type: integer
         status:
           $ref: '#/components/schemas/DeploymentPhaseStatus'
