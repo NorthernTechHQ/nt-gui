@@ -1,4 +1,11 @@
 ---
+## [0.7.2](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/eslint-config-0.7.1...@northern.tech/eslint-config-0.7.2) (2026-09-10)
+
+
+### Bug Fixes
+
+* **eslint-config:** ensured eslint 10 compatibility ([8302763](https://github.com/NorthernTechHQ/nt-gui/commit/8302763af36031e60425253c94bef0ffad8d47f2))
+
 ## 0.7.1 - 2026-04-17
 
 
