@@ -1,4 +1,11 @@
 ---
+## [0.18.1](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/testing-0.18.0...@northern.tech/testing-0.18.1) (2026-09-10)
+
+
+### Bug Fixes
+
+* **testing:** openapi spec update ([e96abe6](https://github.com/NorthernTechHQ/nt-gui/commit/e96abe6fc612c96a6dfabb96fcd27537710317e1))
+
 ## 0.18.0 - 2026-08-28
 
 
