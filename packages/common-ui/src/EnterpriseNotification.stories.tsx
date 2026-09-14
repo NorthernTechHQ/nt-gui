@@ -12,20 +12,38 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router';
 
+import { defaultState as preloadedState } from '@/testUtils';
 import { BENEFITS } from '@northern.tech/store/constants';
 import { getConfiguredStore } from '@northern.tech/store/store';
-import { mockApiResponses as defaultState } from '@northern.tech/testing/mockData';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { EnterpriseNotification } from './EnterpriseNotification';
+import { DefaultUpgradeNotification, EnterpriseNotification } from './EnterpriseNotification';
 
 const meta: Meta<typeof EnterpriseNotification> = {
   title: 'common-ui/EnterpriseNotification',
   component: EnterpriseNotification,
+  decorators: [
+    Story => {
+      const store = getConfiguredStore({ preloadedState });
+      return (
+        <Provider store={store}>
+          <BrowserRouter>
+            <Story />
+          </BrowserRouter>
+        </Provider>
+      );
+    }
+  ],
   argTypes: {
     id: {
+      control: { type: 'select' },
       options: Object.values(BENEFITS).map(({ id }) => id)
+    },
+    size: {
+      control: { type: 'radio' },
+      options: ['small', 'medium']
     }
   }
 };
@@ -37,18 +55,39 @@ type Story = StoryObj<typeof EnterpriseNotification>;
 export const Primary: Story = {
   render: props => <EnterpriseNotification {...props} />,
   name: 'EnterpriseNotification',
-  decorators: [
-    Story => {
-      const store = getConfiguredStore({ preloadedState: defaultState });
-      return (
-        <Provider store={store}>
-          <Story />
-        </Provider>
-      );
-    }
-  ],
   args: {
     className: '',
-    id: BENEFITS.default.id
+    id: BENEFITS.default.id,
+    size: 'medium'
+  }
+};
+
+export const Small: Story = {
+  render: props => <EnterpriseNotification {...props} />,
+  name: 'Small',
+  args: {
+    className: '',
+    id: BENEFITS.phasedDeployments.id,
+    size: 'small'
+  }
+};
+
+export const AddonRequirement: Story = {
+  render: props => <EnterpriseNotification {...props} />,
+  name: 'Add-on requirement',
+  args: {
+    className: '',
+    id: BENEFITS.deviceConfiguration.id,
+    size: 'medium'
+  }
+};
+
+type UpgradeNotificationStory = StoryObj<typeof DefaultUpgradeNotification>;
+
+export const UpgradeNotification: UpgradeNotificationStory = {
+  render: props => <DefaultUpgradeNotification {...props} />,
+  name: 'DefaultUpgradeNotification',
+  args: {
+    className: ''
   }
 };

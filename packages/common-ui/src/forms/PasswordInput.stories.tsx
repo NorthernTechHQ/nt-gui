@@ -11,21 +11,21 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { useForm } from 'react-hook-form';
-
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Form } from './Form';
 import { PasswordInput } from './PasswordInput';
 
-const PasswordInputWrapper = (props: any) => {
-  const { control } = useForm({ defaultValues: { password: '' } });
-  return <PasswordInput control={control} {...props} />;
-};
-
 const meta: Meta<typeof PasswordInput> = {
   component: PasswordInput,
-  title: 'common-ui/forms/PasswordInput'
+  title: 'common-ui/forms/PasswordInput',
+  decorators: [
+    Story => (
+      <Form defaultValues={{ password: '', password_confirmation: '' }} onSubmit={data => console.log('Submitted:', data)}>
+        <Story />
+      </Form>
+    )
+  ]
 };
 
 export default meta;
@@ -34,33 +34,45 @@ type Story = StoryObj<typeof PasswordInput>;
 
 export const Primary: Story = {
   name: 'PasswordInput',
-  render: args => (
-    <Form defaultValues={{ password: '' }} onSubmit={() => {}}>
-      <PasswordInputWrapper {...args} />
-    </Form>
-  ),
   args: {
     id: 'password',
     label: 'Password',
+    placeholder: 'Enter your password',
     disabled: false,
     required: false,
-    create: false,
-    generate: false,
-    edit: false
+    create: false
   }
 };
 
-export const WithGenerate: Story = {
-  name: 'With Generate Button',
-  render: args => (
-    <Form defaultValues={{ password: '' }} onSubmit={() => {}}>
-      <PasswordInputWrapper {...args} />
-    </Form>
-  ),
+export const Create: Story = {
+  name: 'Create - with strength check',
   args: {
     ...Primary.args,
-    generate: true,
+    label: 'New password',
     create: true,
-    required: true
+    required: true,
+    validations: 'isLength:8'
+  }
+};
+
+export const WithConfirmation: Story = {
+  name: 'With Confirmation',
+  render: args => (
+    <div className="flexbox column" style={{ gap: 15 }}>
+      <PasswordInput {...args} />
+      <PasswordInput id="password_confirmation" label="Confirm password" required validations="isLength:8" />
+    </div>
+  ),
+  args: {
+    ...Create.args
+  }
+};
+
+export const Disabled: Story = {
+  name: 'Disabled',
+  args: {
+    ...Primary.args,
+    disabled: true,
+    defaultValue: 'somepassword'
   }
 };
