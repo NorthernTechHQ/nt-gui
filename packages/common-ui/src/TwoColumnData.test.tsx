@@ -15,7 +15,7 @@ import { render } from '@/testUtils';
 import { undefineds } from '@northern.tech/testing/mockData';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { ColumnWidthProvider, SynchronizedTwoColumnData, TwoColumnData } from './TwoColumnData';
 

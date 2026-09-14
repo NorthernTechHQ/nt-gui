@@ -15,7 +15,7 @@ import { render } from '@/testUtils';
 import { undefineds } from '@northern.tech/testing/mockData';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import LogDialog from './Log';
 
