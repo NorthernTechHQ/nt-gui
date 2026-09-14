@@ -13,7 +13,6 @@
 //    limitations under the License.
 import { render } from '@/testUtils';
 import { undefineds } from '@northern.tech/testing/mockData';
-import { describe, expect, it } from 'vitest';
 
 import ExpandableAttribute from './ExpandableAttribute';
 

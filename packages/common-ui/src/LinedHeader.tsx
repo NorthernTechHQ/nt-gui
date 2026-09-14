@@ -11,39 +11,25 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { Divider, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
 const useStyles = makeStyles()(theme => ({
-  border: {
-    borderBottom: `1px solid ${theme.palette.grey[50]}`,
-    span: {
-      background: theme.palette.background.default
-    }
+  header: {
+    alignItems: 'center',
+    gap: theme.spacing(2)
   },
-  groupBorder: {
-    background: theme.palette.grey[50]
-  },
-  groupHeading: {
-    background: theme.palette.background.default
-  }
+  divider: { flex: 1 }
 }));
 
-const LinedHeader = ({ className = '', heading, innerStyle = {}, innerRef, style = {} }) => {
+const LinedHeader = ({ centered = false, className = '', heading, ref }) => {
   const { classes } = useStyles();
   return (
-    <h4 className={`dashboard-header ${classes.border} ${className}`} ref={innerRef} style={style}>
-      <span style={innerStyle}>{heading}</span>
-    </h4>
-  );
-};
-
-export const LinedGroupHeader = ({ heading }) => {
-  const { classes } = useStyles();
-  return (
-    <>
-      <span className={classes.groupHeading}>{heading}</span>
-      <div className={classes.groupBorder} />
-    </>
+    <div className={`flexbox margin-bottom-small ${classes.header} ${className}`} ref={ref}>
+      {centered && <Divider className={classes.divider} />}
+      <Typography variant="subtitle1">{heading}</Typography>
+      <Divider className={classes.divider} />
+    </div>
   );
 };
 

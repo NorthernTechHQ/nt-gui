@@ -14,7 +14,6 @@
 import { defaultState, render } from '@/testUtils';
 import { ATTRIBUTE_SCOPES } from '@northern.tech/store/constants';
 import { undefineds } from '@northern.tech/testing/mockData';
-import { describe, expect, it } from 'vitest';
 
 import DeviceIdentityDisplay from './DeviceIdentity';
 

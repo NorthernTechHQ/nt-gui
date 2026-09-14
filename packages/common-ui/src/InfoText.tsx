@@ -11,22 +11,13 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { ReactNode } from 'react';
-
 import { makeStyles } from 'tss-react/mui';
 
 const useStyles = makeStyles()(theme => ({
   default: { color: theme.palette.text.disabled, margin: '15px 0' }
 }));
 
-interface InfoTextProps {
-  [x: string]: any;
-  children: ReactNode;
-  className?: string;
-  variant?: 'dense';
-}
-
-export const InfoText = ({ children, className = '', variant, ...props }: InfoTextProps) => {
+export const InfoText = ({ children, className = '', variant = '', ...props }) => {
   const { classes } = useStyles();
   const Component = variant === 'dense' ? 'span' : 'p';
   return (

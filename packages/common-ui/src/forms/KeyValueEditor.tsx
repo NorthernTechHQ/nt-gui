@@ -11,13 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import type { CSSProperties, ComponentType } from 'react';
 import { useEffect, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
-import { Clear as ClearIcon, Add as ContentAddIcon } from '@mui/icons-material';
-import { Fab, FormControl, FormHelperText, IconButton, OutlinedInput } from '@mui/material';
+import { AddCircle as AddIcon, Clear as ClearIcon } from '@mui/icons-material';
+import { Button, FormControl, FormHelperText, IconButton, OutlinedInput, outlinedInputClasses } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
 import Form from './Form';
@@ -43,29 +42,29 @@ const emptyInput: InputLineItem = { helptip: null, key: '', value: '' };
 
 const reducePairs = (pairs: InputLineItem[]) => (pairs || []).reduce((accu, item) => ({ ...accu, ...(item.value ? { [item.key]: item.value } : {}) }), {});
 
+const inputWidth = 240;
+
 const useStyles = makeStyles()(theme => ({
-  spacer: { minWidth: theme.spacing(30) },
-  helptip: { left: -35, top: 15, position: 'absolute' },
+  helptip: { left: -35, top: theme.spacing(), position: 'absolute !important' },
   keyValueContainer: {
     display: 'grid',
-    gridTemplateColumns: 'min-content min-content max-content',
-    columnGap: theme.spacing(2),
+    gridTemplateColumns: `${inputWidth}px ${inputWidth}px max-content`,
+    columnGap: theme.spacing(),
     alignItems: 'baseline',
-    justifyItems: 'baseline',
-    '> div': {
-      marginTop: 10
-    }
-  }
+    [`.${outlinedInputClasses.root}`]: { minWidth: inputWidth }
+  },
+  lineAdditionButton: { marginLeft: theme.spacing(-1) },
+  lineRemovalButton: { marginBottom: 2 }
 }));
 
 interface KeyValueFieldsProps {
   disabled?: boolean;
-  errortext?: string;
+  initialValues: InputLineItem[];
   inputHelpTipsMap: Record<string, { component: React.ComponentType<any>; props: any }>;
   onInputChange: (value: Record<string, string>) => void;
 }
 
-const KeyValueFields = ({ disabled, errortext, inputHelpTipsMap, onInputChange }: KeyValueFieldsProps) => {
+const KeyValueFields = ({ disabled, initialValues, inputHelpTipsMap, onInputChange }: KeyValueFieldsProps) => {
   const { classes } = useStyles();
   const {
     control,
@@ -96,6 +95,11 @@ const KeyValueFields = ({ disabled, errortext, inputHelpTipsMap, onInputChange }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(inputs), onInputChange]);
 
+  useEffect(() => {
+    replace(initialValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(initialValues)]);
+
   const onClearClick = () => replace([{ ...emptyInput }]);
 
   const addKeyValue = () => append({ ...emptyInput });
@@ -110,13 +114,13 @@ const KeyValueFields = ({ disabled, errortext, inputHelpTipsMap, onInputChange }
   };
 
   return (
-    <div>
+    <>
       {fields.map((field, index) => {
-        const hasError = Boolean(index === fields.length - 1 && (errortext || errors?.inputs?.root?.message));
+        const errorMessage = index === fields.length - 1 ? errors?.inputs?.root?.message : undefined;
         const hasRemovalDisabled = !(inputs?.[index]?.key && inputs?.[index]?.value);
         const { component: Helptip = null, props: helptipProps = {} } = (inputs[index].helptip ?? {}) as InputHelptip;
         return (
-          <div className={`${classes.keyValueContainer} relative`} key={field.id}>
+          <div className={`${classes.keyValueContainer} relative margin-bottom-x-small`} key={field.id}>
             <FormControl>
               <OutlinedInput
                 disabled={disabled}
@@ -125,7 +129,7 @@ const KeyValueFields = ({ disabled, errortext, inputHelpTipsMap, onInputChange }
                 onChange={e => updateField(index, 'key', e.target.value)}
                 type="text"
               />
-              {hasError && <FormHelperText>{errortext || errors?.inputs?.root?.message}</FormHelperText>}
+              {!!errorMessage && <FormHelperText>{errorMessage}</FormHelperText>}
             </FormControl>
             <FormControl>
               <OutlinedInput
@@ -136,49 +140,62 @@ const KeyValueFields = ({ disabled, errortext, inputHelpTipsMap, onInputChange }
                 type="text"
               />
             </FormControl>
-            {fields.length > 1 && !hasRemovalDisabled ? (
-              <IconButton disabled={disabled} onClick={() => remove(index)} size="large">
-                <ClearIcon fontSize="small" />
-              </IconButton>
-            ) : (
-              <span />
-            )}
+            <div>
+              {fields.length > 1 && !hasRemovalDisabled ? (
+                <IconButton className={classes.lineRemovalButton} disabled={disabled} onClick={() => remove(index)}>
+                  <ClearIcon fontSize="small" />
+                </IconButton>
+              ) : (
+                <span />
+              )}
+            </div>
             {Helptip && <Helptip className={classes.helptip} {...helptipProps} />}
           </div>
         );
       })}
-      <div className={classes.keyValueContainer}>
-        <div className={classes.spacer}>
-          <Fab
+      <div className={`margin-top-x-small ${classes.keyValueContainer} align-items-center`}>
+        <div>
+          <IconButton
+            aria-label="add-editor-line-button"
+            className={classes.lineAdditionButton}
             disabled={disabled || !inputs?.[fields.length - 1]?.key || !inputs?.[fields.length - 1]?.value}
-            style={{ marginBottom: 10 }}
-            color="secondary"
-            size="small"
             onClick={addKeyValue}
+            size="small"
           >
-            <ContentAddIcon />
-          </Fab>
+            <AddIcon fontSize="large" />
+          </IconButton>
         </div>
-        <div className={classes.spacer} />
-        {inputs.length > 1 ? <a onClick={onClearClick}>clear all</a> : <div />}
+        <div />
+        {inputs.length > 1 ? (
+          <Button variant="text" onClick={onClearClick} color="inherit">
+            Clear all
+          </Button>
+        ) : (
+          <div />
+        )}
       </div>
-    </div>
+    </>
   );
 };
 
-export const KeyValueEditor = ({ disabled, errortext, initialInput = {}, inputHelpTipsMap = {}, onInputChange }) => {
+export const KeyValueEditor = ({ disabled, initialInput = {}, inputHelpTipsMap = {}, onInputChange }) => {
   const defaultValues = {
     inputs: Object.keys(initialInput).length
-      ? Object.entries(initialInput).map(([key, value]) => ({ helptip: inputHelpTipsMap[key.toLowerCase()], key, value }))
+      ? Object.entries(initialInput).map(([key, value]) => ({ helptip: inputHelpTipsMap[key.toLowerCase()], key, value }) as InputLineItem)
       : [{ ...emptyInput }]
   };
-  const [initialValues] = useState(defaultValues);
+  const [initialValues, setInitialValues] = useState(defaultValues);
+
+  useEffect(() => {
+    setInitialValues(defaultValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(initialInput)]);
 
   const onFormSubmit = data => onInputChange(reducePairs(data.inputs));
 
   return (
     <Form autocomplete="off" defaultValues={defaultValues} id="key-value-editor" initialValues={initialValues} onSubmit={onFormSubmit}>
-      <KeyValueFields disabled={disabled} errortext={errortext} inputHelpTipsMap={inputHelpTipsMap} onInputChange={onInputChange} />
+      <KeyValueFields disabled={disabled} initialValues={defaultValues.inputs} inputHelpTipsMap={inputHelpTipsMap} onInputChange={onInputChange} />
     </Form>
   );
 };
