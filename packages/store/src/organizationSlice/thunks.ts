@@ -556,11 +556,12 @@ export const getIntegrations = createAppAsyncThunk(`${sliceName}/getIntegrations
 
 type GetWebhookEventsPayload = {
   isFollowUp?: boolean;
+  knownTotal?: number;
   page?: number;
   perPage?: number;
 };
 export const getWebhookEvents = createAppAsyncThunk(`${sliceName}/getWebhookEvents`, (config: GetWebhookEventsPayload = {}, { dispatch, getState }) => {
-  const { isFollowUp, page = defaultPage, perPage = defaultPerPage } = config;
+  const { isFollowUp, knownTotal = 0, page = defaultPage, perPage = defaultPerPage } = config;
   return Api.get<Event[]>(`${iotManagerBaseURL}/events?page=${page}&per_page=${perPage}`)
     .catch(err => commonErrorHandler(err, 'There was an error retrieving activity for this integration', dispatch, commonErrorFallback))
     .then(({ data }) => {
@@ -569,13 +570,13 @@ export const getWebhookEvents = createAppAsyncThunk(`${sliceName}/getWebhookEven
           dispatch(
             actions.receiveWebhookEvents({
               value: isFollowUp ? getState().organization.webhooks.events : data,
-              total: (page - 1) * perPage + data.length
+              total: isFollowUp ? knownTotal + data.length : (page - 1) * perPage + data.length
             })
           )
         )
       ];
       if (data.length >= perPage && !isFollowUp) {
-        tasks.push(dispatch(getWebhookEvents({ isFollowUp: true, page: page + 1, perPage: 1 })));
+        tasks.push(dispatch(getWebhookEvents({ isFollowUp: true, knownTotal: page * perPage, page: page + 1, perPage: 1 })));
       }
       return Promise.all(tasks);
     });
