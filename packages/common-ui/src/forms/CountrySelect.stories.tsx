@@ -13,23 +13,44 @@
 //    limitations under the License.
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { CountrySelect } from './CountrySelect';
+import { ControlledCountrySelect, findCountry } from './CountrySelect';
+import { Form } from './Form';
 
-const meta: Meta<typeof CountrySelect> = {
-  component: CountrySelect,
+const meta: Meta<typeof ControlledCountrySelect> = {
+  component: ControlledCountrySelect,
   title: 'common-ui/forms/CountrySelect'
 };
 
 export default meta;
 
-type Story = StoryObj<typeof CountrySelect>;
+type Story = StoryObj<typeof ControlledCountrySelect>;
 
 export const Primary: Story = {
-  name: 'CountrySelect',
-  args: {
-    error: false,
-    defaultValue: 'NO',
-    helperText: 'Country is required',
-    onChange: (country: any) => alert('Selected country:', country)
-  }
+  name: 'ControlledCountrySelect',
+  render: args => (
+    <Form defaultValues={{ country: null }} onSubmit={data => console.log('submitted:', data)}>
+      <ControlledCountrySelect {...args} />
+    </Form>
+  ),
+  args: { id: 'country' }
+};
+
+export const Preselected: Story = {
+  name: 'With Preselected Country',
+  render: args => (
+    <Form defaultValues={{ country: findCountry('NO') }} onSubmit={data => console.log('submitted:', data)}>
+      <ControlledCountrySelect {...args} />
+    </Form>
+  ),
+  args: { ...Primary.args }
+};
+
+export const Required: Story = {
+  name: 'Required',
+  render: args => (
+    <Form defaultValues={{ country: null }} onSubmit={data => console.log('submitted:', data)} showButtons submitLabel="Submit">
+      <ControlledCountrySelect {...args} />
+    </Form>
+  ),
+  args: { ...Primary.args, required: true }
 };

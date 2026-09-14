@@ -13,7 +13,7 @@
 //    limitations under the License.
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import Pagination from './Pagination';
+import Pagination, { TablePaginationActions } from './Pagination';
 
 const meta: Meta<typeof Pagination> = {
   component: Pagination,
@@ -27,6 +27,7 @@ type Story = StoryObj<typeof Pagination>;
 export const Primary: Story = {
   name: 'Pagination',
   args: {
+    className: '',
     count: 100,
     page: 1,
     rowsPerPage: 20,
@@ -34,5 +35,44 @@ export const Primary: Story = {
     showCountInfo: true,
     onChangePage: (page: number) => console.log('Page changed to:', page),
     onChangeRowsPerPage: (perPage: number) => console.log('Rows per page changed to:', perPage)
+  }
+};
+
+export const WithoutCountInfo: Story = {
+  name: 'Without count info',
+  args: {
+    ...Primary.args,
+    showCountInfo: false
+  }
+};
+
+export const CustomRowsPerPageOptions: Story = {
+  name: 'Custom rows per page options',
+  args: {
+    ...Primary.args,
+    rowsPerPage: 50,
+    rowsPerPageOptions: [50, 100, 250]
+  }
+};
+
+export const Disabled: Story = {
+  name: 'Disabled',
+  args: {
+    ...Primary.args,
+    disabled: true
+  }
+};
+
+type ActionsStory = StoryObj<typeof TablePaginationActions>;
+
+export const Secondary: ActionsStory = {
+  render: props => <TablePaginationActions {...props} />,
+  name: 'TablePaginationActions',
+  args: {
+    count: 100,
+    page: 0,
+    rowsPerPage: 20,
+    showCountInfo: true,
+    onPageChange: (page: number) => console.log('Page changed to:', page)
   }
 };

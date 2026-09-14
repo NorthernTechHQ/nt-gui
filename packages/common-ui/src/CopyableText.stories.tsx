@@ -13,50 +13,49 @@
 //    limitations under the License.
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { SupportLink } from './SupportLink';
+import { CopyableText } from './CopyableText';
 
-const meta: Meta<typeof SupportLink> = {
-  component: SupportLink,
-  title: 'common-ui/SupportLink',
-  argTypes: {
-    variant: {
-      options: ['email', 'ourTeam', 'support', 'salesTeam', 'us', 'custom'],
-      mapping: {
-        email: 'email',
-        ourTeam: 'ourTeam',
-        support: 'support',
-        salesTeam: 'salesTeam',
-        us: 'us',
-        custom: 'get help'
-      }
-    }
-  }
+const meta: Meta<typeof CopyableText> = {
+  component: CopyableText,
+  title: 'common-ui/CopyableText',
+  decorators: [
+    Story => (
+      <div style={{ maxWidth: 400 }}>
+        <Story />
+      </div>
+    )
+  ]
 };
 
 export default meta;
 
-type Story = StoryObj<typeof SupportLink>;
+type Story = StoryObj<typeof CopyableText>;
 
 export const Primary: Story = {
-  name: 'SupportLink',
+  name: 'CopyableText',
   args: {
-    variant: 'support',
-    className: ''
+    children: 'd4ae1ba9-7b52-4b91-a1bc-8c3a1f0c1f4e',
+    onCopy: () => console.log('copied'),
+    title: 'Device id'
   }
 };
 
-export const Email: Story = {
-  name: 'Email address',
+export const WithoutCopy: Story = {
+  name: 'Without Copy',
   args: {
-    variant: 'email',
-    className: ''
+    children: 'd4ae1ba9-7b52-4b91-a1bc-8c3a1f0c1f4e',
+    title: 'Device id'
   }
 };
 
-export const Custom: Story = {
-  name: 'Custom text',
+export const WithComponentContent: Story = {
+  name: 'With Component Content',
   args: {
-    variant: 'reach out to us for help',
-    className: ''
+    children: (
+      <span>
+        <b>mac</b>: dc:a6:32:12:ad:bf
+      </span>
+    ),
+    onCopy: () => console.log('copied')
   }
 };
