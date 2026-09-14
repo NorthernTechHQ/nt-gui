@@ -11,31 +11,35 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
+import { Button, Typography, alpha } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
 import { TIMEOUTS } from '@northern.tech/store/constants';
+import { isDarkMode } from '@northern.tech/store/utils';
 import { useDebounce } from '@northern.tech/utils/debouncehook';
 
 const useStyles = makeStyles()(theme => ({
+  container: {
+    backgroundColor: isDarkMode(theme.palette.mode) ? theme.palette.info.main : alpha(theme.palette.info.main, theme.palette.action.selectedOpacity),
+    padding: `10px ${theme.spacing(3)} ${theme.spacing(3)}`
+  },
   filters: {
-    backgroundColor: theme.palette.grey[100],
     columnGap: theme.spacing(2),
     display: 'flex',
     flexWrap: 'wrap',
-    padding: `10px ${theme.spacing(3)} ${theme.spacing(3)}`,
     rowGap: theme.spacing(2),
     '.filter-item': {
-      display: 'grid'
-    },
-    '.filter-item > div': {
-      alignSelf: 'end'
+      display: 'grid',
+      gridTemplateRows: 'minmax(50px, max-content) 1fr'
     }
   },
-  filterReset: { right: theme.spacing(3) }
+  filterReset: {
+    marginBottom: 2,
+    marginTop: 2
+  }
 }));
 
 export const Filters = ({ className = '', defaultValues, filters = [], initialValues, onChange, fieldResetTrigger = '', dirtyField, clearDirty }) => {
@@ -73,19 +77,31 @@ export const Filters = ({ className = '', defaultValues, filters = [], initialVa
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(debouncedValues), onChange]);
 
+  const handleClear = () => {
+    reset();
+    onChange(defaultValues);
+  };
+
   return (
     <FormProvider {...methods}>
-      <form className={`margin-bottom relative margin-top ${classes.filters} ${className}`} noValidate>
-        {filters.map(({ key, title, Component, componentProps }) => (
-          <div className="filter-item" key={key}>
-            <h5 className="margin-top-small margin-bottom-small muted">{title}</h5>
-            <Component name={key} {...componentProps} />
-          </div>
-        ))}
+      <form className={`margin-bottom margin-top flexbox space-between ${classes.container} ${className}`} noValidate>
+        <div className={classes.filters}>
+          {filters.map(({ key, title, Component, componentProps }) => (
+            <div className="filter-item" key={key}>
+              <Typography className="margin-top-small margin-bottom-small" color="textSecondary" variant="subtitle2">
+                {title}
+              </Typography>
+              <Component name={key} {...componentProps} />
+            </div>
+          ))}
+        </div>
         {isDirty && (
-          <span className={`link absolute ${classes.filterReset}`} onClick={() => reset()}>
-            Clear filter
-          </span>
+          <div>
+            <Typography className="margin-top-small margin-bottom-small" color="textSecondary" variant="subtitle2">{`\u{200B}`}</Typography>
+            <Button className={`nowrap ${classes.filterReset}`} color="info" onClick={handleClear} variant="outlined">
+              Clear filter
+            </Button>
+          </div>
         )}
       </form>
     </FormProvider>

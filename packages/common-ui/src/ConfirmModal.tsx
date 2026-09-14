@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { SubmitEvent } from 'react';
+import type { FormEvent, ReactNode } from 'react';
 import { useState } from 'react';
 
 import type { DialogProps } from '@mui/material';
@@ -22,16 +22,29 @@ import { BaseDialog } from './dialogs/BaseDialog';
 interface ConfirmModalProps {
   className?: string;
   close: () => void;
-  description: string;
+  confirmButtonText?: string;
+  description: ReactNode;
   header: string;
+  isDanger?: boolean;
   maxWidth?: DialogProps['maxWidth'];
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<unknown>;
   open: boolean;
-  toType: string;
+  toType?: string;
 }
 export const ConfirmModal = (props: ConfirmModalProps) => {
-  const { close, onConfirm, className = '', toType, header, description, open, maxWidth = 'xs' } = props;
+  const { close, onConfirm, className = '', toType, header, description, open, maxWidth = 'xs', confirmButtonText = 'Confirm', isDanger = true } = props;
   const [inputValue, setInputValue] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    try {
+      await Promise.resolve(onConfirm());
+      close();
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <BaseDialog
       title={header}
@@ -42,34 +55,34 @@ export const ConfirmModal = (props: ConfirmModalProps) => {
       slotProps={{
         paper: {
           component: 'form',
-          onSubmit: (event: SubmitEvent<HTMLFormElement>) => {
-            event.preventDefault();
-            onConfirm();
-            close();
-          }
+          onSubmit
         }
       }}
     >
       <DialogContent>
-        <DialogContentText className="margin-bottom-small">{description}</DialogContentText>
-        <DialogContentText className="margin-bottom-small">Type &#39;{toType}&#39; below to continue</DialogContentText>
-        <TextField
-          value={inputValue}
-          onChange={e => setInputValue(e.target.value)}
-          autoFocus
-          required
-          name="confirmation-text"
-          id="confirmation-text"
-          label={toType}
-          type="text"
-        />
+        {typeof description === 'string' ? <DialogContentText>{description}</DialogContentText> : description}
+        {toType && (
+          <>
+            <DialogContentText className="margin-top-small margin-bottom-small">Type &#39;{toType}&#39; below to continue</DialogContentText>
+            <TextField
+              value={inputValue}
+              onChange={e => setInputValue(e.target.value)}
+              autoFocus
+              required
+              name="confirmation-text"
+              id="confirmation-text"
+              label={toType}
+              type="text"
+            />
+          </>
+        )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={close} size="small">
+        <Button onClick={close} disabled={isSubmitting}>
           Cancel
         </Button>
-        <Button color="secondary" type="submit" variant="contained" disabled={inputValue !== toType} size="small">
-          Confirm
+        <Button color={isDanger ? 'error' : 'primary'} type="submit" variant="contained" loading={isSubmitting} disabled={!!toType && inputValue !== toType}>
+          {confirmButtonText}
         </Button>
       </DialogActions>
     </BaseDialog>

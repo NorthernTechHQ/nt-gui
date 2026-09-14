@@ -14,47 +14,58 @@
 import { useCallback, useEffect, useState } from 'react';
 
 // material ui
-import { TextField } from '@mui/material';
+import { TextField, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
-import { toggle } from '@northern.tech/utils/helpers';
-
 import { ConfirmationButtons, EditButton } from './Confirm';
-import ExpandableAttribute from './ExpandableAttribute';
 
-const useStyles = makeStyles()(theme => ({
-  notes: { display: 'block', whiteSpace: 'pre-wrap' },
-  // @ts-expect-error - styleOverrides.root is a union type, but we know it's an object here
-  notesWrapper: { minWidth: theme.components?.MuiFormControl?.styleOverrides?.root?.minWidth }
+const useStyles = makeStyles()(() => ({
+  notes: { whiteSpace: 'pre-wrap', wordBreak: 'break-word' }
 }));
 
+const MAX_ROWS = 4;
+
 interface EditableLongTextProps {
-  contentFallback?: string;
   fullWidth?: boolean;
-  onChange: (changed: string) => void;
+  isEditing?: boolean;
+  onChange: (value: string) => Promise<void>;
+  onEditToggle?: (editing: boolean) => void;
   original: string;
   placeholder?: string;
 }
 
-export const EditableLongText = ({ contentFallback = '', fullWidth, original, onChange, placeholder = '-' }: EditableLongTextProps) => {
-  const [isEditing, setIsEditing] = useState(false);
+export const EditableLongText = ({ fullWidth, isEditing: isEditingProp, onChange, onEditToggle, original, placeholder = '-' }: EditableLongTextProps) => {
+  const [isEditingInternal, setIsEditingInternal] = useState(false);
   const [value, setValue] = useState(original);
   const { classes } = useStyles();
+
+  const isControlled = isEditingProp !== undefined;
+  const isEditing = isControlled ? isEditingProp : isEditingInternal;
 
   useEffect(() => {
     setValue(original);
   }, [original]);
 
+  const setEditing = useCallback(
+    (editing: boolean) => {
+      if (!isControlled) {
+        setIsEditingInternal(editing);
+      }
+      onEditToggle?.(editing);
+    },
+    [isControlled, onEditToggle]
+  );
+
   const onCancelClick = () => {
     setValue(original);
-    setIsEditing(false);
+    setEditing(false);
   };
 
-  const onEdit = ({ target: { value } }) => setValue(value);
+  const onEdit = ({ target: { value: newValue } }) => setValue(newValue);
 
-  const onEditClick = () => setIsEditing(true);
+  const onEditClick = () => setEditing(true);
 
-  const onToggleEditing = useCallback(
+  const onConfirmEdit = useCallback(
     event => {
       event.stopPropagation();
       if (event.key && (event.key !== 'Enter' || event.shiftKey)) {
@@ -62,11 +73,14 @@ export const EditableLongText = ({ contentFallback = '', fullWidth, original, on
       }
       if (isEditing) {
         // save change
-        onChange(value);
+        return onChange(value)
+          .then(() => setEditing(false))
+          .catch(() => setEditing(true));
+      } else {
+        setEditing(!isEditing);
       }
-      setIsEditing(toggle);
     },
-    [isEditing, onChange, value]
+    [isEditing, onChange, setEditing, value]
   );
 
   const fullWidthClass = fullWidth ? 'full-width' : '';
@@ -77,26 +91,21 @@ export const EditableLongText = ({ contentFallback = '', fullWidth, original, on
         <>
           <TextField
             className={`margin-right ${fullWidthClass}`}
+            maxRows={MAX_ROWS}
             multiline
             onChange={onEdit}
-            onKeyDown={onToggleEditing}
-            placeholder={placeholder}
+            onKeyDown={onConfirmEdit}
+            label={placeholder}
             value={value}
           />
-          <ConfirmationButtons onCancel={onCancelClick} onConfirm={onToggleEditing} />
+          <ConfirmationButtons onCancel={onCancelClick} onConfirm={onConfirmEdit} />
         </>
       ) : (
         <>
-          <ExpandableAttribute
-            className={`${fullWidthClass} margin-right ${classes.notesWrapper}`}
-            component="div"
-            dense
-            disableGutters
-            primary=""
-            secondary={original || value || contentFallback}
-            textClasses={{ secondary: classes.notes }}
-          />
-          <EditButton onClick={onEditClick} />
+          <Typography className={`${fullWidthClass} margin-right ${classes.notes}`} variant="body2" color="textSecondary" component="div">
+            {original || value}
+          </Typography>
+          {!isControlled && <EditButton onClick={onEditClick} />}
         </>
       )}
     </div>

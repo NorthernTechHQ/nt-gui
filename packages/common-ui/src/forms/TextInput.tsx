@@ -11,11 +11,38 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { ReactNode, RefObject } from 'react';
+import type { Control, FieldValues, RegisterOptions } from 'react-hook-form';
 import { Controller, useFormContext } from 'react-hook-form';
 
+import type { InputLabelProps as MuiInputLabelProps, OutlinedInputProps } from '@mui/material';
 import { FormControl, FormHelperText, InputLabel, OutlinedInput } from '@mui/material';
 
-import { runValidations } from './Form';
+import { runValidations } from './validations';
+
+export type CommonTextInputProps = {
+  autocomplete: string;
+  className: string;
+  control: Control<FieldValues>;
+  disabled: boolean;
+  InputLabelProps: Partial<MuiInputLabelProps>;
+  InputProps: Partial<OutlinedInputProps>;
+  label: ReactNode;
+  required: boolean;
+  validations: string;
+  width: number | string | null;
+};
+
+type TextInputProps = {
+  controlRef?: RefObject<HTMLInputElement | null>;
+  helperText?: string;
+  hint?: string;
+  id: string;
+  requiredRendered?: boolean;
+  rules?: RegisterOptions;
+  type?: string;
+  value?: string;
+} & Partial<CommonTextInputProps>;
 
 export const TextInput = ({
   autocomplete,
@@ -31,11 +58,12 @@ export const TextInput = ({
   required,
   type,
   validations = '',
-  numericValidations = {},
+  rules = {},
   value: passedValue = '',
   requiredRendered = true,
-  width = 400
-}) => {
+  width = 400,
+  helperText = ''
+}: TextInputProps) => {
   const {
     clearErrors,
     formState: { errors },
@@ -60,38 +88,46 @@ export const TextInput = ({
     <Controller
       name={id}
       control={control}
-      rules={{ required: required ? `${label} is required` : false, validate, ...numericValidations }}
-      render={({ field: { value, onChange, onBlur, ref }, fieldState: { error } }) => (
-        <FormControl
-          className={`${className} ${required && requiredRendered ? 'required' : ''}`}
-          error={Boolean(error?.message || errors[errorKey])}
-          style={{ width }}
-        >
-          <InputLabel htmlFor={id} {...InputLabelProps}>
-            {label}
-          </InputLabel>
-          <OutlinedInput
-            autoComplete={autocomplete}
-            id={id}
-            label={label}
-            name={id}
-            disabled={disabled}
-            inputRef={inputRef => {
-              ref(inputRef);
-              if (controlRef) {
-                controlRef.current = inputRef;
-              }
-            }}
-            value={value ?? passedValue}
-            onChange={({ target: { value } }) => onChange(value)}
-            onBlur={onBlur}
-            placeholder={hint}
-            type={type}
-            {...InputProps}
-          />
-          <FormHelperText>{(errors[errorKey] || error)?.message as string}</FormHelperText>
-        </FormControl>
-      )}
+      rules={{ required: required ? `${label} is required` : false, validate, ...rules }}
+      render={({ field: { value, onChange, onBlur, ref }, fieldState: { error } }) => {
+        const { onBlur: externalOnBlur, ...restInputProps } = InputProps;
+        return (
+          <FormControl
+            className={`${className} ${required && requiredRendered ? 'required' : ''}`}
+            error={Boolean(error?.message || errors[errorKey])}
+            style={{ width }}
+          >
+            <InputLabel htmlFor={id} {...InputLabelProps}>
+              {label}
+            </InputLabel>
+            <OutlinedInput
+              autoComplete={autocomplete}
+              id={id}
+              label={label}
+              name={id}
+              disabled={disabled}
+              inputRef={inputRef => {
+                ref(inputRef);
+                if (controlRef) {
+                  controlRef.current = inputRef;
+                }
+              }}
+              value={value ?? passedValue}
+              onChange={({ target: { value } }) => onChange(value)}
+              onBlur={e => {
+                onBlur(e);
+                if (externalOnBlur) {
+                  externalOnBlur(e);
+                }
+              }}
+              placeholder={hint}
+              type={type}
+              {...restInputProps}
+            />
+            <FormHelperText>{(errors[errorKey] || error)?.message || helperText}</FormHelperText>
+          </FormControl>
+        );
+      }}
     />
   );
 };

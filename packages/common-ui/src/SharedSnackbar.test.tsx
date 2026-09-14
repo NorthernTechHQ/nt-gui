@@ -16,7 +16,7 @@ import { yes } from '@northern.tech/store/constants';
 import { undefineds } from '@northern.tech/testing/mockData';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { vi } from 'vitest';
 
 import SharedSnackbar from './SharedSnackbar';
 

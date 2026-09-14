@@ -11,15 +11,28 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { CSSProperties } from 'react';
 import { useState } from 'react';
 
 import { Cancel as CancelIcon, CheckCircle as CheckCircleIcon, Check as CheckIcon, Close as CloseIcon, Edit as EditIcon } from '@mui/icons-material';
-import { Button, IconButton } from '@mui/material';
+import { Button, IconButton, Typography } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
+
+import { isDarkMode } from '@northern.tech/store/utils';
+
+const useStyles = makeStyles()(theme => ({
+  nudgeInward: { marginRight: 6 },
+  wrapper: {
+    zIndex: 1,
+    background: isDarkMode(theme.palette.mode) ? theme.palette.info.dark : theme.palette.info.light,
+    opacity: 1,
+    height: '100%',
+    justifyContent: 'flex-end'
+  }
+}));
 
 const defaultRemoving = 'Removing...';
 
-export const confirmationType = {
+const confirmationType = {
   retry: {
     loading: 'Creating new deployment...',
     message: 'Confirm retry?'
@@ -44,28 +57,16 @@ export const confirmationType = {
     loading: 'Aborting...',
     message: 'This will abort the deployment and attempt to roll back all devices. Confirm abort?'
   },
-  integrationRemoval: {
-    loading: defaultRemoving,
-    message: 'Remove the ingration. Are you sure?'
-  },
   webhooksRemoval: {
     loading: defaultRemoving,
     message: 'Delete all webhooks?'
   }
 };
 
-interface ConfirmProps {
-  action: () => void;
-  cancel: () => void;
-  classes?: string;
-  message?: string;
-  style?: CSSProperties;
-  type: keyof typeof confirmationType;
-}
-
-export const Confirm = ({ action, cancel, classes = '', message = '', style = {}, type }: ConfirmProps) => {
+export const Confirm = ({ action, cancel, classes = '', message = '', style = {}, type }) => {
   const [className, setClassName] = useState('fadeIn');
   const [loading, setLoading] = useState(false);
+  const { classes: localClasses } = useStyles();
 
   const handleCancel = () => {
     setClassName('fadeOut');
@@ -81,26 +82,33 @@ export const Confirm = ({ action, cancel, classes = '', message = '', style = {}
     notification = loading ? confirmationType[type].loading : confirmationType[type].message;
   }
   return (
-    <div className={`flexbox center-aligned ${className} ${classes}`} style={{ marginRight: '12px', justifyContent: 'flex-end', ...style }}>
-      <span className="bold">{notification}</span>
-      <IconButton id="confirmAbort" onClick={handleConfirm} size="large">
-        <CheckCircleIcon className="green" />
+    <div className={`flexbox align-items-center padding-right-small absolute full-width ${className} ${localClasses.wrapper} ${classes}`} style={style}>
+      <Typography className="margin-right-small" variant="subtitle2">
+        {notification}
+      </Typography>
+      <IconButton id="confirmAbort" onClick={handleConfirm}>
+        <CheckCircleIcon className="green" fontSize="small" />
       </IconButton>
-      <IconButton onClick={handleCancel} size="large">
-        <CancelIcon className="red" />
+      <IconButton className={localClasses.nudgeInward} onClick={handleCancel}>
+        <CancelIcon className="red" fontSize="small" />
       </IconButton>
     </div>
   );
 };
 
-export const EditButton = ({ onClick, disabled = false }) => (
-  <Button onClick={onClick} size="small" disabled={disabled} startIcon={<EditIcon />} style={{ padding: 5 }}>
-    Edit
-  </Button>
-);
+export const EditButton = ({ label = 'Edit', onClick, disabled = false }) =>
+  label ? (
+    <Button onClick={onClick} size="small" disabled={disabled} startIcon={<EditIcon />} style={{ padding: 5 }} color="inherit">
+      {label}
+    </Button>
+  ) : (
+    <IconButton onClick={onClick} size="small" disabled={disabled} color="inherit">
+      <EditIcon />
+    </IconButton>
+  );
 
-export const ConfirmationButtons = ({ onConfirm, onCancel }) => (
-  <div className="flexbox">
+export const ConfirmationButtons = ({ onConfirm, onCancel, className = '' }) => (
+  <div className={`flexbox ${className}`}>
     <IconButton onClick={onConfirm} size="small" aria-label="confirm">
       <CheckIcon color="disabled" />
     </IconButton>
