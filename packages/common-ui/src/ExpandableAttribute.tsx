@@ -11,31 +11,33 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { CSSProperties } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 // material ui
 import { FileCopyOutlined as CopyToClipboardIcon } from '@mui/icons-material';
 import { ListItem, ListItemText, Tooltip } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
 
 import { toggle } from '@northern.tech/utils/helpers';
 import copy from 'copy-to-clipboard';
 
-const defaultClasses = { root: 'attributes' };
+import { Link } from './Link';
 
-interface ExpandableAttributeProps {
-  [x: string]: any;
-  className?: string;
-  copyToClipboard?: boolean;
-  dividerDisabled?: boolean;
-  onExpansion?: () => void;
-  primary: string;
-  secondary: string;
-  secondaryTypographyProps?: object;
-  setSnackbar?: (message: string) => void;
-  style?: CSSProperties;
-  textClasses?: Record<string, string>;
-}
+const useStyles = makeStyles()(theme => ({
+  copyable: {
+    cursor: 'pointer',
+    '& > svg': {
+      color: theme.palette.primary.main,
+      opacity: 0,
+      transition: 'opacity 0.2s ease-in-out'
+    },
+    '&:hover > svg': {
+      opacity: 1
+    }
+  }
+}));
+
+const defaultClasses = { root: 'attributes' };
 
 export const ExpandableAttribute = ({
   className = '',
@@ -49,8 +51,9 @@ export const ExpandableAttribute = ({
   style,
   textClasses,
   ...remainder
-}: ExpandableAttributeProps) => {
-  const textContent = useRef<HTMLSpanElement | null>(null);
+}) => {
+  const { classes } = useStyles();
+  const textContent = useRef(null);
   const [expanded, setExpanded] = useState(false);
   const [overflowActive, setOverflowActive] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(false);
@@ -66,7 +69,7 @@ export const ExpandableAttribute = ({
   }, [expanded, overflowActive, textContent]);
 
   const onClick = useCallback(() => {
-    if (copyToClipboard && setSnackbar) {
+    if (copyToClipboard) {
       // Date/Time components
       copy(secondary);
       setSnackbar('Value copied to clipboard');
@@ -83,11 +86,11 @@ export const ExpandableAttribute = ({
       <span className={currentTextClasses} ref={textContent}>
         {secondary}
       </span>{' '}
-      {overflowActive ? <a>show {expanded ? 'less' : 'more'}</a> : null}
+      {overflowActive ? <Link>show {expanded ? 'less' : 'more'}</Link> : null}
     </>
   );
 
-  const cssClasses = { ...defaultClasses, root: `${defaultClasses.root} ${copyToClipboard ? 'copy-to-clipboard' : ''}`.trim() };
+  const cssClasses = { ...defaultClasses, root: `${defaultClasses.root} ${copyToClipboard ? classes.copyable : ''}`.trim() };
 
   return (
     <div className={className} onClick={onClick} onMouseEnter={() => setTooltipVisible(true)} onMouseLeave={() => setTooltipVisible(false)} style={style}>
@@ -95,7 +98,9 @@ export const ExpandableAttribute = ({
         <ListItemText
           primary={primary}
           secondary={secondaryText}
-          secondaryTypographyProps={{ title: secondary, component: 'div', ...secondaryTypographyProps }}
+          slotProps={{
+            secondary: { title: secondary, component: 'div', ...secondaryTypographyProps }
+          }}
         />
         {copyToClipboard ? (
           <Tooltip title={'Copy to clipboard'} placement="top" open={tooltipVisible}>

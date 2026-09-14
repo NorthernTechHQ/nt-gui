@@ -11,38 +11,23 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router';
+import { Link as RouterLink } from 'react-router';
 
-import { Chip } from '@mui/material';
+import { Button, Chip } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
 
 import { ADDONS, BENEFITS, PLANS } from '@northern.tech/store/constants';
 import { getTenantCapabilities } from '@northern.tech/store/selectors';
 import { yes } from '@northern.tech/utils/helpers';
 
+import { Link } from './Link';
 import MenderTooltip, { MenderTooltipClickable } from './helptips/MenderTooltip';
 
-const PlansTooltip = withStyles(MenderTooltip, ({ palette }) => ({
-  arrow: {
-    color: palette.tooltip?.tierTipBackground ?? palette.grey[100]
-  },
+const PlansTooltip = withStyles(MenderTooltip, () => ({
   tooltip: {
-    backgroundColor: palette.tooltip?.tierTipBackground ?? palette.grey[100],
     maxWidth: 300
-  }
-}));
-
-const PlanChip = withStyles(Chip, ({ palette }) => ({
-  root: {
-    backgroundColor: palette.tooltip?.tierTipBackground ?? palette.grey[100],
-    color: palette.text.disabled,
-    textTransform: 'uppercase',
-    '&:hover': {
-      fontWeight: 'bold'
-    }
   }
 }));
 
@@ -52,12 +37,7 @@ export const DefaultUpgradeNotification = props => (
   </div>
 );
 
-interface EnterpriseNotificationProps {
-  className?: string;
-  id?: string; // TODO: generate these from the BENEFITS?
-}
-
-export const EnterpriseNotification = ({ className = '', id = BENEFITS.default.id }: EnterpriseNotificationProps) => {
+const EnterpriseNotification = ({ className = '', id = BENEFITS.default.id, size = 'medium' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const tenantCapabilities = useSelector(getTenantCapabilities);
   const { isEnterprise, plan: currentPlan } = tenantCapabilities;
@@ -73,7 +53,7 @@ export const EnterpriseNotification = ({ className = '', id = BENEFITS.default.i
   }
   const content = requiredAddon ? (
     <>
-      Add the <b>{ADDONS[requiredAddon].title}</b> add-on to {benefit}.
+      Add the <b>{ADDONS[requiredAddon].title}</b> Add-on to {benefit}.
     </>
   ) : (
     <>
@@ -83,22 +63,25 @@ export const EnterpriseNotification = ({ className = '', id = BENEFITS.default.i
   );
   return (
     <MenderTooltipClickable
+      arrow={false}
       onOpenChange={setIsOpen}
       title={
-        <div>
+        <>
           {content}
           <div className="flexbox space-between margin-top-small">
-            <Link to="/subscription">Upgrade now</Link>
-            <span className="link" onClick={() => setIsOpen(false)}>
-              Close
-            </span>
+            <Button color="primary" component={RouterLink} size="small" to="/subscription">
+              Upgrade now
+            </Button>
+            <Button color="inherit" onClick={() => setIsOpen(false)} size="small" variant="text">
+              Cancel
+            </Button>
           </div>
-        </div>
+        </>
       }
       tooltipComponent={PlansTooltip}
       visibility={isOpen}
     >
-      <PlanChip className={className} onClick={yes} label={PLANS[requiredPlan].name} />
+      <Chip size={size} className={className} onClick={yes} label={PLANS[requiredPlan].name} />
     </MenderTooltipClickable>
   );
 };

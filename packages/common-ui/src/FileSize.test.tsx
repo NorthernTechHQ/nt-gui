@@ -13,7 +13,6 @@
 import { undefineds } from '@northern.tech/testing/mockData';
 import { deepCompare } from '@northern.tech/utils/helpers';
 import { render } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
 
 import FileSize from './FileSize';
 

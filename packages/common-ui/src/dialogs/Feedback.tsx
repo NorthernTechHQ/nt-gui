@@ -145,7 +145,10 @@ export const FeedbackDialog = () => {
     setTimeout(() => (isInitialized.current = true), TIMEOUTS.oneSecond);
   }, []);
 
-  const onCloseClick = () => dispatch(setShowFeedbackDialog(false));
+  const onCloseClick = () => {
+    dispatch(submitUserFeedback({ formId: 'product', feedback: { score: 3, message: '_dismiss_' } }));
+    dispatch(setShowFeedbackDialog(false));
+  };
 
   const onSubmit = () => {
     setProgress(progress + 1);
@@ -155,7 +158,15 @@ export const FeedbackDialog = () => {
 
   const Component = progressionLevels[progress];
   return (
-    <Dialog className={classes.root} open hideBackdrop disableEnforceFocus slotProps={{ paper: { style: { pointerEvents: 'auto' } } }}>
+    <Dialog
+      className={classes.root}
+      open
+      hideBackdrop
+      disableEnforceFocus
+      slotProps={{
+        paper: { style: { pointerEvents: 'auto' } }
+      }}
+    >
       <DialogTitle>
         <IconButton onClick={onCloseClick} aria-label="close" size="small">
           <CloseIcon />

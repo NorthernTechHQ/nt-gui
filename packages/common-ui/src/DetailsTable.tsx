@@ -12,10 +12,9 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 // material ui
-import type { CSSProperties, ReactNode, Ref } from 'react';
+import type { ReactNode } from 'react';
 
-import { Sort as SortIcon } from '@mui/icons-material';
-import type { TableCellProps } from '@mui/material';
+import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
 import { Checkbox, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
@@ -33,33 +32,13 @@ const useStyles = makeStyles()(() => ({
   }
 }));
 
-interface SortParams {
-  direction?: 'asc' | 'desc';
-  key?: string;
-}
-
-interface ColumnDefinition {
-  cellProps: TableCellProps;
-  defaultSortDirection?: 'asc' | 'desc';
-  extras?: any;
+export interface ColumnDefinition {
+  cellProps?: Record<string, string>;
   key: string;
-  render: (item: any, extras: any) => ReactNode;
-  renderTitle?: (extras: any) => ReactNode;
+  render: () => ReactNode | string;
+  renderTitle?: () => ReactNode | string;
   sortable?: boolean;
   title: string;
-}
-
-interface DetailsTableProps {
-  className?: string;
-  columns: ColumnDefinition[];
-  items: any[];
-  onChangeSorting: (sortKey: string) => void;
-  onItemClick?: (item: any) => void;
-  onRowSelected?: (rowNumber: number[]) => void;
-  selectedRows?: number[];
-  sort?: SortParams;
-  style?: CSSProperties;
-  tableRef: Ref<HTMLTableElement>;
 }
 
 export const DetailsTable = ({
@@ -73,7 +52,7 @@ export const DetailsTable = ({
   tableRef,
   onRowSelected = undefined,
   selectedRows = []
-}: DetailsTableProps) => {
+}) => {
   const { classes } = useStyles();
 
   const onRowSelection = selectedRow => {
@@ -84,7 +63,6 @@ export const DetailsTable = ({
     } else {
       updatedSelection.splice(selectedIndex, 1);
     }
-    // @ts-expect-error - the render code checks if this is defined
     onRowSelected(updatedSelection);
   };
 
@@ -93,7 +71,6 @@ export const DetailsTable = ({
     if (selectedRows.length && selectedRows.length <= items.length) {
       newSelectedRows = [];
     }
-    // @ts-expect-error - the render code checks if this is defined
     onRowSelected(newSelectedRows);
   };
 
@@ -102,7 +79,7 @@ export const DetailsTable = ({
       <TableHead className={classes.header}>
         <TableRow>
           {onRowSelected !== undefined && (
-            <TableCell>
+            <TableCell padding="checkbox">
               <Checkbox indeterminate={false} checked={selectedRows.length === items.length} onChange={onSelectAllClick} />
             </TableCell>
           )}
@@ -114,7 +91,12 @@ export const DetailsTable = ({
               {...cellProps}
             >
               {renderTitle ? renderTitle(extras) : title}
-              {sortable && <SortIcon className={`sortIcon ${sort.key === key ? 'selected' : ''} ${(sort.direction === SORTING_OPTIONS.desc).toString()}`} />}
+              {sortable &&
+                (sort.direction === SORTING_OPTIONS.desc ? (
+                  <ArrowDownward className={`sortIcon ${sort.key === key ? 'selected' : ''}`} color="action" />
+                ) : (
+                  <ArrowUpward className={`sortIcon ${sort.key === key ? 'selected' : ''}`} color="action" />
+                ))}
             </TableCell>
           ))}
         </TableRow>
@@ -123,12 +105,17 @@ export const DetailsTable = ({
         {items.map((item, index) => (
           <TableRow className={onItemClick ? 'clickable' : ''} hover key={item.id || index}>
             {onRowSelected !== undefined && (
-              <TableCell>
+              <TableCell padding="checkbox">
                 <Checkbox checked={selectedRows.includes(index)} onChange={() => onRowSelection(index)} />
               </TableCell>
             )}
             {columns.map(column => (
-              <TableCell className="relative" key={column.key} onClick={() => (onItemClick ? onItemClick(item) : null)}>
+              <TableCell
+                className={`relative ${column.sortable ? 'padding-right-large' : ''}`}
+                key={column.key}
+                onClick={() => (onItemClick ? onItemClick(item) : null)}
+                {...column.cellProps}
+              >
                 {column.render(item, column.extras)}
               </TableCell>
             ))}

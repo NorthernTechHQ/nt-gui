@@ -11,22 +11,38 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { Autocomplete } from '@mui/material';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const ControlledAutoComplete = ({ freeSolo, name, onChange, onInputChange, ...remainder }) => {
+export const ControlledAutoComplete = ({ freeSolo, name, onChange, onInputChange, renderInput, ...remainder }) => {
   const { control } = useFormContext();
 
   return (
     <Controller
       control={control}
       name={name}
-      render={({ field: { onChange: formOnChange, ...props } }) => {
-        const onChangeHandler = (e, data) => formOnChange(data);
-        return <Autocomplete {...(freeSolo ? { freeSolo, onInputChange: onChangeHandler } : { onChange: onChangeHandler })} {...props} {...remainder} />;
+      render={({ field: { onChange: formOnChange, ref, value, ...field } }) => {
+        const onChangeHandler = (_e, data) => formOnChange(data);
+        const onInputChangeHandler = (_e, data, reason) => {
+          if (reason === 'reset' && !_e) {
+            return;
+          }
+          formOnChange(data);
+        };
+        const wrappedRenderInput = params => renderInput({ ...params, inputRef: ref });
+        return (
+          <Autocomplete
+            autoSelect={false}
+            {...field}
+            {...(freeSolo
+              ? { freeSolo: true, inputValue: value ?? '', onInputChange: onInputChangeHandler }
+              : { value: value ?? null, onChange: onChangeHandler })}
+            renderInput={wrappedRenderInput}
+            {...remainder}
+          />
+        );
       }}
     />
   );

@@ -12,31 +12,14 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { defaultState, render } from '@/testUtils';
+import { CommonList } from '@northern.tech/common-ui/List';
 import { tenants, undefineds } from '@northern.tech/testing/mockData';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { vi } from 'vitest';
 
-import DetailsIndicator from './DetailsIndicator';
-import { CommonList } from './List';
+import { TenantListItem, columnHeaders } from '../components/tenants/TenantList';
 
-const ListItemComponentMock = ({ onClick }) => (
-  <div onClick={onClick}>
-    <DetailsIndicator />
-  </div>
-);
-
-const columnHeaders = [
-  {
-    title: 'View Details',
-    attribute: {
-      name: '',
-      scope: ''
-    },
-    sortable: false,
-    component: DetailsIndicator
-  }
-];
 describe('List component', () => {
   it('renders correctly', () => {
     const onExpandClickMock = vi.fn();
@@ -47,7 +30,7 @@ describe('List component', () => {
     const onChangeRowsPerPage = vi.fn();
     const { baseElement } = render(
       <CommonList
-        ListItemComponent={ListItemComponentMock}
+        ListItemComponent={TenantListItem}
         listItems={tenants}
         listState={{ ...defaultState.organization.organization.tenantList, total: 10 }}
         columnHeaders={columnHeaders}
@@ -74,7 +57,7 @@ describe('List component', () => {
     const onChangeRowsPerPage = vi.fn();
     render(
       <CommonList
-        ListItemComponent={ListItemComponentMock}
+        ListItemComponent={TenantListItem}
         listItems={tenants}
         listState={{ ...defaultState.organization.organization.tenantList, total: 10 }}
         columnHeaders={columnHeaders}

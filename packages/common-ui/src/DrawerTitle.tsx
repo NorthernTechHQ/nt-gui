@@ -11,34 +11,37 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
-import type { FunctionComponent, ReactNode } from 'react';
+import type { FunctionComponent, MouseEvent, ReactNode } from 'react';
 
 import { Close as CloseIcon, Link as LinkIcon } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import { IconButton, Tooltip, Typography } from '@mui/material';
 
-interface DrawerTitleProps {
-  onClose: () => void;
+export interface DrawerTitleProps {
+  onClose: (event: MouseEvent<HTMLButtonElement>) => void;
   onLinkCopy?: () => void;
   postTitle?: ReactNode;
   preCloser?: ReactNode;
-  title: string | ReactNode;
+  title: ReactNode;
 }
 
 export const DrawerTitle: FunctionComponent<DrawerTitleProps> = ({ onClose, onLinkCopy, postTitle, preCloser, title }) => (
-  <div className="flexbox margin-bottom-small space-between">
-    <div className="flexbox center-aligned">
-      <h3 className="capitalized-start flexbox center-aligned">{title}</h3>
+  <div className="flexbox margin-bottom-small space-between relative">
+    <div className="flexbox align-items-center">
+      <Typography className={`capitalized-start ${typeof title === 'string' ? '' : 'flexbox align-items-center'}`} component="div" variant="subtitle1">
+        {title}
+      </Typography>
       {onLinkCopy && (
-        <IconButton onClick={onLinkCopy} size="large">
-          <LinkIcon />
-        </IconButton>
+        <Tooltip title="Copy link">
+          <IconButton className="margin-left-x-small" onClick={onLinkCopy} size="large">
+            <LinkIcon />
+          </IconButton>
+        </Tooltip>
       )}
       {postTitle}
     </div>
-    <div className="flexbox center-aligned">
+    <div className="flexbox align-items-center relative">
       {preCloser}
-      <IconButton onClick={onClose} aria-label="close" size="large">
+      <IconButton className="margin-left-small" onClick={onClose} aria-label="close" size="large">
         <CloseIcon />
       </IconButton>
     </div>

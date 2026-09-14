@@ -11,16 +11,16 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import type { CSSProperties, ComponentType, MutableRefObject, ReactElement } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Settings as SettingsIcon, Sort as SortIcon } from '@mui/icons-material';
-import { Checkbox } from '@mui/material';
+import { Checkbox, Typography, typographyClasses } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
-import type { IdAttribute, SortOptions } from '@northern.tech/store/constants';
+import type { IdAttribute } from '@northern.tech/store/constants';
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TIMEOUTS } from '@northern.tech/store/constants';
+import type { SortOptions } from '@northern.tech/store/organizationSlice/types';
 import { isDarkMode } from '@northern.tech/store/utils';
 import { toggle } from '@northern.tech/utils/helpers';
 import { useWindowSize } from '@northern.tech/utils/resizehook';
@@ -72,16 +72,13 @@ interface ListState {
 
 type wID = { id: string };
 
-interface SharedListItemProps {
+interface CommonListProps<T extends wID> {
   columnHeaders: ColumnHeader<T>[];
-  idAttribute?: IdAttribute | string;
-  listState: ListState;
-}
-
-interface CommonListProps<T extends wID> extends SharedListItemProps {
   customColumnSizes?: Attribute[];
+  idAttribute?: IdAttribute;
   ListItemComponent: ComponentType<ListItemComponentProps<T>>;
   listItems: T[];
+  listState: ListState;
   onChangeRowsPerPage: (perPage: number) => void;
   onExpandClick: (item: T) => void;
   onPageChange: (event: MouseEvent | null, page: number) => void;
@@ -92,10 +89,13 @@ interface CommonListProps<T extends wID> extends SharedListItemProps {
   PaginationProps?: object;
   sortingNotes?: { [key: string]: string };
 }
-export interface ListItemComponentProps<T> extends SharedListItemProps {
+export interface ListItemComponentProps<T> {
+  columnHeaders: ColumnHeader<T>[];
+  idAttribute?: IdAttribute;
   index: number;
   key: string;
   listItem: T;
+  listState: ListState;
   onClick: (item: T) => void;
   onRowSelect: (selectedRow: T) => void;
   selectable: boolean;
@@ -104,8 +104,7 @@ export interface ListItemComponentProps<T> extends SharedListItemProps {
 
 const useStyles = makeStyles()(theme => ({
   header: {
-    // @ts-ignore
-    color: theme.palette.text.hint
+    [`.${typographyClasses.body1}`]: { fontWeight: theme.typography.fontWeightMedium }
   },
   resizer: {
     cursor: 'col-resize',
@@ -172,7 +171,7 @@ export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
     ListItemComponent
   } = props;
   const { page: pageNo = defaultPage, perPage: pageLength = defaultPerPage, selection: selectedRows = [], sort = {}, total: pageTotal = 1 } = listState;
-  const { direction: sortDown = SORTING_OPTIONS.desc, key: sortCol } = sort as SortOptions;
+  const { direction: sortDown = SORTING_OPTIONS.desc, key: sortCol } = sort;
   const listRef = useRef<HTMLDivElement | null>(null);
   const selectedRowsRef = useRef(selectedRows);
   const initRef = useRef<number | null>(null);
@@ -264,52 +263,54 @@ export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
 
   const numSelected = (selectedRows || []).length;
   return (
-    <div className={`deviceList ${selectable ? 'selectable' : ''}`} ref={listRef}>
-      <div className={`header ${classes.header}`}>
-        <div className="deviceListRow">
-          {selectable && (
-            <div>
-              <Checkbox
-                indeterminate={numSelected > 0 && numSelected < listItems.length}
-                checked={numSelected === listItems.length}
-                onChange={onSelectAllClick}
+    <>
+      <div className={`deviceList ${selectable ? 'selectable' : ''}`} ref={listRef}>
+        <div className={`header ${classes.header}`}>
+          <div className="deviceListRow">
+            {selectable && (
+              <div>
+                <Checkbox
+                  indeterminate={numSelected > 0 && numSelected < listItems.length}
+                  checked={numSelected === listItems.length}
+                  onChange={onSelectAllClick}
+                />
+              </div>
+            )}
+            {columnHeaders.map((item, index) => (
+              <HeaderItem
+                column={item}
+                columnCount={columnHeaders.length}
+                index={index}
+                key={`columnHeader-${index}`}
+                onSort={onSort}
+                resizable={!!onResizeColumns}
+                sortCol={sortCol}
+                sortDown={sortDown}
+                onResizeChange={handleResizeChange}
+                onResizeFinish={handleResizeFinish}
+                sortingNotes={sortingNotes}
               />
-            </div>
-          )}
-          {columnHeaders.map((item, index) => (
-            <HeaderItem
-              column={item}
-              columnCount={columnHeaders.length}
+            ))}
+          </div>
+        </div>
+        <div className="body">
+          {listItems.map((item, index) => (
+            <ListItemComponent
+              columnHeaders={columnHeaders}
+              listItem={item}
+              listState={listState}
+              idAttribute={idAttribute}
               index={index}
-              key={`columnHeader-${index}`}
-              onSort={onSort}
-              resizable={!!onResizeColumns}
-              sortCol={sortCol}
-              sortDown={sortDown}
-              onResizeChange={handleResizeChange}
-              onResizeFinish={handleResizeFinish}
-              sortingNotes={sortingNotes}
+              key={item.id}
+              onClick={onExpandClick}
+              onRowSelect={onRowSelection}
+              selectable={selectable}
+              selected={selectedRows.indexOf(index) !== -1}
             />
           ))}
         </div>
       </div>
-      <div className="body">
-        {listItems.map((item, index) => (
-          <ListItemComponent
-            columnHeaders={columnHeaders}
-            listItem={item}
-            listState={listState}
-            idAttribute={idAttribute}
-            index={index}
-            key={item.id}
-            onClick={onExpandClick}
-            onRowSelect={onRowSelection}
-            selectable={selectable}
-            selected={selectedRows.indexOf(index) !== -1}
-          />
-        ))}
-      </div>
-      <div className="footer flexbox margin-top">
+      <div className="flexbox margin-top-small">
         <Pagination
           className="margin-top-none"
           count={pageTotal}
@@ -321,7 +322,7 @@ export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
         />
         <Loader show={pageLoading} small />
       </div>
-    </div>
+    </>
   );
 };
 
@@ -404,11 +405,10 @@ const HeaderItem = <T extends wID>(props: HeaderItemProps<T>) => {
   }, [shouldRemoveListeners, mouseMove, mouseUp]);
 
   let resizeHandleClassName = resizable && isHovering ? 'hovering' : '';
-  // eslint-disable-next-line react-hooks/refs
   resizeHandleClassName = resizeRef.current ? 'resizing' : resizeHandleClassName;
   const header = (
     <div className="columnHeader flexbox space-between relative" style={column.style} onMouseEnter={onMouseOver} onMouseLeave={onMouseOut} ref={ref}>
-      <div className="flexbox center-aligned" onClick={() => onSort(column.attribute ? column.attribute : {})}>
+      <Typography className="flexbox align-items-center" onClick={() => onSort(column.attribute ? column.attribute : {})}>
         {column.title}
         {column.sortable && (
           <SortIcon
@@ -416,9 +416,9 @@ const HeaderItem = <T extends wID>(props: HeaderItemProps<T>) => {
             style={{ fontSize: 16 }}
           />
         )}
-      </div>
-      <div className="flexbox center-aligned full-height">
-        {column.customize && <SettingsIcon onClick={column.customize} style={{ fontSize: 16 }} />}
+      </Typography>
+      <div className="flexbox align-items-center full-height">
+        {column.customize && <SettingsIcon onClick={column.customize} style={{ fontSize: 16 }} data-testid="column-configuration" />}
         {index < columnCount - 2 && resizable && (
           <div onMouseDown={mouseDown} className={`${classes.resizer} full-height`}>
             <div className={`full-height ${classes.resizeHandle} ${resizeHandleClassName}`} />
