@@ -15,7 +15,7 @@ import { formRenderWrapper, render } from '@/testUtils';
 import { undefineds } from '@northern.tech/testing/mockData';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { CheckboxAutocomplete, ControlledCheckboxAutocomplete } from './CheckboxAutocomplete';
 

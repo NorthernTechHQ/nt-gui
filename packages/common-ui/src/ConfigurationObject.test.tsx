@@ -15,11 +15,11 @@ import { render } from '@/testUtils';
 import { undefineds } from '@northern.tech/testing/mockData';
 import { describe, expect, it } from 'vitest';
 
-import ConfigurationObject from './ConfigurationObject';
+import { TwoColumnData } from './ConfigurationObject';
 
-describe('ConfigurationObject Component', () => {
+describe('TwoColumnData Component', () => {
   it('renders correctly', async () => {
-    const { baseElement } = render(<ConfigurationObject config={{ uiPasswordRequired: true, foo: 'bar', timezone: 'GMT+2' }} />);
+    const { baseElement } = render(<TwoColumnData config={{ uiPasswordRequired: true, foo: 'bar', timezone: 'GMT+2' }} />);
     const view = baseElement.firstChild.firstChild;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));

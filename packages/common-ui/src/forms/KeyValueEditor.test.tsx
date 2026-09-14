@@ -15,7 +15,7 @@ import { render } from '@/testUtils';
 import { undefineds } from '@northern.tech/testing/mockData';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import KeyValueEditor from './KeyValueEditor';
 

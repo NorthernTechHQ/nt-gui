@@ -1,4 +1,4 @@
-// Copyright 2019 Northern.tech AS
+// Copyright 2026 Northern.tech AS
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -12,16 +12,20 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { render } from '@/testUtils';
-import { undefineds } from '@northern.tech/testing/mockData';
+import { waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import MaterialDesignIcon from './MaterialDesignIcon';
+import PageTitle, { getPageTitle } from './PageTitle';
 
-describe('MaterialDesignIcon Component', () => {
-  it('renders correctly', async () => {
-    const { baseElement } = render(<MaterialDesignIcon />);
-    const view = baseElement.firstChild.firstChild;
-    expect(view).toMatchSnapshot();
-    expect(view).toEqual(expect.not.stringMatching(undefineds));
+describe('PageTitle Component', () => {
+  it('joins segments from most to least specific', () => {
+    expect(getPageTitle(['Finished', 'Deployments'])).toEqual('Finished | Deployments | Mender');
+    expect(getPageTitle([undefined, 'Devices', ''])).toEqual('Devices | Mender');
+    expect(getPageTitle([])).toEqual('Mender');
+  });
+
+  it('sets the document title', async () => {
+    render(<PageTitle segments={['Accepted', 'Devices']} />);
+    await waitFor(() => expect(document.title).toEqual('Accepted | Devices | Mender'));
   });
 });

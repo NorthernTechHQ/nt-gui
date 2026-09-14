@@ -13,7 +13,7 @@
 //    limitations under the License.
 import { render } from '@/testUtils';
 import { undefineds } from '@northern.tech/testing/mockData';
-import { vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import TextOverflowMultiline from './TextOverflowMultiline';
 
