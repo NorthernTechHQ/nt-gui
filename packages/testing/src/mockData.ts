@@ -13,7 +13,7 @@
 //    limitations under the License.
 import {
   ALL_DEVICES,
-  ALL_RELEASES,
+  ALL_SOFTWARE,
   defaultPermissionSets,
   emptyRole,
   emptyUiPermissions,
@@ -923,7 +923,7 @@ const expectedParsedRoles = {
     uiPermissions: {
       ...emptyUiPermissions,
       groups: { dockerclient: [uiPermissionsById.read.value, uiPermissionsById.manage.value] },
-      releases: { [ALL_RELEASES]: [uiPermissionsById.manage.value] }
+      releases: { [ALL_SOFTWARE]: [uiPermissionsById.manage.value] }
     }
   },
   almostAdmin: {
@@ -944,7 +944,7 @@ const expectedParsedRoles = {
         ]
       },
       releases: {
-        [ALL_RELEASES]: [uiPermissionsById.read.value, uiPermissionsById.upload.value, uiPermissionsById.manage.value]
+        [ALL_SOFTWARE]: [uiPermissionsById.read.value, uiPermissionsById.upload.value, uiPermissionsById.manage.value]
       },
       userManagement: [uiPermissionsById.read.value, uiPermissionsById.manage.value]
     }
@@ -966,7 +966,7 @@ const expectedParsedRoles = {
         ]
       },
       releases: {
-        [ALL_RELEASES]: [uiPermissionsById.manage.value, uiPermissionsById.upload.value, uiPermissionsById.read.value]
+        [ALL_SOFTWARE]: [uiPermissionsById.manage.value, uiPermissionsById.upload.value, uiPermissionsById.read.value]
       },
       tenantManagement: [uiPermissionsById.read.value, uiPermissionsById.manage.value],
       userManagement: [uiPermissionsById.read.value, uiPermissionsById.manage.value]
