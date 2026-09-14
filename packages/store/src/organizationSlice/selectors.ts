@@ -29,7 +29,7 @@ export const getCard = (state: RootState) => state.organization.card;
 export const getSsoConfig = ({ organization: { ssoConfigs = [] } }: RootState) => ssoConfigs[0];
 export const getTenantsList = (state: RootState) => state.organization.tenantList;
 export const getWebhookEvents = (state: RootState) => state.organization.webhooks.events;
-export const getWebhookEventTotal = (state: RootState) => state.organization.webhooks.eventsTotal;
+export const getWebhookEventsTotal = (state: RootState) => state.organization.webhooks.eventsTotal;
 
 export const getDeviceTwinIntegrations = createSelector([getExternalIntegrations], integrations =>
   integrations.filter(integration => integration.id && EXTERNAL_PROVIDER[integration.provider]?.deviceTwin)
@@ -39,8 +39,8 @@ export const getIsServiceProvider = (state: RootState) => state.organization.org
 export const getWebhooks = createSelector([getExternalIntegrations], integrations =>
   integrations.filter(integration => integration.id && integration.provider === EXTERNAL_PROVIDER.webhook.provider)
 );
-export const getWebhookEventInfo = createSelector([getWebhooks, getWebhookEvents, getWebhookEventTotal], (webhooks, events, eventTotal) =>
-  webhooks.length ? { events, eventTotal } : { events: [], eventTotal: 0 }
+export const getWebhookEventInfo = createSelector([getWebhooks, getWebhookEvents, getWebhookEventsTotal], (webhooks, events, eventsTotal) =>
+  webhooks.length ? { events, eventsTotal } : { events: [], eventsTotal: 0 }
 );
 
 export const getAuditLogEntry = createSelector([getAuditLog, getAuditLogSelectionState], (events, { selectedId }) => {
