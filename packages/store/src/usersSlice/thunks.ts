@@ -49,7 +49,7 @@ import type {
   UserManagementPermission
 } from '../constants';
 import {
-  ALL_RELEASES,
+  ALL_SOFTWARE,
   APPLICATION_JSON_CONTENT_TYPE,
   APPLICATION_JWT_CONTENT_TYPE,
   PermissionTypes,
@@ -687,7 +687,7 @@ const transformAreaRoleDataToScopedPermissionsSets = (
   const permissionSetObject: PermissionSetObject = areaPermissions.reduce((accu, { item, uiPermissions }) => {
     // if permission area is release and item is release tag (not all releases) then exclude upload permission as it cannot be applied to tags
 
-    const skipPermissions = scopedPermissionAreas.releases.key === area && item !== ALL_RELEASES ? [uiPermissionsById.upload.value] : [];
+    const skipPermissions = scopedPermissionAreas.releases.key === area && item !== ALL_SOFTWARE ? [uiPermissionsById.upload.value] : [];
     const impliedPermissions = deriveImpliedAreaPermissions(area, uiPermissions, skipPermissions);
     accu = impliedPermissions.reduce((itemPermissionAccu, impliedPermission): PermissionSetObject => {
       const permissionSetState = itemPermissionAccu[uiPermissionsById[impliedPermission].permissionSets[area]] ?? {

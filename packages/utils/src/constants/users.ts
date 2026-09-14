@@ -17,7 +17,7 @@ import type { PermissionSet as BackendPermissionSet, Role as BackendRole, RoleV1
 
 import { useradmApiUrlv1 } from './api';
 import { ALL_DEVICES } from './devices';
-import { ALL_RELEASES } from './releases';
+import { ALL_SOFTWARE } from './releases';
 
 export type ReadPermission = 'read';
 export type ManagePermission = 'manage';
@@ -199,7 +199,7 @@ export type PermissionObject = (typeof uiPermissionsById)[UiPermissionsByIdKey];
 
 export const scopedPermissionAreas = {
   groups: { key: 'groups', excessiveAccessSelector: ALL_DEVICES, scopeType: 'DeviceGroups' },
-  releases: { key: 'releases', excessiveAccessSelector: ALL_RELEASES, scopeType: 'Releases' }
+  releases: { key: 'releases', excessiveAccessSelector: ALL_SOFTWARE, scopeType: 'Releases' }
 } as const;
 export type ScopedPermissionsByAreaKey = keyof typeof scopedPermissionAreas;
 
@@ -258,11 +258,12 @@ export const uiPermissionsByArea = {
         uiPermissions: [uiPermissionsById.read, uiPermissionsById.manage]
       }
     ],
-    explanation: 'Release permissions can be granted to allow artifact & release modifications, as well as the creation of new releases.',
+    explanation:
+      'Software permissions can be granted to allow modifications of existing releases and manifests, as well as the creation of new releases and manifests.',
     key: 'releases',
     scope: 'ReleaseTags',
     uiPermissions: [uiPermissionsById.read, uiPermissionsById.manage, uiPermissionsById.upload],
-    title: 'Release Management'
+    title: 'Software Management'
   },
   tenantManagement: {
     endpoints: [
@@ -304,7 +305,7 @@ export const rolesById: Record<string, Role> = Object.freeze({
       auditlog: uiPermissionsByArea.auditlog.uiPermissions.map(permissionMapper),
       deployments: uiPermissionsByArea.deployments.uiPermissions.map(permissionMapper),
       groups: { [ALL_DEVICES]: uiPermissionsByArea.groups.uiPermissions.map(permissionMapper) },
-      releases: { [ALL_RELEASES]: uiPermissionsByArea.releases.uiPermissions.map(permissionMapper) },
+      releases: { [ALL_SOFTWARE]: uiPermissionsByArea.releases.uiPermissions.map(permissionMapper) },
       userManagement: uiPermissionsByArea.userManagement.uiPermissions.map(permissionMapper)
     }
   },
@@ -318,19 +319,19 @@ export const rolesById: Record<string, Role> = Object.freeze({
       ...emptyUiPermissions,
       deployments: [uiPermissionsById.read.value],
       groups: { [ALL_DEVICES]: [uiPermissionsById.read.value] },
-      releases: { [ALL_RELEASES]: [uiPermissionsById.read.value] },
+      releases: { [ALL_SOFTWARE]: [uiPermissionsById.read.value] },
       userManagement: [uiPermissionsById.read.value]
     }
   },
   [staticRolesByName.ci]: {
-    name: 'Releases Manager',
+    name: 'Software Manager',
     value: staticRolesByName.ci,
     description:
-      'Intended for automation accounts building software (e.g. CI/CD systems), this role can only manage Artifacts, including upload new Artifacts and delete Artifacts. It does not have access to Devices or Deployments.',
+      'Intended for automation accounts building software (e.g. CI/CD systems), this role can only manage existing Releases and Manifests, including the creation of new Releases and Manifests. It does not have access to Devices or Deployments.',
     permissions: [],
     uiPermissions: {
       ...emptyUiPermissions,
-      releases: { [ALL_RELEASES]: uiPermissionsByArea.releases.uiPermissions.map(permissionMapper) }
+      releases: { [ALL_SOFTWARE]: uiPermissionsByArea.releases.uiPermissions.map(permissionMapper) }
     }
   },
   [staticRolesByName.deploymentsManager]: {
@@ -342,7 +343,7 @@ export const rolesById: Record<string, Role> = Object.freeze({
       ...emptyUiPermissions,
       deployments: uiPermissionsByArea.deployments.uiPermissions.map(permissionMapper),
       groups: { [ALL_DEVICES]: [uiPermissionsById.deploy.value, uiPermissionsById.read.value] },
-      releases: { [ALL_RELEASES]: [uiPermissionsById.read.value] }
+      releases: { [ALL_SOFTWARE]: [uiPermissionsById.read.value] }
     }
   },
   [staticRolesByName.terminalAccess]: {
@@ -413,7 +414,7 @@ export const defaultPermissionSets: Record<string, Omit<PermissionSet, 'permissi
   [permissionSetIds.ReadReleases]: {
     name: permissionSetIds.ReadReleases,
     result: {
-      releases: { [ALL_RELEASES]: [uiPermissionsById.read.value] }
+      releases: { [ALL_SOFTWARE]: [uiPermissionsById.read.value] }
     }
   },
   [permissionSetIds.ReadTenants]: {
@@ -437,13 +438,13 @@ export const defaultPermissionSets: Record<string, Omit<PermissionSet, 'permissi
   [permissionSetIds.UploadArtifacts]: {
     name: permissionSetIds.UploadArtifacts,
     result: {
-      releases: { [ALL_RELEASES]: [uiPermissionsById.upload.value] }
+      releases: { [ALL_SOFTWARE]: [uiPermissionsById.upload.value] }
     }
   },
   [permissionSetIds.ManageReleases]: {
     name: permissionSetIds.ManageReleases,
     result: {
-      releases: { [ALL_RELEASES]: [uiPermissionsById.manage.value] }
+      releases: { [ALL_SOFTWARE]: [uiPermissionsById.manage.value] }
     }
   },
   [permissionSetIds.ConfigureDevices]: {
