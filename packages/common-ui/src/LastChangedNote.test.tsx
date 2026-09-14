@@ -13,6 +13,7 @@
 //    limitations under the License.
 import { defaultState, render } from '@/testUtils';
 import { undefineds } from '@northern.tech/testing/mockData';
+import { describe, expect, it } from 'vitest';
 
 import { LastChangedNote } from './LastChangedNote';
 
