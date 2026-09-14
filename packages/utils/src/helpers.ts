@@ -43,22 +43,6 @@ export const yes = function () {
 
 export const canAccess = yes;
 
-export const versionCompare = (v1, v2) => {
-  const partsV1 = `${v1}`.split('.');
-  const partsV2 = `${v2}`.split('.');
-  for (let index = 0; index < partsV1.length; index++) {
-    const numberV1 = partsV1[index];
-    const numberV2 = partsV2[index];
-    if (numberV1 > numberV2) {
-      return 1;
-    }
-    if (numberV2 > numberV1) {
-      return -1;
-    }
-  }
-  return 0;
-};
-
 /*
  *
  * Deep compare
