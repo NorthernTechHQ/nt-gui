@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { versionCompare } from '@northern.tech/utils/helpers';
 import { createSelector } from '@reduxjs/toolkit';
 
 import type { RootState } from '../store';
@@ -36,4 +35,4 @@ export const getAppInitDone = (state: RootState) => state.app.appInitDone;
 export const getIsUploading = createSelector([getUploads], uploadsById => !!Object.keys(uploadsById).length);
 export const getSearchedDevices = createSelector([getSearchState], ({ deviceIds }) => deviceIds);
 
-export const getIsPreview = createSelector([getVersionInformation], ({ version }) => versionCompare(version, 'next') > -1);
+export const getIsPreview = createSelector([getVersionInformation], ({ version }) => version === 'next');

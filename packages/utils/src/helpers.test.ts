@@ -29,8 +29,7 @@ import {
   preformatWithRequestID,
   standardizePhases,
   stringToBoolean,
-  unionizeStrings,
-  versionCompare
+  unionizeStrings
 } from './helpers';
 
 const deploymentCreationTime = '2019-01-01T12:30:00.000Z';
@@ -87,16 +86,6 @@ describe('stringToBoolean function', () => {
     expect(stringToBoolean(false)).toEqual(false);
     expect(stringToBoolean('no')).toEqual(false);
     expect(stringToBoolean('FALSE')).toEqual(false);
-  });
-});
-
-describe('versionCompare function', () => {
-  it('should work as intended', async () => {
-    expect(versionCompare('2.5.1', '2.6.0').toString()).toEqual('-1');
-    expect(versionCompare('2.6.0', '2.6.0').toString()).toEqual('0');
-    expect(versionCompare('2.6.x', '2.6.0').toString()).toEqual('1');
-    expect(versionCompare('next', '2.6').toString()).toEqual('1');
-    expect(versionCompare('', '2.6.0').toString()).toEqual('-1');
   });
 });
 
