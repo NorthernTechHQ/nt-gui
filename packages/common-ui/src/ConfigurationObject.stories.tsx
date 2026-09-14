@@ -13,20 +13,20 @@
 //    limitations under the License.
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { ConfigurationObject, TwoColumnData, TwoColumnDataMultiple, TwoColumns } from './ConfigurationObject';
+import { TwoColumnData, TwoColumnDataMultiple, TwoColumns } from './ConfigurationObject';
 
-const meta: Meta<typeof ConfigurationObject> = {
+const meta: Meta<typeof TwoColumnData> = {
   title: 'common-ui/ConfigurationObject',
-  component: ConfigurationObject,
+  component: TwoColumnData,
   includeStories: ['Primary', 'Secondary', 'Tertiary', 'TheForth']
 };
 
 export default meta;
 
-type Story = StoryObj<typeof ConfigurationObject>;
+type Story = StoryObj<typeof TwoColumnData>;
 
 export const Primary: Story = {
-  render: props => <ConfigurationObject {...props} />,
+  render: props => <TwoColumnData {...props} />,
   name: 'ConfigurationObject',
   args: {
     config: { foo: 'bar', asd: 123, someBool: true, anything: 'else' },
@@ -52,7 +52,7 @@ export const Secondary: SecondaryStory = {
       even: 'more',
       alsoSomethingSomewhatLonger: `with some somewhat longer content to show things, let's repeat: with some somewhat longer content to show things`,
       and: 'now',
-      this: true
+      this: 'true'
     },
     className: '',
     children: undefined,
@@ -75,7 +75,7 @@ export const Tertiary: TertiaryStory = {
       even: 'more',
       alsoSomethingSomewhatLonger: `with some somewhat longer content to show things, let's repeat: with some somewhat longer content to show things`,
       and: 'now',
-      this: true
+      this: 'true'
     },
     className: '',
     children: undefined,
@@ -98,7 +98,7 @@ export const TheForth: TheFortheStory = {
       even: 'more',
       alsoSomethingSomewhatLonger: `with some somewhat longer content to show things, let's repeat: with some somewhat longer content to show things`,
       and: 'now',
-      this: true
+      this: 'true'
     },
     className: '',
     children: undefined,

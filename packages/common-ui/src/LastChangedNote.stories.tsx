@@ -1,4 +1,4 @@
-// Copyright 2025 Northern.tech AS
+// Copyright 2026 Northern.tech AS
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -13,39 +13,39 @@
 //    limitations under the License.
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { InfoText } from './InfoText';
+import { LastChangedNote } from './LastChangedNote';
 
-const meta: Meta<typeof InfoText> = {
-  title: 'common-ui/InfoText',
-  component: InfoText,
-  argTypes: {
-    variant: {
-      control: { type: 'radio' },
-      options: [undefined, 'dense']
-    }
-  }
+const meta: Meta<typeof LastChangedNote> = {
+  component: LastChangedNote,
+  title: 'common-ui/LastChangedNote'
 };
 
 export default meta;
 
-type Story = StoryObj<typeof InfoText>;
+type Story = StoryObj<typeof LastChangedNote>;
+
+const updateTime = '2025-06-02 12:34:56';
 
 export const Primary: Story = {
-  render: props => <InfoText {...props} />,
-  name: 'InfoText',
+  name: 'LastChangedNote',
   args: {
-    children: 'some info here',
-    variant: 'dense',
-    style: {}
+    isOffline: false,
+    updateTime
   }
 };
 
-export const Paragraph: Story = {
-  render: props => <InfoText {...props} />,
-  name: 'Paragraph',
+export const Offline: Story = {
+  name: 'Offline',
   args: {
-    children: 'Devices that have not communicated with the server within the configured interval are considered offline.',
-    variant: undefined,
-    className: ''
+    isOffline: true,
+    updateTime
+  }
+};
+
+export const Unknown: Story = {
+  name: 'Without update time',
+  args: {
+    isOffline: false,
+    updateTime: undefined
   }
 };

@@ -19,6 +19,10 @@ const meta: Meta<typeof Alert> = {
   component: Alert,
   title: 'common-ui/Alert',
   argTypes: {
+    severity: {
+      control: { type: 'radio' },
+      options: ['error', 'info', 'success', 'warning']
+    },
     children: {
       options: [
         'Text',
@@ -47,5 +51,37 @@ export const Primary: Story = {
     style: {
       border: '1px solid gray'
     }
+  }
+};
+
+export const Info: Story = {
+  name: 'Info',
+  args: {
+    children: 'The device will contact the server again shortly.',
+    severity: 'info'
+  }
+};
+
+export const Success: Story = {
+  name: 'Success',
+  args: {
+    children: 'The deployment was created successfully.',
+    severity: 'success'
+  }
+};
+
+export const Warning: Story = {
+  name: 'Warning',
+  args: {
+    children: 'This device has not reported in more than 30 days.',
+    severity: 'warning'
+  }
+};
+
+export const Error: Story = {
+  name: 'Error',
+  args: {
+    children: 'The artifact could not be uploaded, please try again.',
+    severity: 'error'
   }
 };

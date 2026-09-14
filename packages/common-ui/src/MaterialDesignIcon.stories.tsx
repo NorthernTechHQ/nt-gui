@@ -43,3 +43,18 @@ export const Primary: Story = {
     style: { fontSize: 48 }
   }
 };
+
+export const Large: Story = {
+  name: 'Large',
+  args: {
+    path: 'home',
+    fontSize: 'large'
+  }
+};
+
+export const Fallback: Story = {
+  name: 'Fallback',
+  args: {
+    style: { fontSize: 48 }
+  }
+};

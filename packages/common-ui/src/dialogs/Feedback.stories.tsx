@@ -13,8 +13,8 @@
 //    limitations under the License.
 import { Provider } from 'react-redux';
 
+import { defaultState as preloadedState } from '@/testUtils';
 import { getConfiguredStore } from '@northern.tech/store/store';
-import { mockApiResponses as defaultState } from '@northern.tech/testing/mockData';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { FeedbackDialog } from './Feedback';
@@ -32,7 +32,7 @@ export const Primary: Story = {
   name: 'Feedback',
   decorators: [
     Story => {
-      const store = getConfiguredStore({ preloadedState: defaultState });
+      const store = getConfiguredStore({ preloadedState });
       return (
         <Provider store={store}>
           <Story />

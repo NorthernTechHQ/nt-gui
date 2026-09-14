@@ -11,17 +11,17 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { useForm } from 'react-hook-form';
-
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Form } from './Form';
+import type { TextInputProps } from './TextInput';
 import { TextInput } from './TextInput';
 
-const TextInputWrapper = (props: any) => {
-  const { control } = useForm({ defaultValues: { username: '' } });
-  return <TextInput control={control} {...props} />;
-};
+const renderInput = (args: TextInputProps, initialValue = '') => (
+  <Form defaultValues={{ [args.id]: initialValue }} onSubmit={() => {}}>
+    <TextInput {...args} />
+  </Form>
+);
 
 const meta: Meta<typeof TextInput> = {
   component: TextInput,
@@ -34,18 +34,73 @@ type Story = StoryObj<typeof TextInput>;
 
 export const Primary: Story = {
   name: 'TextInput',
-  render: args => (
-    <Form defaultValues={{ username: '' }} onSubmit={() => {}}>
-      <TextInputWrapper {...args} />
-    </Form>
-  ),
+  render: args => renderInput(args),
   args: {
+    autocomplete: 'email',
+    hint: 'user@example.com',
     id: 'email',
     label: 'Email',
-    hint: 'Enter your email or toggle the `required` switch',
-    disabled: false,
     required: true,
     type: 'email',
     validations: 'isEmail'
+  }
+};
+
+export const WithHelperText: Story = {
+  name: 'With Helper Text',
+  render: args => renderInput(args),
+  args: {
+    ...Primary.args,
+    helperText: 'We will only use this address to contact you about your account'
+  }
+};
+
+export const WithValue: Story = {
+  name: 'With Value',
+  render: args => renderInput(args, 'production gateway'),
+  args: {
+    hint: 'e.g. production gateway',
+    id: 'device_name',
+    label: 'Device name',
+    validations: 'isLength:3,trim'
+  }
+};
+
+export const WithRules: Story = {
+  name: 'With Additional Rules',
+  render: args => renderInput(args),
+  args: {
+    id: 'device_name',
+    label: 'Device name',
+    required: true,
+    rules: { maxLength: { message: 'The name may not exceed 32 characters', value: 32 } }
+  }
+};
+
+export const Disabled: Story = {
+  name: 'Disabled',
+  render: args => renderInput(args, 'immutable-value'),
+  args: {
+    disabled: true,
+    id: 'tenant_token',
+    label: 'Tenant token'
+  }
+};
+
+export const FullWidth: Story = {
+  name: 'Full Width',
+  render: args => renderInput(args),
+  args: {
+    ...Primary.args,
+    width: '100%'
+  }
+};
+
+export const RequiredWithoutIndicator: Story = {
+  name: 'Required Without Indicator',
+  render: args => renderInput(args),
+  args: {
+    ...Primary.args,
+    requiredRendered: false
   }
 };

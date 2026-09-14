@@ -1,4 +1,4 @@
-// Copyright 2025 Northern.tech AS
+// Copyright 2026 Northern.tech AS
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -13,39 +13,41 @@
 //    limitations under the License.
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { InfoText } from './InfoText';
+import { EditableNameInput } from './EditableNameInput';
 
-const meta: Meta<typeof InfoText> = {
-  title: 'common-ui/InfoText',
-  component: InfoText,
-  argTypes: {
-    variant: {
-      control: { type: 'radio' },
-      options: [undefined, 'dense']
-    }
-  }
+const meta: Meta<typeof EditableNameInput> = {
+  component: EditableNameInput,
+  title: 'common-ui/EditableNameInput'
 };
 
 export default meta;
 
-type Story = StoryObj<typeof InfoText>;
+type Story = StoryObj<typeof EditableNameInput>;
 
 export const Primary: Story = {
-  render: props => <InfoText {...props} />,
-  name: 'InfoText',
+  render: props => <EditableNameInput {...props} />,
+  name: 'EditableNameInput',
   args: {
-    children: 'some info here',
-    variant: 'dense',
-    style: {}
+    id: 'device-name',
+    isHovered: true,
+    name: 'raspberrypi-in-the-office',
+    onSave: async (value: string) => console.log(`saving ${value}`),
+    placeholder: 'Name this device'
   }
 };
 
-export const Paragraph: Story = {
-  render: props => <InfoText {...props} />,
-  name: 'Paragraph',
+export const NotHovered: Story = {
+  name: 'Without Hover',
   args: {
-    children: 'Devices that have not communicated with the server within the configured interval are considered offline.',
-    variant: undefined,
-    className: ''
+    ...Primary.args,
+    isHovered: false
+  }
+};
+
+export const Empty: Story = {
+  name: 'Empty',
+  args: {
+    ...Primary.args,
+    name: ''
   }
 };

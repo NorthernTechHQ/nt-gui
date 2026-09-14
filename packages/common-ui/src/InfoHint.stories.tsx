@@ -12,10 +12,11 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router';
 
+import { defaultState as preloadedState } from '@/testUtils';
 import { BENEFITS } from '@northern.tech/store/constants';
 import { getConfiguredStore } from '@northern.tech/store/store';
-import { mockApiResponses as defaultState } from '@northern.tech/testing/mockData';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { DOCSTIPS, DocsTooltip } from './DocsLink';
@@ -25,7 +26,7 @@ import { InfoHint, InfoHintContainer } from './InfoHint';
 const meta: Meta<typeof InfoHint> = {
   title: 'common-ui/InfoHint',
   component: InfoHint,
-  includeStories: ['Primary', 'Secondary'],
+  includeStories: ['Primary', 'Dense', 'Secondary'],
   argTypes: {
     content: {
       control: { type: 'radio' },
@@ -50,21 +51,33 @@ export const Primary: Story = {
   }
 };
 
+export const Dense: Story = {
+  render: props => <InfoHint {...props} />,
+  name: 'Dense',
+  args: {
+    content: 'something very helpful getting hinted at here',
+    variant: 'dense',
+    className: ''
+  }
+};
+
 type StorySecondary = StoryObj<typeof InfoHintContainer>;
 
 export const Secondary: StorySecondary = {
   render: props => (
     <InfoHintContainer {...props}>
-      <EnterpriseNotification id={BENEFITS.retryDeployments.id} />
+      <EnterpriseNotification id={BENEFITS.retryDeployments.id} size="small" />
       <DocsTooltip id={DOCSTIPS.phasedDeployments.id} />
     </InfoHintContainer>
   ),
   decorators: [
     Story => {
-      const store = getConfiguredStore({ preloadedState: defaultState });
+      const store = getConfiguredStore({ preloadedState });
       return (
         <Provider store={store}>
-          <Story />
+          <BrowserRouter>
+            <Story />
+          </BrowserRouter>
         </Provider>
       );
     }
