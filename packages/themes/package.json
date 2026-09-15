@@ -36,7 +36,7 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch --onSuccess 'yalc publish --no-script --push'",
-    "lint": "eslint src/**/*.{js,ts} *.{js,ts}"
+    "lint": "eslint src/**/*.ts"
   },
   "type": "module",
   "sideEffects": false,
