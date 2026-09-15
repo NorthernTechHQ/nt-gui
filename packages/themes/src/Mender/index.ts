@@ -14,6 +14,5 @@
 
 // to trigger types import
 export type { DummyType } from '../common';
-export { chartColorPalette } from '../Mender/common';
 export { dark } from './dark';
 export { light } from './light';
