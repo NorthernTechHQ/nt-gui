@@ -1,5 +1,30 @@
 ---
-## 0.46.1 - 2026-09-03
+## 0.46.2 - 2026-09-15
+
+
+
+### Bug fixes
+
+#### store
+
+- Repair webhook pagination workaround ([MEN-9331](https://northerntech.atlassian.net/browse/MEN-9331)) ([caa0292](https://github.com/NorthernTechHQ/nt-gui/commit/caa0292dbd35dc2b6c19c6a3bdbc0f9d8f466a83)) by @mineralsfree
+- Aligned more inclusive release/ software selector in rbac logic ([d506a13](https://github.com/NorthernTechHQ/nt-gui/commit/d506a13212412df5088ef8f93efa92fb03a88c55)) by @mzedel
+- Simplified preview check to no longer consider specific release previews ([6ae35f5](https://github.com/NorthernTechHQ/nt-gui/commit/6ae35f5936e2af90fc75621487dc802cc44aa01b)) by @mzedel
+- Allow retrieving events by webhook id ([MEN-9331](https://northerntech.atlassian.net/browse/MEN-9331)) ([944ea4a](https://github.com/NorthernTechHQ/nt-gui/commit/944ea4a6c2b953cbf0489f34ffc7e4aa24b02af5)) by @mineralsfree
+
+### Dependency updates
+
+
+- Bump the npm_and_yarn group across 1 directory with 8 updates ([2109504](https://github.com/NorthernTechHQ/nt-gui/commit/2109504d90f3a92b89c6ab8a2beeadc74e3e6856)) by @dependabot[bot]
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-9331](https://northerntech.atlassian.net/browse/MEN-9331) |
+
+## @northern.tech/store-0.46.1 - 2026-09-03
 
 
 
