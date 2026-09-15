@@ -19,8 +19,8 @@ import Loader from './Loader';
 
 describe('Loader Component', () => {
   it('renders correctly', async () => {
-    const { baseElement } = render(<Loader />);
-    const view = baseElement.firstChild.firstChild;
+    const { baseElement } = render(<Loader show={false} />);
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });

@@ -20,7 +20,7 @@ import { LastChangedNote } from './LastChangedNote';
 describe('LastChangedNote Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = render(<LastChangedNote updateTime={defaultState.devices.byId.a1.updated_ts} />);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });

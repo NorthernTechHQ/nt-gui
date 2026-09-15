@@ -32,12 +32,12 @@ const defaultProps = {
   placeholder: 'Choose...'
 };
 
-const formConfig = { mode: 'onChange', defaultValues: { items: [] } };
+const formConfig = { mode: 'onChange' as const, defaultValues: { items: [] } };
 
 describe('CheckboxAutocomplete Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = render(<CheckboxAutocomplete {...defaultProps} onChange={vi.fn()} />);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });
@@ -70,7 +70,7 @@ describe('CheckboxAutocomplete Component', () => {
 describe('ControlledCheckboxAutocomplete Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = formRenderWrapper(<ControlledCheckboxAutocomplete {...defaultProps} name="items" />, formConfig);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });

@@ -11,35 +11,44 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { FieldValues, Path } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 
 import { Checkbox, FormControl, FormHelperText, InputLabel, MenuItem, Select } from '@mui/material';
 
+import type { AddonId } from '@northern.tech/store/constants';
 import { ADDONS } from '@northern.tech/store/constants';
 
-export const AddonSelect = ({ name }: { name: string }) => (
-  <Controller
+export interface AddonSelectProps<TFieldValues extends FieldValues = FieldValues> {
+  name: Path<TFieldValues>;
+}
+
+export const AddonSelect = <TFieldValues extends FieldValues = FieldValues>({ name }: AddonSelectProps<TFieldValues>) => (
+  <Controller<TFieldValues>
     name={name}
-    render={({ field: { value, onChange } }) => (
-      <FormControl id="addons-form" style={{ width: 550 }}>
-        <InputLabel id="addons-selection-label">Select Add-ons (optional)</InputLabel>
-        <Select
-          multiple
-          label="Select Add-ons (optional)"
-          labelId="addons-selection-label"
-          value={value}
-          onChange={({ target: { value: addons } }) => onChange(addons)}
-          renderValue={selected => selected.map(addonId => `Mender ${ADDONS[addonId].title}`).join(', ')}
-        >
-          {Object.values(ADDONS).map(addon => (
-            <MenuItem id={addon.id} key={addon.id} value={addon.id}>
-              <Checkbox id={`${addon.id}-checkbox`} checked={value.includes(addon.id)} />
-              Mender {addon.title}
-            </MenuItem>
-          ))}
-        </Select>
-        <FormHelperText className="info">Select any Add-ons you are interested in including in your subscription</FormHelperText>
-      </FormControl>
-    )}
+    render={({ field: { value, onChange } }) => {
+      const selectedAddons: AddonId[] = value ?? [];
+      return (
+        <FormControl id="addons-form" style={{ width: 550 }}>
+          <InputLabel id="addons-selection-label">Select Add-ons (optional)</InputLabel>
+          <Select<AddonId[]>
+            multiple
+            label="Select Add-ons (optional)"
+            labelId="addons-selection-label"
+            value={selectedAddons}
+            onChange={({ target: { value: addons } }) => onChange(addons)}
+            renderValue={selected => selected.map(addonId => `Mender ${ADDONS[addonId].title}`).join(', ')}
+          >
+            {Object.values(ADDONS).map(addon => (
+              <MenuItem id={addon.id} key={addon.id} value={addon.id}>
+                <Checkbox id={`${addon.id}-checkbox`} checked={selectedAddons.includes(addon.id as AddonId)} />
+                Mender {addon.title}
+              </MenuItem>
+            ))}
+          </Select>
+          <FormHelperText className="info">Select any Add-ons you are interested in including in your subscription</FormHelperText>
+        </FormControl>
+      );
+    }}
   />
 );

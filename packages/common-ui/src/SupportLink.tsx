@@ -21,7 +21,12 @@ const variants = {
   us: 'contact us'
 };
 
-export const SupportLink = ({ className = '', variant }: { className?: string; variant: keyof typeof variants | string }) => (
+export interface SupportLinkProps {
+  className?: string;
+  variant: keyof typeof variants | string;
+}
+
+export const SupportLink = ({ className = '', variant }: SupportLinkProps) => (
   <Link className={className} href="mailto:support@mender.io" external>
     {variants[variant] ?? variant}
   </Link>

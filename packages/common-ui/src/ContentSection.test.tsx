@@ -21,7 +21,7 @@ import { ContentSection } from './ContentSection';
 describe('ContentSection Component', () => {
   it('renders correctly with string title', async () => {
     const { baseElement } = render(<ContentSection title="Device Identity">Content here</ContentSection>);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });
@@ -32,7 +32,7 @@ describe('ContentSection Component', () => {
         Content here
       </ContentSection>
     );
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
     expect(screen.getByText('Online')).toBeInTheDocument();

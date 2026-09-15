@@ -11,7 +11,9 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { Ref } from 'react';
 import { useState } from 'react';
+import type { ControllerProps, FieldValues, Path } from 'react-hook-form';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { Cancel as CancelIcon } from '@mui/icons-material';
@@ -21,7 +23,23 @@ import { duplicateFilter, unionizeStrings } from '@northern.tech/utils/helpers';
 
 import { TruncatedTagList } from './helpers';
 
-export const ChipSelect = ({
+type SelectionSetter = (selection: string[]) => void;
+
+export interface ChipSelectProps<TFieldValues extends FieldValues = FieldValues> {
+  chipDisplay?: boolean;
+  className?: string;
+  disabled?: boolean;
+  forcePopupIcon?: boolean;
+  helperText?: string;
+  inputRef?: Ref<HTMLInputElement>;
+  label?: string;
+  name: Path<TFieldValues>;
+  options?: string[];
+  placeholder?: string;
+  rules?: ControllerProps<TFieldValues>['rules'];
+}
+
+export const ChipSelect = <TFieldValues extends FieldValues = FieldValues>({
   chipDisplay = true,
   className = '',
   name,
@@ -33,14 +51,14 @@ export const ChipSelect = ({
   options = [],
   placeholder = '',
   rules
-}) => {
+}: ChipSelectProps<TFieldValues>) => {
   const [value, setValue] = useState('');
 
-  const { control, getValues } = useFormContext();
+  const { control, getValues } = useFormContext<TFieldValues>();
 
   // to allow device types to automatically be selected on entered ',' we have to filter the input and transform any completed device types (followed by a ',')
   // while also checking for duplicates and allowing complete resets of the input
-  const onTextInputChange = (inputValue, reason, setCurrentSelection) => {
+  const onTextInputChange = (inputValue: string | null, reason: string, setCurrentSelection: SelectionSetter) => {
     const value = inputValue || '';
     if (reason === 'clear') {
       setValue('');
@@ -53,15 +71,15 @@ export const ChipSelect = ({
     const tagWorthyValues = commaSeparatedValues.flatMap(potentialTag => potentialTag.trim().split(/\s+/)).filter(Boolean);
     const possibleSelection = tagWorthyValues.filter(duplicateFilter);
     const currentValue = value.substring(lastIndex + 1);
-    const selection = getValues(name);
+    const selection: string[] = getValues(name) ?? [];
     const nextSelection = unionizeStrings(selection, possibleSelection);
     setValue(currentValue);
     setCurrentSelection(nextSelection);
   };
 
-  const onTextInputLeave = (value, setCurrentSelection) => {
-    const selection = getValues(name);
-    const nextSelection = unionizeStrings(selection, [].concat(value.trim().split(/\s+/)).filter(Boolean));
+  const onTextInputLeave = (value: string, setCurrentSelection: SelectionSetter) => {
+    const selection: string[] = getValues(name) ?? [];
+    const nextSelection = unionizeStrings(selection, value.trim().split(/\s+/).filter(Boolean));
     setCurrentSelection(nextSelection);
     setValue('');
   };
@@ -75,14 +93,14 @@ export const ChipSelect = ({
         <Autocomplete
           autoSelect={false}
           id={`${name}-chip-select`}
-          value={currentSelection}
+          value={currentSelection ?? []}
           className={className}
           filterSelectedOptions
           forcePopupIcon={forcePopupIcon}
           freeSolo={true}
           includeInputInList={true}
           multiple
-          onChange={(e, value) => (!chipDisplay || e.key !== 'Backspace' ? formOnChange(value) : null)}
+          onChange={(e, value) => (!chipDisplay || (e as unknown as KeyboardEvent).key !== 'Backspace' ? formOnChange(value) : null)}
           onInputChange={(e, v, reason) => onTextInputChange(null, reason, formOnChange)}
           options={options}
           readOnly={disabled}
@@ -120,7 +138,7 @@ export const ChipSelect = ({
               variant={disabled ? 'standard' : 'outlined'}
               onBlur={e => onTextInputLeave(e.target.value, formOnChange)}
               onChange={e => onTextInputChange(e.target.value, 'input', formOnChange)}
-              placeholder={currentSelection.length ? '' : placeholder}
+              placeholder={currentSelection?.length ? '' : placeholder}
               error={!!error?.message}
               helperText={error?.message || helperText}
               inputRef={inputRef}

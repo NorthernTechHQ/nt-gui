@@ -79,7 +79,7 @@ export const CheckboxAutocomplete = <T,>({
                 const { key, ...tagProps } = getItemProps({ index });
                 return <Chip key={key} label={typeof option === 'string' ? option : option[labelAttribute]} size="small" {...tagProps} />;
               })
-          : values => <TruncatedTagList labelAttribute={labelAttribute} values={values} />
+          : values => <TruncatedTagList labelAttribute={labelAttribute} values={values as (string | Record<string, string>)[]} />
       }
       renderInput={params => <TextField {...params} label={label} placeholder={value?.length ? '' : placeholder} inputRef={inputRef} />}
       slotProps={{ listbox: { style: { maxHeight: listboxMaxHeight } } }}

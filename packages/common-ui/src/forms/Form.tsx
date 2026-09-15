@@ -11,9 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { ReactNode, RefObject } from 'react';
 import { useEffect } from 'react';
+import type { FieldValues, Mode } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 
+import type { ButtonProps } from '@mui/material';
 import { Button } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
@@ -21,6 +24,24 @@ const useStyles = makeStyles()(theme => ({
   buttonWrapper: { display: 'flex', justifyContent: 'flex-end', height: 'min-content', marginTop: theme.spacing(4) },
   cancelButton: { marginRight: theme.spacing() }
 }));
+
+export interface FormProps {
+  autocomplete?: string;
+  buttonColor?: ButtonProps['color'];
+  children: ReactNode;
+  classes?: { buttonWrapper?: string; cancelButton?: string };
+  className?: string;
+  defaultValues?: FieldValues;
+  handleCancel?: () => void;
+  id?: string;
+  initialValues?: FieldValues;
+  onSubmit: (data: FieldValues) => void | Promise<void>;
+  resetOnSubmit?: boolean;
+  showButtons?: boolean;
+  submitLabel?: ReactNode;
+  submitRef?: RefObject<(() => Promise<void>) | undefined>;
+  validationMode?: Mode;
+}
 
 export const Form = ({
   autocomplete,
@@ -38,7 +59,7 @@ export const Form = ({
   submitLabel,
   submitRef,
   validationMode = 'onChange'
-}) => {
+}: FormProps) => {
   const { classes: internalClasses } = useStyles();
   const methods = useForm({ mode: validationMode, defaultValues });
   const {
@@ -57,7 +78,7 @@ export const Form = ({
     Object.entries(initialValues).forEach(([key, value]) => setValue(key, value));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(initialValues), setValue]);
-  const handleFormSubmit = async data => {
+  const handleFormSubmit = async (data: FieldValues) => {
     await onSubmit(data);
     if (resetOnSubmit) {
       reset();

@@ -20,21 +20,16 @@ const useStyles = makeStyles()(() => ({
   root: { maxWidth: 550 }
 }));
 
-export const ToggleSetting = ({
-  className = '',
-  description,
-  disabled = false,
-  title,
-  onClick,
-  value
-}: {
+export interface ToggleSettingProps {
   className?: string;
   description?: string;
   disabled?: boolean;
   onClick: () => void;
   title: string | ReactNode;
   value: boolean;
-}) => {
+}
+
+export const ToggleSetting = ({ className = '', description, disabled = false, title, onClick, value }: ToggleSettingProps) => {
   const { classes } = useStyles();
   return (
     <div className={`flexbox column ${classes.root} ${className}`}>

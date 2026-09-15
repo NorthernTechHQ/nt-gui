@@ -22,14 +22,14 @@ import { ColumnWidthProvider, SynchronizedTwoColumnData, TwoColumnData } from '.
 describe('TwoColumnData Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = render(<TwoColumnData data={{ uiPasswordRequired: true, foo: 'bar', timezone: 'GMT+2', multi: ['something', 'else'] }} />);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
     expect(screen.getByText('something, else')).toBeInTheDocument();
   });
   it('renders with chipLikeKey prop', async () => {
     const { baseElement } = render(<TwoColumnData chipLikeKey data={{ attribute: 'value', another: 'item' }} />);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(screen.getByText('attribute')).toBeInTheDocument();
     expect(screen.getByText('another')).toBeInTheDocument();

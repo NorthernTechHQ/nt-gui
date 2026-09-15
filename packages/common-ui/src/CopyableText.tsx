@@ -34,7 +34,7 @@ const useStyles = makeStyles()(theme => ({
   }
 }));
 
-interface CopyableTextProps {
+export interface CopyableTextProps {
   children: ReactNode;
   onCopy?: () => void;
   textClasses?: string;

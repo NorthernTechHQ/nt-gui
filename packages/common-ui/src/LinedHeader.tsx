@@ -11,8 +11,17 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { ReactNode, Ref } from 'react';
+
 import { Divider, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
+
+export interface LinedHeaderProps {
+  centered?: boolean;
+  className?: string;
+  heading: ReactNode;
+  ref?: Ref<HTMLDivElement>;
+}
 
 const useStyles = makeStyles()(theme => ({
   header: {
@@ -22,7 +31,7 @@ const useStyles = makeStyles()(theme => ({
   divider: { flex: 1 }
 }));
 
-const LinedHeader = ({ centered = false, className = '', heading, ref }) => {
+const LinedHeader = ({ centered = false, className = '', heading, ref }: LinedHeaderProps) => {
   const { classes } = useStyles();
   return (
     <div className={`flexbox margin-bottom-small ${classes.header} ${className}`} ref={ref}>

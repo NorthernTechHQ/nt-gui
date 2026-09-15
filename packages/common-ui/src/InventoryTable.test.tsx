@@ -28,7 +28,7 @@ const testConfig = {
 describe('InventoryTable Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = render(<InventoryTable config={testConfig} />);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });

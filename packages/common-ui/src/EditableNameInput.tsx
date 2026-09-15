@@ -11,8 +11,8 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { useEffect, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // material ui
 import { InputAdornment, OutlinedInput } from '@mui/material';
@@ -27,7 +27,7 @@ const useStyles = makeStyles()(theme => ({
   }
 }));
 
-interface EditableNameInputProps {
+export interface EditableNameInputProps {
   id: string;
   isHovered: boolean;
   name: string;
@@ -39,7 +39,7 @@ export const EditableNameInput = ({ id, name, placeholder, isHovered, onSave }: 
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(name);
   const { classes } = useStyles();
-  const inputRef = useRef<HTMLInputElement>();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!isEditing) {

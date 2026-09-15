@@ -38,8 +38,13 @@ const useStyles = makeStyles()(theme => ({
   }
 }));
 
-const ValueColumn = ({ setSnackbar, value = '' }: { setSnackbar?: (message: string) => void; value?: DataValue }) => {
-  const copyableValue = React.isValidElement(value) ? value.props.value : value;
+export interface ValueColumnProps {
+  setSnackbar?: (message: string) => void;
+  value?: DataValue;
+}
+
+const ValueColumn = ({ setSnackbar, value = '' }: ValueColumnProps) => {
+  const copyableValue = (React.isValidElement<{ value?: unknown }>(value) ? value.props.value : value) as string | undefined;
   const renderedValue = React.isValidElement(value) ? value : Array.isArray(value) ? value.join(', ') : value;
 
   if (!setSnackbar) {
@@ -47,7 +52,7 @@ const ValueColumn = ({ setSnackbar, value = '' }: { setSnackbar?: (message: stri
   }
 
   const onCopy = () => {
-    copy(copyableValue);
+    copy(copyableValue ?? '');
     setSnackbar('Value copied to clipboard');
   };
 
@@ -58,7 +63,7 @@ const ValueColumn = ({ setSnackbar, value = '' }: { setSnackbar?: (message: stri
   );
 };
 
-interface KeyColumnProps {
+export interface KeyColumnProps {
   chipLikeKey?: boolean;
   isTooWide?: boolean;
   setColumnWidth?: (width: number) => void;
@@ -75,6 +80,7 @@ const KeyColumn = ({ chipLikeKey, isTooWide, setColumnWidth, value }: KeyColumnP
     }
   }, [setColumnWidth, value]);
 
+  // eslint-disable-next-line react-hooks/refs
   const isMeasuringTooWide = isTooWide || (ref.current && ref.current.scrollWidth > contentWidth / 3);
 
   return chipLikeKey ? (
@@ -123,7 +129,13 @@ export const TwoColumnData = ({
   );
 };
 
-const ColumnWidthContext = createContext<{ columnWidth: number; isTooWide: boolean; setColumnWidth: (width: number) => void } | null>(null);
+interface ColumnWidthContextValue {
+  columnWidth: number;
+  isTooWide: boolean;
+  setColumnWidth: (width: number) => void;
+}
+
+const ColumnWidthContext = createContext<ColumnWidthContextValue | null>(null);
 
 export const ColumnWidthProvider = ({ children }: { children: ReactNode }) => {
   const [columnWidth, setColumnWidth] = useState<number>(0);

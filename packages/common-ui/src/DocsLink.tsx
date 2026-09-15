@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { ReactNode, Ref } from 'react';
+import type { CSSProperties, ReactNode, Ref } from 'react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -60,7 +60,13 @@ const useStyles = makeStyles()(theme => ({
   }
 }));
 
-export const DOCSTIPS = {
+export interface DocsTip {
+  content?: ReactNode;
+  id: string;
+  path: string;
+}
+
+const docsTips = {
   deltaArtifacts: { id: 'deltaArtifacts', path: 'artifact-creation/server-side-generation-of-delta-artifacts' },
   deviceConfig: { id: 'deviceConfig', path: 'add-ons/configure' },
   deviceIdentity: { id: 'deviceIdentity', path: 'client-installation/identity' },
@@ -76,7 +82,17 @@ export const DOCSTIPS = {
   webhookSecret: { id: 'webhookSecret', path: 'server-integration/webhooks#signature-header' }
 };
 
-export const DocsTooltip = ({ anchor = {}, id = '', ...props }) => {
+export type DocsTipId = keyof typeof docsTips;
+
+export const DOCSTIPS: Record<string, DocsTip> = docsTips;
+
+export interface DocsTooltipProps {
+  [key: string]: unknown;
+  anchor?: CSSProperties;
+  id?: string;
+}
+
+export const DocsTooltip = ({ anchor = {}, id = '', ...props }: DocsTooltipProps) => {
   const [isHovering, setIsHovering] = useState(false);
   const debouncedHovering = useDebounce(isHovering, TIMEOUTS.debounceDefault);
   const { classes } = useStyles();
@@ -124,10 +140,10 @@ export const DocsTooltip = ({ anchor = {}, id = '', ...props }) => {
 
 export const InlineLaunchIcon = () => <LaunchIcon style={{ verticalAlign: 'sub' }} fontSize="small" />;
 
-interface DocsTextLinkProps {
+export interface DocsTextLinkProps {
   [key: string]: unknown;
   children?: ReactNode;
-  id: keyof typeof DOCSTIPS;
+  id: DocsTipId;
   typographyProps?: Partial<TypographyProps>;
 }
 
@@ -147,7 +163,7 @@ export const DocsTextLink = ({ children, id, typographyProps = textLinkDefaultPr
   );
 };
 
-interface DocsLinkProps {
+export interface DocsLinkProps {
   [key: string]: unknown;
   children?: ReactNode;
   className?: string;

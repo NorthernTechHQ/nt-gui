@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { Ref } from 'react';
+import type { Ref, SyntheticEvent } from 'react';
 import { useEffect, useState } from 'react';
 import type { FieldValues, Path } from 'react-hook-form';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -67,7 +67,7 @@ export const AsyncAutocomplete = <T,>({
     onSearch(debouncedValue);
   }, [debouncedValue, onSearch]);
 
-  const onInputChange = (_e: React.SyntheticEvent | null, value: string, reason: string) => {
+  const onInputChange = (_e: SyntheticEvent | null, value: string, reason: string) => {
     if (reason === 'clear') {
       setInputValue('');
     } else if ((reason === 'reset' && !_e) || reason === 'blur') {

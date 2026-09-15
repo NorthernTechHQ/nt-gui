@@ -33,7 +33,7 @@ export type CommonTextInputProps = {
   width: number | string | null;
 };
 
-type TextInputProps = {
+export type TextInputProps = {
   controlRef?: RefObject<HTMLInputElement | null>;
   helperText?: string;
   hint?: string;
@@ -109,7 +109,7 @@ export const TextInput = ({
               value={value ?? passedValue}
               onChange={({ target: { value } }) => onChange(value)}
               onBlur={e => {
-                onBlur(e);
+                onBlur();
                 if (externalOnBlur) {
                   externalOnBlur(e);
                 }
@@ -118,7 +118,7 @@ export const TextInput = ({
               type={type}
               {...restInputProps}
             />
-            <FormHelperText>{(errors[errorKey] || error)?.message || helperText}</FormHelperText>
+            <FormHelperText>{((errors[errorKey] || error)?.message as string) || helperText}</FormHelperText>
           </FormControl>
         );
       }}

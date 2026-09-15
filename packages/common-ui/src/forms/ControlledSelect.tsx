@@ -24,6 +24,7 @@ interface ControlledSelectProps<T extends SelectOption = SelectOption> extends O
   getOptionDisabled?: (option: T) => boolean;
   hideEmptyOption?: boolean;
   labelAttribute?: string;
+  name: string;
   options?: T[];
   placeholder?: string;
   renderOption?: (option: T) => ReactNode;

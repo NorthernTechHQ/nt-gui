@@ -18,6 +18,7 @@ import { Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { makeStyles } from 'tss-react/mui';
 
+import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 
 const useStyles = makeStyles()(theme => ({
@@ -34,12 +35,14 @@ const useStyles = makeStyles()(theme => ({
   }
 }));
 
-const ensureStartOfDay = date => {
+type DateLike = Date | Dayjs | string | null;
+
+const ensureStartOfDay = (date: DateLike): string => {
   const momentDate = typeof date === 'string' ? dayjs(date.replace('Z', '')) : dayjs(date);
   return `${momentDate.format().split('T')[0]}T00:00:00.000`;
 };
 
-const ensureEndOfDay = date => {
+const ensureEndOfDay = (date: DateLike): string => {
   const momentDate = typeof date === 'string' ? dayjs(date.replace('Z', '')) : dayjs(date);
   return `${momentDate.format().split('T')[0]}T23:59:59.999`;
 };
@@ -51,15 +54,13 @@ interface HasHelptextParams {
   startDate: string;
 }
 
-export const TimeframePicker = ({
-  hasHelperText = no,
-  helperText,
-  tonight: propsTonight
-}: {
+export interface TimeframePickerProps {
   hasHelperText?: (params: HasHelptextParams) => boolean;
   helperText?: string;
   tonight: string;
-}) => {
+}
+
+export const TimeframePicker = ({ hasHelperText = no, helperText, tonight: propsTonight }: TimeframePickerProps) => {
   const [tonight] = useState(dayjs(propsTonight));
   const [maxStartDate, setMaxStartDate] = useState(tonight);
   const [minEndDate, setMinEndDate] = useState(tonight);
@@ -94,9 +95,9 @@ export const TimeframePicker = ({
     setShowsHelptext(hasHelperText({ startDate, endDate }));
   }, [endDate, hasHelperText, startDate]);
 
-  const handleChangeStartDate = date => ensureStartOfDay(date);
+  const handleChangeStartDate = (date: DateLike) => ensureStartOfDay(date);
 
-  const handleChangeEndDate = date => ensureEndOfDay(date);
+  const handleChangeEndDate = (date: DateLike) => ensureEndOfDay(date);
 
   return (
     <div className={`flexbox column ${classes.container}`}>
