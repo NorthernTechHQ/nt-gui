@@ -31,12 +31,12 @@ const defaultProps = {
   placeholder: 'Type to search...'
 };
 
-const formConfig = { mode: 'onChange', defaultValues: { search: null } };
+const formConfig = { mode: 'onChange' as const, defaultValues: { search: null } };
 
 describe('AsyncAutocomplete Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = formRenderWrapper(<AsyncAutocomplete {...defaultProps} onChange={vi.fn()} />, formConfig);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });
@@ -63,7 +63,7 @@ describe('AsyncAutocomplete Component', () => {
 describe('ControlledAsyncAutocomplete Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = formRenderWrapper(<ControlledAsyncAutocomplete {...defaultProps} name="search" />, formConfig);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });

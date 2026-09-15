@@ -15,7 +15,7 @@ import { Typography } from '@mui/material';
 
 import Time from './Time';
 
-interface LastChangedNoteProps {
+export interface LastChangedNoteProps {
   isOffline?: boolean;
   updateTime?: string;
 }

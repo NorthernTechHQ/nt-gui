@@ -22,7 +22,7 @@ import DeviceNameInput from './DeviceNameInput';
 describe('DeviceNameInput Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = render(<DeviceNameInput device={defaultState.devices.byId.a1} isHovered />);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });

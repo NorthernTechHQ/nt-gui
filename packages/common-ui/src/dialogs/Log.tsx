@@ -53,7 +53,7 @@ const dialogTypes = {
   }
 };
 
-interface LogDialogProps {
+export interface LogDialogProps {
   children?: ReactNode;
   className?: string;
   context?: LogContext;

@@ -1,4 +1,4 @@
-// Copyright 2020 Northern.tech AS
+// Copyright 2026 Northern.tech AS
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -12,10 +12,16 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
-const Alert = ({ children, className, severity, style }) => (
-  <div className={(className || '') + ' alert ' + (severity ? 'alert-' + severity : '')} style={style}>
-    {children}
-  </div>
-);
+// asset imports are resolved to their public url by the bundler - mirrors the `vite/client` ambient declarations without pulling in the full vite types
+declare module '*.png' {
+  const src: string;
+  export default src;
+}
 
-export default Alert;
+declare module '*.svg' {
+  const src: string;
+  export default src;
+}
+
+// side-effect only css imports (e.g. `@xterm/xterm/css/xterm.css`) are handled by the bundler
+declare module '*.css';

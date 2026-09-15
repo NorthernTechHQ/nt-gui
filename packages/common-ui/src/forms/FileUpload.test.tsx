@@ -24,7 +24,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import FileUpload from './FileUpload';
 
 const mockStore = configureStore([thunk]);
-let store;
+let store: ReturnType<typeof mockStore>;
 
 describe('FileUpload Component', () => {
   beforeEach(() => {
@@ -67,7 +67,7 @@ describe('FileUpload Component', () => {
     const { rerender } = render(ui);
     expect(screen.getByText(/test placeholder/i)).toBeInTheDocument();
     // container.querySelector doesn't work in this scenario for some reason -> but querying document seems to work
-    const uploadInput = document.querySelector('.dropzone input');
+    const uploadInput = document.querySelector('.dropzone input') as HTMLInputElement;
     await user.upload(uploadInput, menderFile);
     await waitFor(() => rerender(ui));
 
@@ -94,7 +94,7 @@ describe('FileUpload Component', () => {
       </Provider>
     );
     const { rerender } = render(ui);
-    await user.upload(document.querySelector('.dropzone input'), new File(['testContent plain'], 'test.file'));
+    await user.upload(document.querySelector('.dropzone input') as HTMLInputElement, new File(['testContent plain'], 'test.file'));
     await waitFor(() => rerender(ui));
     expect(screen.getByTitle(/accepted/i)).toBeInTheDocument();
   });

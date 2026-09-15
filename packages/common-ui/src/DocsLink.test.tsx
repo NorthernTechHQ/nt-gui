@@ -21,7 +21,7 @@ import { DocsTextLink } from './DocsLink';
 describe('DocsTextLink Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = render(<DocsTextLink id="releases" />);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });

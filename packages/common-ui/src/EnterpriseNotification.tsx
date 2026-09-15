@@ -11,13 +11,16 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { HTMLAttributes } from 'react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router';
 
+import type { ChipProps } from '@mui/material';
 import { Button, Chip } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
 
+import type { AvailableAddon, AvailablePlans } from '@northern.tech/store/constants';
 import { ADDONS, BENEFITS, PLANS } from '@northern.tech/store/constants';
 import { getTenantCapabilities } from '@northern.tech/store/selectors';
 import { yes } from '@northern.tech/utils/helpers';
@@ -31,24 +34,39 @@ const PlansTooltip = withStyles(MenderTooltip, () => ({
   }
 }));
 
-export const DefaultUpgradeNotification = props => (
+export const DefaultUpgradeNotification = (props: HTMLAttributes<HTMLDivElement>) => (
   <div {...props}>
     This feature is not available on your plan. <Link to="/subscription">Upgrade</Link> to enable it
   </div>
 );
 
-const EnterpriseNotification = ({ className = '', id = BENEFITS.default.id, size = 'medium' }) => {
+export type BenefitId = keyof typeof BENEFITS;
+
+interface Benefit {
+  benefit: string;
+  id: string;
+  requiredAddon?: AvailableAddon;
+  requiredPlan?: AvailablePlans;
+}
+
+export interface EnterpriseNotificationProps {
+  className?: string;
+  id?: BenefitId;
+  size?: ChipProps['size'];
+}
+
+export const EnterpriseNotification = ({ className = '', id = BENEFITS.default.id, size = 'medium' }: EnterpriseNotificationProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const tenantCapabilities = useSelector(getTenantCapabilities);
   const { isEnterprise, plan: currentPlan } = tenantCapabilities;
-  const { benefit, requiredAddon = '', requiredPlan = PLANS.os.id } = BENEFITS[id];
+  const { benefit, requiredAddon, requiredPlan = PLANS.os.id } = BENEFITS[id] as Benefit;
   const hasAddon = requiredAddon ? ADDONS[requiredAddon].needs.every(need => tenantCapabilities[need]) : false;
 
   const currentPlanIndex = Object.keys(PLANS).indexOf(currentPlan);
   const requiredPlanIndex = Object.keys(PLANS).indexOf(requiredPlan);
   const shouldShow = requiredPlanIndex > currentPlanIndex;
   // we have to explicitly check for the plan requirement here, since the default value prevents us from relying on the `shouldShow` result
-  if (isEnterprise || (BENEFITS[id].requiredPlan && !shouldShow) || (requiredAddon && hasAddon)) {
+  if (isEnterprise || ((BENEFITS[id] as Benefit).requiredPlan && !shouldShow) || (requiredAddon && hasAddon)) {
     return null;
   }
   const content = requiredAddon ? (

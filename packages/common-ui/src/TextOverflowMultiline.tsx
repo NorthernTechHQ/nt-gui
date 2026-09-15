@@ -16,12 +16,12 @@ import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import type { TypographyProps } from '@mui/material';
 import { Typography } from '@mui/material';
 
-interface TextOverflowMultilineProps extends TypographyProps {
+export interface TextOverflowMultilineProps extends TypographyProps {
   lines?: number;
   onOverflowChange?: (isOverflowing: boolean) => void;
 }
 
-const TextOverflowMultiline = ({ children, className = '', lines = 2, onOverflowChange, style, ...rest }: TextOverflowMultilineProps) => {
+export const TextOverflowMultiline = ({ children, className = '', lines = 2, onOverflowChange, style, ...rest }: TextOverflowMultilineProps) => {
   const ref = useRef<HTMLElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isOverflowing, setIsOverflowing] = useState(false);

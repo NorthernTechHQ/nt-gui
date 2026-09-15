@@ -11,9 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { HTMLAttributes, ReactNode } from 'react';
+
 import { InfoOutlined as InfoOutlinedIcon } from '@mui/icons-material';
 import { makeStyles } from 'tss-react/mui';
 
+import type { InfoTextProps } from './InfoText';
 import InfoText from './InfoText';
 
 const useStyles = makeStyles()(theme => ({
@@ -21,7 +24,11 @@ const useStyles = makeStyles()(theme => ({
   default: { gap: theme.spacing() }
 }));
 
-export const InfoHint = ({ className = '', content, ...props }) => {
+export interface InfoHintProps extends Omit<InfoTextProps, 'content'> {
+  content: ReactNode;
+}
+
+export const InfoHint = ({ className = '', content, ...props }: InfoHintProps) => {
   const { classes } = useStyles();
   return (
     <InfoText className={`icon flexbox align-items-center ${classes.default} ${className}`} {...props}>
@@ -31,7 +38,9 @@ export const InfoHint = ({ className = '', content, ...props }) => {
   );
 };
 
-export const InfoHintContainer = ({ children, className = 'margin-left-small', ...props }) => {
+export type InfoHintContainerProps = HTMLAttributes<HTMLDivElement>;
+
+export const InfoHintContainer = ({ children, className = 'margin-left-small', ...props }: InfoHintContainerProps) => {
   const { classes } = useStyles();
   return (
     <div className={`flexbox align-items-center ${className} ${classes.container}`} {...props}>

@@ -18,12 +18,12 @@ import { Controller } from 'react-hook-form';
 import type { CheckboxProps, FormControlLabelProps } from '@mui/material';
 import { Checkbox, FormControlLabel } from '@mui/material';
 
-type FormCheckboxSlotProps = {
+export type FormCheckboxSlotProps = {
   checkbox?: Partial<CheckboxProps>;
   label?: Partial<Omit<FormControlLabelProps, 'control' | 'label'>>;
 };
 
-interface FormCheckboxProps extends Pick<CheckboxProps, 'className' | 'disabled' | 'style'> {
+export interface FormCheckboxProps extends Pick<CheckboxProps, 'className' | 'disabled' | 'style'> {
   control?: Control<FieldValues>;
   handleClick?: MouseEventHandler<HTMLButtonElement>;
   id: string;

@@ -20,7 +20,7 @@ import TextOverflowMultiline from './TextOverflowMultiline';
 describe('TextOverflowMultiline Component', () => {
   it('renders correctly with short text', async () => {
     const { baseElement } = render(<TextOverflowMultiline>Short text</TextOverflowMultiline>);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });
@@ -46,7 +46,7 @@ describe('TextOverflowMultiline Component', () => {
         Content
       </TextOverflowMultiline>
     );
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view.tagName).toBe('DIV');
   });

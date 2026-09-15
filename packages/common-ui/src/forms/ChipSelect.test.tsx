@@ -26,12 +26,12 @@ const defaultProps = {
   placeholder: 'Select tags'
 };
 
-const formConfig = { mode: 'onChange', defaultValues: { tags: [] } };
+const formConfig = { mode: 'onChange' as const, defaultValues: { tags: [] } };
 
 describe('ChipSelect Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = formRenderWrapper(<ChipSelect {...defaultProps} />, formConfig);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });

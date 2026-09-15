@@ -15,7 +15,7 @@ import type { ZxcvbnFactory } from '@zxcvbn-ts/core';
 
 let instancePromise: Promise<ZxcvbnFactory> | undefined;
 
-const initInstance = async () => {
+const initInstance = async (): Promise<ZxcvbnFactory> => {
   const [{ ZxcvbnFactory }, { adjacencyGraphs, dictionary: commonDictionary }, { dictionary: enDictionary, translations }] = await Promise.all([
     import(/* webpackChunkName: "zxcvbn" */ '@zxcvbn-ts/core'),
     import(/* webpackChunkName: "zxcvbn" */ '@zxcvbn-ts/language-common'),

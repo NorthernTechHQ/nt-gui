@@ -35,7 +35,7 @@ const useStyles = makeStyles()(theme => ({
   }
 }));
 
-type PasswordInputProps = {
+export type PasswordInputProps = {
   create?: boolean;
   defaultValue?: string;
   id: string;
@@ -69,9 +69,11 @@ export const PasswordInput = ({
     trigger,
     getValues
   } = useFormContext();
-  const confirmation = useWatch({ name: confirmationId });
-  const confirmationRef = useRef(confirmation);
-  confirmationRef.current = confirmation;
+  const confirmation = useWatch({ name: confirmationId as string });
+  const confirmationRef = useRef<string | undefined>(confirmation);
+  useEffect(() => {
+    confirmationRef.current = confirmation;
+  }, [confirmation]);
   const errorKey = id;
 
   const validate = useCallback(

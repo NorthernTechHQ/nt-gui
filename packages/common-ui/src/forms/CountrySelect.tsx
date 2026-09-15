@@ -11,60 +11,43 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { useEffect, useState } from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
-import { Autocomplete, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
 import { countries } from '@northern.tech/store/constants';
 
-interface CountrySelectProps {
-  [other: string]: any;
-  error: boolean;
-  helperText?: string;
-  id?: string;
-  onChange: (...event: any[]) => void;
-}
+import { ControlledAutoComplete } from './Autocomplete';
+
 const useStyles = makeStyles()(() => ({
   autocomplete: { width: 500 }
 }));
 
-export const CountrySelect = (props: CountrySelectProps) => {
-  const { id, onChange, defaultValue, error, helperText, ...restProps } = props;
-  const { classes } = useStyles();
-  return (
-    <Autocomplete
-      key={defaultValue}
-      getOptionLabel={option => option.label}
-      options={countries}
-      className={classes.autocomplete}
-      autoHighlight
-      renderInput={params => <TextField {...params} error={error} helperText={helperText} label="Country or region" id={id || 'country'} />}
-      onChange={(e, data) => onChange(data)}
-      {...restProps}
-      defaultValue={countries.find(country => country.code === defaultValue)}
-    />
-  );
-};
+export type Country = (typeof countries)[number];
 
-export const ControlledCountrySelect = ({ control, id, required }) => {
-  const [defaultCountry, setDefaultCountry] = useState('');
-  const { getValues } = useFormContext();
-  const values = getValues();
-  useEffect(() => {
-    setDefaultCountry(values.country);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+export const findCountry = (code?: string): Country | null => countries.find(country => country.code === code) ?? null;
+
+export interface ControlledCountrySelectProps {
+  id?: string;
+  required?: boolean;
+}
+
+export const ControlledCountrySelect = ({ id = 'country', required }: ControlledCountrySelectProps) => {
+  const { classes } = useStyles();
+  const {
+    formState: { errors }
+  } = useFormContext();
+  const error = errors.country;
   return (
-    <Controller
-      rules={{ required: required ? 'Country or region is required' : false }}
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      render={({ field: { onChange }, formState, fieldState: { error }, ...props }) => (
-        <CountrySelect defaultValue={defaultCountry} onChange={onChange} id={id} error={!!error} helperText={error?.message} {...props} />
-      )}
+    <ControlledAutoComplete<Country>
       name="country"
-      control={control}
+      rules={{ required: required ? 'Country or region is required' : false }}
+      autoHighlight
+      className={classes.autocomplete}
+      getOptionLabel={option => (typeof option === 'string' ? option : option.label)}
+      options={countries}
+      renderInput={params => <TextField {...params} error={!!error} helperText={error?.message as string} label="Country or region" id={id} />}
     />
   );
 };

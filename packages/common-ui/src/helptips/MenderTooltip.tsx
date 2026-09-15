@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
+import type { MouseEvent } from 'react';
 import { useEffect, useState } from 'react';
 
 import type { TooltipProps } from '@mui/material';
@@ -20,6 +20,12 @@ import { withStyles } from 'tss-react/mui';
 
 import { isDarkMode } from '@northern.tech/store/utils';
 import { toggle } from '@northern.tech/utils/helpers';
+
+declare module '@mui/material/styles' {
+  interface TypeText {
+    hint: string;
+  }
+}
 
 export const MenderTooltip = withStyles(Tooltip, ({ palette, shadows, spacing }) => ({
   arrow: {
@@ -56,7 +62,7 @@ export const MenderTooltipClickable = ({
   onOpenChange,
   tooltipComponent = MenderTooltip,
   ...remainingProps
-}): MenderTooltipClickableProps => {
+}: MenderTooltipClickableProps) => {
   const [open, setOpen] = useState(startOpen || false);
 
   useEffect(() => {
@@ -70,7 +76,7 @@ export const MenderTooltipClickable = ({
     onOpenChange(open);
   }, [open, onOpenChange]);
 
-  const toggleVisibility = e => {
+  const toggleVisibility = (e: MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     setOpen(toggle);
   };

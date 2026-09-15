@@ -22,14 +22,14 @@ import { SettingsItem, ToggleSettingsItem } from './SettingsItem';
 describe('SettingsItem Component', () => {
   it('renders correctly with string title', async () => {
     const { baseElement } = render(<SettingsItem title="Current plan" secondary="Trial" notification="upgrade now!" />);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });
 
   it('renders correctly without secondary', async () => {
     const { baseElement } = render(<SettingsItem title="Title only" description="Just a description" />);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });
@@ -38,7 +38,7 @@ describe('SettingsItem Component', () => {
 describe('ToggleSettingsItem Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = render(<ToggleSettingsItem title="Test toggle" checked={false} onClick={vi.fn()} description="A test description" />);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });

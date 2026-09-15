@@ -21,8 +21,8 @@ import Confirm from './Confirm';
 
 describe('Confirm Component', () => {
   it('renders correctly', async () => {
-    const { baseElement } = render(<Confirm type="abort" />);
-    const view = baseElement.firstChild.firstChild;
+    const { baseElement } = render(<Confirm type="abort" action={vi.fn()} cancel={vi.fn()} />);
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });
@@ -35,10 +35,10 @@ describe('Confirm Component', () => {
     const { container } = render(<Confirm type="chartRemoval" action={actionCheck} cancel={cancelCheck} />);
 
     expect(screen.queryByText(/remove this chart\?/i)).toBeInTheDocument();
-    await user.click(container.querySelector('.green'));
+    await user.click(container.querySelector('.green') as Element);
     expect(actionCheck).toHaveBeenCalledTimes(1);
     expect(screen.queryByText(/removing/i)).toBeInTheDocument();
-    await user.click(container.querySelector('.red'));
+    await user.click(container.querySelector('.red') as Element);
     expect(cancelCheck).toHaveBeenCalledTimes(1);
   });
 });

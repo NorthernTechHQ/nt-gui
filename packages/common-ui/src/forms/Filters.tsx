@@ -11,7 +11,9 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { ComponentType, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
+import type { FieldValues } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { Button, Typography, alpha } from '@mui/material';
@@ -42,9 +44,38 @@ const useStyles = makeStyles()(theme => ({
   }
 }));
 
-export const Filters = ({ className = '', defaultValues, filters = [], initialValues, onChange, fieldResetTrigger = '', dirtyField, clearDirty }) => {
+type FilterComponentProps = { name: string } & Record<string, unknown>;
+
+export interface FilterDefinition {
+  Component: ComponentType<FilterComponentProps>;
+  componentProps?: Record<string, unknown>;
+  key: string;
+  title: ReactNode;
+}
+
+export interface FiltersProps {
+  className?: string;
+  clearDirty?: (field: string) => void;
+  defaultValues: FieldValues;
+  dirtyField?: string;
+  fieldResetTrigger?: string;
+  filters?: FilterDefinition[];
+  initialValues: FieldValues;
+  onChange: (values: FieldValues) => void;
+}
+
+export const Filters = ({
+  className = '',
+  defaultValues,
+  filters = [],
+  initialValues,
+  onChange,
+  fieldResetTrigger = '',
+  dirtyField,
+  clearDirty
+}: FiltersProps) => {
   const { classes } = useStyles();
-  const [values, setValues] = useState(initialValues);
+  const [values, setValues] = useState<FieldValues>(initialValues);
 
   const methods = useForm({ mode: 'onChange', defaultValues });
   const { formState, reset, resetField, watch, setValue, getValues } = methods;
@@ -58,7 +89,7 @@ export const Filters = ({ className = '', defaultValues, filters = [], initialVa
   useEffect(() => {
     if (dirtyField && !formState.isDirty) {
       setValue(dirtyField, getValues(dirtyField), { shouldDirty: true });
-      clearDirty('');
+      clearDirty?.('');
     }
   }, [clearDirty, dirtyField, formState, getValues, setValue]);
 

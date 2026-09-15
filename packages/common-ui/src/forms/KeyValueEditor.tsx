@@ -13,6 +13,7 @@
 //    limitations under the License.
 import type { CSSProperties, ComponentType } from 'react';
 import { useEffect, useState } from 'react';
+import type { FieldValues } from 'react-hook-form';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import { AddCircle as AddIcon, Clear as ClearIcon } from '@mui/icons-material';
@@ -21,31 +22,37 @@ import { makeStyles } from 'tss-react/mui';
 
 import Form from './Form';
 
-type HelptipProps = {
-  [key: string]: any;
+export type HelptipProps = {
+  [key: string]: unknown;
+  className?: string;
   style?: CSSProperties;
 };
 
-type InputHelptip = {
+export type InputHelptip = {
   component: ComponentType<HelptipProps>;
   position?: string;
   props?: HelptipProps;
 };
 
-type InputLineItem = {
+export type InputLineItem = {
   helptip: InputHelptip | null;
   key: string;
   value: string;
 };
 
+export type KeyValuePairs = Record<string, string>;
+
+type KeyValueFormValues = { inputs: InputLineItem[] };
+
 const emptyInput: InputLineItem = { helptip: null, key: '', value: '' };
 
-const reducePairs = (pairs: InputLineItem[]) => (pairs || []).reduce((accu, item) => ({ ...accu, ...(item.value ? { [item.key]: item.value } : {}) }), {});
+const reducePairs = (pairs: InputLineItem[]): KeyValuePairs =>
+  (pairs || []).reduce((accu: KeyValuePairs, item) => ({ ...accu, ...(item.value ? { [item.key]: item.value } : {}) }), {});
 
 const inputWidth = 240;
 
 const useStyles = makeStyles()(theme => ({
-  helptip: { left: -35, top: theme.spacing(), position: 'absolute !important' },
+  helptip: { left: -35, top: theme.spacing(), position: 'absolute !important' as 'absolute' },
   keyValueContainer: {
     display: 'grid',
     gridTemplateColumns: `${inputWidth}px ${inputWidth}px max-content`,
@@ -60,8 +67,8 @@ const useStyles = makeStyles()(theme => ({
 interface KeyValueFieldsProps {
   disabled?: boolean;
   initialValues: InputLineItem[];
-  inputHelpTipsMap: Record<string, { component: React.ComponentType<any>; props: any }>;
-  onInputChange: (value: Record<string, string>) => void;
+  inputHelpTipsMap: Record<string, InputHelptip>;
+  onInputChange: (value: KeyValuePairs) => void;
 }
 
 const KeyValueFields = ({ disabled, initialValues, inputHelpTipsMap, onInputChange }: KeyValueFieldsProps) => {
@@ -72,9 +79,9 @@ const KeyValueFields = ({ disabled, initialValues, inputHelpTipsMap, onInputChan
     setValue,
     formState: { errors },
     trigger
-  } = useFormContext();
+  } = useFormContext<KeyValueFormValues>();
 
-  const { fields, append, remove, replace } = useFieldArray<{ inputs: InputLineItem[] }>({
+  const { fields, append, remove, replace } = useFieldArray<KeyValueFormValues>({
     control,
     name: 'inputs',
     rules: {
@@ -87,7 +94,7 @@ const KeyValueFields = ({ disabled, initialValues, inputHelpTipsMap, onInputChan
     }
   });
 
-  const inputs = watch('inputs') as InputLineItem[];
+  const inputs = watch('inputs');
 
   useEffect(() => {
     const inputObject = reducePairs(inputs);
@@ -108,7 +115,7 @@ const KeyValueFields = ({ disabled, initialValues, inputHelpTipsMap, onInputChan
     setValue(`inputs.${index}.${field}`, value);
     if (field === 'key') {
       const normalizedKey = value.toLowerCase();
-      setValue(`inputs.${index}.helptip`, inputHelpTipsMap[normalizedKey]);
+      setValue(`inputs.${index}.helptip`, inputHelpTipsMap[normalizedKey] ?? null);
     }
     trigger();
   };
@@ -178,7 +185,14 @@ const KeyValueFields = ({ disabled, initialValues, inputHelpTipsMap, onInputChan
   );
 };
 
-export const KeyValueEditor = ({ disabled, initialInput = {}, inputHelpTipsMap = {}, onInputChange }) => {
+export interface KeyValueEditorProps {
+  disabled?: boolean;
+  initialInput?: KeyValuePairs;
+  inputHelpTipsMap?: Record<string, InputHelptip>;
+  onInputChange: (value: KeyValuePairs) => void;
+}
+
+export const KeyValueEditor = ({ disabled, initialInput = {}, inputHelpTipsMap = {}, onInputChange }: KeyValueEditorProps) => {
   const defaultValues = {
     inputs: Object.keys(initialInput).length
       ? Object.entries(initialInput).map(([key, value]) => ({ helptip: inputHelpTipsMap[key.toLowerCase()], key, value }) as InputLineItem)
@@ -191,7 +205,7 @@ export const KeyValueEditor = ({ disabled, initialInput = {}, inputHelpTipsMap =
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(initialInput)]);
 
-  const onFormSubmit = data => onInputChange(reducePairs(data.inputs));
+  const onFormSubmit = (data: FieldValues) => onInputChange(reducePairs(data.inputs));
 
   return (
     <Form autocomplete="off" defaultValues={defaultValues} id="key-value-editor" initialValues={initialValues} onSubmit={onFormSubmit}>

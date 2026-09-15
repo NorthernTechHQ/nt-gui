@@ -11,16 +11,15 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { CSSProperties, ComponentType, MutableRefObject, ReactElement } from 'react';
+import type { CSSProperties, ComponentType, MutableRefObject, ReactElement, MouseEvent as ReactMouseEvent } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Settings as SettingsIcon, Sort as SortIcon } from '@mui/icons-material';
 import { Checkbox, Typography, typographyClasses } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
-import type { IdAttribute } from '@northern.tech/store/constants';
+import type { IdAttribute, SortOptions } from '@northern.tech/store/constants';
 import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TIMEOUTS } from '@northern.tech/store/constants';
-import type { SortOptions } from '@northern.tech/store/organizationSlice/types';
 import { isDarkMode } from '@northern.tech/store/utils';
 import { toggle } from '@northern.tech/utils/helpers';
 import { useWindowSize } from '@northern.tech/utils/resizehook';
@@ -60,14 +59,7 @@ interface ListState {
   perPage?: number;
   selection?: number[];
   sort?: SortOptions;
-  // selectedAttributes: unknown[];
-  // selectedIssues: unknown[];
-  // state: string;
   total: number;
-  // setOnly: boolean;
-  // refreshTrigger: boolean;
-  // detailsTab: string;
-  // isLoading: boolean;
 }
 
 type wID = { id: string };
@@ -81,8 +73,8 @@ interface CommonListProps<T extends wID> {
   listState: ListState;
   onChangeRowsPerPage: (perPage: number) => void;
   onExpandClick: (item: T) => void;
-  onPageChange: (event: MouseEvent | null, page: number) => void;
-  onResizeColumns: ((columns: { attribute: Attribute; size: number }) => void) | false;
+  onPageChange: (page: number) => void;
+  onResizeColumns: ((columns: ColumnSize[]) => void) | false;
   onSelect: ((rows: number[]) => void) | false;
   onSort?: (attr: Attribute | object) => void;
   pageLoading: boolean;
@@ -93,11 +85,10 @@ export interface ListItemComponentProps<T> {
   columnHeaders: ColumnHeader<T>[];
   idAttribute?: IdAttribute;
   index: number;
-  key: string;
   listItem: T;
   listState: ListState;
   onClick: (item: T) => void;
-  onRowSelect: (selectedRow: T) => void;
+  onRowSelect: (selectedRow: number) => void;
   selectable: boolean;
   selected: boolean;
 }
@@ -125,14 +116,28 @@ const useStyles = makeStyles()(theme => ({
 
 export const minCellWidth = 150;
 
-export const calculateResizeChange = ({ columnElements, columnHeaders, e, index, prev, selectable }) => {
+interface ColumnSize {
+  attribute: Attribute;
+  size: number;
+}
+
+interface ResizeChangeOptions<T> {
+  columnElements: Element[] | HTMLCollection;
+  columnHeaders: ColumnHeader<T>[];
+  e: Pick<MouseEvent, 'clientX'>;
+  index: number;
+  prev: number;
+  selectable: boolean;
+}
+
+export const calculateResizeChange = <T,>({ columnElements, columnHeaders, e, index, prev, selectable }: ResizeChangeOptions<T>): ColumnSize[] => {
   const isShrinkage = prev > e.clientX ? -1 : 1;
   const columnDelta = Math.abs(e.clientX - prev) * isShrinkage;
   const relevantColumns = getRelevantColumns(columnElements, selectable);
   const canModifyNextColumn = index + 1 < columnHeaders.length - 1;
 
-  return relevantColumns.reduce((accu, element, columnIndex) => {
-    const currentWidth = element.offsetWidth;
+  return relevantColumns.reduce((accu: ColumnSize[], element, columnIndex) => {
+    const currentWidth = (element as HTMLElement).offsetWidth;
     const column = { attribute: columnHeaders[columnIndex + 1].attribute, size: currentWidth };
     if (canModifyNextColumn && index === columnIndex) {
       column.size = currentWidth + columnDelta;
@@ -143,11 +148,12 @@ export const calculateResizeChange = ({ columnElements, columnHeaders, e, index,
     return accu;
   }, []);
 };
-const getRelevantColumns = (columnElements, selectable) => [...columnElements].slice(selectable ? 1 : 0, columnElements.length - 1);
-const getTemplateColumns = (columns, selectable) =>
+const getRelevantColumns = (columnElements: Element[] | HTMLCollection | undefined, selectable: boolean): Element[] =>
+  [...(columnElements ?? [])].slice(selectable ? 1 : 0, (columnElements?.length ?? 0) - 1);
+const getTemplateColumns = (columns: string, selectable: boolean) =>
   selectable ? `52px ${columns} minmax(${minCellWidth}px, 1fr)` : `${columns} minmax(${minCellWidth}px, 1fr)`;
 
-const getColumnsStyle = (columns, defaultSize, selectable) => {
+const getColumnsStyle = (columns: Partial<ColumnSize>[], defaultSize: string | undefined, selectable: boolean) => {
   const template = columns.map(({ size }) => `minmax(${minCellWidth}px, ${size ? `${size}px` : defaultSize})`);
   // applying styles via state changes would lead to less smooth changes, so we set the style directly on the components
   return getTemplateColumns(template.join(' '), selectable);
@@ -171,7 +177,7 @@ export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
     ListItemComponent
   } = props;
   const { page: pageNo = defaultPage, perPage: pageLength = defaultPerPage, selection: selectedRows = [], sort = {}, total: pageTotal = 1 } = listState;
-  const { direction: sortDown = SORTING_OPTIONS.desc, key: sortCol } = sort;
+  const { direction: sortDown = SORTING_OPTIONS.desc, key: sortCol } = sort as SortOptions;
   const listRef = useRef<HTMLDivElement | null>(null);
   const selectedRowsRef = useRef(selectedRows);
   const initRef = useRef<number | null>(null);
@@ -191,7 +197,7 @@ export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
     }
     const relevantColumns = getRelevantColumns(listRef.current?.querySelector('.deviceListRow')?.children, selectable);
     listRef.current.style.gridTemplateColumns = getColumnsStyle(
-      customColumnSizes.length && customColumnSizes.length === relevantColumns.length ? customColumnSizes : relevantColumns,
+      (customColumnSizes.length && customColumnSizes.length === relevantColumns.length ? customColumnSizes : relevantColumns) as Partial<ColumnSize>[],
       '1.5fr',
       selectable
     );
@@ -205,7 +211,7 @@ export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
     };
   }, [customColumnSizes.length]);
 
-  const onRowSelection = selectedRow => {
+  const onRowSelection = (selectedRow: number) => {
     const updatedSelection = [...selectedRowsRef.current];
     const selectedIndex = updatedSelection.indexOf(selectedRow);
     if (selectedIndex === -1) {
@@ -229,9 +235,9 @@ export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
   };
 
   const handleResizeChange = useCallback(
-    (e, { index, prev, ref }) => {
+    (e: MouseEvent, { index, prev, ref }: ResizeEventData) => {
       const changedColumns = calculateResizeChange({
-        columnElements: [...ref.current.parentElement.children],
+        columnElements: [...(ref.current?.parentElement?.children ?? [])],
         columnHeaders,
         e,
         index,
@@ -245,9 +251,9 @@ export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
   );
 
   const handleResizeFinish = useCallback(
-    (e, { index, prev, ref }) => {
+    (e: MouseEvent, { index, prev, ref }: ResizeEventData) => {
       const changedColumns = calculateResizeChange({
-        columnElements: ref.current.parentElement.children,
+        columnElements: [...(ref.current?.parentElement?.children ?? [])],
         columnHeaders,
         e,
         index,
@@ -326,26 +332,18 @@ export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
   );
 };
 
+interface ResizeEventData {
+  index: number;
+  prev: number;
+  ref: MutableRefObject<HTMLDivElement | null>;
+}
+
 interface HeaderItemProps<T> {
   column: ColumnHeader<T>;
   columnCount: number;
   index: number;
-  onResizeChange: (
-    e: MouseEvent,
-    eventData: {
-      index: number;
-      prev: number;
-      ref: MutableRefObject<HTMLDivElement | null>;
-    }
-  ) => void;
-  onResizeFinish: (
-    e: MouseEvent,
-    eventData: {
-      index: number;
-      prev: number;
-      ref: MutableRefObject<HTMLDivElement | null>;
-    }
-  ) => void;
+  onResizeChange: (e: MouseEvent, eventData: ResizeEventData) => void;
+  onResizeFinish: (e: MouseEvent, eventData: ResizeEventData) => void;
   onSort: (attr: Attribute | object) => void;
   resizable: boolean;
   sortCol?: string;
@@ -386,7 +384,7 @@ const HeaderItem = <T extends wID>(props: HeaderItemProps<T>) => {
     [index, onResizeFinish]
   );
 
-  const mouseDown = e => (resizeRef.current = e.clientX);
+  const mouseDown = (e: ReactMouseEvent<HTMLDivElement>) => (resizeRef.current = e.clientX);
 
   useEffect(() => {
     window.addEventListener('mousemove', mouseMove);
@@ -405,6 +403,7 @@ const HeaderItem = <T extends wID>(props: HeaderItemProps<T>) => {
   }, [shouldRemoveListeners, mouseMove, mouseUp]);
 
   let resizeHandleClassName = resizable && isHovering ? 'hovering' : '';
+  // eslint-disable-next-line react-hooks/refs
   resizeHandleClassName = resizeRef.current ? 'resizing' : resizeHandleClassName;
   const header = (
     <div className="columnHeader flexbox space-between relative" style={column.style} onMouseEnter={onMouseOver} onMouseLeave={onMouseOut} ref={ref}>

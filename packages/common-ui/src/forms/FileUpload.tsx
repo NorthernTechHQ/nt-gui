@@ -13,6 +13,7 @@
 //    limitations under the License.
 import type { CSSProperties, ReactNode } from 'react';
 import { useState } from 'react';
+import type { FileRejection } from 'react-dropzone';
 import Dropzone from 'react-dropzone';
 
 // material ui
@@ -37,7 +38,7 @@ const useStyles = makeStyles()(theme => ({
   }
 }));
 
-interface FileUploadProps {
+export interface FileUploadProps {
   enableContentReading?: boolean;
   fileNameSelection?: string;
   /** indicates whether the selected file passed the consuming component's validation - shows a success indicator if it did */
@@ -57,11 +58,11 @@ export const FileUpload = ({
   placeholder,
   style = {}
 }: FileUploadProps) => {
-  const [filename, setFilename] = useState(fileNameSelection);
+  const [filename, setFilename] = useState<string | undefined>(fileNameSelection);
   const { classes } = useStyles();
   const dispatch = useAppDispatch();
 
-  const onDrop = (acceptedFiles, rejectedFiles) => {
+  const onDrop = (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
     if (acceptedFiles.length) {
       if (enableContentReading) {
         const reader = new FileReader();
@@ -79,7 +80,7 @@ export const FileUpload = ({
       onFileSelect(acceptedFiles[0]);
     }
     if (rejectedFiles.length) {
-      dispatch(setSnackbar(`File '${rejectedFiles[0].name}' was rejected.`));
+      dispatch(setSnackbar(`File '${rejectedFiles[0].file.name}' was rejected.`));
     }
   };
 
@@ -102,7 +103,7 @@ export const FileUpload = ({
     </div>
   ) : (
     <div style={style}>
-      <Dropzone activeClassName="active" rejectClassName="active" multiple={false} onDrop={onDrop}>
+      <Dropzone multiple={false} onDrop={onDrop}>
         {({ getRootProps, getInputProps }) => (
           <div {...getRootProps()} className={`dropzone onboard dashboard-placeholder flexbox centered ${classes.dropzone}`}>
             <input {...getInputProps()} />

@@ -12,7 +12,6 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import type { ElementType } from 'react';
-import { useEffect, useState } from 'react';
 
 import { Tooltip, Typography } from '@mui/material';
 
@@ -27,47 +26,34 @@ export const defaultTimeFormat = `${defaultDateFormat} HH:mm`;
 // based on react-time - https://github.com/andreypopp/react-time - which unfortunately is no longer maintained
 dayjs.extend(relativeTime);
 
-interface TimeProps {
-  [key: string]: unknown;
+interface TimeBaseProps {
   className?: string;
-  Component?: ElementType;
   format?: string;
   relative?: boolean;
   titleFormat?: string;
   value?: string | Date | Dayjs;
-  valueFormat?: string;
 }
 
-export const Time = ({
-  value,
-  relative,
-  format = defaultTimeFormat,
-  valueFormat,
-  titleFormat = defaultTimeFormat,
-  Component = 'time',
-  ...remainingProps
-}: TimeProps) => {
-  if (!value) {
-    value = dayjs();
-  }
-  value = dayjs(value, valueFormat, true);
+// the index signature mirrors the pass-through props of the mender-server implementation, an intersection is used here so the
+// explicitly typed props survive - `Omit`ing from a type with an index signature would collapse them back to `unknown`
+export type TimeProps = TimeBaseProps & { [key: string]: unknown; Component?: ElementType };
 
-  const machineReadable = value.format('YYYY-MM-DDTHH:mm:ssZ');
-  const humanReadable = relative ? value.fromNow() : value.format(format);
+export const Time = ({ value, relative, format = defaultTimeFormat, titleFormat = defaultTimeFormat, Component = 'time', ...remainingProps }: TimeProps) => {
+  if (!value) {
+    return <Component {...remainingProps}>-</Component>;
+  }
+  const parsedValue = dayjs(value);
+
+  const machineReadable = parsedValue.format('YYYY-MM-DDTHH:mm:ssZ');
+  const humanReadable = relative ? parsedValue.fromNow() : parsedValue.format(format);
   return (
-    <Component title={relative ? value.format(titleFormat) : null} {...remainingProps} dateTime={machineReadable}>
+    <Component title={relative ? parsedValue.format(titleFormat) : null} {...remainingProps} dateTime={machineReadable}>
       {humanReadable}
     </Component>
   );
 };
 
-export const MaybeTime = ({ className = '', value, ...remainingProps }: Omit<TimeProps, 'Component'>) => (
-  <Typography variant="body2" className={className}>
-    {value ? <Time value={value} {...remainingProps} /> : '-'}
-  </Typography>
-);
-
-interface RelativeTimeProps {
+export interface RelativeTimeProps {
   className?: string;
   shouldCount?: 'both' | 'up' | 'down' | 'none';
   updateTime?: string | Date;
@@ -75,13 +61,8 @@ interface RelativeTimeProps {
 
 const cutoff = -5 * 60;
 export const RelativeTime = ({ className, shouldCount = 'both', updateTime }: RelativeTimeProps) => {
-  const [updatedTime, setUpdatedTime] = useState<Dayjs>();
-
-  useEffect(() => {
-    setUpdatedTime(updatedTime => (updateTime !== updatedTime ? dayjs(updateTime) : updatedTime));
-  }, [updateTime]);
-
-  let timeDisplay = <MaybeTime className={className} value={updatedTime} />;
+  const updatedTime = updateTime ? dayjs(updateTime) : undefined;
+  let timeDisplay = <Time Component={Typography} component="time" variant="body2" className={className} value={updatedTime} />;
   const diffSeconds = updatedTime ? updatedTime.diff(dayjs(), 'seconds') : 0;
   if (
     updatedTime &&
@@ -103,13 +84,8 @@ export const RelativeTime = ({ className, shouldCount = 'both', updateTime }: Re
 
 const cutoffDays = 14;
 export const ApproximateRelativeDate = ({ className, updateTime }: { className?: string; updateTime?: string | Date }) => {
-  const [updatedTime, setUpdatedTime] = useState<Dayjs>();
-
-  useEffect(() => {
-    setUpdatedTime(updatedTime => (updateTime !== updatedTime ? dayjs(updateTime) : updatedTime));
-  }, [updateTime]);
-
-  const diff = updatedTime ? Math.abs(updatedTime.diff(dayjs(), 'days')) : 0;
+  const updatedTime = updateTime ? dayjs(updateTime) : undefined;
+  const diff = updatedTime ? Math.max(0, dayjs().diff(updatedTime, 'days')) : 0;
   if (updatedTime && diff <= cutoffDays) {
     return (
       <Typography className={className} variant="body2" component="time" dateTime={updatedTime.format(defaultDateFormat)}>
@@ -117,7 +93,17 @@ export const ApproximateRelativeDate = ({ className, updateTime }: { className?:
       </Typography>
     );
   }
-  return <MaybeTime className={className} value={updatedTime} format={defaultDateFormat} titleFormat={defaultDateFormat} />;
+  return (
+    <Time
+      Component={Typography}
+      component="time"
+      variant="body2"
+      className={className}
+      value={updatedTime}
+      format={defaultDateFormat}
+      titleFormat={defaultDateFormat}
+    />
+  );
 };
 
 export default Time;

@@ -19,7 +19,7 @@ import ConfirmDismissHelptips from './ConfirmDismissHelpTips';
 
 describe('ConfirmDismissHelptips Component', () => {
   it('renders correctly', async () => {
-    const { baseElement } = render(<ConfirmDismissHelptips open={true} />);
+    const { baseElement } = render(<ConfirmDismissHelptips />);
     const view = baseElement.getElementsByClassName('MuiDialog-root')[0];
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));

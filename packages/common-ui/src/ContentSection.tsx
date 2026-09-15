@@ -16,7 +16,7 @@ import type { ReactNode } from 'react';
 import { Chip, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
-interface ContentSectionProps {
+export interface ContentSectionProps {
   children: ReactNode;
   className?: string;
   disableMargin?: boolean;

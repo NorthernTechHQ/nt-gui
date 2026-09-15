@@ -11,6 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { ChangeEvent, KeyboardEvent, MouseEvent } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 
 // material ui
@@ -25,7 +26,7 @@ const useStyles = makeStyles()(() => ({
 
 const MAX_ROWS = 4;
 
-interface EditableLongTextProps {
+export interface EditableLongTextProps {
   fullWidth?: boolean;
   isEditing?: boolean;
   onChange: (value: string) => Promise<void>;
@@ -33,6 +34,8 @@ interface EditableLongTextProps {
   original: string;
   placeholder?: string;
 }
+
+type ConfirmEditEvent = KeyboardEvent<HTMLDivElement> | MouseEvent<HTMLButtonElement>;
 
 export const EditableLongText = ({ fullWidth, isEditing: isEditingProp, onChange, onEditToggle, original, placeholder = '-' }: EditableLongTextProps) => {
   const [isEditingInternal, setIsEditingInternal] = useState(false);
@@ -61,14 +64,15 @@ export const EditableLongText = ({ fullWidth, isEditing: isEditingProp, onChange
     setEditing(false);
   };
 
-  const onEdit = ({ target: { value: newValue } }) => setValue(newValue);
+  const onEdit = ({ target: { value: newValue } }: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setValue(newValue);
 
   const onEditClick = () => setEditing(true);
 
   const onConfirmEdit = useCallback(
-    event => {
+    (event: ConfirmEditEvent) => {
       event.stopPropagation();
-      if (event.key && (event.key !== 'Enter' || event.shiftKey)) {
+      const key = 'key' in event ? event.key : undefined;
+      if (key && (key !== 'Enter' || event.shiftKey)) {
         return;
       }
       if (isEditing) {

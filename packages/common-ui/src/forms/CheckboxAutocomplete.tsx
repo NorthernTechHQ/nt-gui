@@ -11,20 +11,27 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { Ref } from 'react';
-import { useMemo } from 'react';
+import type { ReactNode, Ref } from 'react';
 import type { FieldValues, Path } from 'react-hook-form';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import type { AutocompleteProps } from '@mui/material';
 import { Autocomplete, Checkbox, Chip, TextField } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
 
 import { TruncatedTagList } from './helpers';
 
 const listboxMaxHeight = 304;
 
+const useStyles = makeStyles()(() => ({
+  optionLabel: { minWidth: 0, wordBreak: 'break-word' },
+  tagsSelect: { width: 270 }
+}));
+
 type CheckboxAutocompleteProps<T> = {
   chipDisplay?: boolean;
+  error?: boolean;
+  helperText?: ReactNode;
   inputRef?: Ref<HTMLInputElement>;
   label?: string;
   labelAttribute?: string;
@@ -36,6 +43,9 @@ type CheckboxAutocompleteProps<T> = {
 
 export const CheckboxAutocomplete = <T,>({
   chipDisplay = false,
+  className = '',
+  error,
+  helperText,
   inputRef,
   label = '',
   labelAttribute = 'title',
@@ -45,31 +55,23 @@ export const CheckboxAutocomplete = <T,>({
   value = [],
   ...remainder
 }: CheckboxAutocompleteProps<T>) => {
-  const sortedOptions = useMemo(() => {
-    const selectedSet = new Set(value);
-    return [...options].sort((a, b) => {
-      const aSelected = selectedSet.has(a);
-      const bSelected = selectedSet.has(b);
-      if (aSelected && !bSelected) return -1;
-      if (!aSelected && bSelected) return 1;
-      return 0;
-    });
-  }, [value, options]);
+  const { classes } = useStyles();
 
   return (
     <Autocomplete
       autoSelect={false}
+      className={`${chipDisplay ? classes.tagsSelect : ''} ${className}`}
       disableCloseOnSelect
       multiple
       value={value ?? []}
       onChange={(_e, data) => onChange(data)}
-      options={sortedOptions}
+      options={options}
       getOptionLabel={option => (typeof option === 'string' ? option : option[labelAttribute])}
       isOptionEqualToValue={(option, val) => option === val || (option[labelAttribute] != null && option[labelAttribute] === val[labelAttribute])}
       renderOption={({ key, ...optionProps }, option, { selected }) => (
         <li key={key} {...optionProps}>
-          <Checkbox className="margin-right-x-small" checked={selected} />
-          {typeof option === 'string' ? option : option[labelAttribute]}
+          <Checkbox className="padding-none margin-right-x-small" checked={selected} />
+          <span className={classes.optionLabel}>{typeof option === 'string' ? option : option[labelAttribute]}</span>
         </li>
       )}
       renderValue={
@@ -79,9 +81,11 @@ export const CheckboxAutocomplete = <T,>({
                 const { key, ...tagProps } = getItemProps({ index });
                 return <Chip key={key} label={typeof option === 'string' ? option : option[labelAttribute]} size="small" {...tagProps} />;
               })
-          : values => <TruncatedTagList labelAttribute={labelAttribute} values={values} />
+          : values => <TruncatedTagList labelAttribute={labelAttribute} values={values as (string | Record<string, string>)[]} />
       }
-      renderInput={params => <TextField {...params} label={label} placeholder={value?.length ? '' : placeholder} inputRef={inputRef} />}
+      renderInput={params => (
+        <TextField {...params} error={error} helperText={helperText} label={label} placeholder={value?.length ? '' : placeholder} inputRef={inputRef} />
+      )}
       slotProps={{ listbox: { style: { maxHeight: listboxMaxHeight } } }}
       {...remainder}
     />
