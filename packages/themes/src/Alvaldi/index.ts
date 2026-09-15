@@ -11,6 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-export { chartColorPalette } from './common';
+
+export type { DummyType } from '../common';
 export { dark } from './dark';
 export { light } from './light';

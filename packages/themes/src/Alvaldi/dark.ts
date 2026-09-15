@@ -11,10 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { accordionClasses } from '@mui/material/Accordion';
-import { buttonClasses } from '@mui/material/Button';
+import type { ThemeOptions } from '@mui/material';
+import { common, grey as muiGrey } from '@mui/material/colors';
 
-import { palette as commonPalette, overrides, typography } from './common';
+import { listItemStyles, overrides, palette as commonPalette, typography } from './common';
 
 const grey = {
   'A400': '#1d1f20',
@@ -31,9 +31,16 @@ const grey = {
 };
 const paper = '#23252a';
 
+const info = {
+  main: muiGrey[700],
+  dark: muiGrey[800],
+  light: muiGrey[300],
+  contrastText: common.white
+};
+
 const palette = {
   ...commonPalette,
-  mode: 'dark',
+  mode: 'dark' as const,
   primary: {
     main: '#4d8b96'
   },
@@ -46,6 +53,8 @@ const palette = {
   greySecondary: {
     '600': '#616161'
   },
+  info,
+  neutral: info,
   background: {
     light: '#1d1f20',
     lightgrey: paper,
@@ -65,52 +74,22 @@ const palette = {
   }
 };
 
-export const dark = {
+export const dark: ThemeOptions = {
   palette,
   typography,
   components: {
     ...overrides,
-    MuiAccordion: {
-      ...overrides.MuiAccordion,
-      styleOverrides: {
-        root: {
-          ...overrides.MuiAccordion.styleOverrides.root,
-          [`&.${accordionClasses.expanded}`]: {
-            ...overrides.MuiAccordion.styleOverrides.root[`&.${accordionClasses.expanded}`],
-            backgroundColor: palette.grey['A400']
-          }
-        }
-      }
-    },
-    MuiButton: {
-      ...overrides.MuiButton,
-      styleOverrides: {
-        ...overrides.MuiButton.styleOverrides,
-        root: {
-          ...overrides.MuiButton.styleOverrides.root,
-          [`&.${buttonClasses.text}`]: {
-            ...overrides.MuiButton.styleOverrides.root[`&.${buttonClasses.text}`],
-            color: palette.text.primary
-          }
-        }
-      }
-    },
     MuiIconButton: {
-      ...overrides.MuiIconButton,
       styleOverrides: {
-        ...overrides.MuiIconButton.styleOverrides,
         root: {
-          ...overrides.MuiIconButton.styleOverrides.root,
           color: palette.text.primary
         }
       }
     },
     MuiListItem: {
-      ...overrides.MuiListItem,
       styleOverrides: {
-        ...overrides.MuiListItem.styleOverrides,
         root: {
-          ...overrides.MuiListItem.styleOverrides.root,
+          ...listItemStyles,
           [`&.active`]: {
             backgroundColor: palette.background.default
           },
@@ -122,11 +101,10 @@ export const dark = {
       }
     },
     MuiListItemText: {
-      ...overrides.MuiListItemText,
       styleOverrides: {
-        ...overrides.MuiListItemText.styleOverrides,
         root: {
-          ...overrides.MuiListItemText.styleOverrides.root,
+          marginTop: 0,
+          marginBottom: 0,
           color: palette.text.primary
         }
       }
