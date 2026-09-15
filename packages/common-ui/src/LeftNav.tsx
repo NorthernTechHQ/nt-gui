@@ -11,39 +11,53 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { CSSProperties, ReactNode } from 'react';
 import React from 'react';
 import { NavLink } from 'react-router';
 
 // material ui
-import { List, ListItem, ListItemIcon, ListItemText, ListSubheader } from '@mui/material';
+import type { ListItemTextProps } from '@mui/material';
+import { List, ListItem, ListItemIcon, ListItemText, ListSubheader, darken, lighten } from '@mui/material';
 import { listItemTextClasses } from '@mui/material/ListItemText';
 import { makeStyles } from 'tss-react/mui';
 
 import { isDarkMode } from '@northern.tech/store/utils';
 
+export interface LeftNavItem {
+  exact?: boolean;
+  icon?: ReactNode;
+  path?: string;
+  style?: CSSProperties;
+  title?: string;
+  url?: string;
+}
+
+export interface LeftNavSection {
+  itemClass?: string;
+  items?: LeftNavItem[];
+  title?: string;
+}
+
+export interface LeftNavProps {
+  sections: LeftNavSection[];
+}
+
 const useStyles = makeStyles()(theme => ({
-  list: {
-    [`&.navLink .${listItemTextClasses.root}`]: {
-      color: isDarkMode(theme.palette.mode) ? theme.palette.text.primary : theme.palette.grey[900]
-    },
-    [`&.navLink.active .${listItemTextClasses.root}`]: {
-      color: isDarkMode(theme.palette.mode) ? theme.palette.grey[900] : theme.palette.text.primary
-    },
-    '&.active': {
-      background: theme.palette.grey[400]
-    }
-  },
   listItem: {
+    '&.active': {
+      background: isDarkMode(theme.palette.mode) ? lighten(theme.palette.background.paper, 0.08) : darken(theme.palette.background.paper, 0.08)
+    },
+    '&:hover': {
+      background: isDarkMode(theme.palette.mode) ? lighten(theme.palette.background.paper, 0.04) : darken(theme.palette.background.paper, 0.04)
+    },
     [`.${listItemTextClasses.primary}`]: {
-      fontSize: '0.8rem',
-      '&:hover': {
-        color: theme.palette.primary.main
-      }
+      color: theme.palette.text.primary,
+      fontSize: 'small'
     }
   }
 }));
 
-export const LeftNav = ({ sections }) => {
+export const LeftNav = ({ sections }: LeftNavProps) => {
   const { classes } = useStyles();
   return (
     <List className="leftFixed">
@@ -55,8 +69,8 @@ export const LeftNav = ({ sections }) => {
               ? { component: 'a', exact: `${exact}`, href: url, rel: 'noopener', target: '_blank', to: url }
               : { component: NavLink, end: exact, to: path };
             return (
-              <ListItem className={`navLink ${itemClass} ${classes.list}`} key={path} style={style} {...props}>
-                <ListItemText className={classes.listItem} primary={title} />
+              <ListItem className={`navLink ${itemClass} ${classes.listItem}`} key={path} style={style} {...props}>
+                <ListItemText {...({ primary: title, url } as ListItemTextProps)} />
                 {!!icon && <ListItemIcon>{icon}</ListItemIcon>}
               </ListItem>
             );

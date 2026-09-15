@@ -39,7 +39,7 @@ describe('CopyCode Component', () => {
     await user.click(screen.getByRole('button', { name: /Copy to clipboard/i }));
     expect(submitCheck).toHaveBeenCalledTimes(1);
     expect(document.execCommand).toHaveBeenCalledTimes(1);
-    expect(screen.queryByText(/Copied to clipboard/i)).toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText(/Copied to clipboard/i)).toBeInTheDocument());
     act(() => vi.advanceTimersByTime(6000));
     await waitFor(() => rerender(ui));
     expect(screen.queryByText(/Copied to clipboard/i)).not.toBeInTheDocument();

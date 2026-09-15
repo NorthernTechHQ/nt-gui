@@ -23,6 +23,15 @@ exports[`FileTransfer Component > renders correctly 1`] = `
 }
 
 .emotion-4 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 0.875rem;
+  line-height: 1.43;
+  letter-spacing: 0.01071em;
+}
+
+.emotion-5 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -74,13 +83,15 @@ exports[`FileTransfer Component > renders correctly 1`] = `
             class="emotion-3"
             style="display: grid;"
           >
-            <div>
+            <p
+              class="MuiTypography-root MuiTypography-body2 emotion-4"
+            >
               a1
-            </div>
+            </p>
           </div>
           <svg
             aria-hidden="true"
-            class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall margin-left-small link-color emotion-4"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall margin-left-small link-color emotion-5"
             data-testid="LaunchIcon"
             focusable="false"
             viewBox="0 0 24 24"

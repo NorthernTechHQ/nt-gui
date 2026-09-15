@@ -22,6 +22,10 @@ const meta: Meta<typeof FileSize> = {
     fileSize: {
       control: { type: 'radio' },
       options: [0, 512, 1024, 1048576, 1000000, 2147483648, 1099511627776]
+    },
+    variant: {
+      control: { type: 'select' },
+      options: ['body1', 'body2', 'caption', 'h6', 'subtitle1']
     }
   }
 };
@@ -36,5 +40,15 @@ export const Primary: Story = {
   args: {
     fileSize: 1000000,
     style: {}
+  }
+};
+
+export const Emphasized: Story = {
+  render: props => <FileSize {...props} />,
+  name: 'Emphasized',
+  args: {
+    fileSize: 2147483648,
+    variant: 'h6',
+    color: 'primary'
   }
 };

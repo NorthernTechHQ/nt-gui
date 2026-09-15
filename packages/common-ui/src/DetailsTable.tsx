@@ -14,7 +14,7 @@
 // material ui
 import type { CSSProperties, ReactNode, Ref } from 'react';
 
-import { Sort as SortIcon } from '@mui/icons-material';
+import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
 import type { TableCellProps } from '@mui/material';
 import { Checkbox, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
@@ -33,33 +33,36 @@ const useStyles = makeStyles()(() => ({
   }
 }));
 
-interface SortParams {
-  direction?: 'asc' | 'desc';
+export type SortDirection = (typeof SORTING_OPTIONS)[keyof typeof SORTING_OPTIONS];
+
+export interface SortParams {
+  direction?: SortDirection;
   key?: string;
 }
 
-interface ColumnDefinition {
-  cellProps: TableCellProps;
-  defaultSortDirection?: 'asc' | 'desc';
-  extras?: any;
+// the extras are an entirely column specific, opaque pass-through payload - thus the loose typing
+export interface ColumnDefinition<T = any, E = any> {
+  cellProps?: TableCellProps;
+  defaultSortDirection?: SortDirection;
+  extras?: E;
   key: string;
-  render: (item: any, extras: any) => ReactNode;
-  renderTitle?: (extras: any) => ReactNode;
+  render: (item: T, extras?: E) => ReactNode;
+  renderTitle?: (extras?: E) => ReactNode;
   sortable?: boolean;
   title: string;
 }
 
-interface DetailsTableProps {
+export interface DetailsTableProps<T = any> {
   className?: string;
-  columns: ColumnDefinition[];
-  items: any[];
-  onChangeSorting: (sortKey: string) => void;
-  onItemClick?: (item: any) => void;
-  onRowSelected?: (rowNumber: number[]) => void;
+  columns: ColumnDefinition<T>[];
+  items: T[];
+  onChangeSorting?: (sortKey: string) => void;
+  onItemClick?: (item: T) => void;
+  onRowSelected?: (rowNumbers: number[]) => void;
   selectedRows?: number[];
   sort?: SortParams;
   style?: CSSProperties;
-  tableRef: Ref<HTMLTableElement>;
+  tableRef?: Ref<HTMLTableElement>;
 }
 
 export const DetailsTable = ({
@@ -76,7 +79,7 @@ export const DetailsTable = ({
 }: DetailsTableProps) => {
   const { classes } = useStyles();
 
-  const onRowSelection = selectedRow => {
+  const onRowSelection = (selectedRow: number) => {
     const updatedSelection = [...selectedRows];
     const selectedIndex = updatedSelection.indexOf(selectedRow);
     if (selectedIndex === -1) {
@@ -84,8 +87,7 @@ export const DetailsTable = ({
     } else {
       updatedSelection.splice(selectedIndex, 1);
     }
-    // @ts-expect-error - the render code checks if this is defined
-    onRowSelected(updatedSelection);
+    onRowSelected?.(updatedSelection);
   };
 
   const onSelectAllClick = () => {
@@ -93,8 +95,7 @@ export const DetailsTable = ({
     if (selectedRows.length && selectedRows.length <= items.length) {
       newSelectedRows = [];
     }
-    // @ts-expect-error - the render code checks if this is defined
-    onRowSelected(newSelectedRows);
+    onRowSelected?.(newSelectedRows);
   };
 
   return (
@@ -102,7 +103,7 @@ export const DetailsTable = ({
       <TableHead className={classes.header}>
         <TableRow>
           {onRowSelected !== undefined && (
-            <TableCell>
+            <TableCell padding="checkbox">
               <Checkbox indeterminate={false} checked={selectedRows.length === items.length} onChange={onSelectAllClick} />
             </TableCell>
           )}
@@ -110,11 +111,16 @@ export const DetailsTable = ({
             <TableCell
               key={key}
               className={`columnHeader ${sortable ? '' : 'nonSortable'}`}
-              onClick={() => (sortable ? onChangeSorting(key) : null)}
+              onClick={() => (sortable ? onChangeSorting?.(key) : null)}
               {...cellProps}
             >
               {renderTitle ? renderTitle(extras) : title}
-              {sortable && <SortIcon className={`sortIcon ${sort.key === key ? 'selected' : ''} ${(sort.direction === SORTING_OPTIONS.desc).toString()}`} />}
+              {sortable &&
+                (sort.direction === SORTING_OPTIONS.desc ? (
+                  <ArrowDownward className={`sortIcon ${sort.key === key ? 'selected' : ''}`} color="action" />
+                ) : (
+                  <ArrowUpward className={`sortIcon ${sort.key === key ? 'selected' : ''}`} color="action" />
+                ))}
             </TableCell>
           ))}
         </TableRow>
@@ -123,12 +129,17 @@ export const DetailsTable = ({
         {items.map((item, index) => (
           <TableRow className={onItemClick ? 'clickable' : ''} hover key={item.id || index}>
             {onRowSelected !== undefined && (
-              <TableCell>
+              <TableCell padding="checkbox">
                 <Checkbox checked={selectedRows.includes(index)} onChange={() => onRowSelection(index)} />
               </TableCell>
             )}
             {columns.map(column => (
-              <TableCell className="relative" key={column.key} onClick={() => (onItemClick ? onItemClick(item) : null)}>
+              <TableCell
+                className={`relative ${column.sortable ? 'padding-right-large' : ''}`}
+                key={column.key}
+                onClick={() => (onItemClick ? onItemClick(item) : null)}
+                {...column.cellProps}
+              >
                 {column.render(item, column.extras)}
               </TableCell>
             ))}

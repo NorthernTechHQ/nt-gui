@@ -11,12 +11,22 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { CSSProperties } from 'react';
+
+import type { SvgIconProps } from '@mui/material';
 import { SvgIcon } from '@mui/material';
 
 import { mdiImageBrokenVariant } from '@mdi/js';
 
-const MaterialDesignIcon = ({ className = '', path = mdiImageBrokenVariant, style = {} }) => (
-  <SvgIcon className={className} fontSize="inherit" style={style}>
+export interface MaterialDesignIconProps {
+  className?: string;
+  fontSize?: SvgIconProps['fontSize'];
+  path?: string;
+  style?: CSSProperties;
+}
+
+const MaterialDesignIcon = ({ className = '', path = mdiImageBrokenVariant, style = {}, fontSize = 'inherit' }: MaterialDesignIconProps) => (
+  <SvgIcon className={className} fontSize={fontSize} style={style}>
     <path d={path} />
   </SvgIcon>
 );

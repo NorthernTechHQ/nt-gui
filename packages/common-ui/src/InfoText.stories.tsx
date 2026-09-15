@@ -17,7 +17,13 @@ import { InfoText } from './InfoText';
 
 const meta: Meta<typeof InfoText> = {
   title: 'common-ui/InfoText',
-  component: InfoText
+  component: InfoText,
+  argTypes: {
+    variant: {
+      control: { type: 'radio' },
+      options: [undefined, 'dense']
+    }
+  }
 };
 
 export default meta;
@@ -31,5 +37,15 @@ export const Primary: Story = {
     children: 'some info here',
     variant: 'dense',
     style: {}
+  }
+};
+
+export const Paragraph: Story = {
+  render: props => <InfoText {...props} />,
+  name: 'Paragraph',
+  args: {
+    children: 'Devices that have not communicated with the server within the configured interval are considered offline.',
+    variant: undefined,
+    className: ''
   }
 };

@@ -28,10 +28,37 @@ export const Primary: Story = {
   render: props => <EditableLongText {...props} />,
   name: 'EditableLongText',
   args: {
-    contentFallback: 'fallback to this',
     fullWidth: false,
     original: 'the original intention',
-    onChange: changed => alert(`changed to ${changed}`),
+    onChange: async changed => alert(`changed to ${changed}`),
     placeholder: 'some placeholder'
+  }
+};
+
+export const FullWidth: Story = {
+  name: 'Full Width',
+  args: {
+    ...Primary.args,
+    fullWidth: true,
+    original:
+      'a much longer note that spans across multiple lines to demonstrate how the component grows to the full width of its container while staying limited to a maximum number of rows'
+  }
+};
+
+export const ControlledEditing: Story = {
+  name: 'Controlled Editing',
+  args: {
+    ...Primary.args,
+    isEditing: true,
+    onEditToggle: (editing: boolean) => console.log(`editing ${editing ? 'started' : 'stopped'}`)
+  }
+};
+
+export const ControlledDisplay: Story = {
+  name: 'Controlled Display',
+  args: {
+    ...Primary.args,
+    isEditing: false,
+    onEditToggle: (editing: boolean) => console.log(`editing ${editing ? 'started' : 'stopped'}`)
   }
 };

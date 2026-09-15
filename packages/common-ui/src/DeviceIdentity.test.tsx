@@ -28,7 +28,7 @@ describe('DeviceIdentityDisplay Component', () => {
       }
     };
     const { baseElement } = render(<DeviceIdentityDisplay device={defaultState.devices.byId.a1} isEditable={false} />, { preloadedState });
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });

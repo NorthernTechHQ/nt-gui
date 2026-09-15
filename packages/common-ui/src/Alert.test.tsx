@@ -24,7 +24,7 @@ describe('Alert Component', () => {
         Content
       </Alert>
     );
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });

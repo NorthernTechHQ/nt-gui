@@ -11,42 +11,72 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
+import type { ElementType } from 'react';
 import { useEffect, useState } from 'react';
 
-import { Tooltip } from '@mui/material';
+import { Tooltip, Typography } from '@mui/material';
 
+import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime.js';
 import pluralize from 'pluralize';
 
-const defaultDateFormat = 'YYYY-MM-DD';
-const defaultTimeFormat = `${defaultDateFormat} HH:mm`;
+export const defaultDateFormat = 'YYYY-MM-DD';
+export const defaultTimeFormat = `${defaultDateFormat} HH:mm`;
 
 // based on react-time - https://github.com/andreypopp/react-time - which unfortunately is no longer maintained
 dayjs.extend(relativeTime);
 
-export const Time = ({ value, relative, format = defaultTimeFormat, valueFormat, titleFormat = defaultTimeFormat, Component = 'time', ...remainingProps }) => {
-  if (!value) {
-    value = dayjs();
-  }
-  value = dayjs(value, valueFormat, true);
+interface TimeBaseProps {
+  className?: string;
+  format?: string;
+  relative?: boolean;
+  titleFormat?: string;
+  value?: string | Date | Dayjs;
+  valueFormat?: string;
+}
 
-  const machineReadable = value.format('YYYY-MM-DDTHH:mm:ssZ');
-  const humanReadable = relative ? value.fromNow() : value.format(format);
+// the index signature mirrors the pass-through props of the mender-server implementation, an intersection is used here so the
+// explicitly typed props survive - `Omit`ing from a type with an index signature would collapse them back to `unknown`
+export type TimeProps = TimeBaseProps & { [key: string]: unknown; Component?: ElementType };
+
+export type MaybeTimeProps = TimeBaseProps & { [key: string]: unknown };
+
+export const Time = ({
+  value,
+  relative,
+  format = defaultTimeFormat,
+  valueFormat,
+  titleFormat = defaultTimeFormat,
+  Component = 'time',
+  ...remainingProps
+}: TimeProps) => {
+  const parsedValue = dayjs(value || dayjs(), valueFormat, true);
+
+  const machineReadable = parsedValue.format('YYYY-MM-DDTHH:mm:ssZ');
+  const humanReadable = relative ? parsedValue.fromNow() : parsedValue.format(format);
   return (
-    <Component title={relative ? value.format(titleFormat) : null} {...remainingProps} dateTime={machineReadable}>
+    <Component title={relative ? parsedValue.format(titleFormat) : null} {...remainingProps} dateTime={machineReadable}>
       {humanReadable}
     </Component>
   );
 };
 
-export const MaybeTime = ({ className = '', value, ...remainingProps }) =>
-  value ? <Time value={value} {...remainingProps} /> : <div className={className}>-</div>;
+export const MaybeTime = ({ className = '', value, ...remainingProps }: MaybeTimeProps) => (
+  <Typography variant="body2" className={className}>
+    {value ? <Time value={value} {...remainingProps} /> : '-'}
+  </Typography>
+);
+
+export interface RelativeTimeProps {
+  className?: string;
+  shouldCount?: 'both' | 'up' | 'down' | 'none';
+  updateTime?: string | Date;
+}
 
 const cutoff = -5 * 60;
-export const RelativeTime = ({ className, shouldCount = 'both', updateTime }) => {
-  const [updatedTime, setUpdatedTime] = useState();
+export const RelativeTime = ({ className, shouldCount = 'both', updateTime }: RelativeTimeProps) => {
+  const [updatedTime, setUpdatedTime] = useState<Dayjs>();
 
   useEffect(() => {
     setUpdatedTime(updatedTime => (updateTime !== updatedTime ? dayjs(updateTime) : updatedTime));
@@ -60,21 +90,21 @@ export const RelativeTime = ({ className, shouldCount = 'both', updateTime }) =>
     (shouldCount === 'both' || (shouldCount === 'up' && diffSeconds > 0) || (shouldCount === 'down' && diffSeconds < 0))
   ) {
     timeDisplay = (
-      <time className={className} dateTime={updatedTime}>
+      <Typography className={className} variant="body2" component="time" dateTime={updatedTime.toISOString()}>
         {updatedTime.fromNow()}
-      </time>
+      </Typography>
     );
   }
   return (
     <Tooltip title={updatedTime ? updatedTime.toDate().toString().slice(0, 33) : ''} arrow enterDelay={500}>
-      <span>{timeDisplay}</span>
+      {timeDisplay}
     </Tooltip>
   );
 };
 
 const cutoffDays = 14;
-export const ApproximateRelativeDate = ({ className, updateTime }) => {
-  const [updatedTime, setUpdatedTime] = useState();
+export const ApproximateRelativeDate = ({ className, updateTime }: { className?: string; updateTime?: string | Date }) => {
+  const [updatedTime, setUpdatedTime] = useState<Dayjs>();
 
   useEffect(() => {
     setUpdatedTime(updatedTime => (updateTime !== updatedTime ? dayjs(updateTime) : updatedTime));
@@ -83,9 +113,9 @@ export const ApproximateRelativeDate = ({ className, updateTime }) => {
   const diff = updatedTime ? Math.abs(updatedTime.diff(dayjs(), 'days')) : 0;
   if (updatedTime && diff <= cutoffDays) {
     return (
-      <time className={className} dateTime={updatedTime.format(defaultDateFormat)}>
+      <Typography className={className} variant="body2" component="time" dateTime={updatedTime.format(defaultDateFormat)}>
         {diff !== 0 ? `${diff} ${pluralize('day', diff)} ago` : 'today'}
-      </time>
+      </Typography>
     );
   }
   return <MaybeTime className={className} value={updatedTime} format={defaultDateFormat} titleFormat={defaultDateFormat} />;

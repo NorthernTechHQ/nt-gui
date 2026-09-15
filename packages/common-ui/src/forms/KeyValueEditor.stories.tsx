@@ -11,9 +11,25 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { InfoOutlined as InfoOutlinedIcon } from '@mui/icons-material';
+
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import MenderTooltip from '../helptips/MenderTooltip';
+import type { HelptipProps, InputHelptip, KeyValuePairs } from './KeyValueEditor';
 import { KeyValueEditor } from './KeyValueEditor';
+
+const TimezoneHelptip = ({ className, style }: HelptipProps) => (
+  <MenderTooltip arrow placement="top" title="The timezone the device should report its data in, e.g. Europe/Oslo">
+    <InfoOutlinedIcon className={className} color="primary" fontSize="small" style={style} />
+  </MenderTooltip>
+);
+
+const inputHelpTipsMap: Record<string, InputHelptip> = { timezone: { component: TimezoneHelptip } };
+
+const initialInput: KeyValuePairs = { environment: 'production', region: 'eu-west-1', timezone: 'Europe/Oslo' };
+
+const onInputChange = (values: KeyValuePairs) => console.log('key value pairs changed:', values);
 
 const meta: Meta<typeof KeyValueEditor> = {
   component: KeyValueEditor,
@@ -26,22 +42,20 @@ type Story = StoryObj<typeof KeyValueEditor>;
 
 export const Primary: Story = {
   name: 'KeyValueEditor',
-  args: {
-    disabled: false,
-    initialInput: {},
-    onInputChange: (values: Record<string, string>) => console.log('Input changed:', values)
-  }
+  args: { onInputChange }
 };
 
 export const WithInitialValues: Story = {
   name: 'With Initial Values',
-  args: {
-    disabled: false,
-    initialInput: {
-      environment: 'production',
-      region: 'us-west-2',
-      version: '1.0.0'
-    },
-    onInputChange: (values: Record<string, string>) => console.log('Input changed:', values)
-  }
+  args: { initialInput, onInputChange }
+};
+
+export const WithHelptips: Story = {
+  name: 'With Helptips',
+  args: { initialInput, inputHelpTipsMap, onInputChange }
+};
+
+export const Disabled: Story = {
+  name: 'Disabled',
+  args: { disabled: true, initialInput, onInputChange }
 };

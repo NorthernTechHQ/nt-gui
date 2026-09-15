@@ -18,14 +18,13 @@ import { Button } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
 import { TIMEOUTS, yes } from '@northern.tech/store/constants';
-
-import CopyToClipboard from './CopyToClipboard';
+import copy from 'copy-to-clipboard';
 
 const useStyles = makeStyles()(() => ({
   copyNotification: { height: 15 }
 }));
 
-interface CopyTextProps {
+export interface CopyTextProps {
   notify?: boolean;
   onCopy?: () => void;
   token: string;
@@ -39,6 +38,7 @@ export const CopyTextToClipboard = ({ notify = true, onCopy = yes, token }: Copy
   useEffect(() => () => clearTimeout(timer.current), []);
 
   const onCopied = () => {
+    copy(token);
     setCopied(true);
     onCopy();
     timer.current = setTimeout(() => setCopied(false), TIMEOUTS.fiveSeconds);
@@ -46,9 +46,9 @@ export const CopyTextToClipboard = ({ notify = true, onCopy = yes, token }: Copy
 
   return (
     <div>
-      <CopyToClipboard text={token} onCopy={onCopied}>
-        <Button startIcon={<CopyPasteIcon />}>Copy to clipboard</Button>
-      </CopyToClipboard>
+      <Button color="info" variant="outlined" startIcon={<CopyPasteIcon />} onClick={onCopied}>
+        Copy to clipboard
+      </Button>
       {notify && <p className={classes.copyNotification}>{copied && <span className="green fadeIn">Copied to clipboard.</span>}</p>}
     </div>
   );

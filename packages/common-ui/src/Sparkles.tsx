@@ -18,6 +18,10 @@ import { mdiStarFourPointsOutline as StarOutlined } from '@mdi/js';
 
 import MaterialDesignIcon from './MaterialDesignIcon';
 
+export interface SparkleAnimationProps {
+  className?: string;
+}
+
 const sparkle = keyframes`
   0%, 100% {
     transform: scale(0.6);
@@ -38,7 +42,7 @@ const useStyles = makeStyles()(theme => ({
   wrapper: { width: 24, height: 24 }
 }));
 
-export const SparkleAnimation = ({ className = '' }) => {
+export const SparkleAnimation = ({ className = '' }: SparkleAnimationProps) => {
   const { classes } = useStyles();
   return (
     <div className={`relative ${classes.wrapper} ${className}`}>

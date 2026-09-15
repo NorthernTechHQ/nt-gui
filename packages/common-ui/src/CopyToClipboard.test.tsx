@@ -15,7 +15,7 @@ import { Button } from '@mui/material';
 
 import { render } from '@/testUtils';
 import { undefineds } from '@northern.tech/testing/mockData';
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import copy from 'copy-to-clipboard';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -28,7 +28,7 @@ const mockCopy = vi.mocked(copy);
 describe('CopyToClipboard Component', () => {
   beforeEach(() => {
     mockCopy.mockClear();
-    mockCopy.mockReturnValue(true);
+    mockCopy.mockResolvedValue(true);
   });
 
   it('renders correctly', () => {
@@ -67,7 +67,7 @@ describe('CopyToClipboard Component', () => {
     expect(mockCopy).toHaveBeenCalledWith('Hello World', options);
   });
 
-  it('calls both copy and original onClick in correct order', () => {
+  it('calls both copy and original onClick in correct order', async () => {
     const originalOnClick = vi.fn();
     const onCopy = vi.fn();
 
@@ -80,8 +80,8 @@ describe('CopyToClipboard Component', () => {
     fireEvent.click(screen.getByRole('button'));
 
     expect(mockCopy).toHaveBeenCalledWith('Hello World', undefined);
-    expect(onCopy).toHaveBeenCalledWith('Hello World', true);
     expect(originalOnClick).toHaveBeenCalled();
+    await waitFor(() => expect(onCopy).toHaveBeenCalledWith('Hello World', true));
   });
 
   it('passes through additional props to child element', () => {
@@ -96,9 +96,9 @@ describe('CopyToClipboard Component', () => {
     expect(button).toHaveAttribute('data-testid', 'copy-btn');
   });
 
-  it('handles copy failure gracefully', () => {
+  it('handles copy failure gracefully', async () => {
     const onCopy = vi.fn();
-    mockCopy.mockReturnValue(false);
+    mockCopy.mockResolvedValue(false);
 
     render(
       <CopyToClipboard text="Hello World" onCopy={onCopy}>
@@ -108,6 +108,6 @@ describe('CopyToClipboard Component', () => {
 
     fireEvent.click(screen.getByRole('button'));
     expect(mockCopy).toHaveBeenCalledWith('Hello World', undefined);
-    expect(onCopy).toHaveBeenCalledWith('Hello World', false);
+    await waitFor(() => expect(onCopy).toHaveBeenCalledWith('Hello World', false));
   });
 });

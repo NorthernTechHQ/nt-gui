@@ -11,22 +11,28 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
+import type { MouseEvent } from 'react';
 import { useEffect, useState } from 'react';
 
 import type { TooltipProps } from '@mui/material';
-import { ClickAwayListener, Tooltip } from '@mui/material';
+import { ClickAwayListener, Tooltip, getOverlayAlpha, lighten } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
 
+import { isDarkMode } from '@northern.tech/store/utils';
 import { toggle } from '@northern.tech/utils/helpers';
-import type { PositioningStrategy } from '@popperjs/core';
+
+declare module '@mui/material/styles' {
+  interface TypeText {
+    hint: string;
+  }
+}
 
 export const MenderTooltip = withStyles(Tooltip, ({ palette, shadows, spacing }) => ({
   arrow: {
     color: palette.background.paper
   },
   tooltip: {
-    backgroundColor: palette.background.paper,
+    backgroundColor: isDarkMode(palette.mode) ? lighten(palette.background.paper, getOverlayAlpha(8)) : palette.background.paper,
     boxShadow: shadows[1],
     color: palette.text.primary,
     padding: spacing(2),
@@ -56,7 +62,7 @@ export const MenderTooltipClickable = ({
   onOpenChange,
   tooltipComponent = MenderTooltip,
   ...remainingProps
-}): MenderTooltipClickableProps => {
+}: MenderTooltipClickableProps) => {
   const [open, setOpen] = useState(startOpen || false);
 
   useEffect(() => {
@@ -70,25 +76,14 @@ export const MenderTooltipClickable = ({
     onOpenChange(open);
   }, [open, onOpenChange]);
 
-  const toggleVisibility = () => setOpen(toggle);
+  const toggleVisibility = (e: MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setOpen(toggle);
+  };
 
   const hide = () => setOpen(false);
 
   const Component = tooltipComponent as typeof Tooltip;
-  const extraProps = onboarding
-    ? {
-        PopperProps: {
-          disablePortal: true,
-          popperOptions: {
-            strategy: 'fixed' as PositioningStrategy,
-            modifiers: [
-              { name: 'flip', enabled: false },
-              { name: 'preventOverflow', enabled: true, options: { boundary: window, altBoundary: false } }
-            ]
-          }
-        }
-      }
-    : {};
   return (
     <ClickAwayListener onClickAway={hide}>
       <Component
@@ -98,7 +93,6 @@ export const MenderTooltipClickable = ({
         disableHoverListener
         disableTouchListener
         onOpen={() => setOpen(true)}
-        {...extraProps}
         {...remainingProps}
       >
         <div onClick={toggleVisibility}>{children}</div>

@@ -22,8 +22,8 @@ import SharedSnackbar from './SharedSnackbar';
 
 describe('SharedSnackbar Component', () => {
   it('renders correctly', async () => {
-    const { baseElement } = render(<SharedSnackbar snackbar={{ open: true, message: 'test' }} setSnackbar={vi.fn} />);
-    const view = baseElement.firstChild.firstChild;
+    const { baseElement } = render(<SharedSnackbar snackbar={{ open: true, message: 'test' }} setSnackbar={vi.fn()} />);
+    const view = baseElement.firstChild!.firstChild;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });
