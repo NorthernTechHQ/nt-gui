@@ -14,6 +14,8 @@
 import type { FormControlProps } from '@mui/material';
 import { Color, autocompleteClasses, inputBaseClasses, outlinedInputClasses } from '@mui/material';
 
+import { typography as baseTypography, components } from '../common';
+
 const componentProps = {
   MuiTextField: {
     defaultProps: {
@@ -39,7 +41,7 @@ const coef = fontSize / 14;
 const pxToRem = (size: number) => `${round((size / htmlFontSize) * coef)}rem`;
 
 export const typography = {
-  fontFamily: 'Red Hat Text',
+  ...baseTypography,
   fontSize,
   body1: {
     lineHeight: 1.5,
@@ -145,7 +147,7 @@ export const commonPalette = {
   blue,
   green
 };
-export const overrides = {
+const cfengineOverrides = {
   ...componentProps,
   MuiTextField: {
     styleOverrides: {
@@ -264,3 +266,8 @@ export const overrides = {
     }
   }
 };
+
+export const overrides = {
+  ...components,
+  ...cfengineOverrides
+} as typeof cfengineOverrides;
