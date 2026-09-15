@@ -13,7 +13,12 @@
 //    limitations under the License.
 import validator from 'validator';
 
-const validationMethods = {
+export interface ValidationResult {
+  errortext: string;
+  isValid: boolean;
+}
+
+const validationMethods: Record<string, string> = {
   isAlpha: 'This field must contain only letters',
   isAlphanumeric: 'This field must contain only letters or numbers',
   isEmail: 'Please enter a valid email address',
@@ -23,7 +28,7 @@ const validationMethods = {
   isUUID: 'Please enter a valid ID'
 };
 
-const getErrorMsg = (validateMethod, args) => {
+const getErrorMsg = (validateMethod: string, args: string[]): string => {
   if (validationMethods[validateMethod]) {
     return validationMethods[validateMethod];
   }
@@ -33,7 +38,7 @@ const getErrorMsg = (validateMethod, args) => {
         return `Must be between ${args[0]} and ${args[1]} characters long`;
       } else if (Number(args[0]) === 1) {
         return 'This field is required';
-      } else if (args[0] > 1) {
+      } else if (Number(args[0]) > 1) {
         return `Must be at least ${args[0]} characters long`;
       }
       break;
@@ -51,15 +56,18 @@ const getErrorMsg = (validateMethod, args) => {
     default:
       return 'There is an error with this field';
   }
+  return '';
 };
 
-const tryApplyValidationEntry = (value, validations = [], validationResults = []) => {
+type ValidatorMethod = (...args: string[]) => boolean;
+
+const tryApplyValidationEntry = (value: string, validations: string[] = [], validationResults: ValidationResult[] = []): ValidationResult => {
   const validation = validations.shift();
   if (!validation) {
-    return validationResults.pop();
+    return validationResults.pop() as ValidationResult;
   }
   let args = validation.split(':');
-  const validateMethod = args.shift();
+  const validateMethod = args.shift() as string;
   const tmpArgs = args;
   // We then merge two arrays, ending up with the value
   // to pass first, then options, if any. ['valueFromInput', 5]
@@ -67,7 +75,7 @@ const tryApplyValidationEntry = (value, validations = [], validationResults = []
   try {
     // So the next line of code is actually:
     // validator.isLength('valueFromInput', 5)
-    if (!validator[validateMethod](...args)) {
+    if (!(validator as unknown as Record<string, ValidatorMethod>)[validateMethod](...args)) {
       return tryApplyValidationEntry(value, validations, [...validationResults, { errortext: getErrorMsg(validateMethod, tmpArgs), isValid: false }]);
     }
   } catch {
@@ -77,8 +85,8 @@ const tryApplyValidationEntry = (value, validations = [], validationResults = []
   return { errortext: '', isValid: true };
 };
 
-const tryApplyValidations = (value, validations, initialValidationResult) =>
-  validations.split(',').reduce((accu, validation) => {
+const tryApplyValidations = (value: string, validations: string, initialValidationResult: ValidationResult): ValidationResult =>
+  validations.split(',').reduce((accu: ValidationResult, validation: string) => {
     if (!accu.isValid || !validation) {
       return accu;
     }
@@ -86,7 +94,13 @@ const tryApplyValidations = (value, validations, initialValidationResult) =>
     return tryApplyValidationEntry(value, alternatives, [accu]);
   }, initialValidationResult);
 
-const runPasswordValidations = ({ required, value, validations, isValid, errortext }) => {
+interface PasswordValidationInput extends ValidationResult {
+  required?: boolean;
+  validations: string;
+  value: string;
+}
+
+const runPasswordValidations = ({ required, value, validations, isValid, errortext }: PasswordValidationInput): ValidationResult => {
   if (required && !value) {
     return { isValid: false, errortext: 'Password is required' };
   } else if (required || value) {
@@ -96,7 +110,15 @@ const runPasswordValidations = ({ required, value, validations, isValid, errorte
   return { isValid, errortext };
 };
 
-export const runValidations = ({ required, value, id, validations, wasMaybeTouched }) => {
+export interface RunValidationsInput {
+  id?: string;
+  required?: boolean;
+  validations: string;
+  value: string;
+  wasMaybeTouched?: boolean;
+}
+
+export const runValidations = ({ required, value, id, validations, wasMaybeTouched }: RunValidationsInput): ValidationResult => {
   const isValid = true;
   const errortext = '';
   if (id && id.includes('password')) {
@@ -114,5 +136,5 @@ export const invalidCharactersError = 'Valid characters are a-z, A-Z, 0-9, ., _ 
 export const hasValidTagCharacters = (value: string) => validator.isWhitelisted(value, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.');
 
 export const tagValidationRules = {
-  validate: (tags = []) => tags.every(hasValidTagCharacters) || invalidCharactersError
+  validate: (tags: string[] = []) => tags.every(hasValidTagCharacters) || invalidCharactersError
 };

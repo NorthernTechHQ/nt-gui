@@ -11,6 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { CSSProperties, MouseEventHandler } from 'react';
 import { useState } from 'react';
 
 import { Cancel as CancelIcon, CheckCircle as CheckCircleIcon, Check as CheckIcon, Close as CloseIcon, Edit as EditIcon } from '@mui/icons-material';
@@ -32,7 +33,7 @@ const useStyles = makeStyles()(theme => ({
 
 const defaultRemoving = 'Removing...';
 
-const confirmationType = {
+export const confirmationType = {
   retry: {
     loading: 'Creating new deployment...',
     message: 'Confirm retry?'
@@ -63,7 +64,16 @@ const confirmationType = {
   }
 };
 
-export const Confirm = ({ action, cancel, classes = '', message = '', style = {}, type }) => {
+export interface ConfirmProps {
+  action: () => void;
+  cancel: () => void;
+  classes?: string;
+  message?: string;
+  style?: CSSProperties;
+  type?: keyof typeof confirmationType;
+}
+
+export const Confirm = ({ action, cancel, classes = '', message = '', style = {}, type }: ConfirmProps) => {
   const [className, setClassName] = useState('fadeIn');
   const [loading, setLoading] = useState(false);
   const { classes: localClasses } = useStyles();
@@ -78,7 +88,7 @@ export const Confirm = ({ action, cancel, classes = '', message = '', style = {}
   };
 
   let notification = message;
-  if (confirmationType[type]) {
+  if (type && confirmationType[type]) {
     notification = loading ? confirmationType[type].loading : confirmationType[type].message;
   }
   return (
@@ -96,7 +106,13 @@ export const Confirm = ({ action, cancel, classes = '', message = '', style = {}
   );
 };
 
-export const EditButton = ({ label = 'Edit', onClick, disabled = false }) =>
+export interface EditButtonProps {
+  disabled?: boolean;
+  label?: string;
+  onClick: MouseEventHandler<HTMLButtonElement>;
+}
+
+export const EditButton = ({ label = 'Edit', onClick, disabled = false }: EditButtonProps) =>
   label ? (
     <Button onClick={onClick} size="small" disabled={disabled} startIcon={<EditIcon />} style={{ padding: 5 }} color="inherit">
       {label}
@@ -107,7 +123,13 @@ export const EditButton = ({ label = 'Edit', onClick, disabled = false }) =>
     </IconButton>
   );
 
-export const ConfirmationButtons = ({ onConfirm, onCancel, className = '' }) => (
+export interface ConfirmationButtonsProps {
+  className?: string;
+  onCancel: MouseEventHandler<HTMLButtonElement>;
+  onConfirm: MouseEventHandler<HTMLButtonElement>;
+}
+
+export const ConfirmationButtons = ({ onConfirm, onCancel, className = '' }: ConfirmationButtonsProps) => (
   <div className={`flexbox ${className}`}>
     <IconButton onClick={onConfirm} size="small" aria-label="confirm">
       <CheckIcon color="disabled" />

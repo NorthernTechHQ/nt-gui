@@ -39,18 +39,18 @@ const SizedDrawer = styled(Drawer, { shouldForwardProp: prop => prop !== 'size' 
   }
 }));
 
-interface BaseDrawerSlotProps extends Pick<DrawerProps, 'slotProps'> {
+export interface BaseDrawerSlotProps extends Pick<DrawerProps, 'slotProps'> {
   header: Omit<DrawerTitleProps, 'onClose'>;
 }
 
-interface BaseDrawerProps extends Omit<DrawerProps, 'title' | 'slotProps'> {
+export interface BaseDrawerProps extends Omit<DrawerProps, 'title' | 'slotProps'> {
   notification?: ReactNode;
   size?: DrawerSize;
   slotProps: BaseDrawerSlotProps;
 }
 
-const BaseDrawer = ({ children, className = '', notification, onClose, open, size = 'md', slotProps, ...rest }: BaseDrawerProps) => {
-  const { header: headerProps, ...drawerSlotProps } = slotProps ?? {};
+export const BaseDrawer = ({ children, className = '', notification, onClose, open, size = 'md', slotProps, ...rest }: BaseDrawerProps) => {
+  const { header: headerProps, ...drawerSlotProps } = slotProps ?? ({} as BaseDrawerSlotProps);
   const handleHeaderClose = (event: SyntheticEvent) => onClose?.(event, 'escapeKeyDown');
   return (
     <SizedDrawer

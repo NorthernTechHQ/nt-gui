@@ -11,10 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { CSSProperties, ReactNode } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 // material ui
 import { FileCopyOutlined as CopyToClipboardIcon } from '@mui/icons-material';
+import type { ListItemProps, TypographyProps } from '@mui/material';
 import { ListItem, ListItemText, Tooltip } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
@@ -39,6 +41,19 @@ const useStyles = makeStyles()(theme => ({
 
 const defaultClasses = { root: 'attributes' };
 
+export interface ExpandableAttributeProps extends Omit<ListItemProps, 'classes' | 'divider' | 'onClick' | 'secondary' | 'style'> {
+  className?: string;
+  copyToClipboard?: boolean;
+  dividerDisabled?: boolean;
+  onExpansion?: () => void;
+  primary?: ReactNode;
+  secondary?: string;
+  secondaryTypographyProps?: TypographyProps;
+  setSnackbar?: (message: string) => void;
+  style?: CSSProperties;
+  textClasses?: Record<string, string>;
+}
+
 export const ExpandableAttribute = ({
   className = '',
   copyToClipboard,
@@ -51,9 +66,9 @@ export const ExpandableAttribute = ({
   style,
   textClasses,
   ...remainder
-}) => {
+}: ExpandableAttributeProps) => {
   const { classes } = useStyles();
-  const textContent = useRef(null);
+  const textContent = useRef<HTMLSpanElement | null>(null);
   const [expanded, setExpanded] = useState(false);
   const [overflowActive, setOverflowActive] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(false);
@@ -71,8 +86,8 @@ export const ExpandableAttribute = ({
   const onClick = useCallback(() => {
     if (copyToClipboard) {
       // Date/Time components
-      copy(secondary);
-      setSnackbar('Value copied to clipboard');
+      copy(secondary ?? '');
+      setSnackbar?.('Value copied to clipboard');
     }
     if (!expanded && !!onExpansion) {
       onExpansion();

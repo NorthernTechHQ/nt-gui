@@ -22,7 +22,7 @@ import EnterpriseNotification from './EnterpriseNotification';
 describe('EnterpriseNotification Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = render(<EnterpriseNotification />);
-    const view = baseElement.firstChild;
+    const view = baseElement.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });
@@ -30,7 +30,7 @@ describe('EnterpriseNotification Component', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     render(<EnterpriseNotification />);
     await user.click(screen.getByText(/enterprise/i));
-    const view = screen.getByRole('tooltip').firstChild;
+    const view = screen.getByRole('tooltip').firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });

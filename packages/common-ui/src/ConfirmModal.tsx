@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { FormEvent, ReactNode } from 'react';
+import type { ReactNode, SubmitEvent } from 'react';
 import { useState } from 'react';
 
 import type { DialogProps } from '@mui/material';
@@ -19,7 +19,7 @@ import { Button, DialogActions, DialogContent, DialogContentText, TextField } fr
 
 import { BaseDialog } from './dialogs/BaseDialog';
 
-interface ConfirmModalProps {
+export interface ConfirmModalProps {
   className?: string;
   close: () => void;
   confirmButtonText?: string;
@@ -31,11 +31,12 @@ interface ConfirmModalProps {
   open: boolean;
   toType?: string;
 }
+
 export const ConfirmModal = (props: ConfirmModalProps) => {
   const { close, onConfirm, className = '', toType, header, description, open, maxWidth = 'xs', confirmButtonText = 'Confirm', isDanger = true } = props;
   const [inputValue, setInputValue] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: SubmitEvent<HTMLDivElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
     try {

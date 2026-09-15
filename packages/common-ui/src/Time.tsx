@@ -27,16 +27,20 @@ export const defaultTimeFormat = `${defaultDateFormat} HH:mm`;
 // based on react-time - https://github.com/andreypopp/react-time - which unfortunately is no longer maintained
 dayjs.extend(relativeTime);
 
-interface TimeProps {
-  [key: string]: unknown;
+interface TimeBaseProps {
   className?: string;
-  Component?: ElementType;
   format?: string;
   relative?: boolean;
   titleFormat?: string;
   value?: string | Date | Dayjs;
   valueFormat?: string;
 }
+
+// the index signature mirrors the pass-through props of the mender-server implementation, an intersection is used here so the
+// explicitly typed props survive - `Omit`ing from a type with an index signature would collapse them back to `unknown`
+export type TimeProps = TimeBaseProps & { [key: string]: unknown; Component?: ElementType };
+
+export type MaybeTimeProps = TimeBaseProps & { [key: string]: unknown };
 
 export const Time = ({
   value,
@@ -47,27 +51,24 @@ export const Time = ({
   Component = 'time',
   ...remainingProps
 }: TimeProps) => {
-  if (!value) {
-    value = dayjs();
-  }
-  value = dayjs(value, valueFormat, true);
+  const parsedValue = dayjs(value || dayjs(), valueFormat, true);
 
-  const machineReadable = value.format('YYYY-MM-DDTHH:mm:ssZ');
-  const humanReadable = relative ? value.fromNow() : value.format(format);
+  const machineReadable = parsedValue.format('YYYY-MM-DDTHH:mm:ssZ');
+  const humanReadable = relative ? parsedValue.fromNow() : parsedValue.format(format);
   return (
-    <Component title={relative ? value.format(titleFormat) : null} {...remainingProps} dateTime={machineReadable}>
+    <Component title={relative ? parsedValue.format(titleFormat) : null} {...remainingProps} dateTime={machineReadable}>
       {humanReadable}
     </Component>
   );
 };
 
-export const MaybeTime = ({ className = '', value, ...remainingProps }: Omit<TimeProps, 'Component'>) => (
+export const MaybeTime = ({ className = '', value, ...remainingProps }: MaybeTimeProps) => (
   <Typography variant="body2" className={className}>
     {value ? <Time value={value} {...remainingProps} /> : '-'}
   </Typography>
 );
 
-interface RelativeTimeProps {
+export interface RelativeTimeProps {
   className?: string;
   shouldCount?: 'both' | 'up' | 'down' | 'none';
   updateTime?: string | Date;

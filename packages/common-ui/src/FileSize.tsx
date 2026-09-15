@@ -15,7 +15,7 @@ import { Typography } from '@mui/material';
 
 import { getFormattedSize } from '@northern.tech/utils/helpers';
 
-interface FileSizeProps extends TypographyProps {
+export interface FileSizeProps extends TypographyProps {
   fileSize: number;
 }
 

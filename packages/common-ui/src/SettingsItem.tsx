@@ -13,13 +13,12 @@
 //    limitations under the License.
 import type { ReactNode } from 'react';
 
-import { Typography } from '@mui/material';
-import { FormControlLabel, Switch } from '@mui/material';
+import { FormControlLabel, Switch, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
 const SETTINGS_CONTENT_MAX_WIDTH = 750;
 
-type SettingsItemClasses = {
+export type SettingsItemClasses = {
   base: string;
   content: string;
   main: string;

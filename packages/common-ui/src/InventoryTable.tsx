@@ -44,7 +44,7 @@ const columns: Record<SortColumn, SortColumn> = {
   value: 'value'
 };
 
-interface InventoryTableProps {
+export interface InventoryTableProps {
   config: Record<string, string>;
   setSnackbar?: (message: string) => void;
 }

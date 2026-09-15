@@ -25,14 +25,14 @@ import TextInput from './TextInput';
 describe('Form Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = render(
-      <Form showButtons submitLabel="submit">
+      <Form onSubmit={vi.fn()} showButtons submitLabel="submit">
         <FormCheckbox id="testbox" label="testbox" />
         <PasswordInput id="password" create />
         <TextInput id="textbox" />
       </Form>
     );
     expect(await screen.findByText('submit')).toBeInTheDocument();
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });
@@ -41,7 +41,7 @@ describe('Form Component', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
 
     const ui = (
-      <Form showButtons submitLabel="submit">
+      <Form onSubmit={vi.fn()} showButtons submitLabel="submit">
         <PasswordInput id="password" required create generate />
       </Form>
     );
@@ -49,6 +49,6 @@ describe('Form Component', () => {
     await user.click(screen.getByRole('button', { name: /generate/i }));
     await waitFor(() => rerender(ui));
     await waitFor(() => expect(screen.getByRole('button', { name: /submit/i })).not.toBeDisabled());
-    window.prompt.mockClear();
+    (window.prompt as ReturnType<typeof vi.fn>).mockClear();
   });
 });

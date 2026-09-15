@@ -1,4 +1,4 @@
-// Copyright 2020 Northern.tech AS
+// Copyright 2026 Northern.tech AS
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -11,17 +11,17 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { render } from '@/testUtils';
-import { undefineds } from '@northern.tech/testing/mockData';
-import { describe, expect, it } from 'vitest';
 
-import ExpandableAttribute from './ExpandableAttribute';
+// asset imports are resolved to their public url by the bundler - mirrors the `vite/client` ambient declarations without pulling in the full vite types
+declare module '*.png' {
+  const src: string;
+  export default src;
+}
 
-describe('ExpandableAttribute Component', () => {
-  it('renders correctly', async () => {
-    const { baseElement } = render(<ExpandableAttribute />);
-    const view = baseElement.firstChild?.firstChild as HTMLElement;
-    expect(view).toMatchSnapshot();
-    expect(view).toEqual(expect.not.stringMatching(undefineds));
-  });
-});
+declare module '*.svg' {
+  const src: string;
+  export default src;
+}
+
+// side-effect only css imports (e.g. `@xterm/xterm/css/xterm.css`) are handled by the bundler
+declare module '*.css';

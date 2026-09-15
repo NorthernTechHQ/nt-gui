@@ -24,7 +24,7 @@ const useStyles = makeStyles()(() => ({
   copyNotification: { height: 15 }
 }));
 
-interface CopyTextProps {
+export interface CopyTextProps {
   notify?: boolean;
   onCopy?: () => void;
   token: string;
@@ -33,7 +33,7 @@ interface CopyTextProps {
 export const CopyTextToClipboard = ({ notify = true, onCopy = yes, token }: CopyTextProps) => {
   const [copied, setCopied] = useState(false);
   const { classes } = useStyles();
-  const timer = useRef<ReturnType<typeof setTimeout> | undefined>();
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => () => clearTimeout(timer.current), []);
 

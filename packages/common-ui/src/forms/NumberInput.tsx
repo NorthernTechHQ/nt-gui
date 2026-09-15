@@ -79,8 +79,8 @@ export const NumberInput = ({
           label={label}
           value={value ?? null}
           onValueChange={onChange}
-          onBlur={e => {
-            onBlur(e);
+          onBlur={() => {
+            onBlur();
             onBlurExternal?.((getValues(id) as number | null) ?? null);
           }}
           min={min}

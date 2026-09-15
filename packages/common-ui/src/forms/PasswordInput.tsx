@@ -36,17 +36,14 @@ import type { CommonTextInputProps } from './TextInput';
 import { checkPasswordStrength, generatePassword } from './passwordStrength';
 import { runValidations } from './validations';
 
-const PasswordGenerateButtons = ({
-  clearPass,
-  edit,
-  generatePass,
-  disabled
-}: {
+interface PasswordGenerateButtonsProps {
   clearPass: () => void;
   disabled?: boolean;
   edit?: boolean;
   generatePass: () => void;
-}) => (
+}
+
+const PasswordGenerateButtons = ({ clearPass, edit, generatePass, disabled }: PasswordGenerateButtonsProps) => (
   <div className="pass-buttons">
     <Button onClick={generatePass} disabled={disabled}>
       Generate
@@ -66,7 +63,7 @@ const useStyles = makeStyles()(theme => ({
   }
 }));
 
-type PasswordInputProps = {
+export type PasswordInputProps = {
   create?: boolean;
   defaultValue?: string;
   edit?: boolean;
@@ -101,16 +98,18 @@ export const PasswordInput = ({
   const [strong, setStrong] = useState(false);
   const [warningIcon, setWarningIcon] = useState(false);
   const [confirmationId] = useState(id.includes('current') ? '' : ['password', 'password_confirmation'].find(thing => thing !== id));
-  const timer = useRef();
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const {
     formState: { errors },
     setValue,
     trigger,
     getValues
   } = useFormContext();
-  const confirmation = useWatch({ name: confirmationId });
-  const confirmationRef = useRef(confirmation);
-  confirmationRef.current = confirmation;
+  const confirmation = useWatch({ name: confirmationId as string });
+  const confirmationRef = useRef<string | undefined>(confirmation);
+  useEffect(() => {
+    confirmationRef.current = confirmation;
+  }, [confirmation]);
   const errorKey = id;
 
   const validate = useCallback(
@@ -160,7 +159,7 @@ export const PasswordInput = ({
 
   const clearPassClick = () => {
     setValue(id, '');
-    onClear();
+    onClear?.();
     setCopied(false);
   };
 
@@ -168,7 +167,7 @@ export const PasswordInput = ({
     const password = generatePassword();
     setValue(id, password);
     const form = getValues();
-    if (form.hasOwnProperty(`${id}_confirmation`)) {
+    if (Object.prototype.hasOwnProperty.call(form, `${id}_confirmation`)) {
       setValue(`${id}_confirmation`, password);
     }
     copy(password);
@@ -187,14 +186,14 @@ export const PasswordInput = ({
           control={control}
           rules={{ validate }}
           render={({ field: { value, onChange, onBlur, ref }, fieldState: { error } }) => {
-            const errorMessage = (errors[errorKey] || error)?.message;
+            const errorMessage = (errors[errorKey] || error)?.message as string | undefined;
             const showSuccess = strong && !errorMessage && Boolean(value);
             return (
               <FormControl
                 className={`${required ? 'required' : ''} ${showSuccess ? classes.success : ''}`.trim()}
                 error={Boolean(errorMessage)}
                 color={showSuccess ? 'success' : undefined}
-                style={{ width }}
+                style={{ width: width ?? undefined }}
               >
                 <InputLabel htmlFor={id} {...InputLabelProps}>
                   {label}

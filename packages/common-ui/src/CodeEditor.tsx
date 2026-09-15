@@ -50,7 +50,8 @@ const useStyles = makeStyles()(theme => {
 
 export const useEditorStyles = useStyles;
 
-export const defaultEditorOptions: EditorProps['options'] = {
+// enableSplitViewResizing & renderOverviewRuler only apply to the diff editor, but are kept here so the defaults can be shared with it
+export const defaultEditorOptions: EditorProps['options'] & Pick<editor.IDiffEditorBaseOptions, 'enableSplitViewResizing' | 'renderOverviewRuler'> = {
   autoClosingOvertype: 'auto',
   codeLens: false,
   contextmenu: false,
@@ -58,7 +59,7 @@ export const defaultEditorOptions: EditorProps['options'] = {
   fontFamily: 'Red Hat Mono',
   fontSize: 14,
   formatOnPaste: true,
-  lightbulb: { enabled: 'off' },
+  lightbulb: { enabled: 'off' as editor.IEditorLightbulbOptions['enabled'] },
   minimap: { enabled: false },
   overviewRulerBorder: false,
   padding: { top: 16, bottom: 16 },
@@ -104,7 +105,7 @@ export const useEditorTheme = (isReadOnly: boolean) => {
   return { editorThemeName, defineEditorTheme };
 };
 
-interface CodeEditorProps {
+export interface CodeEditorProps {
   className?: string;
   language: string;
   onChange?: (value: string | undefined, ev: editor.IModelContentChangedEvent) => void;

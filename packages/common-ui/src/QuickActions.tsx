@@ -11,7 +11,8 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { type ReactNode, type Ref, useState } from 'react';
+import type { MouseEvent, ReactNode, Ref } from 'react';
+import { useState } from 'react';
 
 import { ClickAwayListener, SpeedDial, SpeedDialAction, SpeedDialIcon, Typography, getOverlayAlpha, lighten } from '@mui/material';
 import { speedDialActionClasses } from '@mui/material/SpeedDialAction';
@@ -30,7 +31,7 @@ export interface QuickAction {
   title: ReactNode;
 }
 
-interface BaseQuickActionsProps {
+export interface BaseQuickActionsProps {
   actions: QuickAction[];
   ariaLabel: string;
   label: string;
@@ -72,7 +73,7 @@ export const BaseQuickActions = ({ actions, ariaLabel, titleRef, label, speedDia
   const [isOpen, setIsOpen] = useState(false);
   const { classes } = useStyles();
 
-  const handleToggle = (e?: React.MouseEvent) => {
+  const handleToggle = (e?: MouseEvent) => {
     e?.stopPropagation();
     setIsOpen(toggle);
     onToggle?.(!isOpen);

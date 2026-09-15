@@ -15,12 +15,21 @@ import type { CSSProperties, ReactNode } from 'react';
 import { useState } from 'react';
 
 import { ContentCopy as CopyPasteIcon } from '@mui/icons-material';
-import { Button, IconButton, Typography, type TypographyProps } from '@mui/material';
+import type { TypographyProps } from '@mui/material';
+import { Button, IconButton, Typography } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';
 
 import { TIMEOUTS } from '@northern.tech/store/constants';
 import copy from 'copy-to-clipboard';
+
+// mirrors the typography variant augmentation of the @northern.tech/themes package, so the code variants can be used without depending on a concrete theme
+declare module '@mui/material/Typography' {
+  interface TypographyPropsVariantOverrides {
+    code1: true;
+    code2: true;
+  }
+}
 
 const sizeMaxHeights = {
   small: 200,
@@ -56,11 +65,11 @@ const useStyles = makeStyles()(theme => {
   };
 });
 
-type CodeSize = 'small' | 'medium' | 'full';
+export type CodeSize = 'small' | 'medium' | 'full';
 
-type CodeVariant = 'code1' | 'code2';
+export type CodeVariant = 'code1' | 'code2';
 
-interface CodeProps {
+export interface CodeProps {
   children: ReactNode;
   className?: string;
   noBackground?: boolean;
@@ -91,7 +100,7 @@ export const InlineCode = ({ children, variant = 'code1', ...props }: Typography
   );
 };
 
-interface CopyCodeProps {
+export interface CopyCodeProps {
   code: string;
   noBackground?: boolean;
   onCopy?: () => void;
@@ -104,8 +113,8 @@ export const CopyCode = ({ code, onCopy, size = 'full', variant = 'code1', withD
   const [copied, setCopied] = useState(false);
   const { classes } = useStyles();
 
-  const onCopied = () => {
-    const result = copy(code);
+  const onCopied = async () => {
+    const result = await copy(code);
     setCopied(result);
     setTimeout(() => setCopied(false), TIMEOUTS.fiveSeconds);
     if (onCopy) {
