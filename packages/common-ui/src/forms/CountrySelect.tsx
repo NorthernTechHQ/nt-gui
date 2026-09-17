@@ -12,6 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { useEffect, useState } from 'react';
+import type { Control, FieldValues } from 'react-hook-form';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { Autocomplete, TextField } from '@mui/material';
@@ -48,7 +49,13 @@ export const CountrySelect = (props: CountrySelectProps) => {
   );
 };
 
-export const ControlledCountrySelect = ({ control, id, required }) => {
+export interface ControlledCountrySelectProps {
+  control: Control<FieldValues>;
+  id?: string;
+  required?: boolean;
+}
+
+export const ControlledCountrySelect = ({ control, id, required }: ControlledCountrySelectProps) => {
   const [defaultCountry, setDefaultCountry] = useState('');
   const { getValues } = useFormContext();
   const values = getValues();

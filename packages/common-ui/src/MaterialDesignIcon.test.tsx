@@ -20,7 +20,7 @@ import MaterialDesignIcon from './MaterialDesignIcon';
 describe('MaterialDesignIcon Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = render(<MaterialDesignIcon />);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });

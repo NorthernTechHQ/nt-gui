@@ -13,15 +13,25 @@
 //    limitations under the License.
 import { Provider } from 'react-redux';
 
+import { defaultState as preloadedState } from '@/testUtils';
 import { getConfiguredStore } from '@northern.tech/store/store';
-import { mockApiResponses as defaultState } from '@northern.tech/testing/mockData';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { FileUpload } from './FileUpload';
 
 const meta: Meta<typeof FileUpload> = {
   component: FileUpload,
-  title: 'common-ui/forms/FileUpload'
+  title: 'common-ui/forms/FileUpload',
+  decorators: [
+    Story => {
+      const store = getConfiguredStore({ preloadedState });
+      return (
+        <Provider store={store}>
+          <Story />
+        </Provider>
+      );
+    }
+  ]
 };
 
 export default meta;
@@ -30,20 +40,49 @@ type Story = StoryObj<typeof FileUpload>;
 
 export const Primary: Story = {
   name: 'FileUpload',
-  decorators: [
-    Story => {
-      const store = getConfiguredStore({ preloadedState: defaultState });
-      return (
-        <Provider store={store}>
-          <Story />
-        </Provider>
-      );
-    }
-  ],
   args: {
-    placeholder: 'Upload or drag and drop a file here',
-    onFileChange: (content: string) => console.log('File content:', content),
-    onFileSelect: (file: File) => console.log('File selected:', file),
-    enableContentReading: true
+    enableContentReading: true,
+    onFileChange: (content?: string) => alert(`file content: ${content}`),
+    onFileSelect: (file?: File) => alert(`file selected: ${file?.name}`),
+    placeholder: 'Drag here or click to browse for a file to upload',
+    style: { maxWidth: 500 }
+  }
+};
+
+export const WithRichPlaceholder: Story = {
+  name: 'With Rich Placeholder',
+  args: {
+    ...Primary.args,
+    placeholder: (
+      <>
+        Drag here or <b>click to browse</b> for your <code>id_rsa.pub</code>
+      </>
+    )
+  }
+};
+
+export const WithSelectedFile: Story = {
+  name: 'With Selected File',
+  args: {
+    ...Primary.args,
+    fileNameSelection: 'id_rsa.pub'
+  }
+};
+
+export const WithValidatedFile: Story = {
+  name: 'With Validated File',
+  args: {
+    ...Primary.args,
+    fileNameSelection: 'release-v2.1.0.mender',
+    isValid: true
+  }
+};
+
+export const WithoutContentReading: Story = {
+  name: 'Without Content Reading',
+  args: {
+    ...Primary.args,
+    enableContentReading: false,
+    placeholder: 'Only the file reference is passed on - the content is not read'
   }
 };

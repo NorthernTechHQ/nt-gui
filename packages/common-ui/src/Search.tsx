@@ -15,19 +15,12 @@ import type { CSSProperties, KeyboardEvent } from 'react';
 import { useCallback, useEffect, useRef } from 'react';
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form';
 
-import { Search as SearchIcon } from '@mui/icons-material';
-import { InputAdornment, TextField } from '@mui/material';
+import { Clear as ClearIcon, Search as SearchIcon } from '@mui/icons-material';
+import { IconButton, InputAdornment, TextField } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
 
 import { TIMEOUTS } from '@northern.tech/store/constants';
 import { useDebounce } from '@northern.tech/utils/debouncehook';
-
-import Loader from './Loader';
-
-const endAdornment = (
-  <InputAdornment position="end">
-    <Loader show small style={{ marginTop: -10 }} />
-  </InputAdornment>
-);
 
 const startAdornment = (
   <InputAdornment position="start">
@@ -37,33 +30,53 @@ const startAdornment = (
 
 // due to search not working reliably for single letter searches, only start at 2
 const MINIMUM_SEARCH_LENGTH = 2;
+const useStyles = makeStyles()(() => ({
+  adornment: {
+    visibility: 'hidden',
+    opacity: 0,
+    transition: 'opacity 0.3s ease-in-out'
+  },
+  textFieldRoot: {
+    '& .MuiOutlinedInput-root:hover, & .Mui-focused': {
+      '& .MuiInputAdornment-root': {
+        visibility: 'visible',
+        opacity: 1
+      }
+    }
+  }
+}));
 
-interface ControlledSearchProps {
+export interface ControlledSearchProps {
+  asFormField?: boolean;
   className?: string;
-  isSearching: boolean;
+  clearButtonOnHover?: boolean;
   name?: string;
-  onSearch: (term: string) => Promise<void>;
+  onSearch?: (term: string) => Promise<unknown>;
   placeholder?: string;
+  showSearchIcon?: boolean;
   style?: CSSProperties;
 }
 
 export const ControlledSearch = ({
   className = '',
-  isSearching,
+  showSearchIcon = true,
+  asFormField = false,
   name = 'search',
   onSearch,
   placeholder = 'Search devices',
-  style = {}
+  style = {},
+  clearButtonOnHover = false
 }: ControlledSearchProps) => {
-  const { control, watch } = useFormContext();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const { control, watch, resetField } = useFormContext();
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const focusLockRef = useRef(true);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined); // this + the above focusLock are needed to work around the focus being reassigned to the input field which would cause runaway search triggers
   const triggerDebounceRef = useRef(false); // this is needed to reject the search triggered through the recreation of the onSearch callback
-
-  const searchValue = watch(name, '');
+  const { classes } = useStyles();
+  const searchValue: string = watch(name, '');
 
   const debouncedSearchTerm = useDebounce(searchValue, TIMEOUTS.debounceDefault);
+  const shouldTriggerSearch = !asFormField && !!onSearch;
 
   const focusAndLock = () => {
     focusLockRef.current = false;
@@ -81,44 +94,62 @@ export const ControlledSearch = ({
   );
 
   useEffect(() => {
-    if (debouncedSearchTerm.length < MINIMUM_SEARCH_LENGTH || triggerDebounceRef.current) {
+    if (!shouldTriggerSearch || debouncedSearchTerm.length < MINIMUM_SEARCH_LENGTH || triggerDebounceRef.current) {
       return;
     }
     triggerDebounceRef.current = true;
     onSearch(debouncedSearchTerm).then(focusAndLock);
-  }, [debouncedSearchTerm, onSearch]);
+  }, [debouncedSearchTerm, onSearch, shouldTriggerSearch]);
 
   const onTriggerSearch = useCallback(
     ({ key }: KeyboardEvent<HTMLInputElement>) => {
-      if (key === 'Enter' && (!debouncedSearchTerm || debouncedSearchTerm.length >= MINIMUM_SEARCH_LENGTH)) {
+      if (shouldTriggerSearch && key === 'Enter' && (!debouncedSearchTerm || debouncedSearchTerm.length >= MINIMUM_SEARCH_LENGTH)) {
         onSearch(debouncedSearchTerm).then(focusAndLock);
       }
     },
-    [debouncedSearchTerm, onSearch]
+    [debouncedSearchTerm, onSearch, shouldTriggerSearch]
   );
 
   const onFocus = useCallback(() => {
-    if (focusLockRef.current && debouncedSearchTerm.length >= MINIMUM_SEARCH_LENGTH) {
+    if (shouldTriggerSearch && focusLockRef.current && debouncedSearchTerm.length >= MINIMUM_SEARCH_LENGTH) {
       onSearch(debouncedSearchTerm).then(focusAndLock);
     }
-  }, [debouncedSearchTerm, onSearch]);
+  }, [debouncedSearchTerm, onSearch, shouldTriggerSearch]);
 
-  const adornments = isSearching ? { startAdornment, endAdornment } : { startAdornment };
+  const resetSearchAdornment = searchValue ? (
+    <InputAdornment position="end" className={clearButtonOnHover ? classes.adornment : ''}>
+      <IconButton
+        size="small"
+        onMouseDown={e => e.preventDefault()}
+        onClick={() => {
+          resetField(name);
+          inputRef.current?.focus();
+        }}
+      >
+        <ClearIcon />
+      </IconButton>
+    </InputAdornment>
+  ) : null;
+
+  const adornments = { ...(showSearchIcon ? { startAdornment } : {}), endAdornment: resetSearchAdornment };
   return (
     <Controller
       name={name}
       control={control}
-      render={({ field }) => (
+      render={({ field: { ref, ...restField } }) => (
         <TextField
-          className={className}
+          className={`${className} ${classes.textFieldRoot}`}
           slotProps={{ input: adornments }}
           onKeyUp={onTriggerSearch}
           onFocus={onFocus}
           placeholder={placeholder}
-          inputRef={inputRef}
           size="small"
           style={style}
-          {...field}
+          {...restField}
+          inputRef={(el: HTMLInputElement | null) => {
+            ref(el);
+            inputRef.current = el;
+          }}
         />
       )}
     />
@@ -127,8 +158,8 @@ export const ControlledSearch = ({
 
 ControlledSearch.displayName = 'ConnectedSearch';
 
-interface SearchProps extends Omit<ControlledSearchProps, 'onSearch'> {
-  onSearch: (term: string, shouldTrigger: boolean) => Promise<void>;
+export interface SearchProps extends Omit<ControlledSearchProps, 'onSearch'> {
+  onSearch: (term: string, shouldTrigger: boolean) => Promise<unknown>;
   searchTerm?: string;
   trigger?: boolean;
 }

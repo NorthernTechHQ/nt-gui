@@ -11,32 +11,45 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { defaultState, render } from '@/testUtils';
+import { render } from '@/testUtils';
+import { SORTING_OPTIONS } from '@northern.tech/store/constants';
 import { tenants, undefineds } from '@northern.tech/testing/mockData';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import DetailsIndicator from './DetailsIndicator';
+import type { ColumnHeader, ListItemComponentProps, RendererProp } from './List';
 import { CommonList } from './List';
 
-const ListItemComponentMock = ({ onClick }) => (
-  <div onClick={onClick}>
+interface TestItem {
+  id: string;
+  name: string;
+}
+
+const listState = { page: 1, perPage: 20, selection: [], sort: { direction: SORTING_OPTIONS.desc, key: 'name' }, total: 10 };
+
+const NameRenderer = ({ column, item }: RendererProp<TestItem>) => <div>{item?.[column.attribute.name] ?? ''}</div>;
+
+const DetailsButtonRenderer = () => (
+  <div className="padding-bottom-small padding-top-small">
     <DetailsIndicator />
   </div>
 );
 
-const columnHeaders = [
-  {
-    title: 'View Details',
-    attribute: {
-      name: '',
-      scope: ''
-    },
-    sortable: false,
-    component: DetailsIndicator
-  }
+const columnHeaders: ColumnHeader<TestItem>[] = [
+  { attribute: { name: 'name', scope: '' }, component: NameRenderer, sortable: false, title: 'Name' },
+  { attribute: { name: '', scope: '' }, component: DetailsButtonRenderer, sortable: false, title: '' }
 ];
+
+const TestListItem = ({ columnHeaders, listItem, onClick }: ListItemComponentProps<TestItem>) => (
+  <div className="deviceListRow clickable" onClick={() => onClick(listItem)}>
+    {columnHeaders.map(({ component: Component, ...column }, index) => (
+      <Component key={`column-${index}`} column={{ component: Component, ...column }} item={listItem} classes={{}} />
+    ))}
+  </div>
+);
+
 describe('List component', () => {
   it('renders correctly', () => {
     const onExpandClickMock = vi.fn();
@@ -47,9 +60,9 @@ describe('List component', () => {
     const onChangeRowsPerPage = vi.fn();
     const { baseElement } = render(
       <CommonList
-        ListItemComponent={ListItemComponentMock}
-        listItems={tenants}
-        listState={{ ...defaultState.organization.organization.tenantList, total: 10 }}
+        ListItemComponent={TestListItem}
+        listItems={tenants as TestItem[]}
+        listState={listState}
         columnHeaders={columnHeaders}
         onExpandClick={onExpandClickMock}
         onChangeRowsPerPage={onChangeRowsPerPage}
@@ -74,9 +87,9 @@ describe('List component', () => {
     const onChangeRowsPerPage = vi.fn();
     render(
       <CommonList
-        ListItemComponent={ListItemComponentMock}
-        listItems={tenants}
-        listState={{ ...defaultState.organization.organization.tenantList, total: 10 }}
+        ListItemComponent={TestListItem}
+        listItems={tenants as TestItem[]}
+        listState={listState}
         columnHeaders={columnHeaders}
         onExpandClick={onExpandClickMock}
         onChangeRowsPerPage={onChangeRowsPerPage}
@@ -88,7 +101,7 @@ describe('List component', () => {
       />
     );
 
-    await user.click(screen.getByText('View details'));
+    await user.click(screen.getAllByText('View details')[0]);
     expect(onExpandClickMock).toHaveBeenCalled();
   });
 });

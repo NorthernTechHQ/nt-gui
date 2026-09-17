@@ -15,12 +15,11 @@ import { Button } from '@mui/material';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import MenderTooltip, { MenderTooltipClickable } from './MenderTooltip';
+import { MenderTooltip, MenderTooltipClickable } from './MenderTooltip';
 
 const meta: Meta<typeof MenderTooltip> = {
   component: MenderTooltip,
-  title: 'common-ui/helptips/MenderTooltip',
-  includeStories: ['Primary', 'Clickable']
+  title: 'common-ui/helptips/MenderTooltip'
 };
 
 export default meta;
@@ -43,6 +42,23 @@ export const Primary: Story = {
   }
 };
 
+export const AlwaysVisible: Story = {
+  name: 'Always Visible',
+  render: args => (
+    <div style={{ padding: 50 }}>
+      <MenderTooltip {...args}>
+        <Button variant="contained">Anchor</Button>
+      </MenderTooltip>
+    </div>
+  ),
+  args: {
+    ...Primary.args,
+    open: true,
+    placement: 'right',
+    title: 'A tooltip that is forced open to inspect its styling'
+  }
+};
+
 type ClickableStory = StoryObj<typeof MenderTooltipClickable>;
 
 export const Clickable: ClickableStory = {
@@ -60,5 +76,28 @@ export const Clickable: ClickableStory = {
     arrow: true,
     startOpen: false,
     onOpenChange: (open: boolean) => console.log('Tooltip open:', open)
+  }
+};
+
+export const ClickableStartOpen: ClickableStory = {
+  name: 'MenderTooltipClickable - initially open',
+  render: Clickable.render,
+  args: {
+    ...Clickable.args,
+    startOpen: true,
+    visibility: true,
+    title: 'This tooltip starts out visible and can be dismissed by clicking away'
+  }
+};
+
+export const ClickableOnboarding: ClickableStory = {
+  name: 'MenderTooltipClickable - onboarding',
+  render: Clickable.render,
+  args: {
+    ...Clickable.args,
+    arrow: false,
+    onboarding: true,
+    startOpen: true,
+    title: 'Onboarding tooltips are rendered without an arrow'
   }
 };

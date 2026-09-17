@@ -13,7 +13,8 @@
 //    limitations under the License.
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import Search from './Search';
+import Search, { ControlledSearch } from './Search';
+import { Form } from './forms/Form';
 
 const meta: Meta<typeof Search> = {
   component: Search,
@@ -29,11 +30,61 @@ export const Primary: Story = {
   args: {
     className: '',
     searchTerm: '',
-    isSearching: false,
     placeholder: 'Search devices',
+    showSearchIcon: true,
     onSearch: async (term: string, shouldTrigger: boolean) => {
       console.log('Search triggered:', { term, shouldTrigger });
       return Promise.resolve();
     }
+  }
+};
+
+export const WithSearchTerm: Story = {
+  name: 'With initial search term',
+  args: {
+    ...Primary.args,
+    searchTerm: 'qemux86-64'
+  }
+};
+
+export const ClearButtonOnHover: Story = {
+  name: 'Clear button on hover',
+  args: {
+    ...Primary.args,
+    clearButtonOnHover: true,
+    searchTerm: 'raspberrypi'
+  }
+};
+
+export const WithoutSearchIcon: Story = {
+  name: 'Without search icon',
+  args: {
+    ...Primary.args,
+    showSearchIcon: false
+  }
+};
+
+export const TriggeredOnly: Story = {
+  name: 'Only searching on submit',
+  args: {
+    ...Primary.args,
+    trigger: true
+  }
+};
+
+type ControlledSearchStory = StoryObj<typeof ControlledSearch>;
+
+export const Secondary: ControlledSearchStory = {
+  name: 'ControlledSearch',
+  render: props => (
+    <Form defaultValues={{ search: '' }} onSubmit={data => console.log('Form submitted:', data)}>
+      <ControlledSearch {...props} />
+    </Form>
+  ),
+  args: {
+    asFormField: true,
+    className: '',
+    name: 'search',
+    placeholder: 'Filter devices'
   }
 };

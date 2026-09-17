@@ -20,7 +20,7 @@ import FileSize from './FileSize';
 describe('FileSize Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = render(<FileSize fileSize={1000} />);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
     expect(deepCompare(<FileSize fileSize={100} />, <FileSize fileSize={100} />)).toBeTruthy();

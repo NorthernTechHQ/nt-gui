@@ -22,14 +22,20 @@ import { TimeframePicker } from './TimeframePicker';
 
 const now = dayjs();
 const weekAgo = now.subtract(7, 'days');
+const monthAgo = now.subtract(30, 'days');
 
 const meta: Meta<typeof TimeframePicker> = {
   component: TimeframePicker,
   title: 'common-ui/forms/TimeframePicker',
   decorators: [
-    Story => (
+    (Story, { parameters }) => (
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Story />
+        <Form
+          defaultValues={{ startDate: (parameters.startDate as string) ?? weekAgo.toISOString(), endDate: now.toISOString() }}
+          onSubmit={data => console.log('Submitted:', data)}
+        >
+          <Story />
+        </Form>
       </LocalizationProvider>
     )
   ]
@@ -41,20 +47,17 @@ type Story = StoryObj<typeof TimeframePicker>;
 
 export const Primary: Story = {
   name: 'TimeframePicker',
-  render: args => (
-    <Form
-      defaultValues={{
-        startDate: weekAgo.toISOString(),
-        endDate: now.toISOString()
-      }}
-      onSubmit={(data: any) => console.log('Submitted:', data)}
-    >
-      <TimeframePicker {...args} />
-    </Form>
-  ),
+  args: {
+    tonight: now.toISOString()
+  }
+};
+
+export const WithHelperText: Story = {
+  name: 'With Helper Text',
+  parameters: { startDate: monthAgo.toISOString() },
   args: {
     tonight: now.toISOString(),
-    fromLabel: 'From',
-    toLabel: 'To'
+    helperText: 'Only the last 7 days of data are available on your current plan',
+    hasHelperText: ({ startDate }) => dayjs(startDate).isBefore(weekAgo)
   }
 };

@@ -11,6 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { FC } from 'react';
 import { useEffect, useRef, useState } from 'react';
 
 import {
@@ -84,7 +85,23 @@ const satisfactionLevels = [
 ];
 const explanations = ['Very unsatisfied', 'Very satisfied'];
 
-const SatisfactionGauge = ({ classes, setSatisfaction }) => (
+type FeedbackClasses = ReturnType<typeof useStyles>['classes'];
+
+interface SatisfactionGaugeProps {
+  classes: FeedbackClasses;
+  setSatisfaction: (satisfaction: number) => void;
+}
+
+interface TextEntryProps {
+  classes: FeedbackClasses;
+  feedback: string;
+  onChangeFeedback: (feedback: string) => void;
+  onSubmit: () => void;
+}
+
+type ProgressionLevelProps = SatisfactionGaugeProps & TextEntryProps;
+
+const SatisfactionGauge = ({ classes, setSatisfaction }: SatisfactionGaugeProps) => (
   <div className={`flexbox column ${classes.columns}`}>
     <div className="title">How satisfied are you with Mender?</div>
     <div className={`flexbox space-between ${classes.rating}`}>
@@ -104,7 +121,7 @@ const SatisfactionGauge = ({ classes, setSatisfaction }) => (
   </div>
 );
 
-const TextEntry = ({ classes, feedback, onChangeFeedback, onSubmit }) => (
+const TextEntry = ({ classes, feedback, onChangeFeedback, onSubmit }: TextEntryProps) => (
   <div className={`flexbox column ${classes.columns} ${classes.text}`}>
     <div className="title">What do you think is the most important thing to improve in Mender? (optional)</div>
     <TextField
@@ -123,7 +140,7 @@ const TextEntry = ({ classes, feedback, onChangeFeedback, onSubmit }) => (
 
 const AppreciationNote = () => <p className="margin-top-none align-center title">Thank you for taking the time to share your thoughts!</p>;
 
-const progressionLevels = [SatisfactionGauge, TextEntry, AppreciationNote];
+const progressionLevels: FC<ProgressionLevelProps>[] = [SatisfactionGauge, TextEntry, AppreciationNote];
 
 export const FeedbackDialog = () => {
   const [progress, setProgress] = useState(0);
@@ -145,7 +162,10 @@ export const FeedbackDialog = () => {
     setTimeout(() => (isInitialized.current = true), TIMEOUTS.oneSecond);
   }, []);
 
-  const onCloseClick = () => dispatch(setShowFeedbackDialog(false));
+  const onCloseClick = () => {
+    dispatch(submitUserFeedback({ formId: 'product', feedback: { score: 3, message: '_dismiss_' } }));
+    dispatch(setShowFeedbackDialog(false));
+  };
 
   const onSubmit = () => {
     setProgress(progress + 1);
@@ -155,7 +175,15 @@ export const FeedbackDialog = () => {
 
   const Component = progressionLevels[progress];
   return (
-    <Dialog className={classes.root} open hideBackdrop disableEnforceFocus slotProps={{ paper: { style: { pointerEvents: 'auto' } } }}>
+    <Dialog
+      className={classes.root}
+      open
+      hideBackdrop
+      disableEnforceFocus
+      slotProps={{
+        paper: { style: { pointerEvents: 'auto' } }
+      }}
+    >
       <DialogTitle>
         <IconButton onClick={onCloseClick} aria-label="close" size="small">
           <CloseIcon />

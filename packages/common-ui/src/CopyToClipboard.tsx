@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { MouseEvent, ReactElement } from 'react';
+import type { HTMLAttributes, MouseEvent, ReactElement } from 'react';
 import { Children, cloneElement } from 'react';
 
 import copy from 'copy-to-clipboard';
@@ -23,7 +23,7 @@ interface CopyToClipboardOptions {
   onCopy?: (clipboardData: object) => void;
 }
 
-interface CopyToClipboardProps {
+interface CopyToClipboardProps extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'onClick' | 'onCopy'> {
   children: ReactElement;
   onClick?: (event: MouseEvent) => void;
   onCopy?: (text: string, result: boolean) => void;
@@ -33,9 +33,9 @@ interface CopyToClipboardProps {
 
 export const CopyToClipboard = ({ text, onCopy, children, options, onClick: originalOnClick, ...props }: CopyToClipboardProps) => {
   const handleClick = (event: MouseEvent) => {
-    const result = copy(text, options);
+    const copied = copy(text, options);
     if (onCopy) {
-      onCopy(text, result);
+      copied.then(result => onCopy(text, result));
     }
     if (originalOnClick && typeof originalOnClick === 'function') {
       originalOnClick(event);

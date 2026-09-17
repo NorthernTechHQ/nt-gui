@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { render } from '@/testUtils';
 import { undefineds } from '@northern.tech/testing/mockData';
 import { describe, expect, it } from 'vitest';
@@ -20,8 +19,8 @@ import Loader from './Loader';
 
 describe('Loader Component', () => {
   it('renders correctly', async () => {
-    const { baseElement } = render(<Loader />);
-    const view = baseElement.firstChild.firstChild;
+    const { baseElement } = render(<Loader show={false} />);
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });

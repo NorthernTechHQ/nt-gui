@@ -27,7 +27,16 @@ type Story = StoryObj<typeof CopyText>;
 export const Primary: Story = {
   name: 'CopyText',
   args: {
-    token: 'something',
+    notify: true,
+    token: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.mender-demo-token',
     onCopy: () => alert('copied this')
+  }
+};
+
+export const WithoutNotification: Story = {
+  name: 'Without notification',
+  args: {
+    ...Primary.args,
+    notify: false
   }
 };

@@ -11,35 +11,61 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
+import { Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { makeStyles } from 'tss-react/mui';
 
+import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 
-const ensureStartOfDay = date => {
+const useStyles = makeStyles()(theme => ({
+  container: {
+    alignItems: 'start',
+    width: 'min-content'
+  },
+  inputs: {
+    gap: theme.spacing(2),
+    flexWrap: 'wrap',
+    [theme.breakpoints.up('md')]: {
+      flexWrap: 'nowrap'
+    }
+  }
+}));
+
+type DateLike = Date | Dayjs | string | null;
+
+const ensureStartOfDay = (date: DateLike): string => {
   const momentDate = typeof date === 'string' ? dayjs(date.replace('Z', '')) : dayjs(date);
   return `${momentDate.format().split('T')[0]}T00:00:00.000`;
 };
 
-const ensureEndOfDay = date => {
+const ensureEndOfDay = (date: DateLike): string => {
   const momentDate = typeof date === 'string' ? dayjs(date.replace('Z', '')) : dayjs(date);
   return `${momentDate.format().split('T')[0]}T23:59:59.999`;
 };
 
-export const TimeframePicker = ({
-  tonight: propsTonight,
-  format = 'YYYY-MM-DD',
-  fromLabel = 'From',
-  toLabel = 'To',
-  slotProps = {},
-  fallbackValue = dayjs()
-}) => {
+const no = () => false;
+
+interface HasHelptextParams {
+  endDate: string;
+  startDate: string;
+}
+
+export interface TimeframePickerProps {
+  hasHelperText?: (params: HasHelptextParams) => boolean;
+  helperText?: string;
+  tonight: string;
+}
+
+export const TimeframePicker = ({ hasHelperText = no, helperText, tonight: propsTonight }: TimeframePickerProps) => {
   const [tonight] = useState(dayjs(propsTonight));
   const [maxStartDate, setMaxStartDate] = useState(tonight);
   const [minEndDate, setMinEndDate] = useState(tonight);
+  const [showsHelptext, setShowsHelptext] = useState(false);
+  const { classes } = useStyles();
 
   const { control, setValue, watch, getValues } = useFormContext();
 
@@ -65,66 +91,69 @@ export const TimeframePicker = ({
     setMaxStartDate(dayjs(endDate));
   }, [endDate, getValues, setValue]);
 
-  const handleChangeStartDate = date => ensureStartOfDay(date);
+  useEffect(() => {
+    setShowsHelptext(hasHelperText({ startDate, endDate }));
+  }, [endDate, hasHelperText, startDate]);
 
-  const handleChangeEndDate = date => ensureEndOfDay(date);
+  const handleChangeStartDate = (date: DateLike) => ensureStartOfDay(date);
+
+  const handleChangeEndDate = (date: DateLike) => ensureEndOfDay(date);
 
   return (
-    <div className="flexbox" style={{ flexWrap: 'wrap', gap: 15 }}>
-      <Controller
-        name="startDate"
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <DatePicker
-            disableFuture
-            format={format}
-            slotProps={{
-              ...slotProps,
-              textField: props => ({
-                ...slotProps.textField,
-                size: 'small',
-                inputProps: {
-                  ...props.inputProps,
-                  ...slotProps.textField?.inputProps,
-                  'aria-label': 'From'
+    <div className={`flexbox column ${classes.container}`}>
+      <div className={`flexbox ${classes.inputs}`}>
+        <Controller
+          name="startDate"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <DatePicker
+              disableFuture
+              slotProps={{
+                textField: {
+                  size: 'small',
+                  slotProps: {
+                    htmlInput: { 'aria-label': 'From' }
+                  }
                 }
-              })
-            }}
-            yearsOrder="desc"
-            label={fromLabel}
-            maxDate={maxStartDate}
-            onChange={e => onChange(handleChangeStartDate(e))}
-            value={value ? dayjs(value) : fallbackValue}
-          />
-        )}
-      />
-      <Controller
-        name="endDate"
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <DatePicker
-            disableFuture
-            format={format}
-            slotProps={{
-              ...slotProps,
-              textField: props => ({
-                ...slotProps.textField,
-                size: 'small',
-                inputProps: {
-                  ...props.inputProps,
-                  ...slotProps.textField?.inputProps,
-                  'aria-label': 'To'
+              }}
+              format="YYYY-MM-DD"
+              yearsOrder="desc"
+              label="From"
+              maxDate={maxStartDate}
+              onChange={e => onChange(handleChangeStartDate(e))}
+              value={value ? dayjs(value) : null}
+            />
+          )}
+        />
+        <Controller
+          name="endDate"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <DatePicker
+              disableFuture
+              slotProps={{
+                textField: {
+                  size: 'small',
+                  slotProps: {
+                    htmlInput: { 'aria-label': 'To' }
+                  }
                 }
-              })
-            }}
-            yearsOrder="desc"
-            label={toLabel}
-            minDate={minEndDate}
-            onChange={e => onChange(handleChangeEndDate(e))}
-            value={value ? dayjs(value) : fallbackValue}
-          />
-        )}
-      />
+              }}
+              format="YYYY-MM-DD"
+              yearsOrder="desc"
+              label="To"
+              minDate={minEndDate}
+              onChange={e => onChange(handleChangeEndDate(e))}
+              value={value ? dayjs(value) : dayjs()}
+            />
+          )}
+        />
+      </div>
+      {showsHelptext && (
+        <Typography className="margin-left-small margin-top-x-small" color="info" variant="body2">
+          {helperText}
+        </Typography>
+      )}
     </div>
   );
 };
