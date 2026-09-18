@@ -9887,6 +9887,42 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - ManagementJWT: []
+  /api/management/v2/tenantadm/billing/portal-session:
+    post:
+      tags:
+        - Tenants_APIs_v2_Tenantadm Management v2
+      summary: Create a Stripe billing portal session.
+      description: |
+        Creates a Stripe customer portal session for the tenant's Stripe
+        customer, allowing the customer to manage their billing details,
+        payment methods and invoices.
+      operationId: Create billing portal session
+      requestBody:
+        description: >
+          Optional parameters for the portal session. If omitted, the
+          customer is redirected back to /ui/ after leaving the portal.
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePortalSessionRequest'
+      responses:
+        '200':
+          description: The billing portal session was created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingPortalSession'
+        '400':
+          $ref: '#/components/responses/InvalidRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - ManagementJWT: []
   /api/management/v2/tenantadm/contact/support:
     post:
       tags:
@@ -19466,6 +19502,27 @@ components:
         - os
         - professional
         - enterprise
+    CreatePortalSessionRequest:
+      type: object
+      properties:
+        return_url_path:
+          type: string
+          description: >
+            Path (not an absolute URL) that the customer is redirected to
+            after leaving the billing portal. Defaults to "/ui/".
+          default: /ui/
+          example: /ui/settings/organization-and-billing
+    BillingPortalSession:
+      required:
+        - url
+      type: object
+      properties:
+        url:
+          type: string
+          description: The URL to the Stripe billing portal session.
+      description: Stripe billing portal session.
+      example:
+        url: https://billing.stripe.com/p/session/test_1234
     CheckoutData:
       required:
         - secret
