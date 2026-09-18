@@ -34,6 +34,7 @@ import {
   changeSsoConfig,
   completeUpgrade,
   confirmCardUpdate,
+  createBillingPortalSession,
   createIntegration,
   createOrganizationTrial,
   deleteIntegration,
@@ -330,6 +331,17 @@ describe('organization actions', () => {
       expect(storeActions).toHaveLength(expectedActions.length);
       expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
     });
+  });
+
+  it('should handle billing portal session creation', async () => {
+    const store = mockStore({ ...defaultState });
+    expect(store.getActions()).toHaveLength(0);
+    const expectedActions = [{ type: createBillingPortalSession.pending.type }, { type: createBillingPortalSession.fulfilled.type }];
+    const result = await store.dispatch(createBillingPortalSession(undefined)).unwrap();
+    const storeActions = store.getActions();
+    expect(storeActions).toHaveLength(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+    expect(result).toEqual({ url: 'https://billing.stripe.com/p/session/test_1234' });
   });
 
   it('should handle auditlog retrieval', async () => {

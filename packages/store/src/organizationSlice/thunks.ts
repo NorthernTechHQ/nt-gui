@@ -14,9 +14,11 @@
 import type {
   Tenant as BackendTenant,
   BillingInfo,
+  BillingPortalSession,
   BillingProfile,
   CardSetupData,
   ConstraintsInfo,
+  CreatePortalSessionRequest,
   Event,
   GetAuditLogsResponse,
   GetIdpSamlOrOpenIdConnectMetadataForTheTenantResponse,
@@ -442,6 +444,17 @@ export const getUserBilling = createAppAsyncThunk(`${sliceName}/getUserBilling`,
     .catch(err => commonErrorHandler(err, 'There was an error getting your billing profile:', dispatch, commonErrorFallback))
     .then(res => dispatch(actions.setBillingProfile(res.data)))
 );
+
+// Requires 1) an authenticated session (enforced by ManagementJWT on the backend + the caller
+// only invoking this once a user is logged in) and 2) an existing Stripe billing profile - callers
+// should gate on getBillingProfile(state) being populated (e.g. via getUserBilling) before dispatching
+// this, since Stripe has nothing to show a customer without a billing profile/customer record yet.
+export const createBillingPortalSession = createAppAsyncThunk(`${sliceName}/createBillingPortalSession`, (returnUrlPath: string | undefined, { dispatch }) => {
+  const body: CreatePortalSessionRequest = returnUrlPath ? { return_url_path: returnUrlPath } : {};
+  return Api.post<BillingPortalSession>(`${tenantadmApiUrlv2}/billing/portal-session`, body)
+    .catch(err => commonErrorHandler(err, 'There was an error opening the billing portal:', dispatch, commonErrorFallback))
+    .then(({ data }) => data);
+});
 
 export const getUserSubscription = createAppAsyncThunk(`${sliceName}/getUserSubscription`, async (_, { dispatch }) => {
   // We need to fetch current subscription first to ensure non-stripe customers handled right
