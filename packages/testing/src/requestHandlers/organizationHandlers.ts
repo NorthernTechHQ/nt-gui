@@ -220,6 +220,10 @@ export const organizationHandlers = [
     validated(() => new HttpResponse(null, { status: 200 }))
   ),
   http.post(
+    `${tenantadmApiUrlv2}/billing/portal-session`,
+    validated(() => HttpResponse.json({ url: 'https://billing.stripe.com/p/session/test_1234' }))
+  ),
+  http.post(
     `${tenantadmApiUrlv2}/billing/subscription`,
     validated(() => new HttpResponse(null, { status: 202 }))
   ),

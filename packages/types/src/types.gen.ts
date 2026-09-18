@@ -3824,6 +3824,23 @@ export const TenantPlanTypeManagement = {
  */
 export type TenantPlanTypeManagement = (typeof TenantPlanTypeManagement)[keyof typeof TenantPlanTypeManagement];
 
+export type CreatePortalSessionRequest = {
+  /**
+   * Path (not an absolute URL) that the customer is redirected to after leaving the billing portal. Defaults to "/ui/".
+   */
+  return_url_path?: string;
+};
+
+/**
+ * Stripe billing portal session.
+ */
+export type BillingPortalSession = {
+  /**
+   * The URL to the Stripe billing portal session.
+   */
+  url: string;
+};
+
 /**
  * Checkout data.
  */
@@ -14620,6 +14637,48 @@ export type GetStripeSecretResponses = {
 };
 
 export type GetStripeSecretResponse = GetStripeSecretResponses[keyof GetStripeSecretResponses];
+
+export type CreateBillingPortalSessionData = {
+  /**
+   * Optional parameters for the portal session. If omitted, the
+   * customer is redirected back to /ui/ after leaving the portal.
+   *
+   */
+  body?: CreatePortalSessionRequest;
+  path?: never;
+  query?: never;
+  url: '/api/management/v2/tenantadm/billing/portal-session';
+};
+
+export type CreateBillingPortalSessionErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * Not Found.
+   */
+  404: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type CreateBillingPortalSessionError = CreateBillingPortalSessionErrors[keyof CreateBillingPortalSessionErrors];
+
+export type CreateBillingPortalSessionResponses = {
+  /**
+   * The billing portal session was created successfully.
+   */
+  200: BillingPortalSession;
+};
+
+export type CreateBillingPortalSessionResponse = CreateBillingPortalSessionResponses[keyof CreateBillingPortalSessionResponses];
 
 export type ContactSupportData = {
   /**
