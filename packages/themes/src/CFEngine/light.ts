@@ -13,11 +13,14 @@
 //    limitations under the License.
 import { Palette, ThemeOptions, autocompleteClasses, inputBaseClasses } from '@mui/material';
 
-import { blue, commonPalette, darkBlue, gray, overrides, typography } from './common';
+import { blue, commonPalette, darkBlue, gray, lightThemeText, overrides, red, typography } from './common';
 
-// @ts-ignore
 const palette = {
   ...commonPalette,
+  danger: {
+    main: red[600],
+    contrastText: '#fff'
+  },
   primary: {
     main: darkBlue[700],
     light: darkBlue[700],
@@ -30,19 +33,23 @@ const palette = {
     dark: darkBlue[400]
   },
   border: {
-    main: gray[600]
+    main: gray[600],
+    secondary: gray[300]
   },
   tooltip: {
     text: gray[50],
     tierTipBackground: '#f7fafb'
   },
-  text: { primary: '#0B132A', muted: gray[600] },
+  text: { primary: lightThemeText, muted: gray[600] },
   link: { primary: darkBlue[400], muted: gray[500] },
   background: {
     default: '#FFF',
     lightgrey: gray[50],
     code: gray[50],
-    paper: gray[50]
+    input: '#FFF',
+    menu: '#FFF',
+    paper: gray[50],
+    summary: gray[100]
   },
   mode: 'light'
 } as Palette;
@@ -50,7 +57,6 @@ const palette = {
 export const light: ThemeOptions = {
   palette,
   typography,
-  // @ts-ignore
   components: {
     ...overrides,
     MuiTextField: {
@@ -62,6 +68,18 @@ export const light: ThemeOptions = {
         }
       }
     },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        ...overrides.MuiOutlinedInput.styleOverrides,
+        root: {
+          ...overrides.MuiOutlinedInput.styleOverrides.root,
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            border: `2px solid ${blue[500]}`,
+            borderColor: blue[500]
+          }
+        }
+      }
+    },
     MuiAutocomplete: {
       styleOverrides: {
         ...overrides.MuiAutocomplete.styleOverrides,
@@ -70,7 +88,7 @@ export const light: ThemeOptions = {
           [`& .${autocompleteClasses.input}`]: {
             ...(overrides.MuiAutocomplete.styleOverrides.root[`& .${autocompleteClasses.input}`] as object),
             background: palette.background.paper,
-            color: '#0B132A',
+            color: palette.text.primary,
             caretColor: '#3869FF'
           },
           [`& .${inputBaseClasses.input}::placeholder`]: {
@@ -78,7 +96,7 @@ export const light: ThemeOptions = {
             color: gray[600]
           },
           ['.Mui-focused .MuiOutlinedInput-notchedOutline']: {
-            border: `3px solid ${blue[500]} !important`
+            border: `2px solid ${blue[500]} !important`
           },
           '.MuiAutocomplete-option': {
             backgroundColor: '#FFFFFFDE'
@@ -88,7 +106,9 @@ export const light: ThemeOptions = {
           ...(overrides.MuiAutocomplete.styleOverrides.popper as object)
         },
         noOptions: {
-          ...(overrides.MuiAutocomplete.styleOverrides.noOptions as object)
+          ...(overrides.MuiAutocomplete.styleOverrides.noOptions as object),
+          color: palette.text.primary,
+          background: palette.background.default
         }
       }
     },
@@ -113,6 +133,59 @@ export const light: ThemeOptions = {
       styleOverrides: {
         input: {
           color: palette.text.primary
+        }
+      }
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          ...overrides.MuiDialog.styleOverrides.paper,
+          backgroundColor: 'white'
+        }
+      }
+    },
+    MuiDialogTitle: {
+      styleOverrides: {
+        root: {
+          ...overrides.MuiDialogTitle.styleOverrides.root,
+          borderBottom: `1px solid ${palette.border.secondary}`
+        }
+      }
+    },
+    MuiDialogContentText: {
+      styleOverrides: {
+        root: {
+          color: palette.text.primary
+        }
+      }
+    },
+    MuiDialogActions: {
+      styleOverrides: {
+        root: {
+          ...overrides.MuiDialogActions.styleOverrides.root,
+          borderTop: `1px solid ${palette.border.secondary}`,
+          backgroundColor: palette.gray[50]
+        }
+      }
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          ...overrides.MuiTab.styleOverrides.root,
+          color: gray[700],
+          '&:focus-visible': { outline: `2px solid ${palette.primary.main}`, outlineOffset: -2 },
+          '&.Mui-selected': {
+            ...overrides.MuiTab.styleOverrides.root['&.Mui-selected'],
+            color: palette.text.primary
+          }
+        }
+      }
+    },
+    MuiTabs: {
+      styleOverrides: {
+        indicator: {
+          ...overrides.MuiTabs.styleOverrides.indicator,
+          backgroundColor: palette.text.primary
         }
       }
     }
