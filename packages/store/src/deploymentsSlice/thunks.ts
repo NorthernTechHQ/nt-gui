@@ -179,8 +179,11 @@ export const createDeployment = createAppAsyncThunk(
       const { force_installation, group } = newDeployment;
       request = GeneralApi.post(`${deploymentsApiUrl}/deployments/group/${group}`, stripUndefined({ ...common, force_installation }));
     } else {
-      const { devices, all_devices, force_installation } = newDeployment as NewDeployment;
-      request = GeneralApi.post(`${deploymentsApiUrl}/deployments`, stripUndefined({ ...common, devices, all_devices, force_installation }));
+      const { devices, all_devices, force_installation, uniform_phases } = newDeployment as NewDeployment;
+      request = GeneralApi.post(
+        `${deploymentsApiUrl}/deployments`,
+        stripUndefined({ ...common, devices, all_devices, force_installation, phases: uniform_phases ? undefined : common.phases, uniform_phases })
+      );
     }
     const totalDeploymentCount = (Object.values(getDeploymentsByStatusSelector(getState())) as DeploymentStatus[]).reduce<number>(
       (accu, item) => accu + item.total,
