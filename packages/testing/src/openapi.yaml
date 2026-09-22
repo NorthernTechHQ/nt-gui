@@ -10726,6 +10726,12 @@ paths:
       responses:
         '200':
           description: Successful response.
+          headers:
+            X-Total-Count:
+              description: |
+                Total number of users matching the query, disregarding paging.
+              schema:
+                type: integer
           content:
             application/json:
               schema:
@@ -15344,6 +15350,8 @@ components:
           description: Force the installation of the Artifact disabling the `already-installed` check.
           type: boolean
         phases:
+          description: The phases definition.
+          maxItems: 100
           items:
             $ref: '#/components/schemas/NewDeploymentPhaseTypeManagement'
           type: array
