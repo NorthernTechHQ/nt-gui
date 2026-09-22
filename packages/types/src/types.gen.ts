@@ -1017,6 +1017,9 @@ export type NewDeploymentTypeManagement = {
    * Force the installation of the Artifact disabling the `already-installed` check.
    */
   force_installation?: boolean;
+  /**
+   * The phases definition.
+   */
   phases?: Array<NewDeploymentPhaseTypeManagement>;
   uniform_phases?: DeploymentUniformPhase;
   /**
