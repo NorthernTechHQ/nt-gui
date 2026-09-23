@@ -1,5 +1,14 @@
 ---
-## 0.18.1 - 2026-09-15
+## 0.18.2 - 2026-09-24
+
+
+
+### Bug fixes
+
+#### testing
+
+- Openapi spec update ([ff8549d](https://github.com/NorthernTechHQ/nt-gui/commit/ff8549dc4a513159e1415569d6a774524a28692b)) by @mender-test-bot
+## @northern.tech/testing-0.18.1 - 2026-09-15
 
 
 
