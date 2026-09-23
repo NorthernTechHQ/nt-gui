@@ -1,5 +1,14 @@
 ---
-## 0.16.9 - 2026-09-01
+## 0.17.0 - 2026-09-23
+
+
+
+### New features
+
+#### themes
+
+- Synced CFEngine theme with Mission Portal ([5f63ebb](https://github.com/NorthernTechHQ/nt-gui/commit/5f63ebb007bd6ce841dd9fbe82913f34caf01ac5)) by @aleksandrychev
+## @northern.tech/themes-0.16.9 - 2026-09-01
 
 
 
