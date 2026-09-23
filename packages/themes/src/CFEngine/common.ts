@@ -46,6 +46,8 @@ declare module '@mui/material/Typography' {
   }
 }
 
+import { typography as baseTypography, components } from '../common';
+
 const componentProps = {
   MuiLink: {
     defaultProps: {
@@ -84,7 +86,7 @@ const pxToRem = (size: number) => `${round((size / htmlFontSize) * coef)}rem`;
 export const fontFamilyMonospace = '"Red Hat Mono", monospace';
 
 export const typography = {
-  fontFamily: 'Red Hat Text',
+  ...baseTypography,
   fontSize,
   h1: {
     fontSize: '32px',
@@ -287,7 +289,7 @@ export const commonPalette = {
   blue,
   green
 };
-export const overrides = {
+const cfengineOverrides = {
   ...componentProps,
   MuiTypography: {
     defaultProps: {
@@ -593,3 +595,8 @@ export const overrides = {
     }
   }
 };
+
+export const overrides = {
+  ...components,
+  ...cfengineOverrides
+} as typeof cfengineOverrides;
