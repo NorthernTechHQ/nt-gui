@@ -37,6 +37,7 @@
     "build": "tsdown",
     "dev": "tsdown --watch --onSuccess 'yalc publish --no-script --push'",
     "lint": "eslint src/**/*.ts",
+    "typecheck": "tsc --noEmit",
     "yalc:publish": "yalc publish --no-script --push"
   },
   "type": "module",
