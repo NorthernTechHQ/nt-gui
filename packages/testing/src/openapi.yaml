@@ -14207,6 +14207,8 @@ components:
             - upload
             - password_change
             - auth_method_change
+            - accept
+            - preauthorize
         object:
           $ref: '#/components/schemas/Object'
         change:
@@ -15316,19 +15318,8 @@ components:
         delta:
           $ref: '#/components/schemas/DeltaConfiguration'
       type: object
-    NewDeploymentTypeManagement:
-      example:
-        name: production
-        artifact_name: Application 0.0.1
-        devices:
-          - 00a0c91e6-7dec-11d0-a765-f81d4faebf6
-        phases:
-          - batch_size: 5
-            start_ts: '2020-07-06T15:04:49.114046203+02:00'
-          - batch_size: 15
-            start_ts: '2020-07-06T16:04:49.114046203+02:00'
-          - start_ts: '2020-07-06T17:04:49.114046203+02:00'
-        retries: 3
+    NewDeploymentSpec:
+      description: Properties common to all new deployment requests.
       properties:
         name:
           description: Name of the deployment
@@ -15336,16 +15327,6 @@ components:
         artifact_name:
           description: Name of the artifact to deploy
           type: string
-        devices:
-          description: An array of devices' identifiers.
-          items:
-            type: string
-          type: array
-        all_devices:
-          description: |
-            When set, the deployment will be created for all
-            currently accepted devices.
-          type: boolean
         force_installation:
           description: Force the installation of the Artifact disabling the `already-installed` check.
           type: boolean
@@ -15380,6 +15361,33 @@ components:
         - artifact_name
         - name
       type: object
+    NewDeploymentTypeManagement:
+      example:
+        name: production
+        artifact_name: Application 0.0.1
+        devices:
+          - 00a0c91e6-7dec-11d0-a765-f81d4faebf6
+        phases:
+          - batch_size: 5
+            start_ts: '2020-07-06T15:04:49.114046203+02:00'
+          - batch_size: 15
+            start_ts: '2020-07-06T16:04:49.114046203+02:00'
+          - start_ts: '2020-07-06T17:04:49.114046203+02:00'
+        retries: 3
+      allOf:
+        - $ref: '#/components/schemas/NewDeploymentSpec'
+        - type: object
+          properties:
+            devices:
+              description: An array of devices' identifiers.
+              items:
+                type: string
+              type: array
+            all_devices:
+              description: |
+                When set, the deployment will be created for all
+                currently accepted devices.
+              type: boolean
     NewDeploymentForGroup:
       example:
         name: production
@@ -15391,43 +15399,8 @@ components:
             start_ts: '2020-07-06T16:04:49.114046203+02:00'
           - start_ts: '2020-07-06T17:04:49.114046203+02:00'
         retries: 3
-      properties:
-        name:
-          description: Name of the deployment
-          type: string
-        artifact_name:
-          description: Name of the artifact to deploy
-          type: string
-        force_installation:
-          description: Force the installation of the Artifact disabling the `already-installed` check.
-          type: boolean
-        phases:
-          items:
-            $ref: '#/components/schemas/NewDeploymentPhaseTypeManagement'
-          type: array
-          x-mender-plan:
-            - professional
-            - enterprise
-        retries:
-          description: The number of times a device can retry the deployment in case of failure, defaults to 0
-          type: integer
-        update_control_map:
-          additionalProperties: true
-          description: |
-            A valid JSON object defining the update control map.
-            *NOTE*: Available only in the Enterprise plan.
-          type: object
-          x-mender-plan:
-            - enterprise
-        autogenerate_delta:
-          default: false
-          description: |
-            The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
-          type: boolean
-      required:
-        - artifact_name
-        - name
-      type: object
+      allOf:
+        - $ref: '#/components/schemas/NewDeploymentSpec'
     DeploymentV1:
       example:
         created: '2016-02-11T13:03:17.063493443Z'
