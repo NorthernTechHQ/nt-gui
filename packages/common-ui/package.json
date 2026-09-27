@@ -97,7 +97,7 @@
     "pluralize": "^8.x",
     "react": "^19.x",
     "react-dom": "^19.x",
-    "react-dropzone": "^15.x",
+    "react-dropzone": "^20.0.0",
     "react-hook-form": "^7.x",
     "react-redux": "^9.x",
     "react-router": "^8.x",
