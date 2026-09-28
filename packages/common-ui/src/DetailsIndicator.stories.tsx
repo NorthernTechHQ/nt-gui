@@ -25,9 +25,6 @@ export default meta;
 type Story = StoryObj<typeof DetailsIndicator>;
 
 export const Primary: Story = {
-  render: props => <DetailsIndicator {...props} />,
-  name: 'DetailsIndicator',
-  args: {
-    classes: { icon: '', wrapper: '' }
-  }
+  render: () => <DetailsIndicator />,
+  name: 'DetailsIndicator'
 };

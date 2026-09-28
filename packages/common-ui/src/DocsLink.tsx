@@ -11,19 +11,21 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
-import type { ReactNode } from 'react';
-import { forwardRef, useState } from 'react';
+import type { CSSProperties, ReactNode, Ref } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { Description as DescriptionIcon } from '@mui/icons-material';
-import { Chip, Collapse, chipClasses } from '@mui/material';
+import { Description as DescriptionIcon, Launch as LaunchIcon } from '@mui/icons-material';
+import type { TypographyProps } from '@mui/material';
+import { Chip, Collapse, Typography, chipClasses } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
 import { TIMEOUTS } from '@northern.tech/store/constants';
 import { getDocsVersion, getFeatures } from '@northern.tech/store/selectors';
 import { useDebounce } from '@northern.tech/utils/debouncehook';
+import { yes } from '@northern.tech/utils/helpers';
 
+import { Link } from './Link';
 import { MenderTooltipClickable } from './helptips/MenderTooltip';
 
 const useStyles = makeStyles()(theme => ({
@@ -58,32 +60,47 @@ const useStyles = makeStyles()(theme => ({
   }
 }));
 
-export const DOCSTIPS = {
+export interface DocsTip {
+  content?: ReactNode;
+  id: string;
+  path: string;
+}
+
+const docsTips = {
+  deltaArtifacts: { id: 'deltaArtifacts', path: 'artifact-creation/server-side-generation-of-delta-artifacts' },
   deviceConfig: { id: 'deviceConfig', path: 'add-ons/configure' },
+  deviceIdentity: { id: 'deviceIdentity', path: 'client-installation/identity' },
+  dynamicDeployments: { id: 'dynamicDeployments', path: 'overview/deployment#phased-rollouts-and-dynamic-groups' },
   dynamicGroups: { id: 'dynamicGroups', path: 'overview/device-group#dynamic-group' },
+  hostedRegions: { id: 'hostedRegions', path: 'general/hosted-mender-regions' },
   limitedDeployments: { id: 'limitedDeployments', path: 'overview/deployment#deployment-to-dynamic-groups' },
-  phasedDeployments: { id: 'phasedDeployments', path: 'overview/customize-the-update-process' },
+  orchestratorManifest: { id: 'orchestratorManifest', path: 'orchestrate-updates/manifest' },
+  phasedDeployments: { id: 'phasedDeployments', path: 'overview/deployment#phased-rollouts-and-dynamic-groups' },
   pausedDeployments: { id: 'pausedDeployments', path: 'overview/customize-the-update-process#synchronized-updates' },
   retryDeployments: { id: 'retryDeployments', path: 'overview/deployment' },
   releases: { id: 'releases', path: 'overview/artifact' },
-  rbac: { id: 'rbac', path: 'overview/role.based.access.control' },
   webhookSecret: { id: 'webhookSecret', path: 'server-integration/webhooks#signature-header' }
 };
 
-export const DocsTooltip = ({ anchor = {}, id = '', ...props }) => {
+export type DocsTipId = keyof typeof docsTips;
+
+export const DOCSTIPS: Record<string, DocsTip> = docsTips;
+
+export interface DocsTooltipProps {
+  [key: string]: unknown;
+  anchor?: CSSProperties;
+  id?: string;
+}
+
+export const DocsTooltip = ({ anchor = {}, id = '', ...props }: DocsTooltipProps) => {
   const [isHovering, setIsHovering] = useState(false);
   const debouncedHovering = useDebounce(isHovering, TIMEOUTS.debounceDefault);
-  const docsVersion = useSelector(getDocsVersion);
-  const { isHosted } = useSelector(getFeatures);
   const { classes } = useStyles();
-  const { content, path } = DOCSTIPS[id] || {};
-  const target = `https://docs.mender.io/${docsVersion}${path}`;
 
-  const onClick = () => {
-    const docsParams = { headers: { 'x-mender-docs': docsVersion } };
-    fetch(target, isHosted ? {} : docsParams);
-    window.open(target, '_blank');
-  };
+  if (!DOCSTIPS[id]) {
+    return null;
+  }
+  const { content, path } = DOCSTIPS[id];
 
   const hoverClass = debouncedHovering ? 'hovering' : 'not-hovering';
   return (
@@ -96,39 +113,66 @@ export const DocsTooltip = ({ anchor = {}, id = '', ...props }) => {
       title={content}
       {...props}
     >
-      <Chip
-        color="primary"
-        className={`${classes.chip} ${hoverClass}`}
-        label={
-          <Collapse in={debouncedHovering} orientation="horizontal">
-            Learn more
-          </Collapse>
-        }
-        deleteIcon={
-          <div className="relative">
-            <DescriptionIcon fontSize="small" />
-            <div className={`${classes.iconAura} ${hoverClass}`} />
-          </div>
-        }
-        onClick={onClick}
-        onDelete={onClick}
-        onMouseOver={() => setIsHovering(true)}
-        onMouseOut={() => setIsHovering(false)}
-        variant="outlined"
-      />
+      <DocsLink path={path}>
+        <Chip
+          color="primary"
+          className={`${classes.chip} ${hoverClass}`}
+          label={
+            <Collapse in={debouncedHovering} orientation="horizontal">
+              Learn more
+            </Collapse>
+          }
+          deleteIcon={
+            <div className="relative">
+              <DescriptionIcon fontSize="small" />
+              <div className={`${classes.iconAura} ${hoverClass}`} />
+            </div>
+          }
+          onDelete={yes}
+          onMouseOver={() => setIsHovering(true)}
+          onMouseOut={() => setIsHovering(false)}
+          variant="outlined"
+        />
+      </DocsLink>
     </MenderTooltipClickable>
   );
 };
 
-interface DocsLinkProps {
-  [anything: string]: any;
-  children: ReactNode;
+export const InlineLaunchIcon = () => <LaunchIcon style={{ verticalAlign: 'sub' }} fontSize="small" />;
+
+export interface DocsTextLinkProps {
+  [key: string]: unknown;
+  children?: ReactNode;
+  id: DocsTipId;
+  typographyProps?: Partial<TypographyProps>;
+}
+
+const textLinkDefaultProps: TypographyProps = { variant: 'body1' };
+
+export const DocsTextLink = ({ children, id, typographyProps = textLinkDefaultProps, ...props }: DocsTextLinkProps) => {
+  if (!DOCSTIPS[id]) {
+    return null;
+  }
+  const { path } = DOCSTIPS[id];
+  return (
+    <DocsLink path={path} {...props}>
+      <Typography component="span" color="primary" {...typographyProps}>
+        {children || 'Learn more'}
+      </Typography>
+    </DocsLink>
+  );
+};
+
+export interface DocsLinkProps {
+  [key: string]: unknown;
+  children?: ReactNode;
   className?: string;
-  path: string;
+  path?: string;
+  ref?: Ref<HTMLAnchorElement>;
   title?: string;
 }
 
-export const DocsLink = forwardRef<HTMLAnchorElement, DocsLinkProps>(({ children, className = '', path, title = '', ...remainder }, ref) => {
+export const DocsLink = ({ children, className = '', path = '', ref, title = '', ...remainder }: DocsLinkProps) => {
   const docsVersion = useSelector(getDocsVersion);
   const { isHosted } = useSelector(getFeatures);
   const target = `https://docs.mender.io/${path}`;
@@ -139,13 +183,10 @@ export const DocsLink = forwardRef<HTMLAnchorElement, DocsLinkProps>(({ children
   };
 
   return (
-    // eslint-disable-next-line react/jsx-no-target-blank
-    <a className={className} {...remainder} href={target} onClick={onClickHandler} ref={ref} target="_blank" rel={isHosted ? 'noopener' : ''}>
+    <Link className={className} {...remainder} href={target} onClick={onClickHandler} ref={ref} external rel={isHosted ? 'noopener' : ''}>
       {children ? children : title}
-    </a>
+    </Link>
   );
-});
-
-DocsLink.displayName = 'DocsLink';
+};
 
 export default DocsLink;

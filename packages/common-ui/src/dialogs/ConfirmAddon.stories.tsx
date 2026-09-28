@@ -33,3 +33,13 @@ export const Primary: Story = {
     onConfirm: () => alert('Change confirmed')
   }
 };
+
+export const AddAddon: Story = {
+  name: 'Add add-on',
+  args: {
+    variant: 'add',
+    name: 'Monitor',
+    onClose: () => alert('Dialog closed'),
+    onConfirm: () => alert('Change confirmed')
+  }
+};

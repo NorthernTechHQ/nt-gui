@@ -13,8 +13,17 @@
 //    limitations under the License.
 import type { CSSProperties, ReactNode } from 'react';
 
-export const Alert = ({ children, className = '', style }: { children: ReactNode; className?: string; style: CSSProperties }) => (
-  <div className={className} style={style}>
+export type AlertSeverity = 'error' | 'info' | 'success' | 'warning';
+
+export interface AlertProps {
+  children?: ReactNode;
+  className?: string;
+  severity?: AlertSeverity;
+  style?: CSSProperties;
+}
+
+export const Alert = ({ children, className, severity, style }: AlertProps) => (
+  <div className={(className || '') + ' alert ' + (severity ? 'alert-' + severity : '')} style={style}>
     {children}
   </div>
 );

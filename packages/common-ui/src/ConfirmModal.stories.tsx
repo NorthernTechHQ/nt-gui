@@ -21,7 +21,7 @@ const meta: Meta<typeof ConfirmModal> = {
   argTypes: {
     maxWidth: {
       control: { type: 'radio' },
-      options: ['sm', 'md', 'lg']
+      options: ['xs', 'sm', 'md', 'lg']
     }
   }
 };
@@ -34,11 +34,52 @@ export const Primary: Story = {
   render: props => <ConfirmModal {...props} />,
   name: 'ConfirmModal',
   args: {
-    toType: 'something',
-    header: 'This is the header',
-    description: 'something descriptive',
-    open: true,
     className: '',
-    maxWidth: 'md'
+    close: () => console.log('close'),
+    confirmButtonText: 'Confirm',
+    description: 'Removing the device will also remove all data associated with it.',
+    header: 'Remove device?',
+    maxWidth: 'md',
+    onConfirm: () => console.log('confirmed'),
+    open: true,
+    toType: 'my-device-name'
+  }
+};
+
+export const WithoutTypeConfirmation: Story = {
+  name: 'Without Type Confirmation',
+  args: {
+    ...Primary.args,
+    description: 'The deployment will be aborted and all pending devices will be skipped.',
+    header: 'Abort deployment?',
+    toType: undefined
+  }
+};
+
+export const NonDestructive: Story = {
+  name: 'Non Destructive',
+  args: {
+    ...Primary.args,
+    confirmButtonText: 'Save changes',
+    description: 'The updated settings will be applied to all devices in this group.',
+    header: 'Apply settings?',
+    isDanger: false,
+    maxWidth: 'sm',
+    toType: undefined
+  }
+};
+
+export const WithRichDescription: Story = {
+  name: 'With Rich Description',
+  args: {
+    ...Primary.args,
+    description: (
+      <div className="flexbox column">
+        <b>This action cannot be undone</b>
+        <span>All artifacts belonging to this release will be removed as well.</span>
+      </div>
+    ),
+    header: 'Delete release?',
+    toType: 'release-1.0.0'
   }
 };

@@ -11,35 +11,26 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { Controller, useFormContext } from 'react-hook-form';
-
-import { TextField } from '@mui/material';
+import type { FieldValues } from 'react-hook-form';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import type { FormProps } from './Form';
 import { Form } from './Form';
+import { TextInput } from './TextInput';
 
-const SampleFormContent = () => {
-  const { control } = useFormContext();
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <Controller
-        name="name"
-        control={control}
-        rules={{ required: 'Name is required' }}
-        render={({ field, fieldState }) => <TextField {...field} label="Name" error={!!fieldState.error} helperText={fieldState.error?.message} />}
-      />
-      <Controller
-        name="email"
-        control={control}
-        rules={{ required: 'Email is required' }}
-        render={({ field, fieldState }) => (
-          <TextField {...field} label="Email" type="email" error={!!fieldState.error} helperText={fieldState.error?.message} />
-        )}
-      />
-    </div>
-  );
-};
+const SampleFormContent = () => (
+  <div className="flexbox column" style={{ gap: 20 }}>
+    <TextInput id="name" label="Name" required validations="isLength:3" />
+    <TextInput hint="user@example.com" id="email" label="Email" required type="email" validations="isEmail" />
+  </div>
+);
+
+const renderForm = (args: FormProps) => (
+  <Form {...args}>
+    <SampleFormContent />
+  </Form>
+);
 
 const meta: Meta<typeof Form> = {
   component: Form,
@@ -52,31 +43,58 @@ type Story = StoryObj<typeof Form>;
 
 export const Primary: Story = {
   name: 'Form',
-  render: args => (
-    <Form {...args}>
-      <SampleFormContent />
-    </Form>
-  ),
+  render: renderForm,
   args: {
-    defaultValues: { name: '', email: '' },
-    onSubmit: (data: any) => {
-      console.log('Form submitted:', data);
-      alert(`Form submitted with: ${JSON.stringify(data)}`);
-    },
+    defaultValues: { email: '', name: '' },
+    onSubmit: (data: FieldValues) => console.log('form submitted:', data),
     showButtons: true,
-    submitLabel: 'Submit'
+    submitLabel: 'Save'
   }
 };
 
 export const WithCancel: Story = {
-  name: 'Form with Cancel Button',
-  render: args => (
-    <Form {...args}>
-      <SampleFormContent />
-    </Form>
-  ),
+  name: 'With Cancel Button',
+  render: renderForm,
   args: {
     ...Primary.args,
-    handleCancel: () => alert('Form cancelled')
+    handleCancel: () => console.log('form cancelled')
+  }
+};
+
+export const WithInitialValues: Story = {
+  name: 'With Initial Values',
+  render: renderForm,
+  args: {
+    ...Primary.args,
+    initialValues: { email: 'ada@example.com', name: 'Ada Lovelace' }
+  }
+};
+
+export const ResetOnSubmit: Story = {
+  name: 'Reset On Submit',
+  render: renderForm,
+  args: {
+    ...Primary.args,
+    resetOnSubmit: true,
+    submitLabel: 'Add another'
+  }
+};
+
+export const SubmitTimeValidation: Story = {
+  name: 'Submit Time Validation',
+  render: renderForm,
+  args: {
+    ...Primary.args,
+    buttonColor: 'secondary',
+    validationMode: 'onSubmit'
+  }
+};
+
+export const WithoutButtons: Story = {
+  name: 'Without Buttons',
+  render: renderForm,
+  args: {
+    ...Primary.args,
+    showButtons: false
   }
 };

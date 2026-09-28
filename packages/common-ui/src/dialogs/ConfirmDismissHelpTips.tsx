@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { Button, DialogActions, DialogContent } from '@mui/material';
 
 import storeActions from '@northern.tech/store/actions';
@@ -30,7 +29,7 @@ export const ConfirmDismissHelptips = () => {
       <DialogContent>Hide the help tips? You haven&apos;t finished your first update yet.</DialogContent>
       <DialogActions className="flexbox space-between">
         <Button onClick={() => dispatch(setShowDismissOnboardingTipsDialog(false))}>Cancel</Button>
-        <Button variant="contained" color="secondary" onClick={onClose}>
+        <Button variant="contained" onClick={onClose}>
           Yes, hide the help
         </Button>
       </DialogActions>

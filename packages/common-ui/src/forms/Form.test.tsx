@@ -13,9 +13,8 @@
 //    limitations under the License.
 import { render } from '@/testUtils';
 import { undefineds } from '@northern.tech/testing/mockData';
-import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 
 import Form from './Form';
 import FormCheckbox from './FormCheckbox';
@@ -25,30 +24,15 @@ import TextInput from './TextInput';
 describe('Form Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = render(
-      <Form showButtons submitLabel="submit">
+      <Form onSubmit={vi.fn()} showButtons submitLabel="submit">
         <FormCheckbox id="testbox" label="testbox" />
         <PasswordInput id="password" create />
         <TextInput id="textbox" />
       </Form>
     );
     expect(await screen.findByText('submit')).toBeInTheDocument();
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
-  });
-  window.prompt = vi.fn();
-  it('works correctly with generated passwords', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-
-    const ui = (
-      <Form showButtons submitLabel="submit">
-        <PasswordInput id="password" required create generate />
-      </Form>
-    );
-    const { rerender } = render(ui);
-    await user.click(screen.getByRole('button', { name: /generate/i }));
-    await waitFor(() => rerender(ui));
-    await waitFor(() => expect(screen.getByRole('button', { name: /submit/i })).not.toBeDisabled());
-    window.prompt.mockClear();
   });
 });

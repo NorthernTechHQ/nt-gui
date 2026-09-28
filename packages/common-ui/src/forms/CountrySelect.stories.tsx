@@ -11,9 +11,19 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { useFormContext } from 'react-hook-form';
+
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { CountrySelect } from './CountrySelect';
+import type { ControlledCountrySelectProps } from './CountrySelect';
+import { ControlledCountrySelect } from './CountrySelect';
+import { Form } from './Form';
+
+const ControlledCountrySelectWrapper = (props: Omit<ControlledCountrySelectProps, 'control'>) => {
+  const { control } = useFormContext();
+  return <ControlledCountrySelect control={control} {...props} />;
+};
 
 const meta: Meta<typeof CountrySelect> = {
   component: CountrySelect,
@@ -29,7 +39,27 @@ export const Primary: Story = {
   args: {
     error: false,
     defaultValue: 'NO',
-    helperText: 'Country is required',
-    onChange: (country: any) => alert('Selected country:', country)
+    helperText: 'Select the country your organization is based in',
+    onChange: (country: { code: string; label: string } | null) => console.log('Selected country:', country)
   }
+};
+
+export const WithError: Story = {
+  name: 'With Error',
+  args: {
+    ...Primary.args,
+    defaultValue: '',
+    error: true,
+    helperText: 'Country or region is required'
+  }
+};
+
+export const Controlled: Story = {
+  name: 'ControlledCountrySelect',
+  args: { ...Primary.args },
+  render: () => (
+    <Form defaultValues={{ country: 'DE' }} onSubmit={() => {}}>
+      <ControlledCountrySelectWrapper id="country" required />
+    </Form>
+  )
 };

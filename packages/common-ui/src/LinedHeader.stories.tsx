@@ -13,12 +13,11 @@
 //    limitations under the License.
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import LinedHeader, { LinedGroupHeader } from './LinedHeader';
+import LinedHeader from './LinedHeader';
 
 const meta: Meta<typeof LinedHeader> = {
   component: LinedHeader,
-  title: 'common-ui/LinedHeader',
-  includeStories: ['Primary', 'GroupHeader']
+  title: 'common-ui/LinedHeader'
 };
 
 export default meta;
@@ -29,18 +28,14 @@ export const Primary: Story = {
   name: 'LinedHeader',
   args: {
     heading: 'Dashboard Header',
-    className: '',
-    style: {},
-    innerStyle: {}
+    className: ''
   }
 };
 
-type GroupStory = StoryObj<typeof LinedGroupHeader>;
-
-export const GroupHeader: GroupStory = {
-  name: 'LinedGroupHeader',
-  render: props => <LinedGroupHeader {...props} />,
+export const Centered: Story = {
+  name: 'Centered',
   args: {
-    heading: 'Group Header'
+    heading: 'Centered Header',
+    centered: true
   }
 };

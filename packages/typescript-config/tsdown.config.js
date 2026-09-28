@@ -19,4 +19,4 @@ export const config = {
   outExtensions: ({ format }) => ({ js: format === 'es' ? `.js` : '.cjs' })
 };
 
-export default defineConfig(options => ({ ...config, ...options }));
+export default (options = {}) => defineConfig({ ...config, ...options });

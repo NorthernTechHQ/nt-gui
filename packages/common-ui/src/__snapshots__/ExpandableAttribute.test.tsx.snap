@@ -64,16 +64,15 @@ exports[`ExpandableAttribute Component > renders correctly 1`] = `
   >
     <div
       class="MuiListItemText-root emotion-1"
-      secondarytypographyprops="[object Object]"
     >
-      <p
+      <div
         class="MuiTypography-root MuiTypography-body2 MuiListItemText-secondary emotion-2"
       >
         <span
           class="inventory-text"
         />
          
-      </p>
+      </div>
     </div>
   </li>
 </div>

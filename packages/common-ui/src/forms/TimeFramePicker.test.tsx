@@ -11,21 +11,21 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { ReactNode } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
-import { render } from '@/testUtils';
+import { formRenderWrapper, render } from '@/testUtils';
 import { undefineds } from '@northern.tech/testing/mockData';
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import TimeframePicker from './TimeframePicker';
-import { formRenderWrapper } from './helpers';
 
-const testRender = ui => {
-  const Wrapper = ({ children }) => {
+const testRender = (ui: ReactNode) => {
+  const Wrapper = ({ children }: { children: ReactNode }) => {
     const methods = useForm({ mode: 'onChange', defaultValues: { startDate: '', endDate: '2019-01-14T03:00:00.000' } });
     return <FormProvider {...methods}>{children}</FormProvider>;
   };

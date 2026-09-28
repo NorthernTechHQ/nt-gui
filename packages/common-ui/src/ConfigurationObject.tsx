@@ -133,13 +133,3 @@ export const TwoColumnDataMultiple = ({ className = '', config, style, ...props 
     ))}
   </div>
 );
-
-export const ConfigurationObject = ({ config, ...props }) => {
-  const content = Object.entries(config).reduce((accu, [key, value]) => {
-    accu[key] = `${value}`;
-    return accu;
-  }, {});
-  return <TwoColumnData {...props} config={content} />;
-};
-
-export default ConfigurationObject;

@@ -11,17 +11,17 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { useForm } from 'react-hook-form';
-
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Form } from './Form';
+import type { FormCheckboxProps } from './FormCheckbox';
 import { FormCheckbox } from './FormCheckbox';
 
-const FormCheckboxWrapper = (props: any) => {
-  const { control } = useForm({ defaultValues: { agree: false } });
-  return <FormCheckbox control={control} {...props} />;
-};
+const renderCheckbox = (args: FormCheckboxProps, checked = false) => (
+  <Form defaultValues={{ [args.id]: checked }} onSubmit={() => {}}>
+    <FormCheckbox {...args} />
+  </Form>
+);
 
 const meta: Meta<typeof FormCheckbox> = {
   component: FormCheckbox,
@@ -34,15 +34,59 @@ type Story = StoryObj<typeof FormCheckbox>;
 
 export const Primary: Story = {
   name: 'FormCheckbox',
-  render: args => (
-    <Form defaultValues={{ agree: false }} onSubmit={() => {}}>
-      <FormCheckboxWrapper {...args} />
-    </Form>
-  ),
+  render: args => renderCheckbox(args),
   args: {
-    id: 'agree',
-    label: 'I agree to the terms and conditions',
-    disabled: false,
-    required: false
+    id: 'terms',
+    label: 'I agree to the terms and conditions'
+  }
+};
+
+export const Checked: Story = {
+  name: 'Checked',
+  render: args => renderCheckbox(args, true),
+  args: {
+    id: 'notifications',
+    label: 'Send me deployment notifications by email'
+  }
+};
+
+export const Required: Story = {
+  name: 'Required',
+  render: args => renderCheckbox(args),
+  args: {
+    ...Primary.args,
+    required: true
+  }
+};
+
+export const Disabled: Story = {
+  name: 'Disabled',
+  render: args => renderCheckbox(args, true),
+  args: {
+    id: 'auditlog',
+    label: 'Enable audit logging (available in the Enterprise plan)',
+    disabled: true
+  }
+};
+
+export const WithClickHandler: Story = {
+  name: 'With Click Handler',
+  render: args => renderCheckbox(args),
+  args: {
+    ...Primary.args,
+    handleClick: () => console.log('checkbox clicked')
+  }
+};
+
+export const WithSlotProps: Story = {
+  name: 'With Slot Props',
+  render: args => renderCheckbox(args, true),
+  args: {
+    id: 'retry',
+    label: 'Retry failed deployments',
+    slotProps: {
+      checkbox: { color: 'secondary', size: 'small' },
+      label: { labelPlacement: 'start' }
+    }
   }
 };
