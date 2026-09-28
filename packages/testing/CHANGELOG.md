@@ -1,5 +1,30 @@
 ---
-## 0.18.1 - 2026-09-15
+## 0.18.2 - 2026-09-28
+
+
+
+### Bug fixes
+
+#### testing
+
+- Openapi spec update ([ff8549d](https://github.com/NorthernTechHQ/nt-gui/commit/ff8549dc4a513159e1415569d6a774524a28692b)) by @mender-test-bot
+
+### Dependency updates
+
+#### deps
+
+- Update dependency vitest to v5 ([8ec9645](https://github.com/NorthernTechHQ/nt-gui/commit/8ec96458df470740137c8367e3dded9b5c300752)) by @mender-test-bot
+
+- Bump vitest to 5.x in all packages ([MEN-9331](https://northerntech.atlassian.net/browse/MEN-9331)) ([7964608](https://github.com/NorthernTechHQ/nt-gui/commit/7964608003878327041beed0d5fac6fc541dafcd)) by @mineralsfree
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-9331](https://northerntech.atlassian.net/browse/MEN-9331) |
+
+## @northern.tech/testing-0.18.1 - 2026-09-15
 
 
 
