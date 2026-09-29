@@ -25,5 +25,8 @@
   ],
   "devDependencies": {
     "tsdown": "^0.23.0"
+  },
+  "scripts": {
+    "yalc:publish": "yalc publish --no-script --push"
   }
 }

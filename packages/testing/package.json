@@ -31,7 +31,8 @@
     "build": "tsdown",
     "dev": "tsdown --watch --onSuccess 'yalc publish --no-script --push'",
     "lint": "eslint --quiet .",
-    "format:check": "prettier --check \"src/**/*.{js,ts,jsx,tsx,less}\""
+    "format:check": "prettier --check \"src/**/*.{js,ts,jsx,tsx,less}\"",
+    "yalc:publish": "yalc publish --no-script --push"
   },
   "type": "module",
   "sideEffects": false,

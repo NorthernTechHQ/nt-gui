@@ -21,7 +21,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdown"
+    "build": "tsdown",
+    "yalc:publish": "yalc publish --no-script --push"
   },
   "type": "module",
   "sideEffects": false,

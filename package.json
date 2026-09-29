@@ -18,7 +18,7 @@
     "init-msw": "msw init .storybook/public/ --save",
     "clean": "turbo run clean && rm -rf node_modules",
     "release": "turbo run build",
-    "yalc:publish": "npm run release && npm exec --workspaces -- yalc publish --no-script --push",
+    "yalc:publish": "turbo run yalc:publish",
     "prepare": "husky"
   },
   "dependencies": {
