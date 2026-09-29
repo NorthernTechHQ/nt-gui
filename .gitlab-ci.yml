@@ -82,7 +82,7 @@ build:
     - k8s
   script:
     - npm ci
-    - npm run release
+    - npm run build
     - npm run build-storybook
   artifacts:
     paths:
@@ -161,7 +161,7 @@ release:
     - apt-get update && apt-get install -y jq
   script:
     - npm ci
-    - npm run release
+    - npm run build
     - release-please github-release
       --token=${GITHUB_BOT_TOKEN_REPO_FULL}
       --repo-url=${GITHUB_REPO_URL}
