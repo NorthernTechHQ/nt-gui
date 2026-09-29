@@ -1414,6 +1414,7 @@ export {
   type NewConfigurationDeploymentResponse,
   type NewDeploymentForGroup,
   type NewDeploymentPhaseTypeManagement,
+  type NewDeploymentSpec,
   type NewDeploymentTypeManagement,
   type NewDeploymentV2TypeManagement,
   type NewDeviceInternalProvisionTypeInternal,

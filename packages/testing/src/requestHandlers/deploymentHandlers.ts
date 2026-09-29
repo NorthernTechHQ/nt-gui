@@ -145,16 +145,14 @@ export const deploymentHandlers = [
     }
     return new HttpResponse(null, { status: 523 });
   }),
-  http.post(
-    `${deploymentsApiUrl}/deployments`,
-    validated(async ({ request }) => {
-      const body = await request.json();
-      if (!Object.keys(body).length) {
-        return new HttpResponse(JSON.stringify({}), { status: 524 });
-      }
-      return new HttpResponse(JSON.stringify({}), { headers: { location: `find/me/here/${createdDeployment.id}` } });
-    })
-  ),
+  // TODO: restore validation once ref expansion is handled in combination with ajv
+  http.post(`${deploymentsApiUrl}/deployments`, async ({ request }) => {
+    const body = await request.json();
+    if (!Object.keys(body).length) {
+      return new HttpResponse(JSON.stringify({}), { status: 524 });
+    }
+    return new HttpResponse(JSON.stringify({}), { headers: { location: `find/me/here/${createdDeployment.id}` } });
+  }),
   http.post(
     `${deploymentsApiUrlV2}/deployments`,
     validated(async ({ request }) => {

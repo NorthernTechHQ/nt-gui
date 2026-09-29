@@ -316,7 +316,9 @@ export type AuditLog = {
     | 'deploy_configuration'
     | 'upload'
     | 'password_change'
-    | 'auth_method_change';
+    | 'auth_method_change'
+    | 'accept'
+    | 'preauthorize';
   object: Object;
   change?: string;
 };
@@ -994,7 +996,10 @@ export type ConfigurationTenant = {
   delta?: DeltaConfiguration;
 };
 
-export type NewDeploymentTypeManagement = {
+/**
+ * Properties common to all new deployment requests.
+ */
+export type NewDeploymentSpec = {
   /**
    * Name of the deployment
    */
@@ -1003,16 +1008,6 @@ export type NewDeploymentTypeManagement = {
    * Name of the artifact to deploy
    */
   artifact_name: string;
-  /**
-   * An array of devices' identifiers.
-   */
-  devices?: Array<string>;
-  /**
-   * When set, the deployment will be created for all
-   * currently accepted devices.
-   *
-   */
-  all_devices?: boolean;
   /**
    * Force the installation of the Artifact disabling the `already-installed` check.
    */
@@ -1041,38 +1036,20 @@ export type NewDeploymentTypeManagement = {
   autogenerate_delta?: boolean;
 };
 
-export type NewDeploymentForGroup = {
+export type NewDeploymentTypeManagement = NewDeploymentSpec & {
   /**
-   * Name of the deployment
+   * An array of devices' identifiers.
    */
-  name: string;
+  devices?: Array<string>;
   /**
-   * Name of the artifact to deploy
-   */
-  artifact_name: string;
-  /**
-   * Force the installation of the Artifact disabling the `already-installed` check.
-   */
-  force_installation?: boolean;
-  phases?: Array<NewDeploymentPhaseTypeManagement>;
-  /**
-   * The number of times a device can retry the deployment in case of failure, defaults to 0
-   */
-  retries?: number;
-  /**
-   * A valid JSON object defining the update control map.
-   * *NOTE*: Available only in the Enterprise plan.
+   * When set, the deployment will be created for all
+   * currently accepted devices.
    *
    */
-  update_control_map?: {
-    [key: string]: unknown;
-  };
-  /**
-   * The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
-   *
-   */
-  autogenerate_delta?: boolean;
+  all_devices?: boolean;
 };
+
+export type NewDeploymentForGroup = NewDeploymentSpec;
 
 export type DeploymentV1 = {
   /**
@@ -1113,6 +1090,14 @@ export type DeploymentV1 = {
    *
    */
   groups?: Array<string>;
+  /**
+   * The total number of phases configured for this deployment.
+   */
+  phase_count?: number;
+  /**
+   * The identifier of the currently active phase. Omitted if the deployment is not phased or the deployment is finished.
+   */
+  current_phase?: string;
   /**
    * An array of the deployment's phases, ordered by `start_ts`.
    *
@@ -2063,6 +2048,14 @@ export type DeploymentV2 = {
    *
    */
   groups?: Array<string>;
+  /**
+   * The total number of phases configured for this deployment.
+   */
+  phase_count?: number;
+  /**
+   * The identifier of the currently active phase. Omitted if the deployment is not phased or the deployment is finished.
+   */
+  current_phase?: string;
   /**
    * An array of the deployment's phases, ordered by `start_ts`.
    *
