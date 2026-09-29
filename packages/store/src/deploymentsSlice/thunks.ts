@@ -167,14 +167,12 @@ export const createDeployment = createAppAsyncThunk(
   `${sliceName}/createDeployment`,
   ({ newDeployment }: { newDeployment: NewDeployment | (NewDeploymentForGroup & { group: string }) | NewDeploymentV2 }, { dispatch, getState }) => {
     let request;
-    const { name, artifact_name, retries, update_control_map, autogenerate_delta } = newDeployment;
-    const common = { name, artifact_name, phases: cleanPhases(newDeployment.phases), retries, update_control_map, autogenerate_delta };
+    const { name, artifact_name, retries, uniform_phases, update_control_map, autogenerate_delta } = newDeployment;
+    const cleanedPhases = cleanPhases(newDeployment.phases);
+    const common = { name, artifact_name, phases: uniform_phases ? undefined : cleanedPhases, retries, uniform_phases, update_control_map, autogenerate_delta };
     if ('filter_id' in newDeployment && newDeployment.filter_id) {
-      const { filter_id, max_devices, uniform_phases } = newDeployment;
-      request = GeneralApi.post(
-        `${deploymentsApiUrlV2}/deployments`,
-        stripUndefined({ ...common, filter_id, max_devices, uniform_phases, phases: uniform_phases ? undefined : common.phases })
-      );
+      const { filter_id, max_devices } = newDeployment;
+      request = GeneralApi.post(`${deploymentsApiUrlV2}/deployments`, stripUndefined({ ...common, filter_id, max_devices }));
     } else if ('group' in newDeployment && newDeployment.group) {
       const { force_installation, group } = newDeployment;
       request = GeneralApi.post(`${deploymentsApiUrl}/deployments/group/${group}`, stripUndefined({ ...common, force_installation }));
