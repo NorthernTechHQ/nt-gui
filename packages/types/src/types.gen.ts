@@ -5143,7 +5143,7 @@ export type DevicesDownloadArtifactResponses = {
 
 export type DevicesDownloadArtifactResponse = DevicesDownloadArtifactResponses[keyof DevicesDownloadArtifactResponses];
 
-export type DeviceCheckUpdateData = {
+export type CheckUpdateData = {
   body?: never;
   path?: never;
   query: {
@@ -5159,7 +5159,7 @@ export type DeviceCheckUpdateData = {
   url: '/api/devices/v1/deployments/device/deployments/next';
 };
 
-export type DeviceCheckUpdateErrors = {
+export type CheckUpdateErrors = {
   /**
    * Invalid Request.
    */
@@ -5182,9 +5182,9 @@ export type DeviceCheckUpdateErrors = {
   500: Error;
 };
 
-export type DeviceCheckUpdateError = DeviceCheckUpdateErrors[keyof DeviceCheckUpdateErrors];
+export type CheckUpdateError = CheckUpdateErrors[keyof CheckUpdateErrors];
 
-export type DeviceCheckUpdateResponses = {
+export type CheckUpdateResponses = {
   /**
    * Successful response.
    */
@@ -5195,7 +5195,7 @@ export type DeviceCheckUpdateResponses = {
   204: void;
 };
 
-export type DeviceCheckUpdateResponse = DeviceCheckUpdateResponses[keyof DeviceCheckUpdateResponses];
+export type CheckUpdateResponse = CheckUpdateResponses[keyof CheckUpdateResponses];
 
 export type CheckUpdateDependsData = {
   /**
@@ -5397,7 +5397,7 @@ export type FetchConfigurationResponses = {
 
 export type FetchConfigurationResponse = FetchConfigurationResponses[keyof FetchConfigurationResponses];
 
-export type CheckUpdateData = {
+export type CheckUpdateV2Data = {
   /**
    * Request which describes the artifact(s) installed on the devices and the supported features. The device_provides attribute contains a key-value map of strings which describes the artifact(s) installed on the device and the device itself. It is used to determine the next deployment. The keys device_type and artifact_name are mandatory, additional free-form key-value pairs can be specified.
    *
@@ -5408,7 +5408,7 @@ export type CheckUpdateData = {
   url: '/api/devices/v2/deployments/device/deployments/next';
 };
 
-export type CheckUpdateErrors = {
+export type CheckUpdateV2Errors = {
   /**
    * Invalid Request.
    */
@@ -5423,9 +5423,9 @@ export type CheckUpdateErrors = {
   500: Error;
 };
 
-export type CheckUpdateError = CheckUpdateErrors[keyof CheckUpdateErrors];
+export type CheckUpdateV2Error = CheckUpdateV2Errors[keyof CheckUpdateV2Errors];
 
-export type CheckUpdateResponses = {
+export type CheckUpdateV2Responses = {
   /**
    * Successful response.
    */
@@ -5436,7 +5436,7 @@ export type CheckUpdateResponses = {
   204: void;
 };
 
-export type CheckUpdateResponse = CheckUpdateResponses[keyof CheckUpdateResponses];
+export type CheckUpdateV2Response = CheckUpdateV2Responses[keyof CheckUpdateV2Responses];
 
 export type GetUpdateControlMapData = {
   body?: never;
