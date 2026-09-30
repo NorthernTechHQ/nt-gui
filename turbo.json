@@ -2,23 +2,34 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build": {
+      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", "storybook-static/**"],
-      "cache": false
+      "outputs": ["dist/**", "storybook-static/**"]
+    },
+    "@northern.tech/common#build": {
+      "dependsOn": ["^build", "@northern.tech/common-ui#build", "@northern.tech/store#build", "@northern.tech/themes#build", "@northern.tech/utils#build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**"]
     },
     "@northern.tech/common-ui#build": {
-      "dependsOn": ["@northern.tech/store#build"],
-      "cache": false
+      "dependsOn": ["^build", "@northern.tech/store#build", "@northern.tech/utils#build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**"]
     },
     "@northern.tech/store#build": {
-      "dependsOn": ["@northern.tech/utils#build"],
-      "cache": false
+      "dependsOn": ["^build", "@northern.tech/types#build", "@northern.tech/utils#build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**"]
     },
     "@northern.tech/testing#build": {
-      "dependsOn": ["@northern.tech/utils#build"]
+      "dependsOn": ["^build", "@northern.tech/utils#build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**"]
     },
     "@northern.tech/utils#build": {
-      "dependsOn": ["@northern.tech/types#build"]
+      "dependsOn": ["^build", "@northern.tech/types#build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**"]
     },
     "lint": {
       "cache": true
@@ -41,6 +52,10 @@
       "dependsOn": ["@northern.tech/common-ui#build", "@northern.tech/common-ui#test-ci"]
     },
     "clean": {
+      "cache": false
+    },
+    "yalc:publish": {
+      "dependsOn": ["build"],
       "cache": false
     }
   }

@@ -7,8 +7,7 @@
     "url": "git+https://github.com/NorthernTechHQ/nt-gui.git"
   },
   "scripts": {
-    "build": "vite build",
-    "dev": "vite dev",
+    "build": "turbo run build",
     "lint": "turbo run lint --continue --log-order=grouped",
     "format:check": "turbo run format:check --continue --log-order=grouped",
     "test": "turbo run test-ci",
@@ -17,8 +16,7 @@
     "preview-storybook": "serve storybook-static",
     "init-msw": "msw init .storybook/public/ --save",
     "clean": "turbo run clean && rm -rf node_modules",
-    "release": "turbo run build",
-    "yalc:publish": "npm run release && npm exec --workspaces -- yalc publish --no-script --push",
+    "yalc:publish": "turbo run yalc:publish",
     "prepare": "husky"
   },
   "dependencies": {
@@ -63,7 +61,6 @@
     "turbo": "^2.10.7",
     "typescript": "6.0.3",
     "uuid": "^14.0.1",
-    "vite": "^8.2.0",
     "vitest": "^5.0.2"
   },
   "optionalDependencies": {
