@@ -665,7 +665,7 @@ paths:
       description: |
         On success, either an empty response or a DeploymentInstructions object
         is returned depending on whether there are any pending updates.
-      operationId: Device Check Update
+      operationId: Check Update
       parameters:
         - description: currently installed artifact
           in: query
@@ -912,7 +912,7 @@ paths:
         Returns the next update to be installed on the device.
         Next update will be chosen based on parameters provided in the request
         body.
-      operationId: Check Update
+      operationId: Check Update v2
       requestBody:
         content:
           application/json:
