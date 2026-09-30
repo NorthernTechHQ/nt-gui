@@ -1,5 +1,21 @@
 ---
-## 0.18.2 - 2026-09-28
+## 0.18.3 - 2026-09-30
+
+
+
+### Bug fixes
+
+#### testing
+
+- Openapi spec update ([e4eecd9](https://github.com/NorthernTechHQ/nt-gui/commit/e4eecd9b584f8a007b5674a5108db9da7c7d5daa)) by @mender-test-bot
+- Include ai feedback in feedback API mock ([0d7e063](https://github.com/NorthernTechHQ/nt-gui/commit/0d7e0638f007614117794c85081f58d2456b628c)) by @mineralsfree
+
+### Dependency updates
+
+#### deps
+
+- Update development-dependencies ([5df5f93](https://github.com/NorthernTechHQ/nt-gui/commit/5df5f93d2f0648c4f67526025637ac7d4fe31fd1)) by @mender-test-bot
+## @northern.tech/testing-0.18.2 - 2026-09-28
 
 
 
