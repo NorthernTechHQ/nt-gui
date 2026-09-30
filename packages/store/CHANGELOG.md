@@ -1,5 +1,30 @@
 ---
-## 0.46.2 - 2026-09-15
+## 0.46.3 - 2026-09-30
+
+
+
+### Bug fixes
+
+#### store
+
+- Aligned uniform phases support w/ backend capabilities ([faac114](https://github.com/NorthernTechHQ/nt-gui/commit/faac11488edc013a6b93b7254aad0231500cdc94)) by @mzedel
+
+### Dependency updates
+
+#### deps
+
+- Update development-dependencies ([5df5f93](https://github.com/NorthernTechHQ/nt-gui/commit/5df5f93d2f0648c4f67526025637ac7d4fe31fd1)) by @mender-test-bot
+
+- Bump vitest to 5.x in all packages ([MEN-9331](https://northerntech.atlassian.net/browse/MEN-9331)) ([7964608](https://github.com/NorthernTechHQ/nt-gui/commit/7964608003878327041beed0d5fac6fc541dafcd)) by @mineralsfree
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-9331](https://northerntech.atlassian.net/browse/MEN-9331) |
+
+## @northern.tech/store-0.46.2 - 2026-09-15
 
 
 
