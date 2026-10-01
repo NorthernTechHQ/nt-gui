@@ -1,5 +1,14 @@
 ---
-## 0.46.3 - 2026-09-30
+## 0.46.4 - 2026-10-01
+
+
+
+### Bug fixes
+
+#### store
+
+- Allowed group creation failures to propagate ([31b38d9](https://github.com/NorthernTechHQ/nt-gui/commit/31b38d9ded21b815b728103a31011c40bcbfacdd)) by @mzedel
+## @northern.tech/store-0.46.3 - 2026-09-30
 
 
 
