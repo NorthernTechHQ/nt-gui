@@ -10559,9 +10559,9 @@ export type DeviceConnectInternalShutdownError = DeviceConnectInternalShutdownEr
 
 export type DeviceConnectInternalShutdownResponses = {
   /**
-   * The service started the graceful shutdown procedure.
+   * The service shut down successfully.
    */
-  202: unknown;
+  200: unknown;
 };
 
 export type DeleteTenantDataData = {
