@@ -172,7 +172,8 @@ export const removeDevicesFromGroup = createAppAsyncThunk(
 export const addStaticGroup = createAppAsyncThunk(
   `${sliceName}/addStaticGroup`,
   ({ group, devices }: { devices: Device[]; group: string }, { dispatch, getState }) =>
-    Promise.resolve(dispatch(addDevicesToGroup({ group, deviceIds: devices.map(({ id }) => id), isCreation: true })))
+    dispatch(addDevicesToGroup({ group, deviceIds: devices.map(({ id }) => id), isCreation: true }))
+      .unwrap()
       .then(() =>
         Promise.resolve(
           dispatch(
