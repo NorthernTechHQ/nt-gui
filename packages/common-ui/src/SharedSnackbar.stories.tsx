@@ -48,3 +48,27 @@ export const PreventCopy: Story = {
     setSnackbar: (message: string) => alert(`Snackbar closed/updated: ${message}`)
   }
 };
+
+export const IgnoringClickaway: Story = {
+  name: 'Ignoring clickaway dismissals',
+  args: {
+    snackbar: {
+      open: true,
+      message: 'This snackbar stays open until it times out - clicking elsewhere will not dismiss it.',
+      autoHideDuration: 10000,
+      onClose: true
+    },
+    setSnackbar: (message: string) => alert(`Snackbar closed/updated: ${message}`)
+  }
+};
+
+export const WithCustomContent: Story = {
+  name: 'With custom content',
+  args: {
+    snackbar: {
+      open: true,
+      children: <div className="flexbox center-aligned padding-small">Deployment created - the devices will start updating shortly.</div>
+    },
+    setSnackbar: (message: string) => alert(`Snackbar closed/updated: ${message}`)
+  }
+};

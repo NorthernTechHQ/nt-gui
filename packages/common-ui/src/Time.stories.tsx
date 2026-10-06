@@ -13,7 +13,7 @@
 //    limitations under the License.
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { RelativeTime, Time } from './Time';
+import { ApproximateRelativeDate, RelativeTime, Time } from './Time';
 
 const meta: Meta<typeof Time> = {
   component: Time,
@@ -60,5 +60,16 @@ export const RelativeTimeStory: RelativeTimeStory = {
       control: 'select',
       options: ['both', 'up', 'down']
     }
+  }
+};
+
+type ApproximateDateStory = StoryObj<typeof ApproximateRelativeDate>;
+
+export const ApproximateDate: ApproximateDateStory = {
+  name: 'ApproximateRelativeDate Component',
+  render: props => <ApproximateRelativeDate {...props} />,
+  args: {
+    updateTime: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    className: ''
   }
 };

@@ -28,16 +28,16 @@ interface SampleItem {
 }
 
 // Sample ListItem component
-const SampleListItem = ({ columnHeaders, listItem, onClick, onRowSelect, selectable, selected }: ListItemComponentProps<SampleItem>) => (
+const SampleListItem = ({ columnHeaders, index, listItem, onClick, onRowSelect, selectable, selected }: ListItemComponentProps<SampleItem>) => (
   <div className="deviceListRow" onClick={() => onClick(listItem)}>
     {selectable && (
       <div>
-        <Checkbox checked={selected} onChange={() => onRowSelect(listItem)} />
+        <Checkbox checked={selected} onChange={() => onRowSelect(index)} />
       </div>
     )}
     {columnHeaders.map((column, index) => {
       const { component: Component } = column;
-      return <Component key={`col-${index}`} column={column} item={listItem} />;
+      return <Component key={`col-${index}`} column={column} item={listItem} classes={{}} />;
     })}
   </div>
 );
@@ -75,6 +75,14 @@ const sampleItems: SampleItem[] = Array.from({ length: 5 }, (_, i) => ({
   created: `2025-01-${String(i + 10).padStart(2, '0')}`
 }));
 
+const listState = {
+  page: 1,
+  perPage: 20,
+  selection: [],
+  sort: { direction: SORTING_OPTIONS.desc, key: 'name' },
+  total: sampleItems.length
+};
+
 const meta: Meta<typeof CommonList<SampleItem>> = {
   component: CommonList,
   title: 'common-ui/List'
@@ -89,21 +97,15 @@ export const Primary: Story = {
   args: {
     columnHeaders: sampleColumns,
     listItems: sampleItems,
-    listState: {
-      page: 1,
-      perPage: 20,
-      selection: [],
-      sort: { direction: SORTING_OPTIONS.desc, key: 'name' },
-      total: 5
-    },
-    idAttribute: 'id',
+    listState,
+    idAttribute: { attribute: 'id', scope: 'identity' },
     ListItemComponent: SampleListItem,
     onChangeRowsPerPage: (perPage: number) => console.log('Rows per page:', perPage),
     onExpandClick: (item: SampleItem) => console.log('Clicked:', item),
-    onPageChange: (event: any, page: number) => console.log('Page:', page),
+    onPageChange: (page: number) => console.log('Page:', page),
     onResizeColumns: false,
     onSelect: false,
-    onSort: (attr: any) => console.log('Sort:', attr),
+    onSort: (attribute: object) => console.log('Sort:', attribute),
     pageLoading: false
   }
 };
@@ -112,6 +114,35 @@ export const WithSelection: Story = {
   name: 'With Selection',
   args: {
     ...Primary.args,
+    listState: { ...listState, selection: [0, 2] },
     onSelect: (rows: number[]) => console.log('Selected rows:', rows)
+  }
+};
+
+export const ResizableColumns: Story = {
+  name: 'Resizable Columns',
+  args: {
+    ...Primary.args,
+    customColumnSizes: [
+      { name: 'status', scope: 'system' },
+      { name: 'created', scope: 'system' }
+    ],
+    onResizeColumns: (columns: { attribute: { name: string; scope: string }; size: number }[]) => console.log('Resized columns:', columns)
+  }
+};
+
+export const WithSortingNotes: Story = {
+  name: 'With Sorting Notes',
+  args: {
+    ...Primary.args,
+    sortingNotes: { name: 'Sorting by Name will only work properly with items that already have a name defined' }
+  }
+};
+
+export const Loading: Story = {
+  name: 'Loading',
+  args: {
+    ...Primary.args,
+    pageLoading: true
   }
 };

@@ -20,7 +20,7 @@ import InfoHint from './InfoHint';
 describe('InfoHint Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = render(<InfoHint content="test" className="test-class" />);
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild as HTMLElement;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });

@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ConfigurationObject Component > renders correctly 1`] = `
+exports[`TwoColumnData Component > renders correctly 1`] = `
 .emotion-0 .key>b {
   background-color: #bdbdbd;
   color: rgba(0, 0, 0, 0.87);
@@ -19,11 +19,7 @@ exports[`ConfigurationObject Component > renders correctly 1`] = `
   <div
     class="flexbox "
   >
-    <div
-      title="true"
-    >
-      true
-    </div>
+    <div />
   </div>
   <div
     class="align-right key muted"

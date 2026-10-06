@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import type { ReactNode } from 'react';
 import { memo, useEffect, useState } from 'react';
 
@@ -37,7 +36,7 @@ const MaybeWrapper = ({ children, disabled }: { children: ReactNode; disabled: b
     <div>{children}</div>
   );
 
-interface TablePaginationActionsProps {
+export interface TablePaginationActionsProps {
   count: number;
   onPageChange: (page: number) => void;
   page?: number;
@@ -65,9 +64,9 @@ export const TablePaginationActions = ({ count, page = 0, onPageChange, rowsPerP
 
   const isAtPaginationLimit = pageNo >= paginationLimit / rowsPerPage;
   return (
-    <div className="flexbox center-aligned">
+    <>
       {showCountInfo && <div>{`${(pageNo - paginationIndex) * rowsPerPage + 1}-${Math.min(pageNo * rowsPerPage, count)} of ${count}`}</div>}
-      <IconButton onClick={() => setPageNo(pageNo - 1)} disabled={pageNo === paginationIndex} size="large" aria-label="prev">
+      <IconButton className="margin-left-small" onClick={() => setPageNo(pageNo - 1)} disabled={pageNo === paginationIndex} size="large" aria-label="prev">
         <KeyboardArrowLeft />
       </IconButton>
       <MaybeWrapper disabled={isAtPaginationLimit}>
@@ -75,11 +74,11 @@ export const TablePaginationActions = ({ count, page = 0, onPageChange, rowsPerP
           <KeyboardArrowRight />
         </IconButton>
       </MaybeWrapper>
-    </div>
+    </>
   );
 };
 
-interface PaginationProps {
+export interface PaginationProps {
   className?: string;
   count: number;
   disabled?: boolean;
@@ -102,35 +101,29 @@ const Pagination = (props: PaginationProps) => {
       classes={{ spacer: 'flexbox no-basis' }}
       component="div"
       labelDisplayedRows={() => ''}
-      slotProps={{ select: { name: 'pagination' } }}
+      slotProps={{ select: { name: 'pagination', size: 'medium' } }}
       rowsPerPageOptions={rowsPerPageOptions}
       onRowsPerPageChange={e => onChangeRowsPerPage(Number(e.target.value))}
       page={propsPage}
-      onPageChange={onChangePage}
-      ActionsComponent={actionProps => <TablePaginationActions {...actionProps} showCountInfo={showCountInfo} />}
+      // the actions component below fully replaces the MUI pagination controls & receives onChangePage directly, this only satisfies the required MUI prop
+      onPageChange={(_, newPage) => onChangePage(newPage)}
+      ActionsComponent={actionProps => <TablePaginationActions {...actionProps} onPageChange={onChangePage} showCountInfo={showCountInfo} />}
       {...remainingProps}
     />
   );
 };
 
-export const areEqual = (prevProps: PaginationProps, nextProps: PaginationProps) => {
+type ComparableProps = Pick<PaginationProps, 'count'> & Partial<Pick<PaginationProps, 'disabled' | 'page' | 'rowsPerPage'>>;
+
+export const areEqual = (prevProps: ComparableProps, nextProps: ComparableProps) => {
   if (prevProps.page !== nextProps.page || prevProps.rowsPerPage !== nextProps.rowsPerPage || prevProps.disabled !== nextProps.disabled) {
     return false;
   }
 
   const rowsPerPage = prevProps.rowsPerPage ?? defaultPerPage;
-  const prevPages = Math.ceil(prevProps.count / rowsPerPage);
-  const nextPages = Math.ceil(nextProps.count / rowsPerPage);
-
-  // re-render if the number of pages changed
-  if (prevPages !== nextPages) {
-    return false;
-  }
-
-  const pageStart = ((prevProps.page ?? 1) - 1) * rowsPerPage;
+  const pageStart = ((prevProps.page ?? 0) - 1) * rowsPerPage;
   const pageEnd = pageStart + rowsPerPage;
 
   return Math.min(prevProps.count, pageEnd) === Math.min(nextProps.count, pageEnd);
 };
-
 export default memo(Pagination, areEqual);

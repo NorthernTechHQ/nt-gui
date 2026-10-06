@@ -12,6 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { render } from '@/testUtils';
+import * as StoreThunks from '@northern.tech/store/thunks';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
@@ -20,6 +21,9 @@ import Feedback from './Feedback';
 
 describe('Feedback Component', () => {
   it('works as intended', async () => {
+    const submitSpy = vi.mocked(StoreThunks.submitUserFeedback);
+    // the component dispatches the thunk without consuming its result, so a bare resolving thunk is enough of a stub
+    submitSpy.mockImplementationOnce(() => (() => Promise.resolve()) as unknown as ReturnType<typeof StoreThunks.submitUserFeedback>);
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const ui = <Feedback />;
     const { rerender } = render(ui);
@@ -30,5 +34,6 @@ describe('Feedback Component', () => {
     await user.type(screen.getByPlaceholderText(/your feedback/i), 'some feedback');
     await user.click(screen.getByRole('button', { name: /submit/i }));
     expect(screen.getByText(/Thank you/i)).toBeVisible();
+    expect(submitSpy).toHaveBeenCalledWith({ formId: 'product', feedback: { score: 4, message: 'some feedback' } });
   });
 });

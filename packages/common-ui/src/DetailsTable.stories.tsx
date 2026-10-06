@@ -14,19 +14,16 @@
 import { SORTING_OPTIONS } from '@northern.tech/store/constants';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import type { ColumnDefinition, ColumnRendererProps } from './DetailsTable';
 import { DetailsTable } from './DetailsTable';
 
-const meta: Meta<typeof DetailsTable> = {
-  component: DetailsTable,
-  includeStories: ['Primary', 'Secondary', 'Tertiary'],
-  title: 'common-ui/DetailsTable'
-};
+interface SampleItem {
+  count: number;
+  id: string;
+  name: string;
+}
 
-export default meta;
-
-type Story = StoryObj<typeof DetailsTable>;
-
-const columns = [
+const columns: ColumnDefinition<SampleItem>[] = [
   {
     key: 'name',
     title: 'Name',
@@ -38,7 +35,7 @@ const columns = [
     key: 'count',
     title: 'count',
     render: ({ count }) => count,
-    renderTitle: ({ extraCount }) => <b>{extraCount}</b>,
+    renderTitle: extras => <b>{extras.extraCount}</b>,
     extras: { extraCount: 'something a little extra' },
     sortable: false,
     defaultSortDirection: SORTING_OPTIONS.asc
@@ -46,11 +43,33 @@ const columns = [
   {
     key: 'constant',
     title: 'something constant',
-    render: () => 'Yeah!'
+    render: () => 'Yeah!',
+    cellProps: { align: 'right' }
   }
 ];
 
-const items = Array.from({ length: 10 }).map((_, index) => ({ name: `list-entry ${index + 1}`, count: index }));
+const CountChip = ({ column, extras, item }: ColumnRendererProps<SampleItem, { label: string }>) => (
+  <div className="flexbox center-aligned" style={{ gap: 4 }}>
+    <b>{item[column.key as keyof SampleItem]}</b>
+    <span className="muted">{extras?.label}</span>
+  </div>
+);
+
+const componentColumns: ColumnDefinition<SampleItem>[] = [
+  { key: 'name', title: 'Name', render: ({ name }) => name, sortable: true },
+  { key: 'count', title: 'Count', component: CountChip, extras: { label: 'deployments' } }
+];
+
+const items: SampleItem[] = Array.from({ length: 10 }).map((_, index) => ({ id: `item-${index + 1}`, name: `list-entry ${index + 1}`, count: index }));
+
+const meta: Meta<typeof DetailsTable> = {
+  component: DetailsTable,
+  title: 'common-ui/DetailsTable'
+};
+
+export default meta;
+
+type Story = StoryObj<typeof DetailsTable>;
 
 export const Primary: Story = {
   render: props => <DetailsTable {...props} />,
@@ -59,34 +78,48 @@ export const Primary: Story = {
     className: '',
     columns,
     items,
-    onChangeSorting: (...args) => alert(`sorting changed: ${JSON.stringify(args)}`),
-    onItemClick: (...args) => alert(`item clicked: ${JSON.stringify(args)}`),
-    style: {},
-    onRowSelected: (...args) => alert(`row selected: ${JSON.stringify(args)}`),
-    selectedRows: [2, 5]
+    onChangeSorting: sortKey => console.log(`sorting changed: ${sortKey}`),
+    onItemClick: item => console.log(`item clicked: ${JSON.stringify(item)}`),
+    onRowSelected: rowNumbers => console.log(`rows selected: ${JSON.stringify(rowNumbers)}`),
+    selectedRows: [2, 5],
+    sort: { direction: SORTING_OPTIONS.asc, key: 'name' },
+    style: {}
   }
 };
 
-export const Secondary: Story = {
-  render: props => <DetailsTable {...props} onRowSelected={undefined} />,
+export const WithoutSelection: Story = {
   name: 'DetailsTableNoSelection',
   args: {
-    className: '',
-    columns,
-    items,
-    onChangeSorting: (...args) => alert(`sorting changed: ${JSON.stringify(args)}`),
-    onItemClick: (...args) => alert(`item clicked: ${JSON.stringify(args)}`),
-    style: {}
+    ...Primary.args,
+    onRowSelected: undefined,
+    selectedRows: []
   }
 };
 
-export const Tertiary: Story = {
-  render: props => <DetailsTable {...props} />,
+export const SortedDescending: Story = {
+  name: 'DetailsTableSortedDescending',
+  args: {
+    ...Primary.args,
+    sort: { direction: SORTING_OPTIONS.desc, key: 'name' }
+  }
+};
+
+export const Empty: Story = {
   name: 'DetailsTableNothingness',
   args: {
-    className: '',
-    columns,
+    ...Primary.args,
     items: [],
-    style: {}
+    onRowSelected: undefined,
+    selectedRows: []
+  }
+};
+
+export const WithComponentRenderers: Story = {
+  name: 'DetailsTableComponentRenderers',
+  args: {
+    ...Primary.args,
+    columns: componentColumns,
+    onRowSelected: undefined,
+    selectedRows: []
   }
 };

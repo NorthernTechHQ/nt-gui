@@ -11,15 +11,15 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
+import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
-import { Button, DialogActions, DialogContent, Divider } from '@mui/material';
+import { Button, DialogActions, DialogContent, Divider, useTheme } from '@mui/material';
 
 import storeActions from '@northern.tech/store/actions';
-import { DEVICE_ONLINE_CUTOFF, TIMEOUTS } from '@northern.tech/store/constants';
-import { getIsDarkMode } from '@northern.tech/store/selectors';
+import { DARK_MODE, DEVICE_ONLINE_CUTOFF, TIMEOUTS } from '@northern.tech/store/constants';
+import type { AppDispatch } from '@northern.tech/store/store';
+import { useAppDispatch } from '@northern.tech/store/store';
 import { saveGlobalSettings } from '@northern.tech/store/thunks';
 import { useDebounce } from '@northern.tech/utils/debouncehook';
 
@@ -57,17 +57,22 @@ const OfflineThresholdContent = () => (
   </>
 );
 
+interface StartupNotification {
+  action: (args: { dispatch: AppDispatch }) => void;
+  Content: () => ReactNode;
+}
+
 const notifications = {
   offlineThreshold: {
     Content: OfflineThresholdContent,
     action: ({ dispatch }) => dispatch(saveGlobalSettings({ offlineThreshold: { interval: 1, intervalUnit: DEVICE_ONLINE_CUTOFF.intervalName } }))
   }
-};
+} satisfies Record<string, StartupNotification>;
 
 export const StartupNotificationDialog = () => {
   const [isAllowedToClose] = useState(false);
-  const dispatch = useDispatch();
-  const isDarkMode = useSelector(getIsDarkMode);
+  const dispatch = useAppDispatch();
+  const { palette } = useTheme();
 
   const { action, Content } = notifications.offlineThreshold;
 
@@ -77,7 +82,7 @@ export const StartupNotificationDialog = () => {
     action({ dispatch });
     dispatch(setShowStartupNotification(false));
   };
-  const headerLogo = isDarkMode ? whiteLogo : logo;
+  const headerLogo = palette.mode === DARK_MODE ? whiteLogo : logo;
   return (
     <BaseDialog
       open
@@ -88,7 +93,7 @@ export const StartupNotificationDialog = () => {
         }
       }}
       title={
-        <div className="flexbox center-aligned">
+        <div className="flexbox align-items-center">
           <img src={headerLogo} style={{ maxHeight: 75 }} />
           <div className="margin-left-small">Welcome back!</div>
         </div>

@@ -1,4 +1,4 @@
-// Copyright 2025 Northern.tech AS
+// Copyright 2026 Northern.tech AS
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -11,32 +11,41 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { AddonId } from '@northern.tech/store/constants';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { AddonSelect } from './AddonSelect';
+import { LastChangedNote } from './LastChangedNote';
 
-const meta: Meta<typeof AddonSelect> = {
-  component: AddonSelect,
-  title: 'common-ui/forms/AddonSelect'
+const meta: Meta<typeof LastChangedNote> = {
+  component: LastChangedNote,
+  title: 'common-ui/LastChangedNote'
 };
 
 export default meta;
 
-type Story = StoryObj<typeof AddonSelect>;
+type Story = StoryObj<typeof LastChangedNote>;
+
+const updateTime = '2025-06-02 12:34:56';
 
 export const Primary: Story = {
-  name: 'AddonSelect',
+  name: 'LastChangedNote',
   args: {
-    initialState: [],
-    onChange: (addons: AddonId[]) => console.log('Selected addons:', addons)
+    isOffline: false,
+    updateTime
   }
 };
 
-export const WithPreselection: Story = {
-  name: 'With Preselected Addons',
+export const Offline: Story = {
+  name: 'Offline',
   args: {
-    initialState: ['configure' as AddonId],
-    onChange: (addons: AddonId[]) => console.log('Selected addons:', addons)
+    isOffline: true,
+    updateTime
+  }
+};
+
+export const Unknown: Story = {
+  name: 'Without update time',
+  args: {
+    isOffline: false,
+    updateTime: undefined
   }
 };

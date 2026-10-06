@@ -1,4 +1,4 @@
-// Copyright 2025 Northern.tech AS
+// Copyright 2026 Northern.tech AS
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -11,25 +11,17 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { ConfirmAddon } from './ConfirmAddon';
+// asset imports are resolved to their public url by the bundler - mirrors the `vite/client` ambient declarations without pulling in the full vite types
+declare module '*.png' {
+  const src: string;
+  export default src;
+}
 
-const meta: Meta<typeof ConfirmAddon> = {
-  component: ConfirmAddon,
-  title: 'common-ui/dialogs/ConfirmAddon'
-};
+declare module '*.svg' {
+  const src: string;
+  export default src;
+}
 
-export default meta;
-
-type Story = StoryObj<typeof ConfirmAddon>;
-
-export const Primary: Story = {
-  name: 'ConfirmAddon',
-  args: {
-    variant: 'remove',
-    name: 'Configure',
-    onClose: () => alert('Dialog closed'),
-    onConfirm: () => alert('Change confirmed')
-  }
-};
+// side-effect only css imports (e.g. `@xterm/xterm/css/xterm.css`) are handled by the bundler
+declare module '*.css';

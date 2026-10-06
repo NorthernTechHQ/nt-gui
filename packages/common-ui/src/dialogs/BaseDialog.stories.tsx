@@ -11,6 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { InfoOutlined as InfoOutlinedIcon } from '@mui/icons-material';
 import { Button, DialogActions, DialogContent } from '@mui/material';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -44,6 +45,21 @@ export const Primary: Story = {
           </Button>
         </DialogActions>
       </>
+    )
+  }
+};
+
+export const CustomTitle: Story = {
+  name: 'Custom title node',
+  args: {
+    ...Primary.args,
+    maxWidth: 'lg',
+    fullWidth: true,
+    title: (
+      <div className="flexbox center-aligned space-between">
+        <div>Deployment report</div>
+        <InfoOutlinedIcon fontSize="small" />
+      </div>
     )
   }
 };

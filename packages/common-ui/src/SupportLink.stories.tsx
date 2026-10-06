@@ -20,12 +20,13 @@ const meta: Meta<typeof SupportLink> = {
   title: 'common-ui/SupportLink',
   argTypes: {
     variant: {
-      options: ['email', 'ourTeam', 'support', 'salesTeam', 'custom'],
+      options: ['email', 'ourTeam', 'support', 'salesTeam', 'us', 'custom'],
       mapping: {
         email: 'email',
         ourTeam: 'ourTeam',
         support: 'support',
         salesTeam: 'salesTeam',
+        us: 'us',
         custom: 'get help'
       }
     }
@@ -40,6 +41,22 @@ export const Primary: Story = {
   name: 'SupportLink',
   args: {
     variant: 'support',
+    className: ''
+  }
+};
+
+export const Email: Story = {
+  name: 'Email address',
+  args: {
+    variant: 'email',
+    className: ''
+  }
+};
+
+export const Custom: Story = {
+  name: 'Custom text',
+  args: {
+    variant: 'reach out to us for help',
     className: ''
   }
 };

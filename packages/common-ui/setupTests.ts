@@ -15,7 +15,10 @@ import handlers from '@northern.tech/testing/requestHandlers/requestHandlers';
 import { afterAll as ntAfterAll, afterEach as ntAfterEach, beforeAll as ntBeforeAll, beforeEach as ntBeforeEach } from '@northern.tech/testing/setupTests';
 import '@testing-library/jest-dom/vitest';
 import { setupServer } from 'msw/node';
-import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest';
+
+// spy on the store thunks, so tests can assert on & stub out dispatched requests without tracking them through msw
+vi.mock('@northern.tech/store/thunks', { spy: true });
 
 process.on('unhandledRejection', err => {
   throw err;

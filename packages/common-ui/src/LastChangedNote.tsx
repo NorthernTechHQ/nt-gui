@@ -1,4 +1,4 @@
-// Copyright 2020 Northern.tech AS
+// Copyright 2026 Northern.tech AS
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -11,12 +11,17 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { CSSProperties, ReactNode } from 'react';
+import { Typography } from '@mui/material';
 
-export const Alert = ({ children, className = '', style }: { children: ReactNode; className?: string; style: CSSProperties }) => (
-  <div className={className} style={style}>
-    {children}
-  </div>
+import Time from './Time';
+
+export interface LastChangedNoteProps {
+  isOffline?: boolean;
+  updateTime?: string;
+}
+
+export const LastChangedNote = ({ isOffline, updateTime }: LastChangedNoteProps) => (
+  <Typography variant="body2" color={isOffline ? 'warning' : 'textSecondary'}>
+    Last changed: <Time value={updateTime} />
+  </Typography>
 );
-
-export default Alert;

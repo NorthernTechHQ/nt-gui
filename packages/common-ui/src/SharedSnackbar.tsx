@@ -11,19 +11,33 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { SyntheticEvent } from 'react';
 import { memo } from 'react';
 
+import type { SnackbarCloseReason, SnackbarProps } from '@mui/material';
 import { Snackbar } from '@mui/material';
 
 import copy from 'copy-to-clipboard';
 
-export const SharedSnackbar = ({ setSnackbar, snackbar }) => {
+export interface SharedSnackbarContent extends Omit<SnackbarProps, 'message' | 'onClose'> {
+  message?: string;
+  // this mirrors the app level snackbar state, where onClose only signals that clickaway dismissals should be ignored
+  onClose?: boolean;
+  preventClickToCopy?: boolean;
+}
+
+export interface SharedSnackbarProps {
+  setSnackbar: (message: string) => void;
+  snackbar: SharedSnackbarContent;
+}
+
+export const SharedSnackbar = ({ setSnackbar, snackbar }: SharedSnackbarProps) => {
   const handleActionClick = () => {
-    copy(snackbar.message);
+    copy(snackbar.message ?? '');
     setSnackbar('Copied to clipboard');
   };
 
-  const onCloseSnackbar = (_, reason) => {
+  const onCloseSnackbar = (_: Event | SyntheticEvent<unknown>, reason: SnackbarCloseReason) => {
     const { onClose = false } = snackbar;
     if (onClose && reason === 'clickaway') {
       return;
@@ -43,7 +57,7 @@ export const SharedSnackbar = ({ setSnackbar, snackbar }) => {
   );
 };
 
-const areEqual = (prevProps, nextProps) => {
+const areEqual = (prevProps: SharedSnackbarProps, nextProps: SharedSnackbarProps) => {
   if (prevProps.snackbar.open != nextProps.snackbar.open || prevProps.snackbar.message != nextProps.snackbar.message) {
     return false;
   }

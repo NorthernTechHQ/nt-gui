@@ -11,6 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { Provider } from 'react-redux';
+
+import { Button } from '@mui/material';
+
+import { defaultState as preloadedState } from '@/testUtils';
+import { getConfiguredStore } from '@northern.tech/store/store';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { LogDialog } from './Log';
@@ -26,20 +32,30 @@ const sampleLogData = `2025-01-15 10:30:45 INFO: Starting deployment
 
 const meta: Meta<typeof LogDialog> = {
   component: LogDialog,
-  title: 'common-ui/dialogs/Log'
+  title: 'common-ui/dialogs/Log',
+  decorators: [
+    Story => {
+      const store = getConfiguredStore({ preloadedState });
+      return (
+        <Provider store={store}>
+          <Story />
+        </Provider>
+      );
+    }
+  ]
 };
 
 export default meta;
 
 type Story = StoryObj<typeof LogDialog>;
 
-export const DeviceLog: Story = {
-  name: 'Device Deployment Log',
+export const Primary: Story = {
+  name: 'Log',
   args: {
     type: 'deviceLog',
     logData: sampleLogData,
     context: {
-      device: 'device-123',
+      device: 'a1b2c3d4-1234-4321-abcd-1234567890ab',
       releaseName: 'release-v1.0.0',
       date: '2025-01-15'
     },
@@ -56,5 +72,19 @@ export const ConfigLog: Story = {
 2025-01-15 10:30:47 INFO: Configuration updated successfully`,
     context: {},
     onClose: () => console.log('Dialog closed')
+  }
+};
+
+export const WithExtraContent: Story = {
+  name: 'With Extra Content',
+  args: {
+    ...Primary.args,
+    className: 'margin-top-small',
+    children: (
+      <div className="flexbox center-aligned space-between margin-top-small">
+        <div>Log tail limited to the last 100 lines.</div>
+        <Button onClick={() => console.log('Full log requested')}>Show full log</Button>
+      </div>
+    )
   }
 };
