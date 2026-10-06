@@ -1,5 +1,20 @@
 ---
-## 0.46.3 - 2026-09-30
+## 0.46.4 - 2026-10-06
+
+
+
+### Bug fixes
+
+#### store
+
+- Allowed group creation failures to propagate ([31b38d9](https://github.com/NorthernTechHQ/nt-gui/commit/31b38d9ded21b815b728103a31011c40bcbfacdd)) by @mzedel
+
+### Dependency updates
+
+#### deps
+
+- Update development-dependencies ([8ee4a7a](https://github.com/NorthernTechHQ/nt-gui/commit/8ee4a7a135d2d9e9a3f15c3afe685247e303e088)) by @mender-test-bot
+## @northern.tech/store-0.46.3 - 2026-09-30
 
 
 
