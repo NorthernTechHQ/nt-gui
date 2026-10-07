@@ -13,7 +13,6 @@ export * from './ContentSection';
 export * from './CopyableText';
 export * from './CopyCode';
 export * from './CopyText';
-export * from './CopyToClipboard';
 export * from './DetailsIndicator';
 export * from './DetailsTable';
 export * from './DeviceIdentity';
