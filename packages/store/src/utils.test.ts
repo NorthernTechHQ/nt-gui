@@ -17,6 +17,7 @@ import { describe, expect, it } from 'vitest';
 
 import { DARK_MODE, LIGHT_MODE } from './constants';
 import {
+  convertDeviceListStateToFilters,
   generateDeploymentGroupDetails,
   getAttributeScopeLabel,
   groupDeploymentDevicesStats,
@@ -277,5 +278,36 @@ describe('getAttributeScopeLabel function', () => {
     expect(getAttributeScopeLabel({ key: 'artifact_name', scope: 'inventory' })).toEqual('inventory');
     expect(getAttributeScopeLabel({ key: 'mac', scope: 'identity' })).toEqual('identity');
     expect(getAttributeScopeLabel({ key: 'mender-orchestrator-manifest.component_type', scope: 'tags' })).toEqual('tags');
+  });
+});
+describe('convertDeviceListStateToFilters function', () => {
+  const offlineThreshold = '2026-10-06T12:00:00.000Z';
+  const checkInFilter = { key: 'check_in_time', operator: '$lte', scope: 'system', value: '2026-01-01T00:00:00.000Z' };
+  it('keeps user defined filters on attributes also used by issue filters', () => {
+    const { applicableFilters, filterTerms } = convertDeviceListStateToFilters({ filters: [checkInFilter], offlineThreshold });
+    expect(applicableFilters).toEqual([checkInFilter]);
+    expect(filterTerms).toEqual([{ attribute: 'check_in_time', scope: 'system', type: '$lte', value: '2026-01-01T00:00:00.000Z' }]);
+  });
+  it('keeps user defined filters alongside a selected issue on the same attribute', () => {
+    const { applicableFilters, filterTerms } = convertDeviceListStateToFilters({ filters: [checkInFilter], offlineThreshold, selectedIssues: ['offline'] });
+    expect(applicableFilters).toEqual([checkInFilter]);
+    expect(filterTerms).toEqual([
+      { attribute: 'check_in_time', scope: 'system', type: '$lte', value: '2026-01-01T00:00:00.000Z' },
+      { attribute: 'check_in_time', scope: 'system', type: '$ltne', value: offlineThreshold }
+    ]);
+  });
+  it('drops filters duplicating a selected issue filter', () => {
+    const offlineFilter = { key: 'check_in_time', operator: '$ltne', scope: 'system', value: offlineThreshold };
+    const alertFilter = { key: 'alerts', operator: '$eq', scope: 'monitor', value: 'true' };
+    const { applicableFilters, filterTerms } = convertDeviceListStateToFilters({
+      filters: [offlineFilter, alertFilter],
+      offlineThreshold,
+      selectedIssues: ['offline', 'monitoring']
+    });
+    expect(applicableFilters).toEqual([]);
+    expect(filterTerms).toEqual([
+      { attribute: 'check_in_time', scope: 'system', type: '$ltne', value: offlineThreshold },
+      { attribute: 'alerts', scope: 'monitor', type: '$eq', value: true }
+    ]);
   });
 });

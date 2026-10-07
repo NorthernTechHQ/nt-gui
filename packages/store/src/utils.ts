@@ -118,14 +118,9 @@ export const convertDeviceListStateToFilters = ({
   if (typeof group === 'string' && !(groups.byId[group]?.filters || applicableFilters).length) {
     applicableFilters.push({ key: 'group', value: group, operator: DEVICE_FILTERING_OPTIONS.$eq.key, scope: 'system' });
   }
-  const nonMonitorFilters = applicableFilters.filter(
-    filter =>
-      !Object.values(DEVICE_ISSUE_OPTIONS).some(({ filterRule }) => {
-        const { key = '', scope = '' } = filterRule as IssueFilterRule;
-        return filter.scope !== 'inventory' && scope === filter.scope && key === filter.key;
-      })
-  );
   const deviceIssueFilters = convertIssueOptionsToFilters(selectedIssues, { offlineThreshold });
+  // only drop filters that exactly duplicate a DEVICE_ISSUE_OPTIONS rule - filters on the same attribute are kept
+  const nonMonitorFilters = applicableFilters.filter(filter => !deviceIssueFilters.some(issueFilter => filterCompare(issueFilter, filter)));
   applicableFilters = [...nonMonitorFilters, ...deviceIssueFilters];
   const effectiveFilters = status
     ? [...applicableFilters, { key: 'status', value: status, operator: DEVICE_FILTERING_OPTIONS.$eq.key, scope: ATTRIBUTE_SCOPES.identity }]
