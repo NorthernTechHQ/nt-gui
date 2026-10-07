@@ -43,8 +43,9 @@ const getFilteringAttributesLimit = (state: RootState) => state.devices.filterin
 export const getDeviceIdentityAttributes = createSelector(
   [getFilteringAttributes, getFilteringAttributesLimit],
   ({ identityAttributes }, filteringAttributesLimit) => {
+    // the device auth status is not a meaningful device identifier
     // limit the selection of the available attribute to AVAILABLE_ATTRIBUTE_LIMIT
-    const attributes = identityAttributes.slice(0, filteringAttributesLimit);
+    const attributes = identityAttributes.filter(attribute => attribute !== 'status').slice(0, filteringAttributesLimit);
     return attributes.reduce(
       (accu, value) => {
         accu.push({ value, label: value, scope: 'identity' });
