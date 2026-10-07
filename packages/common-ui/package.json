@@ -14,6 +14,7 @@
     "build": "tsdown",
     "dev": "tsdown --watch --onSuccess 'yalc publish --no-script --push'",
     "lint": "eslint --quiet .",
+    "typecheck": "tsc --noEmit",
     "format:check": "prettier --check \"src/**/*.{js,ts,jsx,tsx,less}\"",
     "test": "vitest",
     "test-ci": "vitest run",

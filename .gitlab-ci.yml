@@ -66,6 +66,13 @@ format:
     - npm ci
     - npm run format:check
 
+typecheck:
+  stage: test
+  needs: []
+  script:
+    - npm ci
+    - npm run typecheck
+
 test:
   stage: test
   needs: []

@@ -37,6 +37,18 @@
     "format:check": {
       "cache": true
     },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@northern.tech/common-ui#typecheck": {
+      "dependsOn": ["^build", "@northern.tech/store#build", "@northern.tech/types#build", "@northern.tech/utils#build"],
+      "outputs": []
+    },
+    "@northern.tech/testing#typecheck": {
+      "dependsOn": ["^build", "@northern.tech/utils#build"],
+      "outputs": []
+    },
     "dev": {
       "cache": false,
       "persistent": true
