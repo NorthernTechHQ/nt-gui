@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import type { CSSProperties, ReactNode } from 'react';
 import React, { Fragment, useState } from 'react';
 
@@ -33,26 +32,24 @@ const useStyles = makeStyles()(theme => ({
 
 interface ValueColumnProps {
   setSnackbar?: (message: string) => void;
-  value: ReactNode | string;
+  value?: ReactNode;
 }
 
 const cutoffLength = 100;
 const ValueColumn = ({ value = '', setSnackbar }: ValueColumnProps) => {
   const [tooltipVisible, setTooltipVisible] = useState(false);
-  const isComponent = React.isValidElement(value);
+  const isComponent = React.isValidElement<{ value?: unknown }>(value);
   const onClick = () => {
     if (setSnackbar) {
-      let copyable = value;
-      if (isComponent) {
-        copyable = value.props.value as string;
-      }
-      copy(copyable);
+      const copyable = isComponent ? value.props.value : value;
+      copy(`${copyable ?? ''}`);
       setSnackbar('Value copied to clipboard');
     }
   };
   let shownValue = value;
   if (!isComponent) {
-    shownValue = <div title={value}>{value.length > cutoffLength ? `${value.substring(0, cutoffLength - 3)}...` : value}</div>;
+    const title = value == null || typeof value === 'boolean' ? undefined : `${value}`;
+    shownValue = <div title={title}>{typeof value === 'string' && value.length > cutoffLength ? `${value.substring(0, cutoffLength - 3)}...` : value}</div>;
   }
   return (
     <div
@@ -87,13 +84,13 @@ interface TwoColumnsProps {
   chipLikeKey?: boolean;
   className?: string;
   compact?: boolean;
-  items?: Record<string, string>;
+  items?: Record<string, ReactNode>;
   KeyComponent?: (props: KeyColumnProps) => ReactNode;
-  KeyProps?: object;
+  KeyProps?: Partial<KeyColumnProps>;
   setSnackbar?: (message: string) => void;
   style?: CSSProperties;
   ValueComponent?: (props: ValueColumnProps) => ReactNode;
-  ValueProps?: object;
+  ValueProps?: Partial<ValueColumnProps>;
 }
 
 export const TwoColumns = ({
@@ -124,9 +121,15 @@ export const TwoColumns = ({
   );
 };
 
-export const TwoColumnData = ({ className = '', config, ...props }) => <TwoColumns className={`column-data ${className}`} items={config} {...props} />;
+interface TwoColumnDataProps extends Omit<TwoColumnsProps, 'items'> {
+  config?: Record<string, ReactNode>;
+}
 
-export const TwoColumnDataMultiple = ({ className = '', config, style, ...props }) => (
+export const TwoColumnData = ({ className = '', config, ...props }: TwoColumnDataProps) => (
+  <TwoColumns className={`column-data ${className}`} items={config} {...props} />
+);
+
+export const TwoColumnDataMultiple = ({ className = '', config = {}, style, ...props }: TwoColumnDataProps) => (
   <div className={`two-columns-multiple ${className}`} style={{ ...style }}>
     {Object.entries(config).map(([key, value]) => (
       <TwoColumnData className="multiple" config={{ [key]: value }} key={key} compact {...props} />
