@@ -17,7 +17,8 @@ import { FileCopy as CopyPasteIcon } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
-import { TIMEOUTS, yes } from '@northern.tech/store/constants';
+import { TIMEOUTS } from '@northern.tech/utils/constants';
+import { yes } from '@northern.tech/utils/helpers';
 import copy from 'copy-to-clipboard';
 
 const useStyles = makeStyles()(() => ({

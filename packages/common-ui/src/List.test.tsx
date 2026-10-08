@@ -12,8 +12,8 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { render } from '@/testUtils';
-import { SORTING_OPTIONS } from '@northern.tech/store/constants';
 import { tenants, undefineds } from '@northern.tech/testing/mockData';
+import { SORTING_OPTIONS } from '@northern.tech/utils/constants';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';

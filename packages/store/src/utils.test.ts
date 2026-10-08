@@ -15,14 +15,12 @@
 import { defaultState } from '@/testUtils';
 import { describe, expect, it } from 'vitest';
 
-import { DARK_MODE, LIGHT_MODE } from './constants';
 import {
   convertDeviceListStateToFilters,
   generateDeploymentGroupDetails,
   getAttributeScopeLabel,
   groupDeploymentDevicesStats,
   groupDeploymentStats,
-  isDarkMode,
   mapDeviceAttributes,
   parseSubscriptionPreview,
   stripOrchestratorManifestPrefix
@@ -160,15 +158,6 @@ describe('deployment stats grouping functions', () => {
       }
     };
     expect(groupDeploymentDevicesStats(deployment)).toEqual({ inprogress: 3, paused: 0, pending: 1, successes: 3, failures: 3 });
-  });
-});
-
-describe('isDarkMode function', () => {
-  it('should return `true` if DARK_MODE was passed in', () => {
-    expect(isDarkMode(DARK_MODE)).toEqual(true);
-  });
-  it('should return `false` if LIGHT_MODE was passed in', () => {
-    expect(isDarkMode(LIGHT_MODE)).toEqual(false);
   });
 });
 

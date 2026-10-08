@@ -32,6 +32,7 @@ import type {
   SortCriteria,
   Status
 } from '@northern.tech/types/MenderTypes';
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 import { attributeDuplicateFilter, dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
 import { isCancel } from 'axios';
 import pluralize from 'pluralize';
@@ -50,7 +51,6 @@ import {
   EXTERNAL_PROVIDER,
   MAX_PAGE_SIZE,
   SORTING_OPTIONS,
-  TIMEOUTS,
   UNGROUPED_GROUP,
   auditLogsApiUrl,
   deviceAuthV2,

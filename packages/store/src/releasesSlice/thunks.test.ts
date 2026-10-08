@@ -13,6 +13,7 @@
 //    limitations under the License.
 import { defaultState } from '@/testUtils';
 import { mockAbortController } from '@northern.tech/testing/setupTests';
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 import { deepCompare } from '@northern.tech/utils/helpers';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
@@ -20,7 +21,6 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { actions } from '.';
 import { actions as appActions } from '../appSlice';
-import { TIMEOUTS } from '../constants';
 import {
   checkReleasesExistence,
   createArtifact,

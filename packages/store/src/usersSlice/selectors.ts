@@ -11,12 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { isDarkMode } from '@northern.tech/utils/helpers';
 import { createSelector } from '@reduxjs/toolkit';
 
 import { DEVICE_ONLINE_CUTOFF, defaultIdAttribute } from '../constants';
 import { twoFAStates } from '../constants';
 import type { RootState } from '../store';
-import { isDarkMode } from '../utils';
 import { READ_STATES } from './constants';
 import type { User } from './index';
 

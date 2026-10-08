@@ -15,13 +15,14 @@ import { act, defaultState } from '@/testUtils';
 import { deviceComponents, inventoryDevice } from '@northern.tech/testing/requestHandlers/deviceHandlers';
 import { mockAbortController } from '@northern.tech/testing/setupTests';
 import type { Credentials, Integration, Status } from '@northern.tech/types/MenderTypes';
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { describe, expect, it, vi } from 'vitest';
 
 import { actions } from '.';
 import { actions as appActions } from '../appSlice';
-import { DEVICE_STATES, EXTERNAL_PROVIDER, TIMEOUTS, UNGROUPED_GROUP } from '../constants';
+import { DEVICE_STATES, EXTERNAL_PROVIDER, UNGROUPED_GROUP } from '../constants';
 import { actions as deploymentActions } from '../deploymentsSlice';
 import { getSingleDeployment, getUserSettings, saveUserSettings } from '../thunks';
 import {

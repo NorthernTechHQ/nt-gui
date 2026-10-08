@@ -14,6 +14,7 @@
 import { BarChart as BarChartIcon, PieChartOutlined as PieChartIcon } from '@mui/icons-material';
 
 import { yes as yesUtil } from '@northern.tech/utils';
+import { DARK_MODE, LIGHT_MODE } from '@northern.tech/utils/constants';
 
 export const chartTypes = {
   bar: { key: 'bar', Icon: BarChartIcon },
@@ -141,5 +142,4 @@ export const BENEFITS = {
 export const yes = yesUtil;
 export const canAccess = yes;
 
-export const DARK_MODE = 'dark';
-export const LIGHT_MODE = 'light';
+export { DARK_MODE, LIGHT_MODE };

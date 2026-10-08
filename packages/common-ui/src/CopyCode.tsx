@@ -20,7 +20,7 @@ import { Button, IconButton, Typography } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';
 
-import { TIMEOUTS } from '@northern.tech/store/constants';
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 import copy from 'copy-to-clipboard';
 
 // mirrors the typography variant augmentation of the @northern.tech/themes package, so the code variants can be used without depending on a concrete theme

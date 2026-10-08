@@ -18,6 +18,8 @@ import type { DurationUnitType } from 'dayjs/plugin/duration.js';
 import utc from 'dayjs/plugin/utc.js';
 import Cookies from 'universal-cookie';
 
+import { DARK_MODE } from './constants';
+
 dayjs.extend(durationPlugin);
 dayjs.extend(utc);
 
@@ -42,6 +44,8 @@ export const yes = function () {
 };
 
 export const canAccess = yes;
+
+export const isDarkMode = (mode: string): boolean => mode === DARK_MODE;
 
 /*
  *

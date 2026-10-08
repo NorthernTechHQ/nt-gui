@@ -12,20 +12,19 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import type { AttributeFilterPredicate, AttributeResponse, DeviceWithImage, FilterV2, InvoiceLineItem, Scope } from '@northern.tech/types/MenderTypes';
-import { duplicateFilter, yes } from '@northern.tech/utils/helpers';
+import { TIMEOUTS } from '@northern.tech/utils/constants';
+import { duplicateFilter, isDarkMode, yes } from '@northern.tech/utils/helpers';
 import type { AxiosError } from 'axios';
 
 import type { DeviceIssueOptionKey, FilterOperator, Role } from './constants';
 import {
   ATTRIBUTE_SCOPES,
   ATTRIBUTE_SCOPE_LABELS,
-  DARK_MODE,
   DEPLOYMENT_STATES,
   DEVICE_FILTERING_OPTIONS,
   DEVICE_ISSUE_OPTIONS,
   DEVICE_LIST_MAXIMUM_LENGTH,
   ORCHESTRATOR_MANIFEST_ATTRIBUTE_PREFIX,
-  TIMEOUTS,
   defaultStats,
   deploymentDisplayStates,
   deploymentStatesToSubstates,
@@ -330,7 +329,7 @@ export const mapDeviceAttributes = (attributes: AttributeResponse[] = []): Devic
     { inventory: { device_type: [] as string[], artifact_name: '' }, identity: {}, monitor: {}, system: {}, tags: {} }
   );
 
-export const isDarkMode = (mode: string): boolean => mode === DARK_MODE;
+export { isDarkMode };
 
 type Line = InvoiceLineItem & { product: 'mender_standard' | 'mender_micro' };
 export const parseSubscriptionPreview = (lines: Line[]): PricePreview['items'] =>

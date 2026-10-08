@@ -11,9 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 import Cookies from 'universal-cookie';
 
-import { TIMEOUTS, maxSessionAge, settingsKeys } from './constants';
+import { maxSessionAge, settingsKeys } from './constants';
 import type { UserSession } from './usersSlice';
 
 const cookies = new Cookies();

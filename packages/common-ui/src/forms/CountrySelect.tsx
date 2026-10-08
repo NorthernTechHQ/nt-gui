@@ -16,7 +16,7 @@ import { useFormContext } from 'react-hook-form';
 import { TextField } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
-import { countries } from '@northern.tech/store/constants';
+import { countries } from '@northern.tech/utils/constants';
 
 import { ControlledAutoComplete } from './Autocomplete';
 

@@ -22,6 +22,7 @@
   ],
   "scripts": {
     "build": "tsdown",
+    "typecheck": "tsc --noEmit",
     "yalc:publish": "yalc publish --no-script --push"
   },
   "type": "module",

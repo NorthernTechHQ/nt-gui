@@ -13,7 +13,7 @@
 //    limitations under the License.
 import { Checkbox } from '@mui/material';
 
-import { SORTING_OPTIONS } from '@northern.tech/store/constants';
+import { SORTING_OPTIONS } from '@northern.tech/utils/constants';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import type { ColumnHeader, ListItemComponentProps } from './List';

@@ -19,7 +19,7 @@ import type { TableCellProps } from '@mui/material';
 import { Checkbox, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
-import { SORTING_OPTIONS } from '@northern.tech/store/constants';
+import { SORTING_OPTIONS } from '@northern.tech/utils/constants';
 
 const useStyles = makeStyles()(() => ({
   header: {

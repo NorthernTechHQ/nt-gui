@@ -19,7 +19,7 @@ import { Clear as ClearIcon, Search as SearchIcon } from '@mui/icons-material';
 import { IconButton, InputAdornment, TextField } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
-import { TIMEOUTS } from '@northern.tech/store/constants';
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 import { useDebounce } from '@northern.tech/utils/debouncehook';
 
 const startAdornment = (

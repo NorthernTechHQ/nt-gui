@@ -17,7 +17,8 @@ import { memo, useEffect, useState } from 'react';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import { IconButton, TablePagination } from '@mui/material';
 
-import { DEVICE_LIST_DEFAULTS, DEVICE_LIST_MAXIMUM_LENGTH, TIMEOUTS } from '@northern.tech/store/constants';
+import { DEVICE_LIST_MAXIMUM_LENGTH } from '@northern.tech/store/constants';
+import { DEVICE_LIST_DEFAULTS, TIMEOUTS } from '@northern.tech/utils/constants';
 import { useDebounce } from '@northern.tech/utils/debouncehook';
 
 import MenderTooltip from './helptips/MenderTooltip';

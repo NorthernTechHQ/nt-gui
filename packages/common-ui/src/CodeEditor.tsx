@@ -18,7 +18,7 @@ import { makeStyles } from 'tss-react/mui';
 
 import type { EditorProps, Monaco } from '@monaco-editor/react';
 import MonacoEditor, { loader } from '@monaco-editor/react';
-import { DARK_MODE } from '@northern.tech/store/constants';
+import { DARK_MODE } from '@northern.tech/utils/constants';
 import type { editor } from 'monaco-editor';
 
 import Loader from './Loader';

@@ -18,8 +18,7 @@ import { ClickAwayListener, SpeedDial, SpeedDialAction, SpeedDialIcon, Typograph
 import { speedDialActionClasses } from '@mui/material/SpeedDialAction';
 import { makeStyles } from 'tss-react/mui';
 
-import { isDarkMode } from '@northern.tech/store/utils';
-import { toggle } from '@northern.tech/utils/helpers';
+import { isDarkMode, toggle } from '@northern.tech/utils/helpers';
 
 export interface QuickAction {
   action: (context: object & { selection: number[] }) => void;

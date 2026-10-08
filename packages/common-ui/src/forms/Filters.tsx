@@ -19,9 +19,9 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { Button, Typography, alpha } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
-import { TIMEOUTS } from '@northern.tech/store/constants';
-import { isDarkMode } from '@northern.tech/store/utils';
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 import { useDebounce } from '@northern.tech/utils/debouncehook';
+import { isDarkMode } from '@northern.tech/utils/helpers';
 
 const useStyles = makeStyles()(theme => ({
   container: {
