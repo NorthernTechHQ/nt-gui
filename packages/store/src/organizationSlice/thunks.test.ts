@@ -519,7 +519,7 @@ describe('organization actions', () => {
       { type: actions.receiveWebhookEvents.type, payload: { value: webhookEvents, total: 2 } },
       { type: getWebhookEvents.fulfilled.type }
     ];
-    const request = store.dispatch(getWebhookEvents({ isFollowUp: false }));
+    const request = store.dispatch(getWebhookEvents({}));
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
@@ -527,33 +527,15 @@ describe('organization actions', () => {
       expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
     });
   });
-  it('should auto check for more webhook events', async () => {
-    const existingEvents = [
-      { id: 1, something: 'something' },
-      { id: 2, provider: 'aws', something: 'new' }
-    ];
-    const store = mockStore({
-      ...defaultState,
-      organization: {
-        ...defaultState.organization,
-        webhooks: {
-          ...defaultState.organization.webhooks,
-          events: existingEvents,
-          eventsTotal: 2
-        }
-      }
-    });
+  it('should rely on the returned total count when paginating webhook events', async () => {
+    const store = mockStore({ ...defaultState });
     expect(store.getActions()).toHaveLength(0);
-    const defaultEvent = webhookEvents[0];
     const expectedActions = [
       { type: getWebhookEvents.pending.type },
-      { type: actions.receiveWebhookEvents.type, payload: { value: [defaultEvent], total: 1 } },
-      { type: getWebhookEvents.pending.type },
-      { type: actions.receiveWebhookEvents.type, payload: { value: existingEvents, total: 2 } },
-      { type: getWebhookEvents.fulfilled.type },
+      { type: actions.receiveWebhookEvents.type, payload: { value: [webhookEvents[1]], total: webhookEvents.length } },
       { type: getWebhookEvents.fulfilled.type }
     ];
-    const request = store.dispatch(getWebhookEvents({ page: 1, perPage: 1 }));
+    const request = store.dispatch(getWebhookEvents({ page: 2, perPage: 1 }));
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();
