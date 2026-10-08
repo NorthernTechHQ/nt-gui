@@ -12,8 +12,8 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { defaultState, render } from '@/testUtils';
-import { ATTRIBUTE_SCOPES } from '@northern.tech/store/constants';
 import { undefineds } from '@northern.tech/testing/mockData';
+import { ATTRIBUTE_SCOPES } from '@northern.tech/utils/constants';
 import { describe, expect, it } from 'vitest';
 
 import DeviceIdentityDisplay from './DeviceIdentity';
