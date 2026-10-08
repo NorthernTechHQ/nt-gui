@@ -1,5 +1,24 @@
 ---
-## 0.46.4 - 2026-10-06
+## 0.46.5 - 2026-10-08
+
+
+
+### Bug fixes
+
+#### store
+
+- Keep user defined filters on attributes device issues use ([ME-703](https://northerntech.atlassian.net/browse/ME-703)) ([1f5adbe](https://github.com/NorthernTechHQ/nt-gui/commit/1f5adbe75f5ab39fd169b3639b8183b64098bf4f)) by @mzedel
+- Exclude status from device identity attributes ([MEN-10180](https://northerntech.atlassian.net/browse/MEN-10180)) ([726e3c0](https://github.com/NorthernTechHQ/nt-gui/commit/726e3c09e08d5b26edfc1849c5db538d5af53d5e)) by @mineralsfree
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [ME-703](https://northerntech.atlassian.net/browse/ME-703) |
+| [MEN-10180](https://northerntech.atlassian.net/browse/MEN-10180) |
+
+## @northern.tech/store-0.46.4 - 2026-10-06
 
 
 
