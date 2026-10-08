@@ -13,14 +13,15 @@
 //    limitations under the License.
 import { createSelector } from '@reduxjs/toolkit';
 
-import type { Deployment } from '.';
-import type { RootState } from '../store';
+import type { Deployment, DeploymentsSliceType } from '.';
 import { DEPLOYMENT_STATES } from './constants';
 
-export const getDeploymentsById = (state: RootState) => state.deployments.byId;
-export const getDeploymentsByStatus = (state: RootState) => state.deployments.byStatus;
-export const getSelectedDeploymentDeviceIds = (state: RootState) => state.deployments.selectedDeviceIds;
-export const getDeploymentsSelectionState = (state: RootState) => state.deployments.selectionState;
+export type DeploymentsState = { deployments: DeploymentsSliceType };
+
+export const getDeploymentsById = (state: DeploymentsState) => state.deployments.byId;
+export const getDeploymentsByStatus = (state: DeploymentsState) => state.deployments.byStatus;
+export const getSelectedDeploymentDeviceIds = (state: DeploymentsState) => state.deployments.selectedDeviceIds;
+export const getDeploymentsSelectionState = (state: DeploymentsState) => state.deployments.selectionState;
 
 export const getDeploymentById = createSelector(
   [getDeploymentsById, (_, deploymentId) => deploymentId],
