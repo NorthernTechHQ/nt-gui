@@ -289,7 +289,7 @@ export const organizationHandlers = [
     const { searchParams } = new URL(request.url);
     const page = Number(searchParams.get('page'));
     const perPage = Number(searchParams.get('per_page'));
-    return HttpResponse.json(webhookEvents.slice(page - 1, page * perPage));
+    return HttpResponse.json(webhookEvents.slice((page - 1) * perPage, page * perPage), { headers: { [headerNames.total]: `${webhookEvents.length}` } });
   }),
   http.get(ssoIdpApiUrlv1, () =>
     HttpResponse.json([

@@ -556,32 +556,17 @@ export const getIntegrations = createAppAsyncThunk(`${sliceName}/getIntegrations
 
 type GetWebhookEventsPayload = {
   integrationId?: string;
-  isFollowUp?: boolean;
-  knownTotal?: number;
   page?: number;
   perPage?: number;
 };
-export const getWebhookEvents = createAppAsyncThunk(`${sliceName}/getWebhookEvents`, (config: GetWebhookEventsPayload = {}, { dispatch, getState }) => {
-  const { integrationId, isFollowUp, knownTotal = 0, page = defaultPage, perPage = defaultPerPage } = config;
+export const getWebhookEvents = createAppAsyncThunk(`${sliceName}/getWebhookEvents`, async (config: GetWebhookEventsPayload = {}, { dispatch }) => {
+  const { integrationId, page = defaultPage, perPage = defaultPerPage } = config;
   const integrationFilter = integrationId ? `&integration_id=${integrationId}` : '';
-  return Api.get<Event[]>(`${iotManagerBaseURL}/events?page=${page}&per_page=${perPage}${integrationFilter}`)
-    .catch(err => commonErrorHandler(err, 'There was an error retrieving activity for this integration', dispatch, commonErrorFallback))
-    .then(({ data }) => {
-      const tasks: Promise<ReturnType<AppDispatch> | unknown>[] = [
-        Promise.resolve(
-          dispatch(
-            actions.receiveWebhookEvents({
-              value: isFollowUp ? getState().organization.webhooks.events : data,
-              total: isFollowUp ? knownTotal + data.length : (page - 1) * perPage + data.length
-            })
-          )
-        )
-      ];
-      if (data.length >= perPage && !isFollowUp) {
-        tasks.push(dispatch(getWebhookEvents({ integrationId, isFollowUp: true, knownTotal: page * perPage, page: page + 1, perPage: 1 })));
-      }
-      return Promise.all(tasks);
-    });
+  const { data, headers } = await Api.get<Event[]>(`${iotManagerBaseURL}/events?page=${page}&per_page=${perPage}${integrationFilter}`).catch(err =>
+    commonErrorHandler(err, 'There was an error retrieving activity for this integration', dispatch, commonErrorFallback)
+  );
+  const total = Number(headers[headerNames.total] || data.length);
+  return dispatch(actions.receiveWebhookEvents({ value: data, total }));
 });
 
 const ssoConfigActions = {
