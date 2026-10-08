@@ -25,6 +25,7 @@ import type {
   Tags,
   UpdateTypes
 } from '@northern.tech/types/MenderTypes';
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 import { customSort, deepCompare, duplicateFilter, extractErrorMessage, extractSoftwareItem } from '@northern.tech/utils/helpers';
 import type { AxiosResponse } from 'axios';
 import { isCancel } from 'axios';
@@ -38,7 +39,6 @@ import GeneralApi from '../api/general-api';
 import {
   DEVICE_LIST_DEFAULTS,
   SORTING_OPTIONS,
-  TIMEOUTS,
   deploymentsApiUrl,
   deploymentsApiUrlV1alpha1,
   deploymentsApiUrlV2,

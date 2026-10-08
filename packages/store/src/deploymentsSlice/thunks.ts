@@ -21,6 +21,7 @@ import type {
   NewDeploymentForGroup,
   NewDeploymentV2TypeManagement as NewDeploymentV2
 } from '@northern.tech/types/MenderTypes';
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 import { customSort, deepCompare, isEmpty, standardizePhases } from '@northern.tech/utils/helpers';
 import Tracking from '@northern.tech/utils/tracking';
 import validator from 'validator';
@@ -38,7 +39,7 @@ import type {
 import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import GeneralApi from '../api/general-api';
-import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TIMEOUTS, apiRoot, deploymentsApiUrl, deploymentsApiUrlV2, headerNames } from '../constants';
+import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, apiRoot, deploymentsApiUrl, deploymentsApiUrlV2, headerNames } from '../constants';
 import type { SortOptions } from '../constants';
 import { getDevicesById, getGlobalSettings, getIdAttribute, getOrganization, getUserCapabilities } from '../selectors';
 import { commonErrorHandler, createAppAsyncThunk } from '../store';

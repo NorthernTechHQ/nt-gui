@@ -29,6 +29,7 @@ import type {
   SupportRequest,
   UpdateChildTenant
 } from '@northern.tech/types/MenderTypes';
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 import { dateRangeToUnix, deepCompare } from '@northern.tech/utils/helpers';
 import type { AxiosResponse } from 'axios';
 import dayjs from 'dayjs';
@@ -46,7 +47,6 @@ import {
   PLANS,
   SORTING_OPTIONS,
   TENANT_LIST_DEFAULT,
-  TIMEOUTS,
   auditLogsApiUrl,
   deviceAuthV2,
   headerNames,

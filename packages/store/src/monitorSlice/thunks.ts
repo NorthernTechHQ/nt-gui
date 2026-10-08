@@ -13,12 +13,13 @@
 //    limitations under the License.
 import type { DeviceFilter } from '@/src/devicesSlice';
 import type { Alert, DeviceInventoryResponse, MonitorConfiguration } from '@northern.tech/types/MenderTypes';
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 
 import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import Api from '../api/general-api';
 import type { AlertChannelKey, DeviceIssueOptionKey } from '../constants';
-import { DEVICE_LIST_DEFAULTS, TIMEOUTS, alertChannels, headerNames, inventoryApiUrlV2, monitorApiUrlv1 } from '../constants';
+import { DEVICE_LIST_DEFAULTS, alertChannels, headerNames, inventoryApiUrlV2, monitorApiUrlv1 } from '../constants';
 import { getDeviceFilters } from '../selectors';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { convertDeviceListStateToFilters } from '../utils';

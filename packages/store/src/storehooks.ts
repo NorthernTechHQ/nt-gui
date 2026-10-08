@@ -13,6 +13,7 @@
 //    limitations under the License.
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 import { extractErrorMessage } from '@northern.tech/utils/helpers';
 import dayjs from 'dayjs';
 import durationDayJs from 'dayjs/plugin/duration.js';
@@ -21,7 +22,7 @@ import Cookies from 'universal-cookie';
 import storeActions from './actions';
 import actions from './actions';
 import { getSessionInfo } from './auth';
-import { DEPLOYMENT_STATES, DEVICE_STATES, TIMEOUTS, locations, timeUnits } from './constants';
+import { DEPLOYMENT_STATES, DEVICE_STATES, locations, timeUnits } from './constants';
 import type { DeviceSliceType } from './devicesSlice';
 import {
   getDevicesByStatus as getDevicesByStatusSelector,

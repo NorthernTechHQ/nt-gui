@@ -13,11 +13,12 @@
 //    limitations under the License.
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 import { blobToString, byteArrayToString } from '@northern.tech/utils/helpers';
 import { Packr } from 'msgpackr';
 import Cookies from 'universal-cookie';
 
-import { DEVICE_MESSAGE_PROTOCOLS as MessageProtocols, DEVICE_MESSAGE_TYPES as MessageTypes, TIMEOUTS, apiUrl } from './constants';
+import { DEVICE_MESSAGE_PROTOCOLS as MessageProtocols, DEVICE_MESSAGE_TYPES as MessageTypes, apiUrl } from './constants';
 
 const cookies = new Cookies();
 

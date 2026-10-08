@@ -11,12 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 import type { AxiosError, AxiosProgressEvent, AxiosRequestConfig, GenericAbortSignal, InternalAxiosRequestConfig } from 'axios';
 import axios, { isCancel } from 'axios';
 import Cookies from 'universal-cookie';
 
 import { cleanUp, getToken } from '../auth';
-import { TIMEOUTS } from '../constants';
 
 const cookies = new Cookies();
 

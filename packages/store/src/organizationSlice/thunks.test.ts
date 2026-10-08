@@ -14,6 +14,7 @@
 import { defaultState } from '@/testUtils';
 import { mockApiResponses, tenants, webhookEvents } from '@northern.tech/testing/mockData';
 import type { Credentials, ProductInfo } from '@northern.tech/types/MenderTypes';
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { describe, expect, it, vi } from 'vitest';
@@ -21,7 +22,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { actions } from '.';
 import { actions as appActions } from '../appSlice';
 import { getSessionInfo } from '../auth';
-import { EXTERNAL_PROVIDER, SORTING_OPTIONS, TIMEOUTS, locations } from '../constants';
+import { EXTERNAL_PROVIDER, SORTING_OPTIONS, locations } from '../constants';
 import { actions as deviceActions } from '../devicesSlice';
 import { setFirstLoginAfterSignup } from '../thunks';
 import { SSO_TYPES } from './constants';
