@@ -19,7 +19,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import type { AutocompleteProps } from '@mui/material';
 import { Autocomplete, TextField, useTheme } from '@mui/material';
 
-import { TIMEOUTS } from '@northern.tech/store/constants';
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 import { useDebounce } from '@northern.tech/utils/debouncehook';
 
 import Loader from '../Loader';

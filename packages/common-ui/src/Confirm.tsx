@@ -18,7 +18,7 @@ import { Cancel as CancelIcon, CheckCircle as CheckCircleIcon, Check as CheckIco
 import { Button, IconButton, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
-import { isDarkMode } from '@northern.tech/store/utils';
+import { isDarkMode } from '@northern.tech/utils/helpers';
 
 const useStyles = makeStyles()(theme => ({
   nudgeInward: { marginRight: 6 },

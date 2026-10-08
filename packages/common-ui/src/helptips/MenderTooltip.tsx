@@ -18,8 +18,7 @@ import type { TooltipProps } from '@mui/material';
 import { ClickAwayListener, Tooltip, getOverlayAlpha, lighten } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
 
-import { isDarkMode } from '@northern.tech/store/utils';
-import { toggle } from '@northern.tech/utils/helpers';
+import { isDarkMode, toggle } from '@northern.tech/utils/helpers';
 
 declare module '@mui/material/styles' {
   interface TypeText {

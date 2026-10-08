@@ -21,7 +21,7 @@ import { List, ListItem, ListItemIcon, ListItemText, ListSubheader, darken, ligh
 import { listItemTextClasses } from '@mui/material/ListItemText';
 import { makeStyles } from 'tss-react/mui';
 
-import { isDarkMode } from '@northern.tech/store/utils';
+import { isDarkMode } from '@northern.tech/utils/helpers';
 
 export interface LeftNavItem {
   exact?: boolean;
