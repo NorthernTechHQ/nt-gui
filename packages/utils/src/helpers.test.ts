@@ -13,6 +13,7 @@
 //    limitations under the License.
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
+import { DARK_MODE, LIGHT_MODE } from './constants';
 import {
   customSort,
   dateRangeToUnix,
@@ -25,6 +26,7 @@ import {
   fullyDecodeURI,
   getDemoDeviceAddress,
   getFormattedSize,
+  isDarkMode,
   isEmpty,
   preformatWithRequestID,
   standardizePhases,
@@ -56,6 +58,15 @@ describe('getFormattedSize function', () => {
     expect(getFormattedSize(1024 * 1024)).toEqual('1.00 MB');
     expect(getFormattedSize(1024 * 1024 * 2.5)).toEqual('2.50 MB');
     expect(getFormattedSize(1024 * 1024 * 1024 * 1.2345)).toEqual('1.23 GB');
+  });
+});
+
+describe('isDarkMode function', () => {
+  it('should return `true` if DARK_MODE was passed in', () => {
+    expect(isDarkMode(DARK_MODE)).toEqual(true);
+  });
+  it('should return `false` if LIGHT_MODE was passed in', () => {
+    expect(isDarkMode(LIGHT_MODE)).toEqual(false);
   });
 });
 
