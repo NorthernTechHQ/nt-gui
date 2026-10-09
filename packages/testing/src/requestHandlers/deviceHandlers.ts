@@ -270,8 +270,8 @@ export const deviceHandlers = [
   http.post(
     `${inventoryApiUrlV2alpha1}/identities/search`,
     validated(async ({ request }) => {
-      const { name, scope, value_prefix } = await request.json();
-      if ([name, scope, value_prefix].some(item => !item)) {
+      const { attribute, value_prefix } = await request.json();
+      if (!value_prefix || (attribute && [attribute.name, attribute.scope].some(item => !item))) {
         return new HttpResponse(null, { status: 519 });
       }
       return new HttpResponse(JSON.stringify([inventoryDevice]), { headers: { [headerNames.total]: 1 } });
