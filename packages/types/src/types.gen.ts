@@ -1603,6 +1603,10 @@ export type Statistics = {
    */
   aborted: number;
   /**
+   * Number of devices decommissioned during the deployment.
+   */
+  decommissioned: number;
+  /**
    * Number of deployments paused before install state.
    */
   pause_before_installing: number;
@@ -3089,21 +3093,16 @@ export type FilterDefinition = {
 };
 
 /**
- * Parameters for searching for inventory by their identity
+ * Parameters for searching for inventory with matching device identity attributes, optionally
+ * limiting the matching to a specific attribute.
+ *
  */
 export type SearchIdentityParams = {
   /**
-   * The scope of the attribute name used with the search.
-   */
-  scope: 'identity' | 'tags';
-  /**
-   * The name of the attribute used with the search.
-   */
-  name: string;
-  /**
-   * The prefix used to match against attribute values with 'scope' and 'name'.
+   * The prefix used to match against device identity attribute values (all or specific)
    */
   value_prefix: string;
+  attribute?: SearchIdentitySpecificAttribute;
   /**
    * List of attributes to select and return
    */
@@ -3116,6 +3115,20 @@ export type SearchIdentityParams = {
    * Number of results per page.
    */
   per_page?: number;
+};
+
+/**
+ * Parameters for limiting search matches to a specific attribute
+ */
+export type SearchIdentitySpecificAttribute = {
+  /**
+   * The scope of the attribute to match against
+   */
+  scope: 'identity' | 'tags';
+  /**
+   * The name of the attribute to match against
+   */
+  name: string;
 };
 
 export type DeviceInventoryRequest = {

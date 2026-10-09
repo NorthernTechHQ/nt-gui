@@ -1541,6 +1541,7 @@ export {
   type SaveAuditLogResponses,
   Scope,
   type SearchIdentityParams,
+  type SearchIdentitySpecificAttribute,
   type SearchInventoryByIdentityData,
   type SearchInventoryByIdentityError,
   type SearchInventoryByIdentityErrors,
