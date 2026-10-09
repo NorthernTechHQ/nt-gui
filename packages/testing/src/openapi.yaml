@@ -1854,6 +1854,7 @@ paths:
                     artifact_too_big: 0
                     already-installed: 0
                     aborted: 0
+                    decommissioned: 0
                     pause_before_installing: 1
                     pause_before_rebooting: 1
                     pause_before_committing: 1
@@ -1870,6 +1871,7 @@ paths:
                     artifact_too_big: 0
                     already-installed: 0
                     aborted: 0
+                    decommissioned: 0
                     pause_before_installing: 1
                     pause_before_rebooting: 1
                     pause_before_committing: 1
@@ -2099,6 +2101,7 @@ paths:
                 artifact_too_big: 0
                 already-installed: 0
                 aborted: 0
+                decommissioned: 0
                 pause_before_installing: 1
                 pause_before_rebooting: 1
                 pause_before_committing: 1
@@ -7578,6 +7581,8 @@ paths:
           description: Limits result to devices in the given group.
           schema:
             type: string
+            maxLength: 256
+            pattern: ^[A-Za-z0-9._-]+$
       responses:
         '200':
           description: Successful response.
@@ -7890,6 +7895,8 @@ paths:
           required: true
           schema:
             type: string
+            maxLength: 256
+            pattern: ^[A-Za-z0-9._-]+$
       responses:
         '204':
           description: The device was successfully removed from the group.
@@ -7951,6 +7958,8 @@ paths:
           required: true
           schema:
             type: string
+            maxLength: 256
+            pattern: ^[A-Za-z0-9._-]+$
       responses:
         '200':
           description: Successful response
@@ -8093,6 +8102,8 @@ paths:
           required: true
           schema:
             type: string
+            maxLength: 256
+            pattern: ^[A-Za-z0-9._-]+$
       requestBody:
         description: JSON list of device IDs to append to the group.
         content:
@@ -8494,14 +8505,15 @@ paths:
       summary: Search inventory by identity
       operationId: Search Inventory By Identity
       description: |
-        Search for inventory by device identity attribute. Supports prefix matching against 
+        Search for inventory by device identity attribute. Supports prefix matching against
         the following values:
           - the system assigned device `id`
           - the `tags` scoped attribute with name `"name"`
           - any `identity` scoped device attribute
 
         Please note that the `scope` of the system assigned device `id` is expected to be `identity`
-        when used with this endpoint.
+        when used with this endpoint and that searching for the "status" attribute is specifically
+        unsupported and will always return no results.
       requestBody:
         description: Identity search parameters
         content:
@@ -9087,6 +9099,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Event'
+          headers:
+            X-Total-Count:
+              description: |
+                The total number of events (up to 10000).
+              schema:
+                type: integer
         '400':
           $ref: '#/components/responses/InvalidRequestError'
         '401':
@@ -15855,6 +15873,7 @@ components:
             letters, digits, underscores, periods and hyphens.
           items:
             type: string
+            maxLength: 256
           type: array
         notes:
           description: |
@@ -15969,6 +15988,7 @@ components:
           artifact_too_big: 0
           already-installed: 0
           aborted: 0
+          decommissioned: 0
           pause_before_installing: 0
           pause_before_rebooting: 0
           pause_before_committing: 0
@@ -16185,6 +16205,7 @@ components:
         artifact_too_big: 0
         already-installed: 0
         aborted: 0
+        decommissioned: 0
         pause_before_installing: 0
         pause_before_rebooting: 0
         pause_before_committing: 0
@@ -16220,6 +16241,9 @@ components:
         aborted:
           description: Number of deployments aborted by user.
           type: integer
+        decommissioned:
+          description: Number of devices decommissioned during the deployment.
+          type: integer
         pause_before_installing:
           description: Number of deployments paused before install state.
           type: integer
@@ -16235,6 +16259,7 @@ components:
       required:
         - aborted
         - already-installed
+        - decommissioned
         - downloading
         - failure
         - incompatible_tier
@@ -16491,6 +16516,8 @@ components:
         name:
           description: The name of the Manifest.
           type: string
+          maxLength: 256
+          pattern: ^[a-zA-Z0-9._-]+$
         modified:
           description: Last modification time for the Manifest.
           format: date-time
@@ -16585,8 +16612,8 @@ components:
           type: string
         compatible_types:
           description: |
-            The "types" compatible with at least one of the Artifacts of 
-            the Software.  If the kind of Software is 'release', these types are 
+            The "types" compatible with at least one of the Artifacts of
+            the Software.  If the kind of Software is 'release', these types are
             "device types" while they are "system types" in the case of 'manifest'
             Software kind.
           type: array
@@ -16727,6 +16754,7 @@ components:
         letters, digits, underscores, periods and hyphens.
       items:
         type: string
+        maxLength: 256
       type: array
     ReleasesV2:
       description: List of releases
@@ -17962,6 +17990,8 @@ components:
           description: List of device's groups.
           items:
             type: string
+          maxLength: 256
+          pattern: ^[A-Za-z0-9._-]+$
       example:
         groups:
           - test
@@ -18354,6 +18384,8 @@ components:
         group:
           type: string
           description: Device group.
+          maxLength: 256
+          pattern: ^[A-Za-z0-9._-]+$
       example:
         group: staging
     FilterAttribute:
@@ -18391,27 +18423,18 @@ components:
       description: Filter definition
     SearchIdentityParams:
       type: object
-      description: Parameters for searching for inventory by their identity
+      description: |
+        Parameters for searching for inventory with matching device identity attributes, optionally
+        limiting the matching to a specific attribute.
       required:
-        - name
         - value_prefix
-        - scope
       properties:
-        scope:
-          description: The scope of the attribute name used with the search.
-          type: string
-          enum:
-            - identity
-            - tags
-          example: identity
-        name:
-          description: The name of the attribute used with the search.
-          type: string
-          example: mac
         value_prefix:
-          description: The prefix used to match against attribute values with 'scope' and 'name'.
+          description: The prefix used to match against device identity attribute values (all or specific)
           type: string
           example: '00:01:'
+        attribute:
+          $ref: '#/components/schemas/SearchIdentitySpecificAttribute'
         attributes:
           type: array
           description: List of attributes to select and return
@@ -18429,6 +18452,24 @@ components:
           description: Number of results per page.
           type: integer
           maximum: 500
+    SearchIdentitySpecificAttribute:
+      type: object
+      description: Parameters for limiting search matches to a specific attribute
+      required:
+        - name
+        - scope
+      properties:
+        scope:
+          description: The scope of the attribute to match against
+          type: string
+          enum:
+            - identity
+            - tags
+          example: identity
+        name:
+          description: The name of the attribute to match against
+          type: string
+          example: mac
     DeviceInventoryRequest:
       type: object
       properties:
@@ -19656,6 +19697,8 @@ components:
         name:
           type: string
           description: Permission set name.
+          pattern: ^[a-zA-Z0-9._-]+$
+          maxLength: 256
         scope:
           $ref: '#/components/schemas/PermissionSetScope'
     PermissionSetScope:
@@ -19763,6 +19806,8 @@ components:
             title: ListOfRoles
             type: string
             description: Role name
+            maxLength: 256
+            pattern: ^[A-Za-z0-9._-]+$
         send_reset_password:
           type: boolean
           description: Flag indicating whether to trigger password reset on user creation.
@@ -20081,6 +20126,8 @@ components:
             title: ListOfRoles
             type: string
             description: Role name
+            maxLength: 256
+            pattern: ^[A-Za-z0-9._-]+$
         send_reset_password:
           type: boolean
           description: Flag indicating whether to trigger password reset on user creation.
@@ -20101,6 +20148,8 @@ components:
             title: ListOfRoles
             type: string
             description: Role name
+            maxLength: 256
+            pattern: ^[A-Za-z0-9._-]+$
       description: Update user information.
       example:
         roles:
@@ -20340,6 +20389,8 @@ components:
         name:
           type: string
           description: A unique name.
+          pattern: ^[A-Za-z0-9._-]+$
+          maxLength: 256
         description:
           type: string
           description: Description of the role, as shown in the UI.
@@ -20374,6 +20425,8 @@ components:
         name:
           type: string
           description: A unique name.
+          maxLength: 256
+          pattern: ^[A-Za-z0-9._-]+$
         action:
           type: string
         object:
