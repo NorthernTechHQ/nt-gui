@@ -947,7 +947,9 @@ describe('device retrieval ', () => {
     const store = mockStore({ ...defaultState });
     const expectedActions = [{ type: searchIdentities.pending.type }, { type: searchIdentities.fulfilled.type }];
     const { devices, total } = await store
-      .dispatch(searchIdentities({ attributes: [{ attribute: 'mac', scope: 'identity' }], name: 'mac', scope: 'identity', value_prefix: '00:01:' }))
+      .dispatch(
+        searchIdentities({ attributes: [{ attribute: 'mac', scope: 'identity' }], attribute: { name: 'mac', scope: 'identity' }, value_prefix: '00:01:' })
+      )
       .unwrap();
     expect(total).toEqual(1);
     expect(devices).toHaveLength(1);
@@ -955,6 +957,12 @@ describe('device retrieval ', () => {
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+  });
+  it('should allow searching devices across all identity attributes', async () => {
+    const store = mockStore({ ...defaultState });
+    const { devices, total } = await store.dispatch(searchIdentities({ value_prefix: '00:01:' })).unwrap();
+    expect(total).toEqual(1);
+    expect(devices[0]).toMatchObject({ id: inventoryDevice.id });
   });
 });
 
