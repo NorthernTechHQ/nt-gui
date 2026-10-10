@@ -1,5 +1,23 @@
 ---
-## 0.46.5 - 2026-10-08
+## 0.46.6 - 2026-10-10
+
+
+
+### Bug fixes
+
+#### store
+
+- Use generic ui constants from utils ([64f02c2](https://github.com/NorthernTechHQ/nt-gui/commit/64f02c2e53ac53444da4cb5e55f15df365785e0a)) by @mzedel
+- Let webhook events listing rely on backend provided total count ([MEN-10207](https://northerntech.atlassian.net/browse/MEN-10207)) ([45a5b74](https://github.com/NorthernTechHQ/nt-gui/commit/45a5b749659150b351a5559bb1dc6cb1883a9b9c)) by @mzedel
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-10207](https://northerntech.atlassian.net/browse/MEN-10207) |
+
+## @northern.tech/store-0.46.5 - 2026-10-08
 
 
 
