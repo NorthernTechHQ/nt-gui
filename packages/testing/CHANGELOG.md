@@ -1,5 +1,23 @@
 ---
-## 0.18.3 - 2026-09-30
+## 0.18.4 - 2026-10-10
+
+
+
+### Bug fixes
+
+#### testing
+
+- Openapi spec update ([d2ac58e](https://github.com/NorthernTechHQ/nt-gui/commit/d2ac58e98625f0e3f9102449a7d927aa8c4f58ba)) by @mender-test-bot
+- Align webhook events listing w/ updated backend ([MEN-10207](https://northerntech.atlassian.net/browse/MEN-10207)) ([9dbf84b](https://github.com/NorthernTechHQ/nt-gui/commit/9dbf84bfa3f35ed83f919e885a1d8fb698e47b35)) by @mzedel
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-10207](https://northerntech.atlassian.net/browse/MEN-10207) |
+
+## @northern.tech/testing-0.18.3 - 2026-09-30
 
 
 
