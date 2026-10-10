@@ -1,5 +1,30 @@
 ---
-## 0.14.1 - 2026-09-15
+## 0.15.0 - 2026-10-10
+
+
+
+### New features
+
+#### utils
+
+- Add generic ui constants from store to utils ([53880b3](https://github.com/NorthernTechHQ/nt-gui/commit/53880b311f1f066c3be565b25a5ea70059770c79)) by @mzedel
+
+### Dependency updates
+
+#### deps
+
+- Update development-dependencies ([5df5f93](https://github.com/NorthernTechHQ/nt-gui/commit/5df5f93d2f0648c4f67526025637ac7d4fe31fd1)) by @mender-test-bot
+
+- Bump vitest to 5.x in all packages ([MEN-9331](https://northerntech.atlassian.net/browse/MEN-9331)) ([7964608](https://github.com/NorthernTechHQ/nt-gui/commit/7964608003878327041beed0d5fac6fc541dafcd)) by @mineralsfree
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-9331](https://northerntech.atlassian.net/browse/MEN-9331) |
+
+## @northern.tech/utils-0.14.1 - 2026-09-15
 
 
 
