@@ -14,27 +14,28 @@
 import { isDarkMode } from '@northern.tech/utils/helpers';
 import { createSelector } from '@reduxjs/toolkit';
 
+import type { User, UserSliceType } from '.';
 import { DEVICE_ONLINE_CUTOFF, defaultIdAttribute } from '../constants';
 import { twoFAStates } from '../constants';
-import type { RootState } from '../store';
 import { READ_STATES } from './constants';
-import type { User } from './index';
+
+export type UsersState = { users: UserSliceType };
 
 const emptyObject = {} as User;
 
-export const getRolesById = (state: RootState) => state.users.rolesById;
-export const getTooltipsById = (state: RootState) => state.users.tooltips.byId;
-export const getGlobalSettings = (state: RootState) => state.users.globalSettings;
-export const getGlobalSettingsInitialized = (state: RootState) => state.users.settingsInitialized;
-export const getUserSettingsInitialized = (state: RootState) => state.users.userSettingsInitialized;
-const getCurrentUserId = (state: RootState) => state.users.currentUser;
-export const getUsersById = (state: RootState) => state.users.byId;
+export const getRolesById = (state: UsersState) => state.users.rolesById;
+export const getTooltipsById = (state: UsersState) => state.users.tooltips.byId;
+export const getGlobalSettings = (state: UsersState) => state.users.globalSettings;
+export const getGlobalSettingsInitialized = (state: UsersState) => state.users.settingsInitialized;
+export const getUserSettingsInitialized = (state: UsersState) => state.users.userSettingsInitialized;
+const getCurrentUserId = (state: UsersState) => state.users.currentUser;
+export const getUsersById = (state: UsersState) => state.users.byId;
 
 export const getUsersList = createSelector([getUsersById], usersById => Object.values(usersById));
 export const getCurrentUser = createSelector([getUsersById, getCurrentUserId], (usersById, userId) =>
   userId ? (usersById[userId] ?? emptyObject) : emptyObject
 );
-export const getUserSettings = (state: RootState) => state.users.userSettings;
+export const getUserSettings = (state: UsersState) => state.users.userSettings;
 export const getSelectedDeviceAttribute = createSelector([getUserSettings], ({ columnSelection }) =>
   columnSelection.map(attribute => ({ attribute: attribute.key, scope: attribute.scope }))
 );
@@ -68,7 +69,7 @@ export const getOfflineThresholdSettings = createSelector([getGlobalSettings], (
 
 export const getRolesList = createSelector([getRolesById], rolesById => Object.entries(rolesById).map(([value, role]) => ({ value, ...role })));
 
-export const getCurrentSession = (state: RootState) => state.users.currentSession;
-export const getRolesInitialized = (state: RootState) => state.users.rolesInitialized;
+export const getCurrentSession = (state: UsersState) => state.users.currentSession;
+export const getRolesInitialized = (state: UsersState) => state.users.rolesInitialized;
 
-export const getSecurityAlertDismissedTimestamp = (state: RootState) => state.users.userSettings.securityAlertDismissedTimestamp;
+export const getSecurityAlertDismissedTimestamp = (state: UsersState) => state.users.userSettings.securityAlertDismissedTimestamp;

@@ -14,19 +14,20 @@
 import type { ReleaseV2, Software } from '@northern.tech/types/MenderTypes';
 import { createSelector } from '@reduxjs/toolkit';
 
-import type { Manifest } from '.';
-import type { RootState } from '../store';
+import type { Manifest, ReleaseSliceType } from '.';
 import { listItemMapper } from '../utils';
+
+export type ReleasesState = { releases: ReleaseSliceType };
 
 const transformToId = tags => tags.reduce((accu, key) => ({ ...accu, [key]: key }), {});
 
-export const getActiveTab = (state: RootState) => state.releases.tab;
-const getSelectedReleaseId = (state: RootState) => state.releases.selectedRelease;
-export const getReleasesById = (state: RootState) => state.releases.byId;
-const getTags = (state: RootState) => state.releases.tags;
-export const getReleaseListState = (state: RootState) => state.releases.releasesList;
-const getListedReleases = (state: RootState) => state.releases.releasesList.releaseIds;
-export const getUpdateTypes = (state: RootState) => state.releases.updateTypes;
+export const getActiveTab = (state: ReleasesState) => state.releases.tab;
+const getSelectedReleaseId = (state: ReleasesState) => state.releases.selectedRelease;
+export const getReleasesById = (state: ReleasesState) => state.releases.byId;
+const getTags = (state: ReleasesState) => state.releases.tags;
+export const getReleaseListState = (state: ReleasesState) => state.releases.releasesList;
+const getListedReleases = (state: ReleasesState) => state.releases.releasesList.releaseIds;
+export const getUpdateTypes = (state: ReleasesState) => state.releases.updateTypes;
 const releaseDefaults = {};
 const getReleaseMappingDefaults = () => releaseDefaults;
 export const getSoftwareTags = createSelector([getTags], ({ software }) => software);
@@ -44,18 +45,18 @@ export const getSelectedRelease = createSelector([getReleasesById, getSelectedRe
 
 export const getSelectedReleases = createSelector([getReleaseListState, getReleasesList], ({ selection }, releases) => selection.map(index => releases[index]));
 
-export const getDeltaJobsListState = (state: RootState) => state.releases.deltaJobsList;
-export const getDeltaJobsById = (state: RootState) => state.releases.deltaJobs;
+export const getDeltaJobsListState = (state: ReleasesState) => state.releases.deltaJobsList;
+export const getDeltaJobsById = (state: ReleasesState) => state.releases.deltaJobs;
 export const getDeltaJobById = createSelector([getDeltaJobsById, (_, jobId) => jobId], (byId, jobId: string) => byId[jobId]);
-const getSelectedJobId = (state: RootState) => state.releases.selectedJob;
+const getSelectedJobId = (state: ReleasesState) => state.releases.selectedJob;
 export const getSelectedJob = createSelector([getDeltaJobsById, getSelectedJobId], (byId, jobId) => byId[jobId || '']);
 
-const getSelectedManifestId = (state: RootState) => state.releases.selectedManifest;
+const getSelectedManifestId = (state: ReleasesState) => state.releases.selectedManifest;
 export const getManifestTags = createSelector([getTags], ({ manifests }) => manifests);
 export const getManifestTagsById = createSelector([getManifestTags], transformToId);
-export const getManifestsById = (state: RootState) => state.releases.manifestsById;
-export const getManifestsListState = (state: RootState) => state.releases.manifestsList;
-const getListedManifests = (state: RootState) => state.releases.manifestsList.manifestIds;
+export const getManifestsById = (state: ReleasesState) => state.releases.manifestsById;
+export const getManifestsListState = (state: ReleasesState) => state.releases.manifestsList;
+const getListedManifests = (state: ReleasesState) => state.releases.manifestsList.manifestIds;
 const manifestDefaults = {};
 const getManifestMappingDefaults = () => manifestDefaults;
 export const getManifestsList = createSelector([getManifestsById, getListedManifests, getManifestMappingDefaults], listItemMapper<Manifest>);
@@ -71,9 +72,9 @@ export const getSelectedManifests = createSelector([getManifestsListState, getMa
   selection.map(index => manifests[index])
 );
 
-export const getSoftwareById = (state: RootState) => state.releases.softwareById;
-export const getSoftwareListState = (state: RootState) => state.releases.softwareList;
-const getListedSoftware = (state: RootState) => state.releases.softwareList.softwareIds;
+export const getSoftwareById = (state: ReleasesState) => state.releases.softwareById;
+export const getSoftwareListState = (state: ReleasesState) => state.releases.softwareList;
+const getListedSoftware = (state: ReleasesState) => state.releases.softwareList.softwareIds;
 const softwareDefaults = {};
 const getSoftwareMappingDefaults = () => softwareDefaults;
 export const getSoftwareList = createSelector([getSoftwareById, getListedSoftware, getSoftwareMappingDefaults], listItemMapper<Software>);
