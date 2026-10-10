@@ -17130,7 +17130,7 @@ components:
           type: string
           description: |
             Details of the delta generation job
-        devices_types_compatible:
+        device_types_compatible:
           type: array
           items:
             type: string
@@ -17162,7 +17162,7 @@ components:
         delta_job_id: 67e4310d82ba0eead4e41cbf
         to_version: release-1024-rofs-no-deps-sum
         from_version: release-256-rofs-no-deps-sum
-        devices_types_compatible:
+        device_types_compatible:
           - raspberrypi4
           - raspberrypi3
         started: '2025-03-26T16:53:33.592Z'

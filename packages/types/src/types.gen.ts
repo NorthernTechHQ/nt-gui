@@ -2206,7 +2206,7 @@ export type DeltaJobsListItem = {
    * Array of the devices types names compatible with this artifact
    *
    */
-  devices_types_compatible?: Array<string>;
+  device_types_compatible?: Array<string>;
   /**
    * Date we started the generation
    *
