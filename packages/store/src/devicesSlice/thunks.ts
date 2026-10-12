@@ -504,6 +504,9 @@ export const getDeviceInfo = createAppAsyncThunk(`${sliceName}/getDeviceInfo`, (
       tasks.push(dispatch(getLatestDeviceAlerts({ id: deviceId })));
       tasks.push(dispatch(getDeviceMonitorConfig(deviceId)));
     }
+    if (device.tier === 'system') {
+      tasks.push(dispatch(getDeviceComponents(deviceId)));
+    }
   }
   return Promise.all(tasks);
 });
