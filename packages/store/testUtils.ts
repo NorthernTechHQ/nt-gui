@@ -15,26 +15,8 @@
 import { token as mockToken } from '@northern.tech/testing/mockData';
 import { render } from '@northern.tech/testing/setupTests';
 
-import { mockState as appMockState } from './src/appSlice/mocks';
-import { mockState as deploymentsMockState } from './src/deploymentsSlice/mocks';
-import { mockState as devicesMockState } from './src/devicesSlice/mocks';
-import { mockState as monitorMockState } from './src/monitorSlice/mocks';
-import { mockState as onboardingMockState } from './src/onboardingSlice/mocks';
-import { mockState as organizationMockState } from './src/organizationSlice/mocks';
-import { mockState as releasesMockState } from './src/releasesSlice/mocks';
+import { defaultState } from './src/mockState';
 import { getConfiguredStore } from './src/store';
-import { mockState as usersMockState } from './src/usersSlice/mocks';
-
-export const defaultState = {
-  app: { ...appMockState },
-  deployments: { ...deploymentsMockState },
-  devices: { ...devicesMockState },
-  monitor: { ...monitorMockState },
-  onboarding: { ...onboardingMockState },
-  organization: { ...organizationMockState },
-  releases: { ...releasesMockState },
-  users: { ...usersMockState }
-};
 
 const customRender = (ui, options = {}) => {
   const {
@@ -47,4 +29,4 @@ const customRender = (ui, options = {}) => {
 
 export * from '@northern.tech/testing/setupTests';
 
-export { customRender as render };
+export { customRender as render, defaultState };
