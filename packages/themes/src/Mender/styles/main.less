@@ -175,7 +175,20 @@ each(@directions, .(@direction) {
     }
   });
 })
-  .inline-block {
+
+each(@variants, {
+  .gap-@{key} {
+    gap: @value;
+  }
+  .row-gap-@{key} {
+    row-gap: @value;
+  }
+  .column-gap-@{key} {
+    column-gap: @value;
+  }
+});
+
+.inline-block {
   display: inline-block;
 }
 
