@@ -13,8 +13,8 @@
 //    limitations under the License.
 import { Provider } from 'react-redux';
 
-import { defaultState } from '@/testUtils';
 import type { Device } from '@northern.tech/store/devicesSlice';
+import { defaultState } from '@northern.tech/store/mockState';
 import { getConfiguredStore } from '@northern.tech/store/store';
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 

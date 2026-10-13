@@ -15,7 +15,7 @@ import { Provider } from 'react-redux';
 
 import { Button } from '@mui/material';
 
-import { defaultState as preloadedState } from '@/testUtils';
+import { defaultState as preloadedState } from '@northern.tech/store/mockState';
 import { getConfiguredStore } from '@northern.tech/store/store';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
