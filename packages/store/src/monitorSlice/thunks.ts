@@ -19,7 +19,7 @@ import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import Api from '../api/general-api';
 import type { AlertChannelKey, DeviceIssueOptionKey } from '../constants';
-import { DEVICE_LIST_DEFAULTS, alertChannels, headerNames, inventoryApiUrlV2, monitorApiUrlv1 } from '../constants';
+import { DEVICE_LIST_DEFAULTS, DEVICE_STATES, alertChannels, headerNames, inventoryApiUrlV2, monitorApiUrlv1 } from '../constants';
 import { getDeviceFilters } from '../selectors';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { convertDeviceListStateToFilters } from '../utils';
@@ -75,7 +75,7 @@ export const getIssueCountsByType = createAppAsyncThunk(
   `${sliceName}/getIssueCountsByType`,
   async ({ type, options = {} }: GetIssueCountsByTypePayload, { dispatch, getState }) => {
     const state = getState();
-    const { filters = getDeviceFilters(state), group, status, ...remainder } = options;
+    const { filters = getDeviceFilters(state), group, status = DEVICE_STATES.accepted, ...remainder } = options;
     const { applicableFilters: nonMonitorFilters, filterTerms } = convertDeviceListStateToFilters({
       ...remainder,
       filters,
