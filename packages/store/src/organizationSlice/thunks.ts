@@ -59,7 +59,7 @@ import { getCurrentUser, getSpLimits, getTenantCapabilities, getTenantsList } fr
 import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
 import { getDeviceLimits, setFirstLoginAfterSignup } from '../thunks';
-import { convertToBackendSPLimits, dispatchDelayed, parseSubscriptionPreview } from '../utils';
+import { convertToBackendSPLimits, dispatchDelayed, extractErrorMessage, parseSubscriptionPreview } from '../utils';
 import { SSO_TYPES } from './constants';
 import { getAuditlogState, getOrganization } from './selectors';
 import type { AuditLogSelectionState, ProductConfig, ProductPlan, ProductTier, SSOConfig, Tenant, TenantList } from './types';
@@ -578,25 +578,31 @@ const ssoConfigActions = {
 } as const;
 type SsoConfigActionKeys = keyof typeof ssoConfigActions;
 
-const ssoConfigActionErrorHandler = (err, type: keyof typeof ssoConfigActions) => (dispatch: AppDispatch) =>
-  commonErrorHandler(err, `There was an error ${ssoConfigActions[type].error} the SSO configuration.`, dispatch, commonErrorFallback);
+const ssoConfigActionErrorHandler =
+  (err, type: keyof typeof ssoConfigActions, rejectWithValue?: (message: string) => unknown) =>
+  (dispatch: AppDispatch): Promise<never> => {
+    const errorContext = `There was an error ${ssoConfigActions[type].error} the SSO configuration.`;
+    return rejectWithValue
+      ? Promise.reject(rejectWithValue(`${errorContext} ${extractErrorMessage(err, commonErrorFallback)}`))
+      : commonErrorHandler(err, errorContext, dispatch, commonErrorFallback);
+  };
 
 const ssoConfigActionSuccessHandler = (type: SsoConfigActionKeys) => (dispatch: AppDispatch) =>
   dispatch(setSnackbar(`The SSO configuration was ${ssoConfigActions[type].success} successfully`));
 
 export const storeSsoConfig = createAppAsyncThunk(
   `${sliceName}/storeSsoConfig`,
-  ({ config, contentType }: { config: string; contentType: ContentType }, { dispatch }) =>
+  ({ config, contentType }: { config: string; contentType: ContentType }, { dispatch, rejectWithValue }) =>
     Api.post(ssoIdpApiUrlv1, config, { headers: { 'Content-Type': contentType, Accept: 'application/json' } })
-      .catch(err => dispatch(ssoConfigActionErrorHandler(err, 'create')))
+      .catch(err => dispatch(ssoConfigActionErrorHandler(err, 'create', rejectWithValue)))
       .then(() => Promise.all([dispatch(ssoConfigActionSuccessHandler('create')), dispatch(getSsoConfigs())]))
 );
 
 export const changeSsoConfig = createAppAsyncThunk(
   `${sliceName}/changeSsoConfig`,
-  ({ config, contentType }: { config: SSOConfig; contentType: ContentType }, { dispatch }) =>
+  ({ config, contentType }: { config: SSOConfig; contentType: ContentType }, { dispatch, rejectWithValue }) =>
     Api.put(`${ssoIdpApiUrlv1}/${config.id}`, config.config, { headers: { 'Content-Type': contentType, Accept: 'application/json' } })
-      .catch(err => dispatch(ssoConfigActionErrorHandler(err, 'edit')))
+      .catch(err => dispatch(ssoConfigActionErrorHandler(err, 'edit', rejectWithValue)))
       .then(() => Promise.all([dispatch(ssoConfigActionSuccessHandler('edit')), dispatch(getSsoConfigs())]))
 );
 
