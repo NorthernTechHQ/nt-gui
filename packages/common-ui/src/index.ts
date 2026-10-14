@@ -46,6 +46,7 @@ export * from './QuickActions';
 export { default as Search } from './Search';
 export * from './Search';
 export * from './SettingsItem';
+export * from './SettingsSection';
 export { default as SharedSnackbar } from './SharedSnackbar';
 export * from './SharedSnackbar';
 export * from './Sparkles';

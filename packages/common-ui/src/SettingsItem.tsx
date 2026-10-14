@@ -16,7 +16,13 @@ import type { ReactNode } from 'react';
 import { FormControlLabel, Switch, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
-const SETTINGS_CONTENT_MAX_WIDTH = 750;
+export const SETTINGS_CONTENT_MAX_WIDTH = 760;
+
+export const settingsFieldWidths = {
+  small: 120,
+  medium: 240,
+  large: 400
+} as const;
 
 export type SettingsItemClasses = {
   base: string;
@@ -33,19 +39,13 @@ export interface SettingsItemProps {
   title: string | ReactNode;
 }
 
-export const maxWidth = SETTINGS_CONTENT_MAX_WIDTH;
-
 const useStyles = makeStyles()(({ spacing }) => ({
   base: { gap: spacing(1) },
-  content: {
-    '> *': { maxWidth }
-  },
   mainContent: {
     alignItems: 'baseline',
     display: 'grid',
-    gridTemplateColumns: `${maxWidth}px 1fr`,
-    gridColumnGap: spacing(2),
-    maxWidth: 'initial'
+    gridTemplateColumns: `minmax(0, ${SETTINGS_CONTENT_MAX_WIDTH}px) 1fr`,
+    gridColumnGap: spacing(2)
   }
 }));
 
@@ -64,7 +64,7 @@ export const SettingsItem = ({ classes = defaultClasses, description, notificati
   const { classes: localClasses } = useStyles();
   return (
     <div className={`flexbox column settings-item-base ${localClasses.base} margin-top ${classes.base ?? ''}`}>
-      <div className={`flexbox column settings-item-content ${localClasses.base} ${localClasses.content} ${classes.content ?? ''}`}>
+      <div className={`flexbox column settings-item-content ${localClasses.base} ${classes.content ?? ''}`}>
         <SettingsItemTitle title={title} />
         {description && (
           <Typography className="capitalized-start" variant="body2">
