@@ -3330,6 +3330,19 @@ export type DeviceInventoryEvent = {
   };
 };
 
+export type Ratelimits = {
+  /**
+   * Per-request cost multiplier for device API ratelimit groups (enforced by deviceauth). Defaults to 1.0 if unset.
+   *
+   */
+  weight_devices?: number;
+  /**
+   * Per-request cost multiplier for management API ratelimit groups (enforced by useradm). Defaults to 1.0 if unset.
+   *
+   */
+  weight_management?: number;
+};
+
 /**
  * Update tenant information.
  */
@@ -3368,6 +3381,7 @@ export type TenantUpdateInternal = {
    */
   suspend_at?: string;
   customer_id?: string;
+  ratelimits?: Ratelimits;
   subscription_id?: string;
   subscription_type?: string;
 };
