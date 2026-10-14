@@ -13,29 +13,32 @@
 //    limitations under the License.
 import { defaultState, render } from '@/testUtils';
 import { undefineds } from '@northern.tech/testing/mockData';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import FileTransfer from './FileTransfer';
 
 describe('FileTransfer Component', () => {
   it('renders correctly', async () => {
-    const { baseElement } = render(<FileTransfer item={{ ...defaultState.organization.auditlog.events[2], meta: { path: ['/dev/null'] } }} />, {
-      preloadedState: {
-        ...defaultState,
-        organization: {
-          ...defaultState.organization,
-          auditlog: {
-            ...defaultState.organization.auditlog,
-            selectionState: {
-              ...defaultState.organization.auditlog.selectionState,
-              selectedId: btoa(`${defaultState.organization.auditlog.events[2].action}|${defaultState.organization.auditlog.events[2].time}`)
+    const { baseElement } = render(
+      <FileTransfer item={{ ...defaultState.organization.auditlog.events[2], meta: { path: ['/dev/null'] } }} onClose={vi.fn()} />,
+      {
+        preloadedState: {
+          ...defaultState,
+          organization: {
+            ...defaultState.organization,
+            auditlog: {
+              ...defaultState.organization.auditlog,
+              selectionState: {
+                ...defaultState.organization.auditlog.selectionState,
+                selectedId: btoa(`${defaultState.organization.auditlog.events[2].action}|${defaultState.organization.auditlog.events[2].time}`)
+              }
             }
           }
         }
       }
-    });
+    );
 
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });

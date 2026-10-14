@@ -21,7 +21,7 @@ describe('DeviceDetails Component', () => {
   it('renders correctly', async () => {
     const { baseElement } = render(<DeviceDetails device={defaultState.devices.byId.a1} idAttribute={{ attribute: 'foo', scope: 'bar' }} onClose={vi.fn} />);
 
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });

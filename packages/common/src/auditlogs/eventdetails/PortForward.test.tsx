@@ -22,7 +22,7 @@ describe('PortForward Component', () => {
   it('renders correctly', async () => {
     const DeviceActions = await import('@northern.tech/store/thunks');
     const sessionSpy = vi.spyOn(DeviceActions, 'getSessionDetails');
-    const ui = <PortForward item={defaultState.organization.auditlog.events[2]} />;
+    const ui = <PortForward item={defaultState.organization.auditlog.events[2]} onClose={vi.fn()} />;
     const { baseElement, rerender } = render(ui, {
       preloadedState: {
         ...defaultState,
@@ -47,7 +47,7 @@ describe('PortForward Component', () => {
     });
     expect(sessionSpy).toHaveBeenCalled();
 
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });
