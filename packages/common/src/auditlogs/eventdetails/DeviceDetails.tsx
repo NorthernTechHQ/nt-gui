@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { Link } from 'react-router';
 
 import { Launch as LaunchIcon } from '@mui/icons-material';
@@ -21,6 +20,7 @@ import { TwoColumns } from '@northern.tech/common-ui/ConfigurationObject';
 import DeviceIdentityDisplay from '@northern.tech/common-ui/DeviceIdentity';
 import { AUDIT_LOGS_TYPES, BEGINNING_OF_TIME, rootfsImageVersion } from '@northern.tech/store/constants';
 import { formatAuditlogs } from '@northern.tech/store/locationutils';
+import { getISOStringBoundaries } from '@northern.tech/utils/helpers';
 
 const useStyles = makeStyles()(theme => ({
   eventDetails: { gridTemplateColumns: 'minmax(max-content, 150px) max-content', rowGap: theme.spacing(2.5) },
@@ -44,6 +44,8 @@ export const DeviceDetails = ({ device, idAttribute, onClose }) => {
   const { attributes, id: deviceId } = device;
   const { name, device_type: deviceTypes, artifact_name } = attributes || {};
   const { attribute } = idAttribute;
+  const { start: today, end: tonight } = getISOStringBoundaries(new Date());
+  const todayBoundaries = { today, tonight };
   const usesId = attribute === 'id' || attribute === 'Device ID';
   const nameContainer = name ? { Name: name } : {};
   const deviceDetails = {
@@ -58,7 +60,7 @@ export const DeviceDetails = ({ device, idAttribute, onClose }) => {
     'Operating system version': device[rootfsImageVersion] || artifact_name || '-',
     ' ': (
       <Link
-        to={`/auditlog?${formatAuditlogs({ pageState: { type: deviceAuditlogType, detail: deviceId, startDate: BEGINNING_OF_TIME } }, {})}`}
+        to={`/auditlog?${formatAuditlogs({ pageState: { type: deviceAuditlogType, detail: deviceId, startDate: BEGINNING_OF_TIME } }, todayBoundaries)}`}
         onClick={onClose}
       >
         List all log entries for this device
