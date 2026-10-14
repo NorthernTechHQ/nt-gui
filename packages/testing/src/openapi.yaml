@@ -18727,6 +18727,19 @@ components:
         - device_id
         - tenant_id
         - inventory
+    Ratelimits:
+      type: object
+      properties:
+        weight_devices:
+          type: number
+          format: double
+          description: |
+            Per-request cost multiplier for device API ratelimit groups (enforced by deviceauth). Defaults to 1.0 if unset.
+        weight_management:
+          type: number
+          format: double
+          description: |
+            Per-request cost multiplier for management API ratelimit groups (enforced by useradm). Defaults to 1.0 if unset.
     TenantUpdateInternal:
       type: object
       description: Update tenant information.
@@ -18766,6 +18779,8 @@ components:
           description: Planned suspension date and time, in ISO8601 format.
         customer_id:
           type: string
+        ratelimits:
+          $ref: '#/components/schemas/Ratelimits'
         subscription_id:
           type: string
         subscription_type:

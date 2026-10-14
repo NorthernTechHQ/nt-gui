@@ -1465,6 +1465,7 @@ export {
   type ProductInfo,
   ProductName,
   type ProvisionDevice,
+  type Ratelimits,
   type RegisterBillingProfileData,
   type RegisterBillingProfileError,
   type RegisterBillingProfileErrors,
