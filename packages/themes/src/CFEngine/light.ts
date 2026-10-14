@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { Palette, ThemeOptions, autocompleteClasses, inputBaseClasses } from '@mui/material';
+import { ThemeOptions, autocompleteClasses, inputBaseClasses } from '@mui/material';
 
 import { blue, commonPalette, darkBlue, gray, lightThemeText, overrides, red, typography } from './common';
 
@@ -51,8 +51,8 @@ const palette = {
     paper: gray[50],
     summary: gray[100]
   },
-  mode: 'light'
-} as Palette;
+  mode: 'light' as const
+};
 
 export const light: ThemeOptions = {
   palette,
