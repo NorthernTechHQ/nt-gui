@@ -13,24 +13,26 @@
 //    limitations under the License.
 import { createSelector } from '@reduxjs/toolkit';
 
-import type { RootState } from '../store';
+import type { AppSliceType } from '.';
 
-export const getDocsVersion = (state: RootState) => state.app.docsVersion;
-export const getFeatures = (state: RootState) => state.app.features;
-export const getVersionInformation = (state: RootState) => state.app.versionInformation;
-export const getSearchState = (state: RootState) => state.app.searchState;
-export const getUploads = (state: RootState) => state.app.uploadsById;
-export const getSnackbar = (state: RootState) => state.app.snackbar;
-export const getHostAddress = (state: RootState) => state.app.hostAddress;
-export const getHostedAnnouncement = (state: RootState) => state.app.hostedAnnouncement;
-export const getRecaptchaKey = (state: RootState) => state.app.recaptchaSiteKey;
-export const getStripeKey = (state: RootState) => state.app.stripeAPIKey;
-export const getTrackerCode = (state: RootState) => state.app.trackerCode;
-export const getSentryConfig = (state: RootState) => state.app.sentry;
-export const getCommit = (state: RootState) => state.app.commit;
-export const getIsFirstLogin = (state: RootState) => state.app.firstLoginAfterSignup;
-export const getFeedbackProbability = (state: RootState) => state.app.feedbackProbability;
-export const getAppInitDone = (state: RootState) => state.app.appInitDone;
+export type AppState = { app: AppSliceType };
+
+export const getDocsVersion = (state: AppState) => state.app.docsVersion;
+export const getFeatures = (state: AppState) => state.app.features;
+export const getVersionInformation = (state: AppState) => state.app.versionInformation;
+export const getSearchState = (state: AppState) => state.app.searchState;
+export const getUploads = (state: AppState) => state.app.uploadsById;
+export const getSnackbar = (state: AppState) => state.app.snackbar;
+export const getHostAddress = (state: AppState) => state.app.hostAddress;
+export const getHostedAnnouncement = (state: AppState) => state.app.hostedAnnouncement;
+export const getRecaptchaKey = (state: AppState) => state.app.recaptchaSiteKey;
+export const getStripeKey = (state: AppState) => state.app.stripeAPIKey;
+export const getTrackerCode = (state: AppState) => state.app.trackerCode;
+export const getSentryConfig = (state: AppState) => state.app.sentry;
+export const getCommit = (state: AppState) => state.app.commit;
+export const getIsFirstLogin = (state: AppState) => state.app.firstLoginAfterSignup;
+export const getFeedbackProbability = (state: AppState) => state.app.feedbackProbability;
+export const getAppInitDone = (state: AppState) => state.app.appInitDone;
 
 export const getIsUploading = createSelector([getUploads], uploadsById => !!Object.keys(uploadsById).length);
 export const getSearchedDevices = createSelector([getSearchState], ({ deviceIds }) => deviceIds);

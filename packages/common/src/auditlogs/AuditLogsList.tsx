@@ -18,7 +18,7 @@ import { makeStyles } from 'tss-react/mui';
 import DetailsIndicator from '@northern.tech/common-ui/DetailsIndicator';
 import Loader from '@northern.tech/common-ui/Loader';
 import Pagination from '@northern.tech/common-ui/Pagination';
-import { SORTING_OPTIONS } from '@northern.tech/store/constants';
+import { SORTING_OPTIONS } from '@northern.tech/utils/constants';
 
 export const defaultRowsPerPage = 20;
 

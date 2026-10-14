@@ -14,27 +14,29 @@
 import type { Tenant } from '@northern.tech/types/MenderTypes';
 import { createSelector } from '@reduxjs/toolkit';
 
+import type { OrganizationSliceType } from '.';
 import { EXTERNAL_PROVIDER, productOrder } from '../constants';
-import type { RootState } from '../store';
 
-export const getOrganization = (state: RootState) => state.organization.organization;
-export const getProducts = (state: RootState) => state.organization.products;
-export const getExternalIntegrations = (state: RootState) => state.organization.externalDeviceIntegrations;
-export const getAuditlogState = (state: RootState) => state.organization.auditlog.selectionState;
-export const getAuditLog = (state: RootState) => state.organization.auditlog.events;
-export const getAuditLogSelectionState = (state: RootState) => state.organization.auditlog.selectionState;
-export const getBillingProfile = (state: RootState) => state.organization.organization.billing_profile;
-export const getSubscription = (state: RootState) => state.organization.organization.subscription;
-export const getCard = (state: RootState) => state.organization.card;
-export const getSsoConfig = ({ organization: { ssoConfigs = [] } }: RootState) => ssoConfigs[0];
-export const getTenantsList = (state: RootState) => state.organization.tenantList;
-export const getWebhookEvents = (state: RootState) => state.organization.webhooks.events;
-export const getWebhookEventsTotal = (state: RootState) => state.organization.webhooks.eventsTotal;
+export type OrganizationState = { organization: OrganizationSliceType };
+
+export const getOrganization = (state: OrganizationState) => state.organization.organization;
+export const getProducts = (state: OrganizationState) => state.organization.products;
+export const getExternalIntegrations = (state: OrganizationState) => state.organization.externalDeviceIntegrations;
+export const getAuditlogState = (state: OrganizationState) => state.organization.auditlog.selectionState;
+export const getAuditLog = (state: OrganizationState) => state.organization.auditlog.events;
+export const getAuditLogSelectionState = (state: OrganizationState) => state.organization.auditlog.selectionState;
+export const getBillingProfile = (state: OrganizationState) => state.organization.organization.billing_profile;
+export const getSubscription = (state: OrganizationState) => state.organization.organization.subscription;
+export const getCard = (state: OrganizationState) => state.organization.card;
+export const getSsoConfig = ({ organization: { ssoConfigs = [] } }: OrganizationState) => ssoConfigs[0];
+export const getTenantsList = (state: OrganizationState) => state.organization.tenantList;
+export const getWebhookEvents = (state: OrganizationState) => state.organization.webhooks.events;
+export const getWebhookEventsTotal = (state: OrganizationState) => state.organization.webhooks.eventsTotal;
 
 export const getDeviceTwinIntegrations = createSelector([getExternalIntegrations], integrations =>
   integrations.filter(integration => integration.id && EXTERNAL_PROVIDER[integration.provider]?.deviceTwin)
 );
-export const getIsServiceProvider = (state: RootState) => state.organization.organization.service_provider;
+export const getIsServiceProvider = (state: OrganizationState) => state.organization.organization.service_provider;
 
 export const getWebhooks = createSelector([getExternalIntegrations], integrations =>
   integrations.filter(integration => integration.id && integration.provider === EXTERNAL_PROVIDER.webhook.provider)

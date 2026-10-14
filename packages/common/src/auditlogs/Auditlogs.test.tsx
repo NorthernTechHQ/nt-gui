@@ -19,11 +19,11 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import { defaultState, render } from '@/testUtils';
-import { TIMEOUTS } from '@northern.tech/store/constants';
 import { getConfiguredStore } from '@northern.tech/store/store';
 import { undefineds } from '@northern.tech/testing/mockData';
 import { light as lightTheme } from '@northern.tech/testing/theme/light';
 import { selectMaterialUiSelectOption } from '@northern.tech/testing/utils';
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 import { act, prettyDOM, screen, render as testingLibRender, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';

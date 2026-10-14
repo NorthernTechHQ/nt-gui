@@ -35,9 +35,7 @@ const { setSnackbar, uploadProgress } = actions;
 
 // exclude 'pendings-redirect' since this is expected to persist refreshes - the rest should be better to be redone
 const keys = ['sessionDeploymentChecker', settingsKeys.initialized];
-const resetEnvironment = (): void => keys.forEach(key => window.sessionStorage.removeItem(key));
-
-resetEnvironment();
+export const resetEnvironment = (): void => keys.forEach(key => window.sessionStorage.removeItem(key));
 
 export type { ErrorWithResponse } from './utils';
 
@@ -156,10 +154,8 @@ export const getConfiguredStore = (options: { [key: string]: unknown; preloadedS
       }).concat(rejectionLoggerMiddleware)
   });
 };
-export const store = getConfiguredStore({
-  preloadedState: {}
-});
-export type AppDispatch = typeof store.dispatch;
+export type AppStore = ReturnType<typeof getConfiguredStore>;
+export type AppDispatch = AppStore['dispatch'];
 export type RootState = ReturnType<typeof rootReducer>;
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

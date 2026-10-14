@@ -19,7 +19,8 @@ import { Button } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
 import XTerm from '@northern.tech/common-ui/xterm';
-import { DEVICE_MESSAGE_PROTOCOLS as MessageProtocols, DEVICE_MESSAGE_TYPES as MessageTypes, TIMEOUTS, deviceConnect } from '@northern.tech/store/constants';
+import { DEVICE_MESSAGE_PROTOCOLS as MessageProtocols, DEVICE_MESSAGE_TYPES as MessageTypes } from '@northern.tech/store/constants';
+import { TIMEOUTS, deviceConnect } from '@northern.tech/utils/constants';
 import { blobToString, byteArrayToString, createFileDownload, toggle } from '@northern.tech/utils/helpers';
 import { Packr } from 'msgpackr';
 import Cookies from 'universal-cookie';

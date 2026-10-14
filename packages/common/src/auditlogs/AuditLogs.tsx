@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import EnterpriseNotification, { DefaultUpgradeNotification } from '@northern.tech/common-ui/EnterpriseNotification';
-import { AUDIT_LOGS_TYPES, BEGINNING_OF_TIME, BENEFITS, SORTING_OPTIONS, SP_AUDIT_LOGS_TYPES, TIMEOUTS } from '@northern.tech/store/constants';
+import { AUDIT_LOGS_TYPES, BEGINNING_OF_TIME, BENEFITS, SP_AUDIT_LOGS_TYPES } from '@northern.tech/store/constants';
 import { useLocationParams } from '@northern.tech/store/liststatehook';
 import {
   getAuditLog,
@@ -31,6 +31,7 @@ import {
   getUserCapabilities
 } from '@northern.tech/store/selectors';
 import { getAuditLogs, getAuditLogsCsvLink, getUserList, setAuditlogsState } from '@northern.tech/store/thunks';
+import { SORTING_OPTIONS, TIMEOUTS } from '@northern.tech/utils/constants';
 import { createDownload, getISOStringBoundaries } from '@northern.tech/utils/helpers';
 import dayjs from 'dayjs';
 

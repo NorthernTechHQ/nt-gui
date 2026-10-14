@@ -14,31 +14,32 @@
 import { duplicateFilter } from '@northern.tech/utils/helpers';
 import { createSelector } from '@reduxjs/toolkit';
 
-import type { DeviceFilter, DeviceGroup } from '.';
+import type { DeviceFilter, DeviceGroup, DeviceSliceType } from '.';
 import type { DeviceAuthState } from '../constants';
 import { DEVICE_STATES, UNGROUPED_GROUP } from '../constants';
-import type { RootState } from '../store';
 
-export const getAcceptedDevices = (state: RootState) => state.devices.byStatus.accepted;
-export const getDevicesByStatus = (state: RootState) => state.devices.byStatus;
-export const getDevicesById = (state: RootState) => state.devices.byId;
-export const getDeviceReports = (state: RootState) => state.devices.reports;
-export const getGroupsById = (state: RootState) => state.devices.groups.byId;
-export const getSelectedGroup = (state: RootState) => state.devices.groups.selectedGroup;
+export type DevicesState = { devices: DeviceSliceType };
 
-export const getDeviceListState = (state: RootState) => state.devices.deviceList;
-export const getListedDevices = (state: RootState) => state.devices.deviceList.deviceIds;
-export const getFilteringAttributes = (state: RootState) => state.devices.filteringAttributes;
-export const getDeviceFilters = (state: RootState) => state.devices.filters || [];
-export const getTestDeviceLimit = (state: RootState) => state.devices.testDeviceLimit;
-const getFilteringAttributesFromConfig = (state: RootState) => state.devices.filteringAttributesConfig.attributes;
+export const getAcceptedDevices = (state: DevicesState) => state.devices.byStatus.accepted;
+export const getDevicesByStatus = (state: DevicesState) => state.devices.byStatus;
+export const getDevicesById = (state: DevicesState) => state.devices.byId;
+export const getDeviceReports = (state: DevicesState) => state.devices.reports;
+export const getGroupsById = (state: DevicesState) => state.devices.groups.byId;
+export const getSelectedGroup = (state: DevicesState) => state.devices.groups.selectedGroup;
+
+export const getDeviceListState = (state: DevicesState) => state.devices.deviceList;
+export const getListedDevices = (state: DevicesState) => state.devices.deviceList.deviceIds;
+export const getFilteringAttributes = (state: DevicesState) => state.devices.filteringAttributes;
+export const getDeviceFilters = (state: DevicesState) => state.devices.filters || [];
+export const getTestDeviceLimit = (state: DevicesState) => state.devices.testDeviceLimit;
+const getFilteringAttributesFromConfig = (state: DevicesState) => state.devices.filteringAttributesConfig.attributes;
 export const getSortedFilteringAttributes = createSelector([getFilteringAttributes], filteringAttributes => ({
   ...filteringAttributes,
   identityAttributes: [...filteringAttributes.identityAttributes, 'id']
 }));
-export const getDeviceLimits = (state: RootState) => state.devices.limits;
-export const getTestDeviceCount = (state: RootState) => state.devices.testDeviceCount;
-const getFilteringAttributesLimit = (state: RootState) => state.devices.filteringAttributesLimit;
+export const getDeviceLimits = (state: DevicesState) => state.devices.limits;
+export const getTestDeviceCount = (state: DevicesState) => state.devices.testDeviceCount;
+const getFilteringAttributesLimit = (state: DevicesState) => state.devices.filteringAttributesLimit;
 
 export const getDeviceIdentityAttributes = createSelector(
   [getFilteringAttributes, getFilteringAttributesLimit],

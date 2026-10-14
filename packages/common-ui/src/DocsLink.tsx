@@ -20,8 +20,8 @@ import type { TypographyProps } from '@mui/material';
 import { Chip, Collapse, Typography, chipClasses } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
-import { TIMEOUTS } from '@northern.tech/store/constants';
 import { getDocsVersion, getFeatures } from '@northern.tech/store/selectors';
+import { TIMEOUTS } from '@northern.tech/utils/constants';
 import { useDebounce } from '@northern.tech/utils/debouncehook';
 import { yes } from '@northern.tech/utils/helpers';
 
