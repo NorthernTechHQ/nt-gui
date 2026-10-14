@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { CssBaseline, ThemeProvider, createTheme, styled } from '@mui/material';
+import { CssBaseline, StyledEngineProvider, ThemeProvider, createTheme, styled } from '@mui/material';
 
 import { dark as darkAlvaldiTheme, light as lightAlvaldiTheme } from '@northern.tech/themes/Alvaldi';
 import { dark as darkCFEngineTheme, light as lightCFEngineTheme } from '@northern.tech/themes/CFEngine';
@@ -60,10 +60,12 @@ export const withMuiTheme = (Story, context) => {
   const theme = useMemo(() => createTheme(THEMES[product][themeKey] || THEMES.Mender.light), [product, themeKey]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <WrappedBaseline enableColorScheme />
-      <Story {...context} />
-    </ThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <WrappedBaseline enableColorScheme />
+        <Story {...context} />
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 };
 
