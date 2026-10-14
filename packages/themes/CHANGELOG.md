@@ -1,5 +1,20 @@
 ---
-## 0.17.0 - 2026-09-23
+## 0.18.0 - 2026-10-14
+
+
+
+### New features
+
+#### themes
+
+- Add global gap classes ([3a9d3de](https://github.com/NorthernTechHQ/nt-gui/commit/3a9d3deb9ebc96e64515427162cabecd2441f7b9)) by @mineralsfree
+
+### Dependency updates
+
+#### deps
+
+- Update development-dependencies ([5df5f93](https://github.com/NorthernTechHQ/nt-gui/commit/5df5f93d2f0648c4f67526025637ac7d4fe31fd1)) by @mender-test-bot
+## @northern.tech/themes-0.17.0 - 2026-09-24
 
 
 
