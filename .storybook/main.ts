@@ -12,7 +12,8 @@ const config: StorybookConfig = {
     // customize the Vite config here
     return {
       ...config,
-      define: { 'process.env': {} }
+      define: { 'process.env': {} },
+      resolve: { ...config.resolve, tsconfigPaths: true }
     };
   },
   addons: ['msw-storybook-addon']

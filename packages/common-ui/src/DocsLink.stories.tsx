@@ -13,7 +13,7 @@
 //    limitations under the License.
 import { Provider } from 'react-redux';
 
-import { defaultState as preloadedState } from '@/testUtils';
+import { defaultState as preloadedState } from '@northern.tech/store/mockState';
 import { getConfiguredStore } from '@northern.tech/store/store';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

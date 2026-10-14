@@ -15,33 +15,12 @@ import type { ReactNode } from 'react';
 import type { UseFormProps } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import { mockState as appMockState } from '@northern.tech/store/appSlice/mocks';
-import { mockState as deploymentsMockState } from '@northern.tech/store/deploymentsSlice/mocks';
-import { mockState as devicesMockState } from '@northern.tech/store/devicesSlice/mocks';
-import { mockState as monitorMockState } from '@northern.tech/store/monitorSlice/mocks';
-import { mockState as onboardingMockState } from '@northern.tech/store/onboardingSlice/mocks';
-import { mockState as organizationMockState } from '@northern.tech/store/organizationSlice/mocks';
-import { mockState as releasesMockState } from '@northern.tech/store/releasesSlice/mocks';
+import { defaultState } from '@northern.tech/store/mockState';
 import { getConfiguredStore } from '@northern.tech/store/store';
-import { mockState as usersMockState } from '@northern.tech/store/usersSlice/mocks';
 import { token as mockToken } from '@northern.tech/testing/mockData';
 import { render } from '@northern.tech/testing/setupTests';
 
 type PreloadedState = NonNullable<Parameters<typeof getConfiguredStore>[0]>['preloadedState'];
-type MockState = Required<NonNullable<PreloadedState>>;
-
-// the slice mocks are hand written fixtures that deliberately deviate from the slice types in places (e.g. `app.searchState.sort`), yet they are
-// meant to stand in for a fully populated store state - so we treat them as such to keep tests & stories consuming them type safe
-export const defaultState = {
-  app: { ...appMockState },
-  deployments: { ...deploymentsMockState },
-  devices: { ...devicesMockState },
-  monitor: { ...monitorMockState },
-  onboarding: { ...onboardingMockState },
-  organization: { ...organizationMockState },
-  releases: { ...releasesMockState },
-  users: { ...usersMockState }
-} as unknown as MockState;
 
 interface CustomRenderOptions {
   [key: string]: unknown;
@@ -68,4 +47,4 @@ export const formRenderWrapper = (ui: ReactNode, formConfig?: UseFormProps) => {
 
 export * from '@northern.tech/testing/setupTests';
 
-export { customRender as render };
+export { customRender as render, defaultState };

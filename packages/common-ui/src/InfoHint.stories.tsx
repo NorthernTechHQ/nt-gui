@@ -14,8 +14,8 @@
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router';
 
-import { defaultState as preloadedState } from '@/testUtils';
 import { BENEFITS } from '@northern.tech/store/constants';
+import { defaultState as preloadedState } from '@northern.tech/store/mockState';
 import { getConfiguredStore } from '@northern.tech/store/store';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
