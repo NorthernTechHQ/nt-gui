@@ -1,5 +1,36 @@
 ---
-## 0.46.5 - 2026-10-08
+## 0.47.0 - 2026-10-14
+
+
+
+### Breaking changes
+
+- *(store)* Let app init become product responsibility ([0641e60](https://github.com/NorthernTechHQ/nt-gui/commit/0641e608509e117f422698c56834184d73785dab)) by @mzedel
+- *(store)* Defer store configuration to dependent projects ([01e6c83](https://github.com/NorthernTechHQ/nt-gui/commit/01e6c83aa7a782e25f479602c446232ea9a4c44c)) by @mzedel
+
+### Improvements
+
+#### store
+
+- Let slice selector types only care about their known environment ([7fc71ab](https://github.com/NorthernTechHQ/nt-gui/commit/7fc71ab971edb6b1913d8a79b167a7c4863028c3)) by @mzedel
+
+### Bug fixes
+
+#### store
+
+- Use generic ui constants from utils ([64f02c2](https://github.com/NorthernTechHQ/nt-gui/commit/64f02c2e53ac53444da4cb5e55f15df365785e0a)) by @mzedel
+- Let webhook events listing rely on backend provided total count ([MEN-10207](https://northerntech.atlassian.net/browse/MEN-10207)) ([45a5b74](https://github.com/NorthernTechHQ/nt-gui/commit/45a5b749659150b351a5559bb1dc6cb1883a9b9c)) by @mzedel
+- Only count accepted devices as offline ([MEN-7008](https://northerntech.atlassian.net/browse/MEN-7008)) ([258d940](https://github.com/NorthernTechHQ/nt-gui/commit/258d940b5011f11ca27e2c5a6f6dc909bfc3c0a1)) by @mzedel
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-10207](https://northerntech.atlassian.net/browse/MEN-10207) |
+| [MEN-7008](https://northerntech.atlassian.net/browse/MEN-7008) |
+
+## @northern.tech/store-0.46.5 - 2026-10-08
 
 
 
