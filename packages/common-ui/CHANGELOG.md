@@ -1,5 +1,22 @@
 ---
-## 0.9.1 - 2026-10-06
+## 0.10.0 - 2026-10-14
+
+
+
+### New features
+
+#### common-ui
+
+- Added base settings section to ease uniform settings appearance ([MEN-10246](https://northerntech.atlassian.net/browse/MEN-10246)) ([de909a5](https://github.com/NorthernTechHQ/nt-gui/commit/de909a5a8b6b9d17d3564cf36fd2af641af8de4b)) by @mzedel
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-10246](https://northerntech.atlassian.net/browse/MEN-10246) |
+
+## @northern.tech/common-ui-0.9.1 - 2026-10-06
 
 
 
