@@ -393,6 +393,17 @@ describe('organization actions', () => {
       expect(link).toEqual('http://localhost/api/management/v1/auditlogs/logs/export?limit=20000&sort=desc');
     });
   });
+  it('should filter by actor email for users without a known id', async () => {
+    const store = mockStore({
+      ...defaultState,
+      organization: {
+        ...defaultState.organization,
+        auditlog: { ...defaultState.organization.auditlog, selectionState: { ...defaultState.organization.auditlog.selectionState, user: 'gone@example.com' } }
+      }
+    });
+    const link = await store.dispatch(getAuditLogsCsvLink()).unwrap();
+    expect(link).toEqual('http://localhost/api/management/v1/auditlogs/logs/export?limit=20000&actor_email=gone%40example.com&sort=desc');
+  });
   it('should allow initializing external device providers', async () => {
     const store = mockStore({
       ...defaultState,
