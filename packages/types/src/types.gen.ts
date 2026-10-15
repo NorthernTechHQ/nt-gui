@@ -271,6 +271,16 @@ export type AuditlogsDevice = {
 };
 
 /**
+ * The software descriptor.
+ */
+export type AuditlogsSoftware = {
+  /**
+   * The kind of the software.
+   */
+  kind: 'release' | 'manifest';
+};
+
+/**
  * Various types of objects are supported.
  * Depending on the type of object different information will be available.
  *
@@ -285,12 +295,13 @@ export type Object = {
    * The type of the object.
    *
    */
-  type: 'tenant' | 'user' | 'deployment' | 'artifact' | 'device';
+  type: 'tenant' | 'user' | 'deployment' | 'artifact' | 'device' | 'software';
   tenant?: AuditlogsTenant;
   user?: AuditlogsUser;
   deployment?: Deployment;
   artifact?: AuditlogsArtifact;
   device?: AuditlogsDevice;
+  software?: AuditlogsSoftware;
 };
 
 /**
@@ -3332,15 +3343,46 @@ export type DeviceInventoryEvent = {
 
 export type Ratelimits = {
   /**
-   * Per-request cost multiplier for device API ratelimit groups (enforced by deviceauth). Defaults to 1.0 if unset.
-   *
+   * Per-request cost multiplier for device API ratelimit groups.
    */
   weight_devices?: number;
   /**
-   * Per-request cost multiplier for management API ratelimit groups (enforced by useradm). Defaults to 1.0 if unset.
-   *
+   * Per-request cost multiplier for management API ratelimit groups.
    */
   weight_management?: number;
+};
+
+export type TenantInternal = Tenant & {
+  ratelimits?: Ratelimits;
+  /**
+   * Timestamp when user requested account cancellation.
+   */
+  cancelled_at?: string;
+  /**
+   * Suspension date for the tenant.
+   */
+  suspend_at?: string;
+  suspend_at_last_warn?: string;
+  /**
+   * Subscription type
+   */
+  subscription_type?: 'trial' | 'stripe';
+  /**
+   * Stripe subscription ID
+   */
+  subscription_id?: string;
+  /**
+   * Stripe customer ID
+   */
+  customer_id?: string;
+  /**
+   * The ID of the service provider tenant managing this tenant.
+   */
+  parent_tenant_id?: string;
+  /**
+   * Maximum number of children tenants
+   */
+  max_child_tenants?: number;
 };
 
 /**
@@ -3521,10 +3563,6 @@ export type Tenant = {
    * Whether this account is a service provider.
    */
   service_provider?: boolean;
-  /**
-   * The ID of the service provider tenant managing this tenant.
-   */
-  parent_tenant_id?: string;
   additional_info?: TenantAdditionalInfo;
   api_limits?: TenantApiLimits;
   /**
@@ -4906,7 +4944,7 @@ export type GetAuditLogsData = {
     /**
      * If present, limits the results only to logs where the object is of a given type.
      */
-    object_type?: 'tenant' | 'user' | 'deployment' | 'artifact' | 'device';
+    object_type?: 'tenant' | 'user' | 'deployment' | 'artifact' | 'device' | 'software';
     /**
      * If present, limits the results only to logs where the object is a deployment and has a given name.
      */
@@ -4985,7 +5023,7 @@ export type ExportAuditLogsData = {
     /**
      * If present, limits the results only to logs where the object is of a given type.
      */
-    object_type?: 'user' | 'deployment' | 'artifact' | 'device';
+    object_type?: 'tenant' | 'user' | 'deployment' | 'artifact' | 'device' | 'software';
     /**
      * If present, limits the results only to logs where the object is a deployment and has a given name.
      */
@@ -13845,7 +13883,7 @@ export type ListTenantsResponses = {
    *
    * Successful response.
    */
-  200: Array<Tenant>;
+  200: Array<TenantInternal>;
 };
 
 export type ListTenantsResponse = ListTenantsResponses[keyof ListTenantsResponses];
@@ -13880,7 +13918,7 @@ export type VerifyTenantTokenResponses = {
   /**
    * The token is valid. A tenant descriptor is returned.
    */
-  200: Tenant;
+  200: TenantInternal;
 };
 
 export type VerifyTenantTokenResponse = VerifyTenantTokenResponses[keyof VerifyTenantTokenResponses];
@@ -13989,7 +14027,7 @@ export type ShowTenantResponses = {
   /**
    * A tenant descriptor is returned.
    */
-  200: Tenant;
+  200: TenantInternal;
 };
 
 export type ShowTenantResponse = ShowTenantResponses[keyof ShowTenantResponses];
