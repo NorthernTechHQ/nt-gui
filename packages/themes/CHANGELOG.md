@@ -1,5 +1,14 @@
 ---
-## 0.18.0 - 2026-10-14
+## 0.18.1 - 2026-10-15
+
+
+
+### Bug fixes
+
+#### themes
+
+- Removed deprecated & moved style definitions ([47b5043](https://github.com/NorthernTechHQ/nt-gui/commit/47b5043ba08fdeaef4c860b7822a38e7d9f82825)) by @mzedel
+## @northern.tech/themes-0.18.0 - 2026-10-14
 
 
 
