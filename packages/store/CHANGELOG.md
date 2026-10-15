@@ -1,5 +1,30 @@
 ---
-## 0.47.0 - 2026-10-14
+## 0.48.0 - 2026-10-15
+
+
+
+### New features
+
+#### store
+
+- Hoist system device information retrieval to full device level to ease data reuse ([MEN-10220](https://northerntech.atlassian.net/browse/MEN-10220)) ([83d6ed6](https://github.com/NorthernTechHQ/nt-gui/commit/83d6ed6b992fa437e0313333ad4484d0cd8c405b)) by @mzedel
+
+### Bug fixes
+
+#### store
+
+- Propagate SSO modification error to show in UI ([MEN-10183](https://northerntech.atlassian.net/browse/MEN-10183)) ([ffb6463](https://github.com/NorthernTechHQ/nt-gui/commit/ffb6463e6088798e61ef2140e30bc84bf01a5305)) by @mineralsfree
+- Ensured unified software understanding ([eacdffe](https://github.com/NorthernTechHQ/nt-gui/commit/eacdffe93f65aef57230c8b294691108773c6302)) by @mzedel
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-10183](https://northerntech.atlassian.net/browse/MEN-10183) |
+| [MEN-10220](https://northerntech.atlassian.net/browse/MEN-10220) |
+
+## @northern.tech/store-0.47.0 - 2026-10-14
 
 
 
