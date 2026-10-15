@@ -44,7 +44,8 @@ import {
   deploymentsApiUrlV2,
   emptyFilter,
   headerNames,
-  inventoryApiUrlV2
+  inventoryApiUrlV2,
+  softwareIndicator
 } from '../constants';
 import type { SortOptions } from '../constants';
 import { formatReleases } from '../locationutils';
@@ -112,7 +113,7 @@ export const getArtifactInstallCount = createAppAsyncThunk(`${sliceName}/getArti
   const releaseArtifacts = [...release.artifacts];
   const artifact = releaseArtifacts[index];
   const { key, name, version } = extractSoftwareItem(artifact.artifact_provides) ?? {};
-  const attribute = `${key}${name ? `.${name}` : ''}.version`;
+  const attribute = `${key}${name ? `.${name}` : ''}${softwareIndicator}`;
   const { filterTerms } = convertDeviceListStateToFilters({
     filters: [{ ...emptyFilter, key: attribute, value: version!, scope: 'inventory' }]
   });

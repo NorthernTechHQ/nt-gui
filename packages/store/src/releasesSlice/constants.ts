@@ -14,7 +14,6 @@
 export const ARTIFACT_GENERATION_TYPE = { SINGLE_FILE: 'single_file' };
 
 export const currentArtifact = 'artifact_name';
-export const softwareIndicator = '.version';
 export const rootfsImageVersion = 'rootfs-image.version';
 export const manifestVersion = 'data-partition.mender-orchestrator-manifest.version';
 export const softwareTitleMap = {

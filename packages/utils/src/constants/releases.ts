@@ -12,3 +12,4 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 export const ALL_SOFTWARE = 'All software';
+export const softwareIndicator = '.version';
