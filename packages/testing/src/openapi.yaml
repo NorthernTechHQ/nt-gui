@@ -336,6 +336,7 @@ paths:
               - deployment
               - artifact
               - device
+              - software
         - name: object_deployment_name
           in: query
           description: If present, limits the results only to logs where the object is a deployment and has a given name.
@@ -438,10 +439,12 @@ paths:
           schema:
             type: string
             enum:
+              - tenant
               - user
               - deployment
               - artifact
               - device
+              - software
         - name: object_deployment_name
           in: query
           description: If present, limits the results only to logs where the object is a deployment and has a given name.
@@ -9236,7 +9239,7 @@ paths:
                 title: ListOfTenants
                 type: array
                 items:
-                  $ref: '#/components/schemas/Tenant'
+                  $ref: '#/components/schemas/TenantInternal'
               example:
                 - id: 507f191e810c19729de860ea
                   name: Acme
@@ -9272,11 +9275,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tenant'
+                $ref: '#/components/schemas/TenantInternal'
               example:
                 id: 507f191e810c19729de860ea
                 name: Acme
-                tenant_token: wGypZL/J5mDakDq1CjL2hCfNcF8zEYcz
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '500':
@@ -9340,7 +9342,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tenant'
+                $ref: '#/components/schemas/TenantInternal'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -14159,6 +14161,20 @@ components:
       example:
         id: e1ba5bee-c45d-11eb-887d-3fd47bdc3990
         identity_data: '{"mac_address": "2C:54:91:88:C9:E3", "sn": "1229224105105176"}'
+    AuditlogsSoftware:
+      required:
+        - kind
+      type: object
+      properties:
+        kind:
+          type: string
+          description: The kind of the software.
+          enum:
+            - release
+            - manifest
+      description: The software descriptor.
+      example:
+        kind: manifest
     Object:
       required:
         - id
@@ -14179,6 +14195,7 @@ components:
             - deployment
             - artifact
             - device
+            - software
         tenant:
           $ref: '#/components/schemas/AuditlogsTenant'
         user:
@@ -14189,6 +14206,8 @@ components:
           $ref: '#/components/schemas/AuditlogsArtifact'
         device:
           $ref: '#/components/schemas/AuditlogsDevice'
+        software:
+          $ref: '#/components/schemas/AuditlogsSoftware'
       description: |
         Various types of objects are supported.
         Depending on the type of object different information will be available.
@@ -18733,13 +18752,49 @@ components:
         weight_devices:
           type: number
           format: double
-          description: |
-            Per-request cost multiplier for device API ratelimit groups (enforced by deviceauth). Defaults to 1.0 if unset.
+          description: Per-request cost multiplier for device API ratelimit groups.
+          default: 1
         weight_management:
           type: number
           format: double
-          description: |
-            Per-request cost multiplier for management API ratelimit groups (enforced by useradm). Defaults to 1.0 if unset.
+          description: Per-request cost multiplier for management API ratelimit groups.
+          default: 1
+    TenantInternal:
+      allOf:
+        - $ref: '#/components/schemas/Tenant'
+        - type: object
+          properties:
+            ratelimits:
+              $ref: '#/components/schemas/Ratelimits'
+            cancelled_at:
+              type: string
+              format: date-time
+              description: Timestamp when user requested account cancellation.
+            suspend_at:
+              type: string
+              format: date-time
+              description: Suspension date for the tenant.
+            suspend_at_last_warn:
+              type: string
+              format: date-time
+            subscription_type:
+              type: string
+              description: Subscription type
+              enum:
+                - trial
+                - stripe
+            subscription_id:
+              type: string
+              description: Stripe subscription ID
+            customer_id:
+              type: string
+              description: Stripe customer ID
+            parent_tenant_id:
+              type: string
+              description: The ID of the service provider tenant managing this tenant.
+            max_child_tenants:
+              type: number
+              description: Maximum number of children tenants
     TenantUpdateInternal:
       type: object
       description: Update tenant information.
@@ -18970,9 +19025,6 @@ components:
         service_provider:
           type: boolean
           description: Whether this account is a service provider.
-        parent_tenant_id:
-          type: string
-          description: The ID of the service provider tenant managing this tenant.
         additional_info:
           $ref: '#/components/schemas/TenantAdditionalInfo'
         api_limits:
