@@ -12883,6 +12883,31 @@ paths:
         - ManagementJWT: []
       x-mender-plan:
         - enterprise
+  /api/management/v1/useradm/sso/endpoints:
+    get:
+      tags:
+        - User_Administration_Management API
+      operationId: List SSO endpoints
+      summary: Lists all SSO connection endpoints
+      parameters: []
+      responses:
+        '200':
+          description: List of available SSO endpoints
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SSOEndpoint'
+        '403':
+          description: |
+            Request forbidden, possibly due to feature not being available in current Mender plan.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      x-mender-plan:
+        - enterprise
   /api/management/v1/useradm/sso/sp/metadata/{id}:
     get:
       tags:
@@ -20428,6 +20453,42 @@ components:
               value:
                 - test
                 - dev
+    SSOEndpoint:
+      type: object
+      properties:
+        id:
+          description: Connection ID for SSO configuration.
+          type: string
+        saml:
+          $ref: '#/components/schemas/SSOEndpointSAML'
+        oidc:
+          $ref: '#/components/schemas/SSOEndpointOIDC'
+    SSOEndpointSAML:
+      type: object
+      properties:
+        entity_id:
+          description: The SAML entity ID of the connection.
+          type: string
+          format: url
+        acs_url:
+          description: Assertion consumer service URL.
+          type: string
+          format: url
+        start_url:
+          description: Start URL for SAML login.
+          type: string
+          format: url
+    SSOEndpointOIDC:
+      type: object
+      properties:
+        callback_url:
+          description: Assertion consumer service URL.
+          type: string
+          format: url
+        start_url:
+          description: Start URL for OIDC login.
+          type: string
+          format: url
     UserNewV2:
       required:
         - email

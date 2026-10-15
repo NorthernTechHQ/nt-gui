@@ -4548,6 +4548,41 @@ export type RoleV1 = {
   permission_sets_with_scope?: Array<PermissionSetWithScope>;
 };
 
+export type SsoEndpoint = {
+  /**
+   * Connection ID for SSO configuration.
+   */
+  id?: string;
+  saml?: SsoEndpointSaml;
+  oidc?: SsoEndpointOidc;
+};
+
+export type SsoEndpointSaml = {
+  /**
+   * The SAML entity ID of the connection.
+   */
+  entity_id?: string;
+  /**
+   * Assertion consumer service URL.
+   */
+  acs_url?: string;
+  /**
+   * Start URL for SAML login.
+   */
+  start_url?: string;
+};
+
+export type SsoEndpointOidc = {
+  /**
+   * Assertion consumer service URL.
+   */
+  callback_url?: string;
+  /**
+   * Start URL for OIDC login.
+   */
+  start_url?: string;
+};
+
 /**
  * New user descriptor.
  */
@@ -17829,6 +17864,36 @@ export type PostSamlOpenIdConnectMetadataOrUrlPointToThemResponses = {
    */
   201: unknown;
 };
+
+export type ListSsoEndpointsData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/management/v1/useradm/sso/endpoints';
+};
+
+export type ListSsoEndpointsErrors = {
+  /**
+   * Request forbidden, possibly due to feature not being available in current Mender plan.
+   *
+   */
+  403: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type ListSsoEndpointsError = ListSsoEndpointsErrors[keyof ListSsoEndpointsErrors];
+
+export type ListSsoEndpointsResponses = {
+  /**
+   * List of available SSO endpoints
+   */
+  200: SsoEndpoint;
+};
+
+export type ListSsoEndpointsResponse = ListSsoEndpointsResponses[keyof ListSsoEndpointsResponses];
 
 export type GetServiceProviderMetadataByIdData = {
   body?: never;
