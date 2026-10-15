@@ -1,5 +1,14 @@
 ---
-## 0.15.0 - 2026-10-14
+## 0.15.1 - 2026-10-15
+
+
+
+### Bug fixes
+
+#### utils
+
+- Ensured unified software understanding ([96d48d5](https://github.com/NorthernTechHQ/nt-gui/commit/96d48d5bd5f7531ed9d90e5dd7469576e730c31a)) by @mzedel
+## @northern.tech/utils-0.15.0 - 2026-10-14
 
 
 
