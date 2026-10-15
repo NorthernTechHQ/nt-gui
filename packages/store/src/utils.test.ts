@@ -296,7 +296,7 @@ describe('convertDeviceListStateToFilters function', () => {
     expect(applicableFilters).toEqual([]);
     expect(filterTerms).toEqual([
       { attribute: 'check_in_time', scope: 'system', type: '$ltne', value: offlineThreshold },
-      { attribute: 'alerts', scope: 'monitor', type: '$eq', value: true }
+      { attribute: 'alerts', scope: 'monitor', type: '$eq', value: 'true' }
     ]);
   });
 });

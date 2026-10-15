@@ -43,11 +43,6 @@ type FilterProcessor = (val: string) => FilterProcessorValue;
 
 // for some reason these functions can not be stored in the deviceConstants...
 const filterProcessors: Record<string, FilterProcessor> = {
-  [DEVICE_FILTERING_OPTIONS.$gt.key]: (val: string) => Number(val) || val,
-  [DEVICE_FILTERING_OPTIONS.$gte.key]: (val: string) => Number(val) || val,
-  [DEVICE_FILTERING_OPTIONS.$lt.key]: (val: string) => Number(val) || val,
-  [DEVICE_FILTERING_OPTIONS.$lte.key]: (val: string) => Number(val) || val,
-  [DEVICE_FILTERING_OPTIONS.$ltne.key]: (val: string) => Number(val) || val,
   [DEVICE_FILTERING_OPTIONS.$in.key]: (val: string) => ('' + val).split(',').map(i => i.trim()),
   [DEVICE_FILTERING_OPTIONS.$nin.key]: (val: string) => ('' + val).split(',').map(i => i.trim()),
   [DEVICE_FILTERING_OPTIONS.$exists.key]: yes,
@@ -71,7 +66,7 @@ export const mapFiltersToTerms = (filters: DeviceFilter[]): FilterTerm[] =>
     scope: filter.scope,
     attribute: filter.key,
     type: filterAliases[filter.operator]?.alias || filter.operator,
-    value: Object.hasOwn(filterProcessors, filter.operator) ? filterProcessors[filter.operator](filter.value as string) : filter.value
+    value: Object.hasOwn(filterProcessors, filter.operator) ? filterProcessors[filter.operator](filter.value as string) : '' + filter.value
   }));
 export const mapTermsToFilters = (terms: FilterTerm[]): DeviceFilter[] =>
   terms.map(term => {
