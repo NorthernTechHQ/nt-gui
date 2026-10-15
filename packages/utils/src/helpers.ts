@@ -18,7 +18,7 @@ import type { DurationUnitType } from 'dayjs/plugin/duration.js';
 import utc from 'dayjs/plugin/utc.js';
 import Cookies from 'universal-cookie';
 
-import { DARK_MODE } from './constants';
+import { DARK_MODE, softwareIndicator } from './constants';
 
 dayjs.extend(durationPlugin);
 dayjs.extend(utc);
@@ -352,7 +352,7 @@ interface SoftwareInformation {
 
 export const extractSoftware = (attributes: DeviceAttributes = {}) => {
   const softwareKeys = Object.keys(attributes).reduce<string[]>((accu, item) => {
-    if (item.endsWith('.version')) {
+    if (item.endsWith(softwareIndicator)) {
       accu.push(item.substring(0, item.lastIndexOf('.')));
     }
     return accu;
