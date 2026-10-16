@@ -64,6 +64,7 @@ export const useSession = ({ onClose, onHealthCheckFailed, onMessageReceived, on
   }, []);
 
   const close = useCallback((): void => {
+    clearTimeout(healthcheckTimeout.current);
     if (!socketRef.current || socketRef.current?.readyState !== WebSocket.OPEN) {
       return;
     }
@@ -131,7 +132,6 @@ export const useSession = ({ onClose, onHealthCheckFailed, onMessageReceived, on
     (error: Event): void => {
       onNotify(`WebSocket error: ${(error as ErrorEvent).message || 'Unknown error'}`);
       close();
-      clearTimeout(healthcheckTimeout.current);
     },
     [close, onNotify]
   );
