@@ -11,12 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { accordionClasses } from '@mui/material/Accordion';
-import { buttonClasses } from '@mui/material/Button';
+import type { ThemeOptions } from '@mui/material';
+import { common, grey as muiGrey } from '@mui/material/colors';
 import { formLabelClasses } from '@mui/material/FormLabel';
 import { iconButtonClasses } from '@mui/material/IconButton';
 
-import { palette as commonPalette, overrides, typography } from './common';
+import { listItemStyles, overrides, palette as commonPalette, typography } from './common';
 
 const grey = {
   '900': '#969696',
@@ -51,9 +51,16 @@ const blue = {
   '700': '#1D71D3'
 };
 
+const info = {
+  main: muiGrey[400],
+  dark: muiGrey[700],
+  light: muiGrey[200],
+  contrastText: common.black
+};
+
 const palette = {
   ...commonPalette,
-  mode: 'light',
+  mode: 'light' as const,
   grey,
   blue,
   green,
@@ -62,8 +69,9 @@ const palette = {
   greySecondary: {
     '600': '#616161'
   },
+  info,
+  neutral: info,
   background: {
-    ...commonPalette.background,
     light: '#fdfdfd',
     lightgrey: grey[400],
     default: '#fff',
@@ -76,7 +84,6 @@ const palette = {
     main: '#fff'
   },
   tooltip: {
-    ...commonPalette.tooltip,
     text: grey[50]
   },
   text: {
@@ -94,7 +101,7 @@ const palette = {
   }
 };
 
-export const light = {
+export const light: ThemeOptions = {
   palette,
   typography,
   components: {
@@ -113,30 +120,6 @@ export const light = {
         }
       }
     },
-    MuiAccordion: {
-      ...overrides.MuiAccordion,
-      styleOverrides: {
-        root: {
-          ...overrides.MuiAccordion.styleOverrides.root,
-          [`&.${accordionClasses.expanded}`]: {
-            ...overrides.MuiAccordion.styleOverrides.root[`&.${accordionClasses.expanded}`]
-          }
-        }
-      }
-    },
-    MuiButton: {
-      ...overrides.MuiButton,
-      styleOverrides: {
-        ...overrides.MuiButton.styleOverrides,
-        root: {
-          ...overrides.MuiButton.styleOverrides.root,
-          [`&.${buttonClasses.text}`]: {
-            ...overrides.MuiButton.styleOverrides.root[`&.${buttonClasses.text}`],
-            color: palette.text.primary
-          }
-        }
-      }
-    },
     MuiFormLabel: {
       styleOverrides: {
         root: {
@@ -148,21 +131,16 @@ export const light = {
       }
     },
     MuiIconButton: {
-      ...overrides.MuiIconButton,
       styleOverrides: {
-        ...overrides.MuiIconButton.styleOverrides,
         root: {
-          ...overrides.MuiIconButton.styleOverrides.root,
           color: palette.text.hint
         }
       }
     },
     MuiListItem: {
-      ...overrides.MuiListItem,
       styleOverrides: {
-        ...overrides.MuiListItem.styleOverrides,
         root: {
-          ...overrides.MuiListItem.styleOverrides.root,
+          ...listItemStyles,
           [`&.active`]: {
             backgroundColor: palette.background.default
           },
@@ -174,11 +152,10 @@ export const light = {
       }
     },
     MuiListItemText: {
-      ...overrides.MuiListItemText,
       styleOverrides: {
-        ...overrides.MuiListItemText.styleOverrides,
         root: {
-          ...overrides.MuiListItemText.styleOverrides.root,
+          marginTop: 0,
+          marginBottom: 0,
           color: palette.text.primary
         }
       }
@@ -196,7 +173,6 @@ export const light = {
     MuiDialogTitle: {
       styleOverrides: {
         root: {
-          ...overrides.MuiDialogTitle.styleOverrides.root,
           [`.${iconButtonClasses.root}`]: {
             color: palette.grey[450]
           }

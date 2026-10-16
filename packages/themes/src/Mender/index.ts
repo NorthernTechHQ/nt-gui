@@ -13,7 +13,6 @@
 //    limitations under the License.
 
 // to trigger types import
-export type { DummyType } from './mui';
-export { chartColorPalette } from '../Mender/common';
+export type { DummyType } from '../common';
 export { dark } from './dark';
 export { light } from './light';
