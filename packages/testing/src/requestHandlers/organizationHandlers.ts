@@ -12,10 +12,10 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import { auditLogsApiUrl, headerNames, iotManagerBaseURL, ssoIdpApiUrlv1, tenantadmApiUrlv2 } from '@northern.tech/utils/constants';
+import { auditLogsApiUrl, headerNames, iotManagerBaseURL, ssoEndpointsApiUrlv1, ssoIdpApiUrlv1, tenantadmApiUrlv2 } from '@northern.tech/utils/constants';
 import { HttpResponse, http } from 'msw';
 
-import { mockApiResponses, tenants, webhookEvents } from '../mockData';
+import { mockApiResponses, ssoEndpoint, tenants, webhookEvents } from '../mockData';
 import { validated } from './validation';
 
 const PLANS = {
@@ -311,5 +311,6 @@ export const organizationHandlers = [
     `${ssoIdpApiUrlv1}/:configId`,
     validated(({ params: { configId } }) => new HttpResponse(null, { status: configId ? 200 : 551 }))
   ),
-  http.delete(`${ssoIdpApiUrlv1}/:configId`, ({ params: { configId } }) => new HttpResponse(null, { status: configId ? 200 : 552 }))
+  http.delete(`${ssoIdpApiUrlv1}/:configId`, ({ params: { configId } }) => new HttpResponse(null, { status: configId ? 200 : 552 })),
+  http.get(ssoEndpointsApiUrlv1, () => HttpResponse.json(ssoEndpoint))
 ];
