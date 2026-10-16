@@ -29,9 +29,9 @@ export const SSO_TYPES = {
     contentType: 'application/samlmetadata+xml',
     getStartUrl: getSamlStartUrl,
     configDetails: [
-      { key: 'entityID', label: 'Entity ID', getValue: id => `${window.location.origin}${useradmApiUrl}/sso/sp/metadata/${id}` },
-      { key: 'acs', label: 'ACS URL', getValue: id => `${window.location.origin}${useradmApiUrl}/auth/sso/${id}/acs` },
-      { key: 'startURL', label: 'Start URL', getValue: getSamlStartUrl }
+      { key: 'entity_id', label: 'Entity ID' },
+      { key: 'acs_url', label: 'ACS URL' },
+      { key: 'start_url', label: 'Start URL' }
     ]
   },
   oidc: {
@@ -42,7 +42,10 @@ export const SSO_TYPES = {
     editorLanguage: JSON_METADATA_FORMAT,
     contentType: 'application/json',
     getStartUrl: getOidcStartUrl,
-    configDetails: [{ key: 'startURL', label: 'Start Url', getValue: getOidcStartUrl }]
+    configDetails: [
+      { key: 'callback_url', label: 'Callback URL' },
+      { key: 'start_url', label: 'Start URL' }
+    ]
   }
 } as const;
 
