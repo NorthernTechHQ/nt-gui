@@ -103,7 +103,7 @@
     "@zxcvbn-ts/language-en": "^4.x",
     "copy-to-clipboard": "^4.x",
     "dayjs": "^1.x",
-    "monaco-editor": "^0.55.x",
+    "monaco-editor": "^0.57.x",
     "pluralize": "^8.x",
     "react": "^19.x",
     "react-dom": "^19.x",
