@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { AuditLog as AuditLogEvent, BillingProfile, Integration, Event as WebhookEvent } from '@northern.tech/types/MenderTypes';
+import type { AuditLog as AuditLogEvent, BillingProfile, Integration, SsoEndpoint, Event as WebhookEvent } from '@northern.tech/types/MenderTypes';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -28,6 +28,7 @@ export type OrganizationSliceType = {
   organization: Partial<Organization>;
   products?: ProductConfig;
   ssoConfigs: SSOConfig[];
+  ssoEndpoint?: SsoEndpoint;
   tenantList: TenantList;
   webhooks: Webhook;
 };
@@ -120,6 +121,9 @@ export const organizationSlice = createSlice({
     },
     receiveSsoConfigs: (state, action: PayloadAction<SSOConfig[]>) => {
       state.ssoConfigs = action.payload;
+    },
+    receiveSsoEndpoint: (state, action: PayloadAction<SsoEndpoint>) => {
+      state.ssoEndpoint = action.payload;
     },
     receiveWebhookEvents: (state, action: PayloadAction<{ total: number; value: WebhookEvent[] }>) => {
       const { value, total } = action.payload;

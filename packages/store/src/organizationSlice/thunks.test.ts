@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { defaultState } from '@/testUtils';
-import { mockApiResponses, tenants, webhookEvents } from '@northern.tech/testing/mockData';
+import { mockApiResponses, ssoEndpoint, tenants, webhookEvents } from '@northern.tech/testing/mockData';
 import type { Credentials, ProductInfo } from '@northern.tech/types/MenderTypes';
 import { TIMEOUTS } from '@northern.tech/utils/constants';
 import configureMockStore from 'redux-mock-store';
@@ -47,6 +47,7 @@ import {
   getIntegrations,
   getSsoConfigById,
   getSsoConfigs,
+  getSsoEndpoints,
   getTargetLocation,
   getTenantToken,
   getTenants,
@@ -637,6 +638,22 @@ describe('organization actions', () => {
       { type: getSsoConfigs.fulfilled.type }
     ];
     const request = store.dispatch(getSsoConfigs());
+    await expect(request).resolves.toBeTruthy();
+    await request.then(() => {
+      const storeActions = store.getActions();
+      expect(storeActions).toHaveLength(expectedActions.length);
+      expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
+    });
+  });
+  it('should allow retrieving SSO endpoints', async () => {
+    const store = mockStore({ ...defaultState });
+    expect(store.getActions()).toHaveLength(0);
+    const expectedActions = [
+      { type: getSsoEndpoints.pending.type },
+      { type: actions.receiveSsoEndpoint.type, payload: ssoEndpoint },
+      { type: getSsoEndpoints.fulfilled.type }
+    ];
+    const request = store.dispatch(getSsoEndpoints());
     await expect(request).resolves.toBeTruthy();
     await request.then(() => {
       const storeActions = store.getActions();

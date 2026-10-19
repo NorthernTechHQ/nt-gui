@@ -29,6 +29,7 @@ export const getBillingProfile = (state: OrganizationState) => state.organizatio
 export const getSubscription = (state: OrganizationState) => state.organization.organization.subscription;
 export const getCard = (state: OrganizationState) => state.organization.card;
 export const getSsoConfig = ({ organization: { ssoConfigs = [] } }: OrganizationState) => ssoConfigs[0];
+export const getSsoEndpoint = (state: OrganizationState) => state.organization.ssoEndpoint;
 export const getTenantsList = (state: OrganizationState) => state.organization.tenantList;
 export const getWebhookEvents = (state: OrganizationState) => state.organization.webhooks.events;
 export const getWebhookEventsTotal = (state: OrganizationState) => state.organization.webhooks.eventsTotal;

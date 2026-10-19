@@ -21,6 +21,7 @@ import type {
   GetAuditLogsResponse,
   GetIdpSamlOrOpenIdConnectMetadataForTheTenantResponse,
   Integration,
+  ListSsoEndpointsResponse,
   NewTenantTypeManagement as NewTenant,
   PreviewRequest,
   Product,
@@ -52,6 +53,7 @@ import {
   headerNames,
   iotManagerBaseURL,
   locations,
+  ssoEndpointsApiUrlv1,
   ssoIdpApiUrlv1,
   tenantadmApiUrlv2
 } from '../constants';
@@ -635,3 +637,10 @@ export const getSsoConfigs = createAppAsyncThunk(`${sliceName}/getSsoConfigs`, (
         .catch(err => commonErrorHandler(err, err, dispatch, ''))
     )
 );
+
+export const getSsoEndpoints = createAppAsyncThunk(`${sliceName}/getSsoEndpoints`, async (_, { dispatch }) => {
+  const { data } = await Api.get<ListSsoEndpointsResponse>(ssoEndpointsApiUrlv1).catch(err =>
+    commonErrorHandler(err, 'There was an error retrieving the SSO endpoints.', dispatch, commonErrorFallback)
+  );
+  return dispatch(actions.receiveSsoEndpoint(data));
+});

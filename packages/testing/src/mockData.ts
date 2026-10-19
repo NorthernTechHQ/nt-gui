@@ -1025,3 +1025,16 @@ export const receivedPermissionSets = permissionSets.reduce((accu, set) => {
   };
   return accu;
 }, {});
+
+export const ssoEndpoint = {
+  id: '1',
+  saml: {
+    entity_id: 'https://hosted.mender.io/api/management/v1/useradm/sso/sp/metadata/1',
+    acs_url: 'https://hosted.mender.io/api/management/v1/useradm/auth/sso/1/acs',
+    start_url: 'https://hosted.mender.io/api/management/v1/useradm/auth/sso/1/login'
+  },
+  oidc: {
+    callback_url: 'https://hosted.mender.io/api/management/v1/useradm/oidc/1/callback',
+    start_url: 'https://hosted.mender.io/api/management/v1/useradm/oidc/1/start'
+  }
+};

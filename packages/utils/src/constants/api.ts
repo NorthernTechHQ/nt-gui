@@ -35,6 +35,7 @@ export const inventoryApiUrlV2alpha1 = `${apiUrl.v2alpha1}/inventory`;
 export const iotManagerBaseURL = `${apiUrl.v1}/iot-manager`;
 export const monitorApiUrlv1 = `${apiUrl.v1}/devicemonitor`;
 export const ssoIdpApiUrlv1 = `${apiUrl.v1}/useradm/sso/idp/metadata`;
+export const ssoEndpointsApiUrlv1 = `${apiUrl.v1}/useradm/sso/endpoints`;
 export const tenantadmApiUrlv1 = `${apiUrl.v1}/tenantadm`;
 export const tenantadmApiUrlv2 = `${apiUrl.v2}/tenantadm`;
 export const useradmApiUrl = `${apiUrl.v1}/useradm`;
