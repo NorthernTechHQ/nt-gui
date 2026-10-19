@@ -1,5 +1,30 @@
 ---
-## 0.48.0 - 2026-10-15
+## 0.49.0 - 2026-10-19
+
+
+
+### New features
+
+#### store
+
+- Add sso endpoints retrieval to organization ([MEN-10183](https://northerntech.atlassian.net/browse/MEN-10183)) ([8886e03](https://github.com/NorthernTechHQ/nt-gui/commit/8886e03bf7a0d78beb80df426c5624cb4ded8b57)) by @mineralsfree
+
+### Bug fixes
+
+#### store
+
+- Removed operator dependent number handling to align w/ device submitted data ([47db1b0](https://github.com/NorthernTechHQ/nt-gui/commit/47db1b09707ef5284f1567b30b2aa228b9711fec)) by @mzedel
+- Stop health check once a terminal session was closed ([MEN-9452](https://northerntech.atlassian.net/browse/MEN-9452)) ([b49729e](https://github.com/NorthernTechHQ/nt-gui/commit/b49729e36a9d5ab68a741650f1047bdb0f315771)) by @mzedel
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-9452](https://northerntech.atlassian.net/browse/MEN-9452) |
+| [MEN-10183](https://northerntech.atlassian.net/browse/MEN-10183) |
+
+## @northern.tech/store-0.48.0 - 2026-10-15
 
 
 
