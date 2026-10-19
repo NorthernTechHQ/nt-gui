@@ -1,5 +1,28 @@
 ---
-## 0.15.1 - 2026-10-15
+## 0.15.2 - 2026-10-19
+
+
+
+### Bug fixes
+
+#### utils
+
+- Add sso endpoint url const ([MEN-10183](https://northerntech.atlassian.net/browse/MEN-10183)) ([be415d9](https://github.com/NorthernTechHQ/nt-gui/commit/be415d93318d3b7fa48f386ef7e601d22d3befd0)) by @mineralsfree
+
+### Dependency updates
+
+#### deps
+
+- Update development-dependencies ([3a9c99a](https://github.com/NorthernTechHQ/nt-gui/commit/3a9c99a31e2ed28685662f20e24603eead2bb6d9)) by @renovate-ring[bot]
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-10183](https://northerntech.atlassian.net/browse/MEN-10183) |
+
+## @northern.tech/utils-0.15.1 - 2026-10-15
 
 
 
