@@ -17874,6 +17874,10 @@ export type ListSsoEndpointsData = {
 
 export type ListSsoEndpointsErrors = {
   /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
    * Request forbidden, possibly due to feature not being available in current Mender plan.
    *
    */
