@@ -11,9 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { makeStyles } from 'tss-react/mui';
 
@@ -30,6 +28,7 @@ import {
   getTenantCapabilities,
   getUserCapabilities
 } from '@northern.tech/store/selectors';
+import { useAppDispatch, useAppSelector } from '@northern.tech/store/store';
 import { getAuditLogs, getAuditLogsCsvLink, getUserList, setAuditlogsState } from '@northern.tech/store/thunks';
 import { SORTING_OPTIONS, TIMEOUTS } from '@northern.tech/utils/constants';
 import { createDownload, getISOStringBoundaries } from '@northern.tech/utils/helpers';
@@ -72,20 +71,20 @@ export const AuditLogs = () => {
   const isInitialized = useRef();
   const [locationParams, setLocationParams] = useLocationParams('auditlogs', { today, tonight, defaults: locationDefaults });
   const { classes } = useStyles();
-  const dispatch = useDispatch();
-  const events = useSelector(getAuditLog);
-  const eventItem = useSelector(getAuditLogEntry);
-  const groups = useSelector(getGroupNames);
-  const selectionState = useSelector(getAuditLogSelectionState);
-  const userCapabilities = useSelector(getUserCapabilities);
-  const tenantCapabilities = useSelector(getTenantCapabilities);
-  const users = useSelector(state => state.users.byId);
+  const dispatch = useAppDispatch();
+  const events = useAppSelector(getAuditLog);
+  const eventItem = useAppSelector(getAuditLogEntry);
+  const groups = useAppSelector(getGroupNames);
+  const selectionState = useAppSelector(getAuditLogSelectionState);
+  const userCapabilities = useAppSelector(getUserCapabilities);
+  const tenantCapabilities = useAppSelector(getTenantCapabilities);
+  const users = useAppSelector(state => state.users.byId);
   const { canReadUsers } = userCapabilities;
   const { hasAuditlogs } = tenantCapabilities;
   const [detailsReset, setDetailsReset] = useState('');
   const [dirtyField, setDirtyField] = useState('');
-  const { token } = useSelector(getCurrentSession);
-  const isSP = useSelector(getIsServiceProvider);
+  const { token } = useAppSelector(getCurrentSession) as UserSession;
+  const isSP = useAppSelector(getIsServiceProvider);
   const { detail, perPage, endDate, user, sort, startDate, type, total, isLoading } = selectionState;
   const [auditLogsTypes, setAuditLogsTypes] = useState(AUDIT_LOGS_TYPES);
   const timers = useRef({ init: null, detailsReset: null, dirtyField: null });
