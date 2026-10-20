@@ -12897,6 +12897,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SSOEndpoint'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         '403':
           description: |
             Request forbidden, possibly due to feature not being available in current Mender plan.
