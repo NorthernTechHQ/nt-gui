@@ -1,5 +1,28 @@
 ---
-## 0.18.5 - 2026-10-14
+## 0.19.0 - 2026-10-20
+
+
+
+### New features
+
+#### testing
+
+- Add sso endpoints mock handler ([MEN-10183](https://northerntech.atlassian.net/browse/MEN-10183)) ([4a34787](https://github.com/NorthernTechHQ/nt-gui/commit/4a3478784d7b0d84c0cf87c67e3b77c64b751f99)) by @mineralsfree
+
+### Bug fixes
+
+#### testing
+
+- Openapi spec update ([934a35e](https://github.com/NorthernTechHQ/nt-gui/commit/934a35e5a1d151d12739b07958c28a9b856b51fb)) by @mender-test-bot
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-10183](https://northerntech.atlassian.net/browse/MEN-10183) |
+
+## @northern.tech/testing-0.18.5 - 2026-10-14
 
 
 
