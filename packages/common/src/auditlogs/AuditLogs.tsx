@@ -43,18 +43,7 @@ import EventDetailsDrawer from './EventDetailsDrawer';
 import EventDetailsDrawerContentMap from './EventDetailsDrawerContentMap';
 import EventDetailsFallbackComponent from './eventdetails/FallbackComponent';
 
-const useStyles = makeStyles()(theme => ({
-  filters: {
-    backgroundColor: theme.palette.background.lightgrey,
-    padding: '0px 25px 5px',
-    display: 'grid',
-    gridTemplateColumns: '400px 250px 250px 1fr',
-    gridColumnGap: theme.spacing(2),
-    gridRowGap: theme.spacing(2)
-  },
-  filterReset: { alignSelf: 'flex-end', marginBottom: 5 },
-  timeframe: { gridColumnStart: 2, gridColumnEnd: 4, marginLeft: 7.5 },
-  typeDetails: { marginRight: 15, marginTop: theme.spacing(2) },
+const useStyles = makeStyles()(() => ({
   upgradeNote: { marginTop: '5vh', placeSelf: 'center' }
 }));
 
@@ -229,7 +218,6 @@ export const AuditLogs = () => {
   return (
     <AuditlogsView
       createCsvDownload={createCsvDownload}
-      hasAuditlogs={hasAuditlogs}
       total={total}
       csvLoading={csvLoading}
       infoHintComponent={<EnterpriseNotification id={BENEFITS.auditlog.id} />}
