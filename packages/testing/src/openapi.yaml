@@ -1796,7 +1796,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewDeploymentTypeManagement'
+              $ref: '#/components/schemas/NewDeployment'
         description: New deployment that needs to be created.
         required: true
       responses:
@@ -1920,8 +1920,18 @@ paths:
       requestBody:
         content:
           application/json:
+            example:
+              name: production
+              artifact_name: Application 0.0.1
+              phases:
+                - batch_size: 5
+                  start_ts: '2020-07-06T15:04:49.114046203+02:00'
+                - batch_size: 15
+                  start_ts: '2020-07-06T16:04:49.114046203+02:00'
+                - start_ts: '2020-07-06T17:04:49.114046203+02:00'
+              retries: 3
             schema:
-              $ref: '#/components/schemas/NewDeploymentForGroup'
+              $ref: '#/components/schemas/NewDeploymentSpec'
         description: New deployment that needs to be created.
         required: true
       responses:
@@ -3894,6 +3904,9 @@ paths:
         Devices for which there are no compatible artifacts to be installed are considered finished successfully as well as receive the status of `noartifact`.
         If there are no artifacts for the deployment, the deployment will not be created and the 422 Unprocessable Entity status code will be returned.
         Dynamic deployments feature is available only to Enterprise users.
+
+        In case of dynamic groups that are empty at the time the deployment is created
+        we do not allow more than one phase.
       operationId: Create Deployment
       requestBody:
         content:
@@ -14149,7 +14162,7 @@ components:
       description: User descriptor.
       example:
         email: user@acme.com
-    Deployment:
+    AuditlogsDeployment:
       required:
         - artifact_name
         - name
@@ -14228,7 +14241,7 @@ components:
         user:
           $ref: '#/components/schemas/AuditlogsUser'
         deployment:
-          $ref: '#/components/schemas/Deployment'
+          $ref: '#/components/schemas/AuditlogsDeployment'
         artifact:
           $ref: '#/components/schemas/AuditlogsArtifact'
         device:
@@ -15382,50 +15395,7 @@ components:
         delta:
           $ref: '#/components/schemas/DeltaConfiguration'
       type: object
-    NewDeploymentSpec:
-      description: Properties common to all new deployment requests.
-      properties:
-        name:
-          description: Name of the deployment
-          type: string
-        artifact_name:
-          description: Name of the artifact to deploy
-          type: string
-        force_installation:
-          description: Force the installation of the Artifact disabling the `already-installed` check.
-          type: boolean
-        phases:
-          description: The phases definition.
-          maxItems: 100
-          items:
-            $ref: '#/components/schemas/NewDeploymentPhaseTypeManagement'
-          type: array
-          x-mender-plan:
-            - professional
-            - enterprise
-        uniform_phases:
-          $ref: '#/components/schemas/DeploymentUniformPhase'
-        retries:
-          description: The number of times a device can retry the deployment in case of failure, defaults to 0
-          type: integer
-        update_control_map:
-          additionalProperties: true
-          description: |
-            A valid JSON object defining the update control map.
-            *NOTE*: Available only in the Enterprise plan.
-          type: object
-          x-mender-plan:
-            - enterprise
-        autogenerate_delta:
-          default: false
-          description: |
-            The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
-          type: boolean
-      required:
-        - artifact_name
-        - name
-      type: object
-    NewDeploymentTypeManagement:
+    NewDeployment:
       example:
         name: production
         artifact_name: Application 0.0.1
@@ -15452,19 +15422,6 @@ components:
                 When set, the deployment will be created for all
                 currently accepted devices.
               type: boolean
-    NewDeploymentForGroup:
-      example:
-        name: production
-        artifact_name: Application 0.0.1
-        phases:
-          - batch_size: 5
-            start_ts: '2020-07-06T15:04:49.114046203+02:00'
-          - batch_size: 15
-            start_ts: '2020-07-06T16:04:49.114046203+02:00'
-          - start_ts: '2020-07-06T17:04:49.114046203+02:00'
-        retries: 3
-      allOf:
-        - $ref: '#/components/schemas/NewDeploymentSpec'
     DeploymentV1:
       example:
         created: '2016-02-11T13:03:17.063493443Z'
@@ -15598,49 +15555,6 @@ components:
         - id
         - name
         - status
-      type: object
-    NewDeploymentPhaseTypeManagement:
-      description: |
-        An array of deployments phases. Phases define a starting point and
-        a relative batch size of devices to which the deployment applies.
-
-        A single phase allows scheduling a deployment to start at a specific
-        time.
-
-        Multiple phases split the deployment into smaller batches of devices
-        at the time giving a higher level of control of the rate devices are
-        updated.
-
-        *NOTE*: Professional plan is only allowed to specify a single phase to
-        schedule deployments, this feature is not available for Starter plan.
-      example:
-        start_ts: '2099-07-07T21:10:17.063493443Z'
-        batch_size: 5
-      properties:
-        batch_size:
-          description: |
-            Percentage of devices to update in the phase.
-            This field is optional for the last phase.
-            The last phase will contain the rest of the devices.
-            Note that if the percentage of devices entered does not
-            add up to a whole number of devices it is rounded down,
-            and in the case it is rounded down to zero, a 400 error
-            will be returned. This is mostly a concern when the deployment
-            consists of a low number of devices, like say 5 percent of 11
-            devices will round to zero, and an error is returned by the server.
-          type: integer
-        batch_size_devices:
-          description: |
-            Exact number of devices to update in this phase.
-            This field is optional for the last phase, which will contain the remaining devices.
-            Note that you can only specify either `batch_size` or `batch_size_devices`, not both for all phases in a deployment.
-          type: integer
-        start_ts:
-          description: |
-            Start date of a phase.
-            Can be skipped for the first phase of a new deployment definition ('start immediately').
-          format: date-time
-          type: string
       type: object
     DeviceDeploymentV1:
       example:
@@ -16379,6 +16293,93 @@ components:
         - type
         - value
       type: object
+    NewDeploymentPhaseTypeManagement:
+      description: |
+        An array of deployments phases. Phases define a starting point and
+        a relative batch size of devices to which the deployment applies.
+
+        A single phase allows scheduling a deployment to start at a specific
+        time. Note that we support only one phase for the future scheduled deployments
+        in case of empty dynamic groups at the deployments creation.
+
+        Multiple phases split the deployment into smaller batches of devices
+        at the time giving a higher level of control of the rate devices are
+        updated.
+
+        *NOTE*: Professional plan is only allowed to specify a single phase to
+        schedule deployments, this feature is not available for Starter plan.
+      example:
+        start_ts: '2099-07-07T21:10:17.063493443Z'
+        batch_size: 5
+      properties:
+        batch_size:
+          description: |
+            Percentage of devices to update in the phase.
+            This field is optional for the last phase.
+            The last phase will contain the rest of the devices.
+            Note that if the percentage of devices entered does not
+            add up to a whole number of devices it is rounded down,
+            and in the case it is rounded down to zero, a 400 error
+            will be returned. This is mostly a concern when the deployment
+            consists of a low number of devices, like say 5 percent of 11
+            devices will round to zero, and an error is returned by the server.
+          type: integer
+        batch_size_devices:
+          description: |
+            Exact number of devices to update in this phase.
+            This field is optional for the last phase, which will contain the remaining devices.
+            Note that you can only specify either `batch_size` or `batch_size_devices`, not both for all phases in a deployment.
+          type: integer
+        start_ts:
+          description: |
+            Start date of a phase.
+            Can be skipped for the first phase of a new deployment definition ('start immediately').
+          format: date-time
+          type: string
+      type: object
+    NewDeploymentSpec:
+      description: Properties common to all new deployment requests.
+      properties:
+        name:
+          description: Name of the deployment
+          type: string
+        artifact_name:
+          description: Name of the artifact to deploy
+          type: string
+        force_installation:
+          description: Force the installation of the Artifact disabling the `already-installed` check.
+          type: boolean
+        phases:
+          description: The phases definition.
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/NewDeploymentPhaseTypeManagement'
+          type: array
+          x-mender-plan:
+            - professional
+            - enterprise
+        uniform_phases:
+          $ref: '#/components/schemas/DeploymentUniformPhase'
+        retries:
+          description: The number of times a device can retry the deployment in case of failure, defaults to 0
+          type: integer
+        update_control_map:
+          additionalProperties: true
+          description: |
+            A valid JSON object defining the update control map.
+            *NOTE*: Available only in the Enterprise plan.
+          type: object
+          x-mender-plan:
+            - enterprise
+        autogenerate_delta:
+          default: false
+          description: |
+            The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
+          type: boolean
+      required:
+        - artifact_name
+        - name
+      type: object
     DeploymentDeviceStatusGet:
       enum:
         - pause
@@ -17087,47 +17088,19 @@ components:
             start_ts: '2020-07-06T18:04:49.114046203+02:00'
           - start_ts: '2020-07-06T19:04:49.114046203+02:00'
         retries: 3
-      properties:
-        name:
-          type: string
-        artifact_name:
-          type: string
-        filter_id:
-          description: ID of a filter from inventory service.
-          type: string
-        phases:
-          description: |
-            Phased rollout feature is available only to Enterprise users.
-          items:
-            $ref: '#/components/schemas/NewDeploymentPhaseTypeManagement'
-          type: array
-        uniform_phases:
-          $ref: '#/components/schemas/DeploymentUniformPhase'
-        retries:
-          description: The number of times a device can retry the deployment in case of failure, defaults to 0
-          type: integer
-        max_devices:
-          description: |
-            max_devices denotes a limit on a number of completed deployments (failed or successful) above which the dynamic deployment will be finished
-          type: integer
-        update_control_map:
-          additionalProperties: true
-          description: |
-            A valid JSON object defining the update control map.
-            *NOTE*: Available only in the Enterprise plan.
-          type: object
-          x-mender-plan:
-            - enterprise
-        autogenerate_delta:
-          default: false
-          description: |
-            The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
-          type: boolean
-      required:
-        - artifact_name
-        - filter_id
-        - name
-      type: object
+      allOf:
+        - $ref: '#/components/schemas/NewDeploymentSpec'
+        - type: object
+          properties:
+            filter_id:
+              description: ID of a filter from inventory service.
+              type: string
+            max_devices:
+              description: |
+                max_devices denotes a limit on a number of completed deployments (failed or successful) above which the dynamic deployment will be finished
+              type: integer
+          required:
+            - filter_id
     ReleasesDeleteError:
       description: Releases used by active deployment.
       example:
