@@ -153,16 +153,14 @@ export const deploymentHandlers = [
     }
     return new HttpResponse(JSON.stringify({}), { headers: { location: `find/me/here/${createdDeployment.id}` } });
   }),
-  http.post(
-    `${deploymentsApiUrlV2}/deployments`,
-    validated(async ({ request }) => {
-      const { filter_id, devices = [], uniform_phases = [] } = await request.json();
-      if (!filter_id || !!devices.length || !!uniform_phases.length) {
-        return new HttpResponse(JSON.stringify({}), { status: 525 });
-      }
-      return new HttpResponse(JSON.stringify({}), { headers: { location: `find/me/here/${createdDeployment.id}` } });
-    })
-  ),
+  // TODO: restore validation once ref expansion is handled in combination with ajv
+  http.post(`${deploymentsApiUrlV2}/deployments`, async ({ request }) => {
+    const { filter_id, devices = [], uniform_phases = [] } = await request.json();
+    if (!filter_id || !!devices.length || !!uniform_phases.length) {
+      return new HttpResponse(JSON.stringify({}), { status: 525 });
+    }
+    return new HttpResponse(JSON.stringify({}), { headers: { location: `find/me/here/${createdDeployment.id}` } });
+  }),
   http.post(
     `${deploymentsApiUrl}/deployments/group/:deploymentGroup`,
     validated(async ({ params: { deploymentGroup }, request }) => {
