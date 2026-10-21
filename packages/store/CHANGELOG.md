@@ -1,5 +1,22 @@
 ---
-## 0.49.0 - 2026-10-19
+## 0.49.1 - 2026-10-21
+
+
+
+### Bug fixes
+
+#### store
+
+- Allowed forced deployments for dynamic groups to align w/ backend ([ME-777](https://northerntech.atlassian.net/browse/ME-777)) ([be6de15](https://github.com/NorthernTechHQ/nt-gui/commit/be6de1592dff8cc609d9dd8ea6994f4874ab129c)) by @mzedel
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [ME-777](https://northerntech.atlassian.net/browse/ME-777) |
+
+## @northern.tech/store-0.49.0 - 2026-10-19
 
 
 
@@ -15,6 +32,12 @@
 
 - Removed operator dependent number handling to align w/ device submitted data ([47db1b0](https://github.com/NorthernTechHQ/nt-gui/commit/47db1b09707ef5284f1567b30b2aa228b9711fec)) by @mzedel
 - Stop health check once a terminal session was closed ([MEN-9452](https://northerntech.atlassian.net/browse/MEN-9452)) ([b49729e](https://github.com/NorthernTechHQ/nt-gui/commit/b49729e36a9d5ab68a741650f1047bdb0f315771)) by @mzedel
+
+### Dependency updates
+
+#### deps
+
+- Update development-dependencies ([3a9c99a](https://github.com/NorthernTechHQ/nt-gui/commit/3a9c99a31e2ed28685662f20e24603eead2bb6d9)) by @renovate-ring[bot]
 
 ---
 ### All tickets resolved in this release
