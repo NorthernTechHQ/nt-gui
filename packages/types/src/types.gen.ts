@@ -244,7 +244,7 @@ export type AuditlogsUser = {
 /**
  * The deployment descriptor.
  */
-export type Deployment = {
+export type AuditlogsDeployment = {
   name: string;
   artifact_name: string;
 };
@@ -298,7 +298,7 @@ export type Object = {
   type: 'tenant' | 'user' | 'deployment' | 'artifact' | 'device' | 'software';
   tenant?: AuditlogsTenant;
   user?: AuditlogsUser;
-  deployment?: Deployment;
+  deployment?: AuditlogsDeployment;
   artifact?: AuditlogsArtifact;
   device?: AuditlogsDevice;
   software?: AuditlogsSoftware;
@@ -1007,47 +1007,7 @@ export type ConfigurationTenant = {
   delta?: DeltaConfiguration;
 };
 
-/**
- * Properties common to all new deployment requests.
- */
-export type NewDeploymentSpec = {
-  /**
-   * Name of the deployment
-   */
-  name: string;
-  /**
-   * Name of the artifact to deploy
-   */
-  artifact_name: string;
-  /**
-   * Force the installation of the Artifact disabling the `already-installed` check.
-   */
-  force_installation?: boolean;
-  /**
-   * The phases definition.
-   */
-  phases?: Array<NewDeploymentPhaseTypeManagement>;
-  uniform_phases?: DeploymentUniformPhase;
-  /**
-   * The number of times a device can retry the deployment in case of failure, defaults to 0
-   */
-  retries?: number;
-  /**
-   * A valid JSON object defining the update control map.
-   * *NOTE*: Available only in the Enterprise plan.
-   *
-   */
-  update_control_map?: {
-    [key: string]: unknown;
-  };
-  /**
-   * The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
-   *
-   */
-  autogenerate_delta?: boolean;
-};
-
-export type NewDeploymentTypeManagement = NewDeploymentSpec & {
+export type NewDeployment = NewDeploymentSpec & {
   /**
    * An array of devices' identifiers.
    */
@@ -1059,8 +1019,6 @@ export type NewDeploymentTypeManagement = NewDeploymentSpec & {
    */
   all_devices?: boolean;
 };
-
-export type NewDeploymentForGroup = NewDeploymentSpec;
 
 export type DeploymentV1 = {
   /**
@@ -1162,50 +1120,6 @@ export type DeploymentV1 = {
   autogenerate_delta?: boolean;
   statistics?: DeploymentStatistics;
   filter?: FilterV1;
-};
-
-/**
- * An array of deployments phases. Phases define a starting point and
- * a relative batch size of devices to which the deployment applies.
- *
- * A single phase allows scheduling a deployment to start at a specific
- * time.
- *
- * Multiple phases split the deployment into smaller batches of devices
- * at the time giving a higher level of control of the rate devices are
- * updated.
- *
- * *NOTE*: Professional plan is only allowed to specify a single phase to
- * schedule deployments, this feature is not available for Starter plan.
- *
- */
-export type NewDeploymentPhaseTypeManagement = {
-  /**
-   * Percentage of devices to update in the phase.
-   * This field is optional for the last phase.
-   * The last phase will contain the rest of the devices.
-   * Note that if the percentage of devices entered does not
-   * add up to a whole number of devices it is rounded down,
-   * and in the case it is rounded down to zero, a 400 error
-   * will be returned. This is mostly a concern when the deployment
-   * consists of a low number of devices, like say 5 percent of 11
-   * devices will round to zero, and an error is returned by the server.
-   *
-   */
-  batch_size?: number;
-  /**
-   * Exact number of devices to update in this phase.
-   * This field is optional for the last phase, which will contain the remaining devices.
-   * Note that you can only specify either `batch_size` or `batch_size_devices`, not both for all phases in a deployment.
-   *
-   */
-  batch_size_devices?: number;
-  /**
-   * Start date of a phase.
-   * Can be skipped for the first phase of a new deployment definition ('start immediately').
-   *
-   */
-  start_ts?: string;
 };
 
 export type DeviceDeploymentV1 = {
@@ -1671,6 +1585,91 @@ export type AttributeFilterPredicate = {
   value: string | number | Array<string> | Array<number>;
 };
 
+/**
+ * An array of deployments phases. Phases define a starting point and
+ * a relative batch size of devices to which the deployment applies.
+ *
+ * A single phase allows scheduling a deployment to start at a specific
+ * time. Note that we support only one phase for the future scheduled deployments
+ * in case of empty dynamic groups at the deployments creation.
+ *
+ * Multiple phases split the deployment into smaller batches of devices
+ * at the time giving a higher level of control of the rate devices are
+ * updated.
+ *
+ * *NOTE*: Professional plan is only allowed to specify a single phase to
+ * schedule deployments, this feature is not available for Starter plan.
+ *
+ */
+export type NewDeploymentPhaseTypeManagement = {
+  /**
+   * Percentage of devices to update in the phase.
+   * This field is optional for the last phase.
+   * The last phase will contain the rest of the devices.
+   * Note that if the percentage of devices entered does not
+   * add up to a whole number of devices it is rounded down,
+   * and in the case it is rounded down to zero, a 400 error
+   * will be returned. This is mostly a concern when the deployment
+   * consists of a low number of devices, like say 5 percent of 11
+   * devices will round to zero, and an error is returned by the server.
+   *
+   */
+  batch_size?: number;
+  /**
+   * Exact number of devices to update in this phase.
+   * This field is optional for the last phase, which will contain the remaining devices.
+   * Note that you can only specify either `batch_size` or `batch_size_devices`, not both for all phases in a deployment.
+   *
+   */
+  batch_size_devices?: number;
+  /**
+   * Start date of a phase.
+   * Can be skipped for the first phase of a new deployment definition ('start immediately').
+   *
+   */
+  start_ts?: string;
+};
+
+/**
+ * Properties common to all new deployment requests.
+ */
+export type NewDeploymentSpec = {
+  /**
+   * Name of the deployment
+   */
+  name: string;
+  /**
+   * Name of the artifact to deploy
+   */
+  artifact_name: string;
+  /**
+   * Force the installation of the Artifact disabling the `already-installed` check.
+   */
+  force_installation?: boolean;
+  /**
+   * The phases definition.
+   */
+  phases?: Array<NewDeploymentPhaseTypeManagement>;
+  uniform_phases?: DeploymentUniformPhase;
+  /**
+   * The number of times a device can retry the deployment in case of failure, defaults to 0
+   */
+  retries?: number;
+  /**
+   * A valid JSON object defining the update control map.
+   * *NOTE*: Available only in the Enterprise plan.
+   *
+   */
+  update_control_map?: {
+    [key: string]: unknown;
+  };
+  /**
+   * The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
+   *
+   */
+  autogenerate_delta?: boolean;
+};
+
 export const DeploymentDeviceStatusGet = {
   PAUSE: 'pause',
   ACTIVE: 'active',
@@ -2126,41 +2125,16 @@ export type DeploymentV2 = {
   statistics?: DeploymentStatistics;
 };
 
-export type NewDeploymentV2TypeManagement = {
-  name: string;
-  artifact_name: string;
+export type NewDeploymentV2TypeManagement = NewDeploymentSpec & {
   /**
    * ID of a filter from inventory service.
    */
   filter_id: string;
   /**
-   * Phased rollout feature is available only to Enterprise users.
-   *
-   */
-  phases?: Array<NewDeploymentPhaseTypeManagement>;
-  uniform_phases?: DeploymentUniformPhase;
-  /**
-   * The number of times a device can retry the deployment in case of failure, defaults to 0
-   */
-  retries?: number;
-  /**
    * max_devices denotes a limit on a number of completed deployments (failed or successful) above which the dynamic deployment will be finished
    *
    */
   max_devices?: number;
-  /**
-   * A valid JSON object defining the update control map.
-   * *NOTE*: Available only in the Enterprise plan.
-   *
-   */
-  update_control_map?: {
-    [key: string]: unknown;
-  };
-  /**
-   * The flag indicating if the autogeneration of delta artifacts is enabled for a given deployment.
-   *
-   */
-  autogenerate_delta?: boolean;
 };
 
 /**
@@ -6413,7 +6387,7 @@ export type DeploymentsCreateDeploymentData = {
   /**
    * New deployment that needs to be created.
    */
-  body: NewDeploymentTypeManagement;
+  body: NewDeployment;
   path?: never;
   query?: never;
   url: '/api/management/v1/deployments/deployments';
@@ -6492,7 +6466,7 @@ export type CreateDeploymentForAGroupOfDevicesData = {
   /**
    * New deployment that needs to be created.
    */
-  body: NewDeploymentForGroup;
+  body: NewDeploymentSpec;
   path: {
     /**
      * Device group name.
