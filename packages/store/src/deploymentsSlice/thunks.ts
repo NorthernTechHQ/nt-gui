@@ -17,8 +17,8 @@ import type {
   DeploymentV2 as BackendDeploymentV2,
   ConfigurationTenant,
   DeviceWithImage,
-  NewDeploymentTypeManagement as NewDeployment,
-  NewDeploymentForGroup,
+  NewDeployment,
+  NewDeploymentSpec,
   NewDeploymentV2TypeManagement as NewDeploymentV2
 } from '@northern.tech/types/MenderTypes';
 import { TIMEOUTS } from '@northern.tech/utils/constants';
@@ -166,20 +166,29 @@ const cleanPhases = (phases?: NewDeployment['phases']) =>
 const MAX_PREVIOUS_PHASES_COUNT = 5;
 export const createDeployment = createAppAsyncThunk(
   `${sliceName}/createDeployment`,
-  ({ newDeployment }: { newDeployment: NewDeployment | (NewDeploymentForGroup & { group: string }) | NewDeploymentV2 }, { dispatch, getState }) => {
+  ({ newDeployment }: { newDeployment: NewDeployment | (NewDeploymentSpec & { group: string }) | NewDeploymentV2 }, { dispatch, getState }) => {
     let request;
-    const { name, artifact_name, retries, uniform_phases, update_control_map, autogenerate_delta } = newDeployment;
+    const { name, artifact_name, force_installation, retries, uniform_phases, update_control_map, autogenerate_delta } = newDeployment;
     const cleanedPhases = cleanPhases(newDeployment.phases);
-    const common = { name, artifact_name, phases: uniform_phases ? undefined : cleanedPhases, retries, uniform_phases, update_control_map, autogenerate_delta };
+    const common = {
+      name,
+      artifact_name,
+      force_installation,
+      phases: uniform_phases ? undefined : cleanedPhases,
+      retries,
+      uniform_phases,
+      update_control_map,
+      autogenerate_delta
+    };
     if ('filter_id' in newDeployment && newDeployment.filter_id) {
       const { filter_id, max_devices } = newDeployment;
       request = GeneralApi.post(`${deploymentsApiUrlV2}/deployments`, stripUndefined({ ...common, filter_id, max_devices }));
     } else if ('group' in newDeployment && newDeployment.group) {
-      const { force_installation, group } = newDeployment;
-      request = GeneralApi.post(`${deploymentsApiUrl}/deployments/group/${group}`, stripUndefined({ ...common, force_installation }));
+      const { group } = newDeployment;
+      request = GeneralApi.post(`${deploymentsApiUrl}/deployments/group/${group}`, stripUndefined(common));
     } else {
-      const { devices, all_devices, force_installation } = newDeployment as NewDeployment;
-      request = GeneralApi.post(`${deploymentsApiUrl}/deployments`, stripUndefined({ ...common, devices, all_devices, force_installation }));
+      const { devices, all_devices } = newDeployment as NewDeployment;
+      request = GeneralApi.post(`${deploymentsApiUrl}/deployments`, stripUndefined({ ...common, devices, all_devices }));
     }
     const totalDeploymentCount = (Object.values(getDeploymentsByStatusSelector(getState())) as DeploymentStatus[]).reduce<number>(
       (accu, item) => accu + item.total,
