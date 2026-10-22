@@ -1,5 +1,15 @@
 ---
-## 0.19.1 - 2026-10-21
+## 0.19.2 - 2026-10-23
+
+
+
+### Bug fixes
+
+#### testing
+
+- Openapi spec update ([1df6dd5](https://github.com/NorthernTechHQ/nt-gui/commit/1df6dd52ef9055db10ca2245b0ea1f74e25eb3e8)) by @mender-test-bot
+- Moved orchestrator paths to stable versions ([de393c6](https://github.com/NorthernTechHQ/nt-gui/commit/de393c6f6ebcf68cf56994738649e680dba13fbd)) by @mzedel
+## @northern.tech/testing-0.19.1 - 2026-10-21
 
 
 
