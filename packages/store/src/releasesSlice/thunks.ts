@@ -40,7 +40,6 @@ import {
   DEVICE_LIST_DEFAULTS,
   SORTING_OPTIONS,
   deploymentsApiUrl,
-  deploymentsApiUrlV1alpha1,
   deploymentsApiUrlV2,
   emptyFilter,
   headerNames,
@@ -490,7 +489,7 @@ export const setReleasesTags = createAppAsyncThunk(
 );
 
 export const getExistingSoftwareTags = createAppAsyncThunk(`${sliceName}/getSoftwareTags`, async (kind: SoftwareKind | undefined, { dispatch }) => {
-  const { data: tags } = await GeneralApi.get<Tags>(`${deploymentsApiUrlV1alpha1}/software/tags`, { params: { kind } }).catch(err =>
+  const { data: tags } = await GeneralApi.get<Tags>(`${deploymentsApiUrl}/software/tags`, { params: { kind } }).catch(err =>
     commonErrorHandler(err, `Existing ${kind ?? 'software'} tags couldn't be retrieved.`, dispatch)
   );
   if (kind) {
@@ -546,7 +545,7 @@ const manifestListRetrieval = (config: Partial<ManifestsList>) => {
   const filterQuery = formatReleases({ pageState: { searchTerm, selectedTags } });
   const sorting = attribute ? `sort=${attribute}:${direction}`.toLowerCase() : '';
   return GeneralApi.get<Array<Manifest>>(
-    `${deploymentsApiUrlV1alpha1}/manifests?${[`page=${page}`, `per_page=${perPage}`, filterQuery, sorting].filter(i => i).join('&')}`
+    `${deploymentsApiUrl}/manifests?${[`page=${page}`, `per_page=${perPage}`, filterQuery, sorting].filter(i => i).join('&')}`
   );
 };
 
@@ -602,7 +601,7 @@ export const uploadManifest = createAppAsyncThunk(
     dispatch(initUpload({ id: uploadId, upload: { name: file.name, size: file.size, progress: 0, cancelSource } }));
     try {
       const { headers } = await GeneralApi.upload(
-        `${deploymentsApiUrlV1alpha1}/manifests`,
+        `${deploymentsApiUrl}/manifests`,
         formData,
         e => dispatch(uploadProgress({ id: uploadId, progress: progress(e) })),
         cancelSource.signal
@@ -631,7 +630,7 @@ export const generateManifest = createAppAsyncThunk(`${sliceName}/generateManife
   dispatch(initUpload({ id: uploadId, upload: { name: file.name, size: file.size, progress: 0, cancelSource } }));
   try {
     const { headers } = await GeneralApi.upload(
-      `${deploymentsApiUrlV1alpha1}/manifests/generate`,
+      `${deploymentsApiUrl}/manifests/generate`,
       formData,
       e => dispatch(uploadProgress({ id: uploadId, progress: progress(e) })),
       cancelSource.signal
@@ -675,7 +674,7 @@ export const getManifests = createAppAsyncThunk(
 );
 
 export const getManifest = createAppAsyncThunk(`${sliceName}/getManifest`, async (name: string, { dispatch, getState }) => {
-  const { data } = await GeneralApi.get<Manifest>(`${deploymentsApiUrlV1alpha1}/manifests/${name}`);
+  const { data } = await GeneralApi.get<Manifest>(`${deploymentsApiUrl}/manifests/${name}`);
   if (!data) {
     return null;
   }
@@ -688,7 +687,7 @@ export const getManifest = createAppAsyncThunk(`${sliceName}/getManifest`, async
 export const updateManifestInfo = createAppAsyncThunk(
   `${sliceName}/updateManifestInfo`,
   async ({ name, info }: { info: ManifestUpdate; name: string }, { dispatch, getState }) => {
-    await GeneralApi.patch(`${deploymentsApiUrlV1alpha1}/manifests/${name}`, info).catch(err =>
+    await GeneralApi.patch(`${deploymentsApiUrl}/manifests/${name}`, info).catch(err =>
       commonErrorHandler(err, `Manifest details couldn't be updated.`, dispatch)
     );
     dispatch(actions.receiveManifest({ ...getManifestsById(getState())[name], ...info, name }));
@@ -699,7 +698,7 @@ export const updateManifestInfo = createAppAsyncThunk(
 
 export const removeManifests = createAppAsyncThunk(`${sliceName}/removeManifests`, async (names: string[], { dispatch, getState }) => {
   const nameParams = names.map(name => `name=${encodeURIComponent(name)}`).join('&');
-  await GeneralApi.delete(`${deploymentsApiUrlV1alpha1}/manifests?${nameParams}`).catch(err =>
+  await GeneralApi.delete(`${deploymentsApiUrl}/manifests?${nameParams}`).catch(err =>
     commonErrorHandler(err, `Manifest${names.length > 1 ? 's' : ''} couldn't be deleted.`, dispatch)
   );
   const manifestsList = getManifestsListState(getState());
@@ -766,7 +765,7 @@ const softwareListRetrieval = (config: Partial<SoftwareList>) => {
   const updateTypeQuery = type ? `update_type=${encodeURIComponent(type)}` : '';
   const namePrefixQuery = searchTerm ? `name_prefix=${encodeURIComponent(searchTerm)}` : '';
   return GeneralApi.get<Array<Software>>(
-    `${deploymentsApiUrlV1alpha1}/software?${[`page=${page}`, `per_page=${perPage}`, namePrefixQuery, kindQuery, filterQuery, updateTypeQuery, sorting].filter(i => i).join('&')}`
+    `${deploymentsApiUrl}/software?${[`page=${page}`, `per_page=${perPage}`, namePrefixQuery, kindQuery, filterQuery, updateTypeQuery, sorting].filter(i => i).join('&')}`
   );
 };
 
@@ -842,8 +841,8 @@ export const checkReleasesExistence = createAppAsyncThunk(`${sliceName}/checkRel
     return {};
   }
   const nameFilter = names.map(name => `name=${encodeURIComponent(name)}`).join('&');
-  const { data = [] } = await GeneralApi.get<Array<Software>>(`${deploymentsApiUrlV1alpha1}/software?${nameFilter}&kind=release&page=1&per_page=100`).catch(
-    err => commonErrorHandler(err, 'Checking release existence failed:', dispatch)
+  const { data = [] } = await GeneralApi.get<Array<Software>>(`${deploymentsApiUrl}/software?${nameFilter}&kind=release&page=1&per_page=100`).catch(err =>
+    commonErrorHandler(err, 'Checking release existence failed:', dispatch)
   );
   const existingNames = new Set(data.map(item => item.name));
   return names.reduce<Record<string, boolean>>((accu, name) => {
