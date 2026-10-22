@@ -195,7 +195,7 @@ export const deviceHandlers = [
     return new HttpResponse(null, { status: 506 });
   }),
   http.get(
-    `${inventoryApiUrlV2alpha1}/devices/:deviceId/components`,
+    `${inventoryApiUrlV2}/devices/:deviceId/components`,
     validated(({ params: { deviceId } }) => {
       if (mockApiResponses.devices.byId[deviceId]) {
         return HttpResponse.json(deviceComponents);

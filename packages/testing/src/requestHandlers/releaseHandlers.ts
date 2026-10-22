@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //@ts-nocheck
-import { SORTING_OPTIONS, deploymentsApiUrl, deploymentsApiUrlV1alpha1, deploymentsApiUrlV2, headerNames } from '@northern.tech/utils/constants';
+import { SORTING_OPTIONS, deploymentsApiUrl, deploymentsApiUrlV2, headerNames } from '@northern.tech/utils/constants';
 import { customSort } from '@northern.tech/utils/helpers';
 import { HttpResponse, http } from 'msw';
 
@@ -177,7 +177,7 @@ export const releaseHandlers = [
     return new HttpResponse(null, { status: 404 });
   }),
   http.get(
-    `${deploymentsApiUrlV1alpha1}/manifests`,
+    `${deploymentsApiUrl}/manifests`,
     validated(async ({ request }) => {
       const { searchParams } = new URL(request.url);
       const page = Number(searchParams.get('page'));
@@ -201,7 +201,7 @@ export const releaseHandlers = [
     })
   ),
   http.delete(
-    `${deploymentsApiUrlV1alpha1}/manifests`,
+    `${deploymentsApiUrl}/manifests`,
     validated(({ request: { url } }) => {
       const { searchParams } = new URL(url);
       const names = searchParams.getAll('name');
@@ -212,23 +212,23 @@ export const releaseHandlers = [
     })
   ),
   http.post(
-    `${deploymentsApiUrlV1alpha1}/manifests`,
+    `${deploymentsApiUrl}/manifests`,
     () =>
       new HttpResponse(null, {
         status: 201,
-        headers: { [headerNames.location]: `${deploymentsApiUrlV1alpha1}/manifests/m1000` }
+        headers: { [headerNames.location]: `${deploymentsApiUrl}/manifests/m1000` }
       })
   ),
   http.post(
-    `${deploymentsApiUrlV1alpha1}/manifests/generate`,
+    `${deploymentsApiUrl}/manifests/generate`,
     () =>
       new HttpResponse(null, {
         status: 202,
-        headers: { [headerNames.location]: `${deploymentsApiUrlV1alpha1}/manifests/m1000` }
+        headers: { [headerNames.location]: `${deploymentsApiUrl}/manifests/m1000` }
       })
   ),
   http.get(
-    `${deploymentsApiUrlV1alpha1}/manifests/:name`,
+    `${deploymentsApiUrl}/manifests/:name`,
     validated(({ params: { name } }) => {
       if (name === mockApiResponses.manifests.byId.m1000.name) {
         return HttpResponse.json(mockApiResponses.manifests.byId.m1000);
@@ -237,7 +237,7 @@ export const releaseHandlers = [
     })
   ),
   http.patch(
-    `${deploymentsApiUrlV1alpha1}/manifests/:name`,
+    `${deploymentsApiUrl}/manifests/:name`,
     validated(async ({ params: { name }, request }) => {
       const body = await request.json();
       if (name && (body.notes !== undefined || body.tags !== undefined)) {
@@ -247,7 +247,7 @@ export const releaseHandlers = [
     })
   ),
   http.get(
-    `${deploymentsApiUrlV1alpha1}/software`,
+    `${deploymentsApiUrl}/software`,
     validated(async ({ request }) => {
       const { searchParams } = new URL(request.url);
       const page = Number(searchParams.get('page'));
@@ -283,7 +283,7 @@ export const releaseHandlers = [
     })
   ),
   http.get(
-    `${deploymentsApiUrlV1alpha1}/software/tags`,
+    `${deploymentsApiUrl}/software/tags`,
     validated(({ request: { url } }) => {
       const { searchParams } = new URL(url);
       const kind = searchParams.get('kind');
