@@ -1199,6 +1199,41 @@ export type ArtifactUploadLink = {
 };
 
 /**
+ * Software information representing either a Release or a Manifest.
+ * Contains only the shared attributes common to both kinds.
+ */
+export type Software = {
+  /**
+   * The name of the Software.
+   */
+  name: string;
+  /**
+   * Last modification time for the Software.
+   */
+  modified?: string;
+  /**
+   * The "types" compatible with at least one of the Artifacts of
+   * the Software.  If the kind of Software is 'release', these types are
+   * "device types" while they are "system types" in the case of 'manifest'
+   * Software kind.
+   *
+   */
+  compatible_types?: Array<string>;
+  kind: 'release' | 'manifest';
+  /**
+   * Tags assigned to the Software used for filtering. Each tag
+   * must be valid a ASCII string and contain only lowercase and uppercase
+   * letters, digits, underscores, periods and hyphens.
+   */
+  tags?: Array<string>;
+  /**
+   * Additional information describing a Software limited to 1024 characters.
+   *
+   */
+  notes?: string;
+};
+
+/**
  * List of releases
  */
 export type ReleasesV1 = Array<ReleaseV1>;
@@ -1236,6 +1271,134 @@ export type ReleaseV1 = {
    *
    */
   notes?: string;
+};
+
+/**
+ * The `update_strategy` of a component from the manifest.yaml
+ */
+export type ManifestComponentUpdateStrategy = {
+  /**
+   * The installation priority (order). Lower number means higher priority.
+   */
+  order: number;
+};
+
+/**
+ * A `component` from the manifest.yaml. Every `component` will always have _at least_ one of
+ * `artifact_name` and `artifact_path`. If both are defined, `artifact_path` takes precedence.
+ */
+export type ManifestComponent = {
+  artifact_name?: string;
+  artifact_path?: string;
+  update_strategy: ManifestComponentUpdateStrategy;
+};
+
+/**
+ * The content of the manifest.yaml file used to produce the Manifest and by extension the
+ * file stored inside the associated Artifact.
+ */
+export type ManifestContent = {
+  /**
+   * The `api_version` from the manifest.yaml. Currently the only supported version is 'mender/v1'.
+   */
+  api_version: string;
+  /**
+   * The `kind` from the manifest.yaml. Currently the only supported version is 'manifest'.
+   */
+  kind: string;
+  /**
+   * The name from the manifest.yaml. This will always be the same as the `name` of
+   * the Manifest and associated Artifact.
+   */
+  name: string;
+  /**
+   * The `system_types_compatible` from the manifest.yaml. This will always be the same
+   * as `device_types_compatible` from the associated Artifact.
+   */
+  system_types_compatible: Array<string>;
+  /**
+   * The `component_types` from the manifest.yaml. This is a dictionary that uses component IDs as keys
+   * and describes the required end state of the components of the target system after the Manifest
+   * has been deployed.
+   */
+  component_types: {
+    [key: string]: ManifestComponent;
+  };
+};
+
+/**
+ * A Manifest is software that only can be deployed to a Mender Orchestrator Device.
+ */
+export type Manifest = {
+  /**
+   * The name of the Manifest.
+   */
+  name: string;
+  /**
+   * Last modification time for the Manifest.
+   */
+  modified?: string;
+  artifact: ArtifactV2;
+  manifest?: ManifestContent;
+  /**
+   * Tags assigned to the Manifest used for filtering. Each tag
+   * must be valid a ASCII string and contain only lowercase and uppercase
+   * letters, digits, underscores, periods and hyphens.
+   */
+  tags?: Array<string>;
+  /**
+   * Additional information describing a Manifest limited to 1024 characters.
+   *
+   */
+  notes?: string;
+};
+
+/**
+ * Update metadata update.
+ */
+export type ManifestUpdate = {
+  /**
+   * Manifest notes.
+   */
+  notes?: string;
+  /**
+   * Manifest tags
+   */
+  tags?: Array<string>;
+};
+
+export type GenerateManifestRequest = {
+  /**
+   * Description of the manifest.
+   */
+  description?: string;
+  /**
+   * List of tags for the manifest.
+   *
+   */
+  tags?: Array<string>;
+  /**
+   * Raw manifest.yaml to be used to generate the manifest. It has to be the last part of request.
+   */
+  file: Blob | File;
+};
+
+/**
+ * Manifest used by active deployment.
+ */
+export type ManifestInUseError = {
+  /**
+   * Description of the error.
+   */
+  error?: string;
+  /**
+   * List of IDs of active deployments which are using Manifests from the request.
+   */
+  active_deployments?: Array<string>;
+  /**
+   * Request ID.
+   */
+  request_id?: string;
 };
 
 /**
@@ -1678,216 +1841,12 @@ export const DeploymentDeviceStatusGet = {
 
 export type DeploymentDeviceStatusGet = (typeof DeploymentDeviceStatusGet)[keyof typeof DeploymentDeviceStatusGet];
 
-export type UploadArtifactRequest2 = {
-  /**
-   * Size of the artifact file in bytes.
-   *
-   *
-   * @deprecated
-   */
-  size?: number;
-  description?: string;
-  /**
-   * Artifact. It has to be the last part of request.
-   */
-  artifact: Blob | File;
-};
-
 /**
- * Error descriptor with additional metadata.
+ * Tags assigned to software used for filtering. Each tag
+ * must be valid a ASCII string and contain only lowercase and uppercase
+ * letters, digits, underscores, periods and hyphens.
  */
-export type ErrorExt = {
-  /**
-   * Description of the error.
-   */
-  error: string;
-  /**
-   * Request ID (same as in X-MEN-RequestID header).
-   */
-  request_id?: string;
-  metadata?: {
-    [key: string]: unknown;
-  };
-};
-
-/**
- * Tenant account storage limit and storage usage.
- */
-export type StorageLimit = {
-  /**
-   * Storage limit in bytes. If set to -1 - there is no limit for storage.
-   *
-   */
-  limit: number;
-  /**
-   * Current storage usage in bytes.
-   *
-   */
-  usage: number;
-};
-
-/**
- * The `update_strategy` of a component from the manifest.yaml
- */
-export type ManifestComponentUpdateStrategy = {
-  /**
-   * The installation priority (order). Lower number means higher priority.
-   */
-  order: number;
-};
-
-/**
- * A `component` from the manifest.yaml. Every `component` will always have _at least_ one of
- * `artifact_name` and `artifact_path`. If both are defined, `artifact_path` takes precedence.
- */
-export type ManifestComponent = {
-  artifact_name?: string;
-  artifact_path?: string;
-  update_strategy: ManifestComponentUpdateStrategy;
-};
-
-/**
- * The content of the manifest.yaml file used to produce the Manifest and by extension the
- * file stored inside the associated Artifact.
- */
-export type ManifestContent = {
-  /**
-   * The `api_version` from the manifest.yaml. Currently the only supported version is 'mender/v1'.
-   */
-  api_version: string;
-  /**
-   * The `kind` from the manifest.yaml. Currently the only supported version is 'manifest'.
-   */
-  kind: string;
-  /**
-   * The name from the manifest.yaml. This will always be the same as the `name` of
-   * the Manifest and associated Artifact.
-   */
-  name: string;
-  /**
-   * The `system_types_compatible` from the manifest.yaml. This will always be the same
-   * as `device_types_compatible` from the associated Artifact.
-   */
-  system_types_compatible: Array<string>;
-  /**
-   * The `component_types` from the manifest.yaml. This is a dictionary that uses component IDs as keys
-   * and describes the required end state of the components of the target system after the Manifest
-   * has been deployed.
-   */
-  component_types: {
-    [key: string]: ManifestComponent;
-  };
-};
-
-/**
- * A Manifest is software that only can be deployed to a Mender Orchestrator Device.
- */
-export type Manifest = {
-  /**
-   * The name of the Manifest.
-   */
-  name: string;
-  /**
-   * Last modification time for the Manifest.
-   */
-  modified?: string;
-  artifact: ArtifactV2;
-  manifest?: ManifestContent;
-  /**
-   * Tags assigned to the Manifest used for filtering. Each tag
-   * must be valid a ASCII string and contain only lowercase and uppercase
-   * letters, digits, underscores, periods and hyphens.
-   */
-  tags?: Array<string>;
-  /**
-   * Additional information describing a Manifest limited to 1024 characters.
-   *
-   */
-  notes?: string;
-};
-
-/**
- * Update metadata update.
- */
-export type ManifestUpdate = {
-  /**
-   * Manifest notes.
-   */
-  notes?: string;
-  /**
-   * Manifest tags
-   */
-  tags?: Array<string>;
-};
-
-export type GenerateManifestRequest = {
-  /**
-   * Description of the manifest.
-   */
-  description?: string;
-  /**
-   * List of tags for the manifest.
-   *
-   */
-  tags?: Array<string>;
-  /**
-   * Raw manifest.yaml to be used to generate the manifest. It has to be the last part of request.
-   */
-  file: Blob | File;
-};
-
-/**
- * Manifest used by active deployment.
- */
-export type ManifestInUseError = {
-  /**
-   * Description of the error.
-   */
-  error?: string;
-  /**
-   * List of IDs of active deployments which are using Manifests from the request.
-   */
-  active_deployments?: Array<string>;
-  /**
-   * Request ID.
-   */
-  request_id?: string;
-};
-
-/**
- * Software information representing either a Release or a Manifest.
- * Contains only the shared attributes common to both kinds.
- */
-export type Software = {
-  /**
-   * The name of the Software.
-   */
-  name: string;
-  /**
-   * Last modification time for the Software.
-   */
-  modified?: string;
-  /**
-   * The "types" compatible with at least one of the Artifacts of
-   * the Software.  If the kind of Software is 'release', these types are
-   * "device types" while they are "system types" in the case of 'manifest'
-   * Software kind.
-   *
-   */
-  compatible_types?: Array<string>;
-  kind: 'release' | 'manifest';
-  /**
-   * Tags assigned to the Software used for filtering. Each tag
-   * must be valid a ASCII string and contain only lowercase and uppercase
-   * letters, digits, underscores, periods and hyphens.
-   */
-  tags?: Array<string>;
-  /**
-   * Additional information describing a Software limited to 1024 characters.
-   *
-   */
-  notes?: string;
-};
+export type Tags = Array<string>;
 
 /**
  * Detailed artifact.
@@ -1940,6 +1899,21 @@ export type ArtifactV2 = {
   modified: string;
 };
 
+export type UploadArtifactRequest2 = {
+  /**
+   * Size of the artifact file in bytes.
+   *
+   *
+   * @deprecated
+   */
+  size?: number;
+  description?: string;
+  /**
+   * Artifact. It has to be the last part of request.
+   */
+  artifact: Blob | File;
+};
+
 export type UploadManifestRequest = {
   /**
    * List of tags for the manifest.
@@ -1949,11 +1923,37 @@ export type UploadManifestRequest = {
 } & UploadArtifactRequest2;
 
 /**
- * Tags assigned to software used for filtering. Each tag
- * must be valid a ASCII string and contain only lowercase and uppercase
- * letters, digits, underscores, periods and hyphens.
+ * Error descriptor with additional metadata.
  */
-export type Tags = Array<string>;
+export type ErrorExt = {
+  /**
+   * Description of the error.
+   */
+  error: string;
+  /**
+   * Request ID (same as in X-MEN-RequestID header).
+   */
+  request_id?: string;
+  metadata?: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * Tenant account storage limit and storage usage.
+ */
+export type StorageLimit = {
+  /**
+   * Storage limit in bytes. If set to -1 - there is no limit for storage.
+   *
+   */
+  limit: number;
+  /**
+   * Current storage usage in bytes.
+   *
+   */
+  usage: number;
+};
 
 /**
  * List of releases
@@ -7013,6 +7013,111 @@ export type ResetDeviceDeploymentsHistoryResponses = {
 
 export type ResetDeviceDeploymentsHistoryResponse = ResetDeviceDeploymentsHistoryResponses[keyof ResetDeviceDeploymentsHistoryResponses];
 
+export type GetDeploymentSoftwareData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Software name filter. Can be repeated to query a set of entries. Mutually exclusive with `name_prefix`.
+     */
+    name?: Array<string>;
+    /**
+     * Software name prefix filter. Mutually exclusive with `name`.
+     */
+    name_prefix?: string;
+    /**
+     * Software kind filter.
+     */
+    kind?: 'release' | 'manifest';
+    /**
+     * Filter the software based on their associated tags and only return
+     * software that have at least one matching tag (i.e. OR matching).
+     */
+    tag?: Array<string>;
+    /**
+     * Update type filter.
+     */
+    update_type?: string;
+    /**
+     * Starting page.
+     */
+    page?: number;
+    /**
+     * Maximum number of results per page.
+     */
+    per_page?: number;
+    /**
+     * Sort the Software list by the specified field and direction.
+     */
+    sort?: 'modified:asc' | 'modified:desc' | 'name:asc' | 'name:desc' | 'tags:asc' | 'tags:desc';
+  };
+  url: '/api/management/v1/deployments/software';
+};
+
+export type GetDeploymentSoftwareErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type GetDeploymentSoftwareError = GetDeploymentSoftwareErrors[keyof GetDeploymentSoftwareErrors];
+
+export type GetDeploymentSoftwareResponses = {
+  /**
+   * A successful response including the Software information
+   */
+  200: Array<Software>;
+};
+
+export type GetDeploymentSoftwareResponse = GetDeploymentSoftwareResponses[keyof GetDeploymentSoftwareResponses];
+
+export type ListSoftwareTagsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Only list tags used on software of a particular kind
+     */
+    kind?: 'release' | 'manifest';
+  };
+  url: '/api/management/v1/deployments/software/tags';
+};
+
+export type ListSoftwareTagsErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type ListSoftwareTagsError = ListSoftwareTagsErrors[keyof ListSoftwareTagsErrors];
+
+export type ListSoftwareTagsResponses = {
+  /**
+   * Successful response.
+   */
+  200: Tags;
+};
+
+export type ListSoftwareTagsResponse = ListSoftwareTagsResponses[keyof ListSoftwareTagsResponses];
+
 export type ListReleasesData = {
   body?: never;
   path?: never;
@@ -7118,6 +7223,275 @@ export type DeploymentsV1ListReleasesWithPaginationResponses = {
 
 export type DeploymentsV1ListReleasesWithPaginationResponse =
   DeploymentsV1ListReleasesWithPaginationResponses[keyof DeploymentsV1ListReleasesWithPaginationResponses];
+
+export type DeleteDeploymentManifestsData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Manifest name filter. Can be repeated to query a set of entries.
+     */
+    name: Array<string>;
+  };
+  url: '/api/management/v1/deployments/manifests';
+};
+
+export type DeleteDeploymentManifestsErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * The resource requires a paid plan.
+   */
+  402: Error;
+  /**
+   * Conflict.
+   */
+  409: ManifestInUseError;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type DeleteDeploymentManifestsError = DeleteDeploymentManifestsErrors[keyof DeleteDeploymentManifestsErrors];
+
+export type DeleteDeploymentManifestsResponses = {
+  /**
+   * Manifests deleted successfully.
+   */
+  204: void;
+};
+
+export type DeleteDeploymentManifestsResponse = DeleteDeploymentManifestsResponses[keyof DeleteDeploymentManifestsResponses];
+
+export type GetDeploymentManifestsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Manifest name filter.
+     */
+    name?: string;
+    /**
+     * Filter the manifests based on their associated tags and only return
+     * manifests that have at least one matching tag (i.e. OR matching).
+     */
+    tag?: Array<string>;
+    /**
+     * Starting page.
+     */
+    page?: number;
+    /**
+     * Maximum number of results per page.
+     */
+    per_page?: number;
+    /**
+     * Sort the Manifest list by the specified field and direction.
+     */
+    sort?: 'modified:asc' | 'modified:desc' | 'name:asc' | 'name:desc' | 'tags:asc' | 'tags:desc';
+  };
+  url: '/api/management/v1/deployments/manifests';
+};
+
+export type GetDeploymentManifestsErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * The resource requires a paid plan.
+   */
+  402: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type GetDeploymentManifestsError = GetDeploymentManifestsErrors[keyof GetDeploymentManifestsErrors];
+
+export type GetDeploymentManifestsResponses = {
+  /**
+   * A successful response including the Manifests
+   */
+  200: Array<Manifest>;
+};
+
+export type GetDeploymentManifestsResponse = GetDeploymentManifestsResponses[keyof GetDeploymentManifestsResponses];
+
+export type UploadDeploymentManifestArtifactData = {
+  body: UploadManifestRequest;
+  path?: never;
+  query?: never;
+  url: '/api/management/v1/deployments/manifests';
+};
+
+export type UploadDeploymentManifestArtifactErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * The resource requires a paid plan.
+   */
+  402: Error;
+  /**
+   * An artifact with the same name and matching dependency requirements already exists.
+   *
+   */
+  409: ErrorExt;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type UploadDeploymentManifestArtifactError = UploadDeploymentManifestArtifactErrors[keyof UploadDeploymentManifestArtifactErrors];
+
+export type UploadDeploymentManifestArtifactResponses = {
+  /**
+   * Artifact uploaded.
+   */
+  201: unknown;
+};
+
+export type GenerateDeploymentManifestArtifactData = {
+  body?: GenerateManifestRequest;
+  path?: never;
+  query?: never;
+  url: '/api/management/v1/deployments/manifests/generate';
+};
+
+export type GenerateDeploymentManifestArtifactErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * The resource requires a paid plan.
+   */
+  402: Error;
+  /**
+   * Software with the same name already exists.
+   *
+   */
+  409: ErrorExt;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type GenerateDeploymentManifestArtifactError = GenerateDeploymentManifestArtifactErrors[keyof GenerateDeploymentManifestArtifactErrors];
+
+export type GenerateDeploymentManifestArtifactResponses = {
+  /**
+   * Generation request accepted and queued for processing.
+   */
+  202: unknown;
+};
+
+export type GetDeploymentManifestByNameData = {
+  body?: never;
+  path: {
+    /**
+     * Name of the Manifest
+     */
+    manifest_name: string;
+  };
+  query?: never;
+  url: '/api/management/v1/deployments/manifests/{manifest_name}';
+};
+
+export type GetDeploymentManifestByNameErrors = {
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * The resource requires a paid plan.
+   */
+  402: Error;
+  /**
+   * Not Found.
+   */
+  404: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type GetDeploymentManifestByNameError = GetDeploymentManifestByNameErrors[keyof GetDeploymentManifestByNameErrors];
+
+export type GetDeploymentManifestByNameResponses = {
+  /**
+   * A successful response including the Manifest.
+   */
+  200: Manifest;
+};
+
+export type GetDeploymentManifestByNameResponse = GetDeploymentManifestByNameResponses[keyof GetDeploymentManifestByNameResponses];
+
+export type UpdateManifestInformationData = {
+  body?: ManifestUpdate;
+  path: {
+    /**
+     * Name of the manifest
+     */
+    manifest_name: string;
+  };
+  query?: never;
+  url: '/api/management/v1/deployments/manifests/{manifest_name}';
+};
+
+export type UpdateManifestInformationErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Unauthorized.
+   */
+  401: Error;
+  /**
+   * The resource requires a paid plan.
+   */
+  402: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type UpdateManifestInformationError = UpdateManifestInformationErrors[keyof UpdateManifestInformationErrors];
+
+export type UpdateManifestInformationResponses = {
+  /**
+   * Successful response.
+   */
+  204: void;
+};
+
+export type UpdateManifestInformationResponse = UpdateManifestInformationResponses[keyof UpdateManifestInformationResponses];
 
 export type ListArtifactsData = {
   body?: never;
@@ -7636,380 +8010,6 @@ export type UpdateBinaryDeltaConfigurationResponses = {
 };
 
 export type UpdateBinaryDeltaConfigurationResponse = UpdateBinaryDeltaConfigurationResponses[keyof UpdateBinaryDeltaConfigurationResponses];
-
-export type DeleteDeploymentManifestsData = {
-  body?: never;
-  path?: never;
-  query: {
-    /**
-     * Manifest name filter. Can be repeated to query a set of entries.
-     */
-    name: Array<string>;
-  };
-  url: '/api/management/v1alpha1/deployments/manifests';
-};
-
-export type DeleteDeploymentManifestsErrors = {
-  /**
-   * Invalid Request.
-   */
-  400: Error;
-  /**
-   * Unauthorized.
-   */
-  401: Error;
-  /**
-   * The resource requires a paid plan.
-   */
-  402: Error;
-  /**
-   * Conflict.
-   */
-  409: ManifestInUseError;
-  /**
-   * Internal Server Error.
-   */
-  500: Error;
-};
-
-export type DeleteDeploymentManifestsError = DeleteDeploymentManifestsErrors[keyof DeleteDeploymentManifestsErrors];
-
-export type DeleteDeploymentManifestsResponses = {
-  /**
-   * Manifests deleted successfully.
-   */
-  204: void;
-};
-
-export type DeleteDeploymentManifestsResponse = DeleteDeploymentManifestsResponses[keyof DeleteDeploymentManifestsResponses];
-
-export type GetDeploymentManifestsData = {
-  body?: never;
-  path?: never;
-  query?: {
-    /**
-     * Manifest name filter.
-     */
-    name?: string;
-    /**
-     * Filter the manifests based on their associated tags and only return
-     * manifests that have at least one matching tag (i.e. OR matching).
-     */
-    tag?: Array<string>;
-    /**
-     * Starting page.
-     */
-    page?: number;
-    /**
-     * Maximum number of results per page.
-     */
-    per_page?: number;
-    /**
-     * Sort the Manifest list by the specified field and direction.
-     */
-    sort?: 'modified:asc' | 'modified:desc' | 'name:asc' | 'name:desc' | 'tags:asc' | 'tags:desc';
-  };
-  url: '/api/management/v1alpha1/deployments/manifests';
-};
-
-export type GetDeploymentManifestsErrors = {
-  /**
-   * Invalid Request.
-   */
-  400: Error;
-  /**
-   * Unauthorized.
-   */
-  401: Error;
-  /**
-   * The resource requires a paid plan.
-   */
-  402: Error;
-  /**
-   * Internal Server Error.
-   */
-  500: Error;
-};
-
-export type GetDeploymentManifestsError = GetDeploymentManifestsErrors[keyof GetDeploymentManifestsErrors];
-
-export type GetDeploymentManifestsResponses = {
-  /**
-   * A successful response including the Manifests
-   */
-  200: Array<Manifest>;
-};
-
-export type GetDeploymentManifestsResponse = GetDeploymentManifestsResponses[keyof GetDeploymentManifestsResponses];
-
-export type UploadDeploymentManifestArtifactData = {
-  body: UploadManifestRequest;
-  path?: never;
-  query?: never;
-  url: '/api/management/v1alpha1/deployments/manifests';
-};
-
-export type UploadDeploymentManifestArtifactErrors = {
-  /**
-   * Invalid Request.
-   */
-  400: Error;
-  /**
-   * Unauthorized.
-   */
-  401: Error;
-  /**
-   * The resource requires a paid plan.
-   */
-  402: Error;
-  /**
-   * An artifact with the same name and matching dependency requirements already exists.
-   *
-   */
-  409: ErrorExt;
-  /**
-   * Internal Server Error.
-   */
-  500: Error;
-};
-
-export type UploadDeploymentManifestArtifactError = UploadDeploymentManifestArtifactErrors[keyof UploadDeploymentManifestArtifactErrors];
-
-export type UploadDeploymentManifestArtifactResponses = {
-  /**
-   * Artifact uploaded.
-   */
-  201: unknown;
-};
-
-export type GenerateDeploymentManifestArtifactData = {
-  body?: GenerateManifestRequest;
-  path?: never;
-  query?: never;
-  url: '/api/management/v1alpha1/deployments/manifests/generate';
-};
-
-export type GenerateDeploymentManifestArtifactErrors = {
-  /**
-   * Invalid Request.
-   */
-  400: Error;
-  /**
-   * Unauthorized.
-   */
-  401: Error;
-  /**
-   * The resource requires a paid plan.
-   */
-  402: Error;
-  /**
-   * Software with the same name already exists.
-   *
-   */
-  409: ErrorExt;
-  /**
-   * Internal Server Error.
-   */
-  500: Error;
-};
-
-export type GenerateDeploymentManifestArtifactError = GenerateDeploymentManifestArtifactErrors[keyof GenerateDeploymentManifestArtifactErrors];
-
-export type GenerateDeploymentManifestArtifactResponses = {
-  /**
-   * Generation request accepted and queued for processing.
-   */
-  202: unknown;
-};
-
-export type GetDeploymentManifestByNameData = {
-  body?: never;
-  path: {
-    /**
-     * Name of the Manifest
-     */
-    manifest_name: string;
-  };
-  query?: never;
-  url: '/api/management/v1alpha1/deployments/manifests/{manifest_name}';
-};
-
-export type GetDeploymentManifestByNameErrors = {
-  /**
-   * Unauthorized.
-   */
-  401: Error;
-  /**
-   * The resource requires a paid plan.
-   */
-  402: Error;
-  /**
-   * Not Found.
-   */
-  404: Error;
-  /**
-   * Internal Server Error.
-   */
-  500: Error;
-};
-
-export type GetDeploymentManifestByNameError = GetDeploymentManifestByNameErrors[keyof GetDeploymentManifestByNameErrors];
-
-export type GetDeploymentManifestByNameResponses = {
-  /**
-   * A successful response including the Manifest.
-   */
-  200: Manifest;
-};
-
-export type GetDeploymentManifestByNameResponse = GetDeploymentManifestByNameResponses[keyof GetDeploymentManifestByNameResponses];
-
-export type UpdateManifestInformationData = {
-  body?: ManifestUpdate;
-  path: {
-    /**
-     * Name of the manifest
-     */
-    manifest_name: string;
-  };
-  query?: never;
-  url: '/api/management/v1alpha1/deployments/manifests/{manifest_name}';
-};
-
-export type UpdateManifestInformationErrors = {
-  /**
-   * Invalid Request.
-   */
-  400: Error;
-  /**
-   * Unauthorized.
-   */
-  401: Error;
-  /**
-   * The resource requires a paid plan.
-   */
-  402: Error;
-  /**
-   * Internal Server Error.
-   */
-  500: Error;
-};
-
-export type UpdateManifestInformationError = UpdateManifestInformationErrors[keyof UpdateManifestInformationErrors];
-
-export type UpdateManifestInformationResponses = {
-  /**
-   * Successful response.
-   */
-  204: void;
-};
-
-export type UpdateManifestInformationResponse = UpdateManifestInformationResponses[keyof UpdateManifestInformationResponses];
-
-export type GetDeploymentSoftwareData = {
-  body?: never;
-  path?: never;
-  query?: {
-    /**
-     * Software name filter. Can be repeated to query a set of entries. Mutually exclusive with `name_prefix`.
-     */
-    name?: Array<string>;
-    /**
-     * Software name prefix filter. Mutually exclusive with `name`.
-     */
-    name_prefix?: string;
-    /**
-     * Software kind filter.
-     */
-    kind?: 'release' | 'manifest';
-    /**
-     * Filter the software based on their associated tags and only return
-     * software that have at least one matching tag (i.e. OR matching).
-     */
-    tag?: Array<string>;
-    /**
-     * Update type filter.
-     */
-    update_type?: string;
-    /**
-     * Starting page.
-     */
-    page?: number;
-    /**
-     * Maximum number of results per page.
-     */
-    per_page?: number;
-    /**
-     * Sort the Software list by the specified field and direction.
-     */
-    sort?: 'modified:asc' | 'modified:desc' | 'name:asc' | 'name:desc' | 'tags:asc' | 'tags:desc';
-  };
-  url: '/api/management/v1alpha1/deployments/software';
-};
-
-export type GetDeploymentSoftwareErrors = {
-  /**
-   * Invalid Request.
-   */
-  400: Error;
-  /**
-   * Unauthorized.
-   */
-  401: Error;
-  /**
-   * Internal Server Error.
-   */
-  500: Error;
-};
-
-export type GetDeploymentSoftwareError = GetDeploymentSoftwareErrors[keyof GetDeploymentSoftwareErrors];
-
-export type GetDeploymentSoftwareResponses = {
-  /**
-   * A successful response including the Software information
-   */
-  200: Array<Software>;
-};
-
-export type GetDeploymentSoftwareResponse = GetDeploymentSoftwareResponses[keyof GetDeploymentSoftwareResponses];
-
-export type ListSoftwareTagsData = {
-  body?: never;
-  path?: never;
-  query?: {
-    /**
-     * Only list tags used on software of a particular kind
-     */
-    kind?: 'release' | 'manifest';
-  };
-  url: '/api/management/v1alpha1/deployments/software/tags';
-};
-
-export type ListSoftwareTagsErrors = {
-  /**
-   * Invalid Request.
-   */
-  400: Error;
-  /**
-   * Unauthorized.
-   */
-  401: Error;
-  /**
-   * Internal Server Error.
-   */
-  500: Error;
-};
-
-export type ListSoftwareTagsError = ListSoftwareTagsErrors[keyof ListSoftwareTagsErrors];
-
-export type ListSoftwareTagsResponses = {
-  /**
-   * Successful response.
-   */
-  200: Tags;
-};
-
-export type ListSoftwareTagsResponse = ListSoftwareTagsResponses[keyof ListSoftwareTagsResponses];
 
 export type GetDeploymentLogForDeviceV1Alpha1Data = {
   body?: never;
@@ -12726,6 +12726,48 @@ export type AddDevicesToGroupResponses = {
 
 export type AddDevicesToGroupResponse = AddDevicesToGroupResponses[keyof AddDevicesToGroupResponses];
 
+export type GetSystemComponentsData = {
+  body?: never;
+  path: {
+    /**
+     * Device identifier.
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/api/management/v2/inventory/devices/{id}/components';
+};
+
+export type GetSystemComponentsErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Not Found.
+   */
+  404: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type GetSystemComponentsError = GetSystemComponentsErrors[keyof GetSystemComponentsErrors];
+
+export type GetSystemComponentsResponses = {
+  /**
+   * System Components
+   *
+   * Maps system component IDs to it's attributes
+   */
+  200: {
+    [key: string]: Array<AttributeResponse>;
+  };
+};
+
+export type GetSystemComponentsResponse = GetSystemComponentsResponses[keyof GetSystemComponentsResponses];
+
 export type GetFilterableAttributesData = {
   body?: never;
   path?: never;
@@ -13075,48 +13117,6 @@ export type SearchInventoryByIdentityResponses = {
 };
 
 export type SearchInventoryByIdentityResponse = SearchInventoryByIdentityResponses[keyof SearchInventoryByIdentityResponses];
-
-export type GetSystemComponentsData = {
-  body?: never;
-  path: {
-    /**
-     * Device identifier.
-     */
-    id: string;
-  };
-  query?: never;
-  url: '/api/management/v2alpha1/inventory/devices/{id}/components';
-};
-
-export type GetSystemComponentsErrors = {
-  /**
-   * Invalid Request.
-   */
-  400: Error;
-  /**
-   * Not Found.
-   */
-  404: Error;
-  /**
-   * Internal Server Error.
-   */
-  500: Error;
-};
-
-export type GetSystemComponentsError = GetSystemComponentsErrors[keyof GetSystemComponentsErrors];
-
-export type GetSystemComponentsResponses = {
-  /**
-   * System Components
-   *
-   * Maps system component IDs to it's attributes
-   */
-  200: {
-    [key: string]: Array<AttributeResponse>;
-  };
-};
-
-export type GetSystemComponentsResponse = GetSystemComponentsResponses[keyof GetSystemComponentsResponses];
 
 export type IoTManagerInternalCheckHealthData = {
   body?: never;
