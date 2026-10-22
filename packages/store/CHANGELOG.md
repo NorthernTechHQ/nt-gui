@@ -1,5 +1,14 @@
 ---
-## 0.49.1 - 2026-10-21
+## 0.49.2 - 2026-10-22
+
+
+
+### Bug fixes
+
+#### store
+
+- Moved orchestrator request paths to stable versions ([b51f783](https://github.com/NorthernTechHQ/nt-gui/commit/b51f783c68640b00332751dedcc04ce133ea1b85)) by @mzedel
+## @northern.tech/store-0.49.1 - 2026-10-21
 
 
 
