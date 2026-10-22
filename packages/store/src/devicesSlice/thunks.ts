@@ -1136,7 +1136,7 @@ const prepareSearchArguments = ({ filters, group, state, status }: { filters?: D
 };
 
 export const getDeviceComponents = createAppAsyncThunk(`${sliceName}/getDeviceComponents`, (deviceId: string, { dispatch }) =>
-  GeneralApi.get<GetSystemComponentsResponse>(`${inventoryApiUrlV2alpha1}/devices/${deviceId}/components`)
+  GeneralApi.get<GetSystemComponentsResponse>(`${inventoryApiUrlV2}/devices/${deviceId}/components`)
     .then(({ data }) => dispatch(actions.receivedDevice({ id: deviceId, components: data })))
     .catch(err => commonErrorHandler(err, `There was an error retrieving components for device ${deviceId}.`, dispatch, commonErrorFallback))
 );
