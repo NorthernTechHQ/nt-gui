@@ -37,7 +37,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 import hashString from 'md5';
 import Cookies from 'universal-cookie';
-import { isEmail } from 'validator';
+import validator from 'validator';
 
 import { actions, sliceName } from '.';
 import storeActions from '../actions';
@@ -283,7 +283,7 @@ const prepareAuditlogQuery = ({
   const createdAfter = startDate ? `&created_after=${startUnix}` : '';
   const createdBefore = endDate ? `&created_before=${endUnix}` : '';
   const typeSearch = type ? `&object_type=${type.value}`.toLowerCase() : '';
-  const userSearch = userId ? `&${isEmail(userId) ? 'actor_email' : 'actor_id'}=${encodeURIComponent(userId)}` : '';
+  const userSearch = userId ? `&${validator.isEmail(userId) ? 'actor_email' : 'actor_id'}=${encodeURIComponent(userId)}` : '';
   const objectSearch = type && detail ? `&${type.queryParameter}=${encodeURIComponent(detail)}` : '';
   const { direction = SORTING_OPTIONS.desc } = sort;
   return `${createdAfter}${createdBefore}${userSearch}${typeSearch}${objectSearch}&sort=${direction}`;
