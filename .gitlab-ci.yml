@@ -32,6 +32,10 @@ stages:
   - changelog
   - release
 
+workflow:
+  auto_cancel:
+    on_new_commit: interruptible
+
 default:
   tags: !reference [.qa-common-default-runner, tags]
   retry: !reference [.qa-common-default-retry, retry]
@@ -98,10 +102,14 @@ build:
 changelog:
   stage: changelog
   image: 'registry.gitlab.com/northern.tech/mender/mender-test-containers/release-please:master'
+  resource_group: changelog-${CI_COMMIT_REF_NAME}
+  interruptible: true
   variables:
     GIT_DEPTH: 0 # Always get the full history
     GIT_STRATEGY: clone
   rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /^Merge pull request #\d+ from NorthernTechHQ\/release-please--branches--/'
+      when: never
     - if: $CI_COMMIT_BRANCH =~ "/^\d+\.\d+\.x$/"
     - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH
   before_script:
@@ -161,6 +169,7 @@ release:
     - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH
   needs:
     - job: changelog
+      optional: true
   id_tokens:
     NPM_ID_TOKEN:
       aud: "npm:registry.npmjs.org"
