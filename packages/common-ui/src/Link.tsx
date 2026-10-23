@@ -11,12 +11,13 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { LinkProps as RouterLinkProps } from 'react-router';
 import { Link as RouterLink } from 'react-router';
 
 import type { LinkProps as MuiLinkProps } from '@mui/material';
 import { Link as MuiLink } from '@mui/material';
 
-export type LinkProps = Omit<MuiLinkProps, 'href'> & { external?: boolean; href?: string; to?: string };
+export type LinkProps = Omit<MuiLinkProps, 'href'> & Pick<RouterLinkProps, 'state'> & { external?: boolean; href?: string; to?: string };
 
 export const Link = ({ href, to, external = false, onClick, target, rel, component, ...rest }: LinkProps) => {
   if (to) {
