@@ -11,40 +11,18 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { CSSProperties } from 'react';
+import {
+  Color,
+  type Components,
+  type Theme,
+  autocompleteClasses,
+  inputBaseClasses,
+  outlinedInputClasses,
+  switchClasses,
+  tableCellClasses
+} from '@mui/material';
 
-import { Color, type Theme, autocompleteClasses, inputBaseClasses, outlinedInputClasses, switchClasses, tableCellClasses } from '@mui/material';
-import { listItemClasses } from '@mui/material/ListItem';
-
-declare module '@mui/material/styles' {
-  interface TypographyVariants {
-    hint: CSSProperties;
-    labelSmall: CSSProperties;
-    statValue: CSSProperties;
-  }
-  interface TypographyVariantsOptions {
-    hint?: CSSProperties;
-    labelSmall?: CSSProperties;
-    statValue?: CSSProperties;
-  }
-  interface TypeBackground {
-    code: string;
-    // Text fields / selects rendered on top of a filled panel.
-    input: string;
-    lightgrey: string;
-    // Dropdown and popover surfaces; `paper` is a light gray in the light theme.
-    menu: string;
-    summary: string;
-  }
-}
-
-declare module '@mui/material/Typography' {
-  interface TypographyPropsVariantOverrides {
-    hint: true;
-    labelSmall: true;
-    statValue: true;
-  }
-}
+import { typography as baseTypography, components } from '../common';
 
 const componentProps = {
   MuiLink: {
@@ -74,7 +52,7 @@ const componentProps = {
       }
     }
   }
-};
+} satisfies Components<Theme>;
 const fontSize = 13;
 const round = (value: number) => Math.round(value * 1e4) / 1e4;
 const htmlFontSize = 10;
@@ -84,7 +62,7 @@ const pxToRem = (size: number) => `${round((size / htmlFontSize) * coef)}rem`;
 export const fontFamilyMonospace = '"Red Hat Mono", monospace';
 
 export const typography = {
-  fontFamily: 'Red Hat Text',
+  ...baseTypography,
   fontSize,
   h1: {
     fontSize: '32px',
@@ -287,7 +265,7 @@ export const commonPalette = {
   blue,
   green
 };
-export const overrides = {
+const cfengineOverrides = {
   ...componentProps,
   MuiTypography: {
     defaultProps: {
@@ -320,12 +298,12 @@ export const overrides = {
   },
   MuiTextField: {
     styleOverrides: {
-      root: ({ props }) => ({
+      root: {
         width: '100%',
         fontSize: '16px',
         padding: 0,
-        ...(props.multiline ? {} : { height: '40px' })
-      })
+        variants: [{ props: { multiline: false }, style: { height: '40px' } }]
+      }
     }
   },
   MuiOutlinedInput: {
@@ -436,10 +414,7 @@ export const overrides = {
     styleOverrides: {
       root: {
         paddingTop: 11,
-        paddingBottom: 11,
-        [`&.${listItemClasses.disabled}`]: {
-          opacity: 1
-        }
+        paddingBottom: 11
       }
     }
   },
@@ -592,4 +567,9 @@ export const overrides = {
       }
     }
   }
-};
+} satisfies Components<Theme>;
+
+export const overrides = {
+  ...components,
+  ...cfengineOverrides
+} as typeof cfengineOverrides;
