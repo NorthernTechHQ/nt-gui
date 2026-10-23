@@ -686,7 +686,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
             2019-01-01 12:10
           </time>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeMedium MuiButton-colorInfo nowrap css-10bnaj9-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeMedium MuiButton-colorInfo clickable nowrap css-10bnaj9-MuiButtonBase-root-MuiButton-root"
             tabindex="0"
             type="button"
           >
@@ -724,7 +724,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
             2019-01-01 12:16
           </time>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeMedium MuiButton-colorInfo nowrap css-10bnaj9-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeMedium MuiButton-colorInfo clickable nowrap css-10bnaj9-MuiButtonBase-root-MuiButton-root"
             tabindex="0"
             type="button"
           >
@@ -766,7 +766,7 @@ exports[`Auditlogs Component > renders correctly 1`] = `
             2019-01-01 12:10
           </time>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeMedium MuiButton-colorInfo nowrap css-10bnaj9-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-sizeMedium MuiButton-colorInfo clickable nowrap css-10bnaj9-MuiButtonBase-root-MuiButton-root"
             tabindex="0"
             type="button"
           >
