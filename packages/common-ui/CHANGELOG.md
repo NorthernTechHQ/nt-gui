@@ -1,5 +1,22 @@
 ---
-## 0.10.0 - 2026-10-14
+## 0.10.1 - 2026-10-23
+
+
+
+### Bug fixes
+
+#### common-ui
+
+- Aligned settings appearance closer w/ design ([433407e](https://github.com/NorthernTechHQ/nt-gui/commit/433407eb9c6a0945c031480b3c5adc617699cb52)) by @mzedel
+- Ensure details indicator always invites to be interacted with ([9ccd863](https://github.com/NorthernTechHQ/nt-gui/commit/9ccd863da5d426f319325570b83faf35031716ab)) by @mzedel
+
+### Dependency updates
+
+#### deps
+
+- Update development-dependencies ([3a9c99a](https://github.com/NorthernTechHQ/nt-gui/commit/3a9c99a31e2ed28685662f20e24603eead2bb6d9)) by @renovate-ring[bot]
+- Update dependency monaco-editor to ^0.57.0 ([b388500](https://github.com/NorthernTechHQ/nt-gui/commit/b38850093bb02d611a45367af82182701be376da)) by @renovate-ring[bot]
+## @northern.tech/common-ui-0.10.0 - 2026-10-14
 
 
 

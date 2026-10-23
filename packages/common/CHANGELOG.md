@@ -1,4 +1,19 @@
 ---
+## 0.6.0 - 2026-10-23
+
+
+
+### Bug fixes
+
+#### common-ui
+
+- Ensure details indicator always invites to be interacted with ([9ccd863](https://github.com/NorthernTechHQ/nt-gui/commit/9ccd863da5d426f319325570b83faf35031716ab)) by @mzedel
+
+### Dependency updates
+
+#### deps
+
+- Update development-dependencies ([3a9c99a](https://github.com/NorthernTechHQ/nt-gui/commit/3a9c99a31e2ed28685662f20e24603eead2bb6d9)) by @renovate-ring[bot]
 ## @northern.tech/common-ui-0.9.1 - 2026-10-06
 
 
