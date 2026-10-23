@@ -40,7 +40,7 @@ export interface SettingsItemProps {
 }
 
 const useStyles = makeStyles()(({ spacing }) => ({
-  base: { gap: spacing(1) },
+  base: { gap: spacing(1), marginTop: spacing(5) },
   mainContent: {
     alignItems: 'baseline',
     display: 'grid',
@@ -63,7 +63,7 @@ export const SettingsItemTitle = ({ title }: Pick<SettingsItemProps, 'title'>) =
 export const SettingsItem = ({ classes = defaultClasses, description, notification, secondary, sideBarContent, title }: SettingsItemProps) => {
   const { classes: localClasses } = useStyles();
   return (
-    <div className={`flexbox column settings-item-base ${localClasses.base} margin-top ${classes.base ?? ''}`}>
+    <div className={`flexbox column settings-item-base ${localClasses.base} ${classes.base ?? ''}`}>
       <div className={`flexbox column settings-item-content ${localClasses.base} ${classes.content ?? ''}`}>
         <SettingsItemTitle title={title} />
         {description && (
