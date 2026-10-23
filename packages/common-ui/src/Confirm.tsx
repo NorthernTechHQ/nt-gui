@@ -14,7 +14,8 @@
 import type { CSSProperties, MouseEventHandler } from 'react';
 import { useState } from 'react';
 
-import { Cancel as CancelIcon, CheckCircle as CheckCircleIcon, Check as CheckIcon, Close as CloseIcon, Edit as EditIcon } from '@mui/icons-material';
+import { Cancel as CancelIcon, CheckCircle as CheckCircleIcon, Edit as EditIcon } from '@mui/icons-material';
+import type { ButtonProps } from '@mui/material';
 import { Button, IconButton, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
@@ -127,16 +128,17 @@ export interface ConfirmationButtonsProps {
   className?: string;
   onCancel: MouseEventHandler<HTMLButtonElement>;
   onConfirm: MouseEventHandler<HTMLButtonElement>;
+  size?: ButtonProps['size'];
 }
 
-export const ConfirmationButtons = ({ onConfirm, onCancel, className = '' }: ConfirmationButtonsProps) => (
+export const ConfirmationButtons = ({ onConfirm, onCancel, className = '', size }: ConfirmationButtonsProps) => (
   <div className={`flexbox ${className}`}>
-    <IconButton onClick={onConfirm} size="small" aria-label="confirm">
-      <CheckIcon color="disabled" />
-    </IconButton>
-    <IconButton onClick={onCancel} size="small" aria-label="cancel">
-      <CloseIcon color="disabled" />
-    </IconButton>
+    <Button variant="contained" onClick={onConfirm} size={size}>
+      Save
+    </Button>
+    <Button className="margin-left-small" variant="outlined" color="info" onClick={onCancel} size={size}>
+      Cancel
+    </Button>
   </div>
 );
 
