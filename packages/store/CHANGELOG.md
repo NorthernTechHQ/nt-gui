@@ -1,5 +1,30 @@
 ---
-## 0.49.2 - 2026-10-22
+## 0.49.3 - 2026-10-23
+
+
+
+### New features
+
+#### store
+
+- Added software auditlog type to align w/ backend ([MEN-10270](https://northerntech.atlassian.net/browse/MEN-10270)) ([685d15d](https://github.com/NorthernTechHQ/nt-gui/commit/685d15d47d9ee44ddae014a15bfd3ff300556419)) by @mzedel
+
+### Bug fixes
+
+#### store
+
+- Filter auditlogs by actor email if no user id is available ([MEN-9330](https://northerntech.atlassian.net/browse/MEN-9330)) ([fda0813](https://github.com/NorthernTechHQ/nt-gui/commit/fda08133dd7358f3cd5ad9adc7f90ee4e2eeffe4)) by @mzedel
+- Enforce new search usage by no longer having a choice ([871462b](https://github.com/NorthernTechHQ/nt-gui/commit/871462b92305e581e19a8f1ccfba2d50783834fb)) by @mzedel
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-9330](https://northerntech.atlassian.net/browse/MEN-9330) |
+| [MEN-10270](https://northerntech.atlassian.net/browse/MEN-10270) |
+
+## @northern.tech/store-0.49.2 - 2026-10-23
 
 
 
