@@ -1,5 +1,14 @@
 ---
-## 0.49.3 - 2026-10-23
+## 0.49.4 - 2026-10-23
+
+
+
+### Bug fixes
+
+#### store
+
+- Fixed email validation import in absence of esm support ([53b7bc9](https://github.com/NorthernTechHQ/nt-gui/commit/53b7bc939c1510e14f3c024b547363f0747195f7)) by @mzedel
+## @northern.tech/store-0.49.3 - 2026-10-23
 
 
 
