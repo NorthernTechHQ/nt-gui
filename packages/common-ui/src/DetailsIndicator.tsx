@@ -15,7 +15,7 @@
 import { Button } from '@mui/material';
 
 export const DetailsIndicator = () => (
-  <Button className="nowrap" color="info" variant="outlined">
+  <Button className="clickable nowrap" color="info" variant="outlined">
     View details
   </Button>
 );
