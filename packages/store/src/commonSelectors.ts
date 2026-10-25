@@ -67,6 +67,8 @@ export const getUserCapabilities = createSelector([getUserRoles, getIsServicePro
   const canReadUsers = uiPermissions.userManagement.includes(uiPermissionsById.read.value);
   const canManageUsers = uiPermissions.userManagement.includes(uiPermissionsById.manage.value);
 
+  const canManageTokens = uiPermissions.tokenManagement?.includes(uiPermissionsById.manage.value) ?? false;
+
   const canReadDevices = hasPermission(uiPermissions.groups, uiPermissionsById.read.value);
   const canWriteDevices = Object.values(uiPermissions.groups).some(
     groupPermissions => groupPermissions.includes(uiPermissionsById.read.value) && groupPermissions.length > 1
@@ -85,6 +87,7 @@ export const getUserCapabilities = createSelector([getUserRoles, getIsServicePro
     canDeploy,
     canManageDevices,
     canManageReleases,
+    canManageTokens,
     canManageUsers,
     canReadDeployments,
     canReadDevices,
