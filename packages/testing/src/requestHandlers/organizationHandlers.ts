@@ -13,7 +13,7 @@
 //    limitations under the License.
 //@ts-nocheck
 import { auditLogsApiUrl, headerNames, iotManagerBaseURL, ssoEndpointsApiUrlv1, ssoIdpApiUrlv1, tenantadmApiUrlv2 } from '@northern.tech/utils/constants';
-import { HttpResponse, http } from 'msw';
+import { HttpResponse, http } from 'msw/http';
 
 import { mockApiResponses, ssoEndpoint, tenants, webhookEvents } from '../mockData';
 import { validated } from './validation';

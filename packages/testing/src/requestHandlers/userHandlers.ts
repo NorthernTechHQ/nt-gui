@@ -13,7 +13,7 @@
 //    limitations under the License.
 //@ts-nocheck
 import { APPLICATION_JWT_CONTENT_TYPE, useradmApiUrl, useradmApiUrlv2 } from '@northern.tech/utils/constants';
-import { HttpResponse, http } from 'msw';
+import { HttpResponse, http } from 'msw/http';
 
 import { accessTokens, defaultPassword, userId as defaultUserId, mockApiResponses, permissionSets, rbacRoles, testSsoId, token } from '../mockData';
 import { validated } from './validation';

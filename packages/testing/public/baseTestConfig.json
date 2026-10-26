@@ -12,6 +12,9 @@
     },
     "retry": 0,
     "environment": "jsdom",
+    "fakeTimers": {
+      "toNotFake": ["setImmediate"]
+    },
     "globals": true
   }
 }

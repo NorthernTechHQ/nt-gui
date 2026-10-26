@@ -14,7 +14,7 @@
 //@ts-nocheck
 import { SORTING_OPTIONS, deploymentsApiUrl, deploymentsApiUrlV2, headerNames } from '@northern.tech/utils/constants';
 import { customSort } from '@northern.tech/utils/helpers';
-import { HttpResponse, http } from 'msw';
+import { HttpResponse, http } from 'msw/http';
 
 import { manifestsList, mockApiResponses, releasesList, softwareList } from '../mockData';
 import { validated } from './validation';

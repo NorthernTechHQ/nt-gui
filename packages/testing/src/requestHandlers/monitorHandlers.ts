@@ -13,7 +13,7 @@
 //    limitations under the License.
 //@ts-nocheck
 import { alertChannels, headerNames, monitorApiUrlv1 } from '@northern.tech/utils/constants';
-import { HttpResponse, http } from 'msw';
+import { HttpResponse, http } from 'msw/http';
 
 import { mockApiResponses } from '../mockData';
 import { validated } from './validation';

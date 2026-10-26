@@ -24,7 +24,7 @@ import {
   inventoryApiUrlV2alpha1,
   iotManagerBaseURL
 } from '@northern.tech/utils/constants';
-import { HttpResponse, http } from 'msw';
+import { HttpResponse, http } from 'msw/http';
 
 import { defaultCreationDate, defaultMacAddress, mockApiResponses } from '../mockData';
 import { validated } from './validation';
