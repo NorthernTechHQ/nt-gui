@@ -73,13 +73,14 @@ describe('TerminalSession Component', () => {
       }
     });
     await waitFor(() => rerender(ui));
+    // let the session & device retrieval settle before running timers, as those would otherwise trigger the request timeouts
+    await waitFor(() => expect(screen.queryByText(/Device type/i)).toBeVisible());
     await act(async () => {
       vi.runAllTimers();
       vi.runAllTicks();
     });
     expect(await screen.findByText('WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW')).toBeInTheDocument();
     expect(sessionSpy).toHaveBeenCalled();
-    await waitFor(() => expect(screen.queryByText(/Device type/i)).toBeVisible());
 
     const view = baseElement.firstChild.firstChild;
     expect(view).toMatchSnapshot();

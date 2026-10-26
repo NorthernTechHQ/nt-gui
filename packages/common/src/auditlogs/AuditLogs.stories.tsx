@@ -21,7 +21,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { defaultState } from '@northern.tech/store/mockState';
 import { getConfiguredStore } from '@northern.tech/store/store';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { HttpResponse, http } from 'msw';
+import { HttpResponse, http } from 'msw/http';
 
 import AuditLogs from './AuditLogs';
 
