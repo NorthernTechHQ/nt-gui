@@ -13,21 +13,18 @@
   "exports": {
     "./Mender": {
       "types": "./dist/Mender/index.d.ts",
-      "import": "./dist/Mender/index.js",
-      "require": "./dist/Mender/index.cjs"
+      "import": "./dist/Mender/index.js"
     },
     "./Mender/styles/main.css": {
       "default": "./dist/style.css"
     },
     "./Alvaldi": {
       "types": "./dist/Alvaldi/index.d.ts",
-      "import": "./dist/Alvaldi/index.js",
-      "require": "./dist/Alvaldi/index.cjs"
+      "import": "./dist/Alvaldi/index.js"
     },
     "./CFEngine": {
       "types": "./dist/CFEngine/index.d.ts",
-      "import": "./dist/CFEngine/index.js",
-      "require": "./dist/CFEngine/index.cjs"
+      "import": "./dist/CFEngine/index.js"
     }
   },
   "files": [
