@@ -19,9 +19,6 @@ const oldWindowLocalStorage = window.localStorage;
 const oldWindowLocation = window.location;
 const oldWindowSessionStorage = window.sessionStorage;
 
-// this duplicates what's in the testing package, but is kept here to ease package structure
-const mockAbortController = { abort: vi.fn(), signal: { addEventListener: () => {}, removeEventListener: () => {} } };
-
 process.on('unhandledRejection', err => {
   throw err;
 });
@@ -56,9 +53,6 @@ beforeAll(async () => {
     removeItem: vi.fn()
   };
   window.ENV = 'test';
-  global.AbortController = vi.fn().mockImplementation(function () {
-    return mockAbortController;
-  });
   global.MessageChannel = MessageChannel;
   global.ResizeObserver = vi.fn().mockImplementation(function () {
     return {
