@@ -193,7 +193,7 @@ export const removeReportsByGroupName = createAppAsyncThunk(`${sliceName}/remove
   if (!groupName) return Promise.resolve();
   const reports = getDeviceReportsForUser(getState());
   const filteredReports = reports.filter(report => report.group !== groupName);
-  dispatch(saveUserSettings({ reports: filteredReports }));
+  return dispatch(saveUserSettings({ reports: filteredReports }));
 });
 
 export const removeStaticGroup = createAppAsyncThunk(`${sliceName}/removeStaticGroup`, (groupName: string, { dispatch }) =>
