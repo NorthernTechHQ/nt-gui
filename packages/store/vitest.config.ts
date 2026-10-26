@@ -27,12 +27,12 @@ export default defineConfig({
     alias: [
       {
         find: '@/testUtils',
-        replacement: path.resolve(__dirname, 'testUtils')
+        replacement: path.resolve(import.meta.dirname, 'testUtils')
       }
     ]
   },
   test: {
     ...baseConfig.test,
-    setupFiles: path.resolve(__dirname, 'setupTests.ts')
+    setupFiles: path.resolve(import.meta.dirname, 'setupTests.ts')
   }
 });

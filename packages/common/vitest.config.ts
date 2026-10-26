@@ -27,14 +27,14 @@ export default defineConfig({
     alias: [
       {
         find: '@/testUtils',
-        replacement: path.resolve(__dirname, 'testUtils')
+        replacement: path.resolve(import.meta.dirname, 'testUtils')
       }
     ],
     dedupe: ['react-router', '@mui/x-date-pickers']
   },
   test: {
     ...baseConfig.test,
-    setupFiles: path.resolve(__dirname, 'setupTests.ts'),
+    setupFiles: path.resolve(import.meta.dirname, 'setupTests.ts'),
     server: {
       deps: {
         inline: ['@mui/material', '@mui/x-date-pickers', 'react-transition-group']
