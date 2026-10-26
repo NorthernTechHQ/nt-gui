@@ -1,5 +1,14 @@
 ---
-## 0.10.1 - 2026-10-23
+## 0.10.2 - 2026-10-26
+
+
+
+### Bug fixes
+
+#### common-ui
+
+- Fixed an issue that would make settings appear too spaced out ([42ea2d5](https://github.com/NorthernTechHQ/nt-gui/commit/42ea2d58aeb379e8045c072bdabffa4d7f816221)) by @mzedel
+## @northern.tech/common-ui-0.10.1 - 2026-10-23
 
 
 
