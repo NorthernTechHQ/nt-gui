@@ -13,13 +13,11 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.js"
     },
     "./auditlogs/*": {
       "types": "./dist/auditlogs/*.d.ts",
-      "import": "./dist/auditlogs/*.js",
-      "require": "./dist/auditlogs/*.cjs"
+      "import": "./dist/auditlogs/*.js"
     }
   },
   "files": [
