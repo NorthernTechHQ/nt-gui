@@ -128,23 +128,26 @@ describe('organization actions', () => {
       { type: setFirstLoginAfterSignup.fulfilled.type },
       { type: createOrganizationTrial.fulfilled.type }
     ];
-    const result = store.dispatch(
-      createOrganizationTrial({
-        'g-recaptcha-response': 'test',
-        email: 'test@test.com',
-        password: '123',
-        name: 'My Organization',
-        location: 'us',
-        organization: 'test',
-        plan: 'os',
-        tos: true
-      })
-    );
+    const result = store
+      .dispatch(
+        createOrganizationTrial({
+          'g-recaptcha-response': 'test',
+          email: 'test@test.com',
+          password: '123',
+          name: 'My Organization',
+          location: 'us',
+          organization: 'test',
+          plan: 'os',
+          tos: true
+        })
+      )
+      .unwrap();
+    await vi.waitFor(() => expect(store.getActions()).toContainEqual(expect.objectContaining({ type: setFirstLoginAfterSignup.fulfilled.type })));
     vi.advanceTimersByTime(6000);
-    result.then(token => {
-      expect(token).toBeTruthy();
-      expect(store.getActions()).toHaveLength(expectedActions.length);
-    });
+    await result;
+    const storeActions = store.getActions();
+    expect(storeActions).toHaveLength(expectedActions.length);
+    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
 
   it('should handle credit card details retrieval', async () => {
@@ -283,9 +286,9 @@ describe('organization actions', () => {
       { type: getDeviceLimits.pending.type },
       { type: getUserOrganization.pending.type },
       { type: deviceActions.setDeviceLimits.type },
-      { type: getDeviceLimits.fulfilled.type },
       { type: actions.setOrganization.type, payload: defaultState.organization.organization },
       { type: appActions.setAnnouncement.type, payload: tenantDataDivergedMessage },
+      { type: getDeviceLimits.fulfilled.type },
       { type: getUserOrganization.fulfilled.type },
       { type: completeUpgrade.fulfilled.type }
     ];

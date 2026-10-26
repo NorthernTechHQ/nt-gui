@@ -12,9 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 import { defaultState } from '@/testUtils';
-import { mockAbortController } from '@northern.tech/testing/setupTests';
 import { TIMEOUTS } from '@northern.tech/utils/constants';
-import { deepCompare } from '@northern.tech/utils/helpers';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { describe, expect, it, vi } from 'vitest';
@@ -245,7 +243,7 @@ describe('release actions', () => {
         type: appActions.initUpload.type,
         payload: {
           id: 'mock-uuid',
-          upload: { cancelSource: mockAbortController, name: 'createdRelease', size: undefined, progress: 0 }
+          upload: { cancelSource: expect.any(AbortController), name: 'createdRelease', size: undefined, progress: 0 }
         }
       },
       { type: appActions.uploadProgress.type, payload: { id: 'mock-uuid', progress: 100 } },
@@ -263,10 +261,7 @@ describe('release actions', () => {
     );
     vi.runAllTimers();
     const storeActions = store.getActions();
-    expectedActions.forEach(expectedAction => {
-      const handledAction = storeActions.some(storeAction => Object.keys(expectedAction).every(key => deepCompare(storeAction[key], expectedAction[key])));
-      expect(handledAction, JSON.stringify(expectedAction)).toBeTruthy();
-    });
+    expectedActions.forEach(expectedAction => expect(storeActions).toContainEqual(expect.objectContaining(expectedAction)));
   });
   it('should support editing artifact information', async () => {
     const store = mockStore({ ...defaultState });
@@ -306,7 +301,7 @@ describe('release actions', () => {
       { type: appActions.setSnackbar.type, payload: 'Uploading artifact' },
       {
         type: appActions.initUpload.type,
-        payload: { id: 'mock-uuid', upload: { cancelSource: mockAbortController, name: defaultState.releases.byId.r1.name, size: 1234, progress: 0 } }
+        payload: { id: 'mock-uuid', upload: { cancelSource: expect.any(AbortController), name: defaultState.releases.byId.r1.name, size: 1234, progress: 0 } }
       },
       { type: appActions.uploadProgress.type, payload: { id: 'mock-uuid', progress: 100 } },
       { type: appActions.setSnackbar.type, payload: { autoHideDuration: 5000, message: 'Upload successful' } },
@@ -592,6 +587,8 @@ describe('manifest actions', () => {
       releases: { ...defaultState.releases, manifestsList: { ...defaultState.releases.manifestsList, selection: [0, 1, 2] } }
     });
     await store.dispatch(setManifestsListState({ page: 2 }));
+    // the list retrieval is intentionally not awaited by the thunk, so wait for it to settle before the test ends
+    await vi.waitFor(() => expect(store.getActions()).toContainEqual(expect.objectContaining({ type: getManifests.fulfilled.type })));
     const storeActions = store.getActions();
     expect(storeActions).toContainEqual(
       expect.objectContaining({ type: actions.setManifestsListState.type, payload: expect.objectContaining({ selection: [] }) })
@@ -617,7 +614,7 @@ describe('manifest actions', () => {
       { type: uploadManifest.pending.type },
       {
         type: appActions.initUpload.type,
-        payload: { id: 'mock-uuid', upload: { cancelSource: mockAbortController, name: 'test-manifest.mender', size: 1234, progress: 0 } }
+        payload: { id: 'mock-uuid', upload: { cancelSource: expect.any(AbortController), name: 'test-manifest.mender', size: 1234, progress: 0 } }
       },
       { type: appActions.uploadProgress.type, payload: { id: 'mock-uuid', progress: 100 } },
       { type: appActions.setSnackbar.type, payload: { autoHideDuration: 5000, message: 'Upload successful' } },
@@ -626,10 +623,7 @@ describe('manifest actions', () => {
     ];
     await store.dispatch(uploadManifest({ file: mockFile, meta: { description: 'test manifest' } }));
     const storeActions = store.getActions();
-    expectedActions.forEach(expectedAction => {
-      const handledAction = storeActions.some(storeAction => Object.keys(expectedAction).every(key => deepCompare(storeAction[key], expectedAction[key])));
-      expect(handledAction, JSON.stringify(expectedAction)).toBeTruthy();
-    });
+    expectedActions.forEach(expectedAction => expect(storeActions).toContainEqual(expect.objectContaining(expectedAction)));
   });
   it('should support generating manifest artifacts', { timeout: 2 * TIMEOUTS.fiveSeconds }, async () => {
     const store = mockStore({ ...defaultState });
@@ -637,7 +631,7 @@ describe('manifest actions', () => {
     const expectedActions = [
       {
         type: appActions.initUpload.type,
-        payload: { id: 'mock-uuid', upload: { cancelSource: mockAbortController, name: 'manifest.yaml', size: 567, progress: 0 } }
+        payload: { id: 'mock-uuid', upload: { cancelSource: expect.any(AbortController), name: 'manifest.yaml', size: 567, progress: 0 } }
       },
       { type: appActions.uploadProgress.type, payload: { id: 'mock-uuid', progress: 100 } },
       { type: appActions.setSnackbar.type, payload: { message: 'Upload successful', autoHideDuration: 5000 } },
@@ -647,10 +641,7 @@ describe('manifest actions', () => {
     await store.dispatch(generateManifest({ file: mockFile, meta: { description: 'test', tags: ['foo'] } }));
     await vi.advanceTimersByTimeAsync(TIMEOUTS.fiveSeconds);
     const storeActions = store.getActions();
-    expectedActions.forEach(expectedAction => {
-      const handledAction = storeActions.some(storeAction => Object.keys(expectedAction).every(key => deepCompare(storeAction[key], expectedAction[key])));
-      expect(handledAction, JSON.stringify(expectedAction)).toBeTruthy();
-    });
+    expectedActions.forEach(expectedAction => expect(storeActions).toContainEqual(expect.objectContaining(expectedAction)));
   });
   it('should remove a single manifest by name', async () => {
     const store = mockStore({ ...defaultState });
@@ -667,10 +658,7 @@ describe('manifest actions', () => {
     ];
     await store.dispatch(removeManifest('m1'));
     const storeActions = store.getActions();
-    expectedActions.forEach(expectedAction => {
-      const handledAction = storeActions.some(storeAction => Object.keys(expectedAction).every(key => deepCompare(storeAction[key], expectedAction[key])));
-      expect(handledAction, JSON.stringify(expectedAction)).toBeTruthy();
-    });
+    expectedActions.forEach(expectedAction => expect(storeActions).toContainEqual(expect.objectContaining(expectedAction)));
   });
   it('should remove multiple manifests by name', async () => {
     const store = mockStore({ ...defaultState });
@@ -686,10 +674,7 @@ describe('manifest actions', () => {
     ];
     await store.dispatch(removeManifests(['m1', 'm2']));
     const storeActions = store.getActions();
-    expectedActions.forEach(expectedAction => {
-      const handledAction = storeActions.some(storeAction => Object.keys(expectedAction).every(key => deepCompare(storeAction[key], expectedAction[key])));
-      expect(handledAction, JSON.stringify(expectedAction)).toBeTruthy();
-    });
+    expectedActions.forEach(expectedAction => expect(storeActions).toContainEqual(expect.objectContaining(expectedAction)));
   });
 });
 
@@ -821,6 +806,8 @@ describe('software actions', () => {
   it('should update software list state and trigger fetch on change', async () => {
     const store = mockStore({ ...defaultState });
     await store.dispatch(setSoftwareListState({ page: 2 }));
+    // the list retrieval is intentionally not awaited by the thunk, so wait for it to settle before the test ends
+    await vi.waitFor(() => expect(store.getActions()).toContainEqual(expect.objectContaining({ type: getSoftware.fulfilled.type })));
     const storeActions = store.getActions();
     expect(storeActions).toContainEqual(expect.objectContaining({ type: setSoftwareListState.pending.type }));
     expect(storeActions).toContainEqual(expect.objectContaining({ type: actions.setSoftwareListState.type, payload: expect.objectContaining({ page: 2 }) }));

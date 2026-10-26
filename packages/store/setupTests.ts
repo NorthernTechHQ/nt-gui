@@ -25,7 +25,7 @@ process.on('unhandledRejection', err => {
 export const server = setupServer(...handlers);
 
 beforeAll(async () => {
-  await server.listen({ onUnhandledRequest: 'error' });
+  await server.listen({ onUnhandledFrame: 'error' });
   await ntBeforeAll();
 });
 

@@ -13,7 +13,6 @@
 //    limitations under the License.
 import { act, defaultState } from '@/testUtils';
 import { deviceComponents, inventoryDevice } from '@northern.tech/testing/requestHandlers/deviceHandlers';
-import { mockAbortController } from '@northern.tech/testing/setupTests';
 import type { Credentials, Integration, Status } from '@northern.tech/types/MenderTypes';
 import { TIMEOUTS } from '@northern.tech/utils/constants';
 import configureMockStore from 'redux-mock-store';
@@ -25,6 +24,7 @@ import { actions as appActions } from '../appSlice';
 import { DEVICE_STATES, EXTERNAL_PROVIDER, UNGROUPED_GROUP } from '../constants';
 import { actions as deploymentActions } from '../deploymentsSlice';
 import { getSingleDeployment, getUserSettings, saveUserSettings } from '../thunks';
+import { actions as userActions } from '../usersSlice';
 import {
   addDevicesToGroup,
   addDynamicGroup,
@@ -651,9 +651,13 @@ describe('static grouping related actions', () => {
       { type: getUserSettings.pending.type },
       { type: getGroups.pending.type },
       { type: appActions.setSnackbar.type, payload: { autoHideDuration: 5000, message: 'Group was removed successfully' } },
-      { type: removeReportsByGroupName.fulfilled.type },
       { type: actions.receivedGroups.type, payload: { testGroup: defaultState.devices.groups.byId.testGroup } },
       { type: getDevicesByStatus.pending.type },
+      { type: userActions.setUserSettings.type },
+      { type: getUserSettings.fulfilled.type },
+      { type: userActions.setUserSettings.type },
+      { type: saveUserSettings.fulfilled.type },
+      { type: removeReportsByGroupName.fulfilled.type },
       {
         type: actions.receivedDevices.type,
         payload: { [defaultState.devices.byId.a1.id]: { ...defaultState.devices.byId.a1, updated_ts: inventoryDevice.updated_ts } }
@@ -803,6 +807,10 @@ describe('dynamic grouping related actions', () => {
       { type: saveUserSettings.pending.type },
       { type: getUserSettings.pending.type },
       { type: appActions.setSnackbar.type, payload: { autoHideDuration: 5000, message: 'Group was removed successfully' } },
+      { type: userActions.setUserSettings.type },
+      { type: getUserSettings.fulfilled.type },
+      { type: userActions.setUserSettings.type },
+      { type: saveUserSettings.fulfilled.type },
       { type: removeReportsByGroupName.fulfilled.type },
       { type: removeDynamicGroup.fulfilled.type }
     ];
@@ -843,15 +851,15 @@ describe('device retrieval ', () => {
       { type: getDeviceById.pending.type },
       { type: getDeviceTwin.pending.type },
       { type: getDeviceConnect.pending.type },
-      { type: actions.receivedDevices.type, payload: { [id]: { ...expectedDevice, id } } },
-      { type: getDevicesWithAuth.fulfilled.type },
       { type: actions.receivedDevice.type, payload: { attributes, id } },
-      { type: getDeviceAuth.fulfilled.type },
-      { type: getDeviceById.fulfilled.type },
       { type: actions.receivedDevice.type, payload: { connect_status: 'connected', connect_updated_ts: updated_ts, id } },
-      { type: getDeviceConnect.fulfilled.type },
+      { type: actions.receivedDevices.type, payload: { [id]: { ...expectedDevice, id } } },
       { type: actions.receivedDevice.type, payload: expectedDevice },
+      { type: getDevicesWithAuth.fulfilled.type },
+      { type: getDeviceConnect.fulfilled.type },
+      { type: getDeviceById.fulfilled.type },
       { type: getDeviceTwin.fulfilled.type },
+      { type: getDeviceAuth.fulfilled.type },
       { type: getDeviceInfo.fulfilled.type }
     ];
     await store.dispatch(getDeviceInfo(defaultState.devices.byId.a1.id));
@@ -1140,7 +1148,7 @@ describe('troubleshooting related actions', () => {
       { type: appActions.setSnackbar.type, payload: 'Uploading file' },
       {
         type: appActions.initUpload.type,
-        payload: { id: 'mock-uuid', upload: { cancelSource: mockAbortController, progress: 0 } }
+        payload: { id: 'mock-uuid', upload: { cancelSource: expect.any(AbortController), progress: 0 } }
       },
       { type: appActions.uploadProgress.type, payload: { id: 'mock-uuid', progress: 100 } },
       { type: appActions.setSnackbar.type, payload: { autoHideDuration: 5000, message: 'Upload successful' } },
