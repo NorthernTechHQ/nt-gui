@@ -17,93 +17,75 @@
     },
     "./appSlice": {
       "types": "./dist/appSlice/index.d.ts",
-      "import": "./dist/appSlice/index.js",
-      "require": "./dist/appSlice/index.cjs"
+      "import": "./dist/appSlice/index.js"
     },
     "./appSlice/*": {
       "types": "./dist/appSlice/*.d.ts",
-      "import": "./dist/appSlice/*.js",
-      "require": "./dist/appSlice/*.cjs"
+      "import": "./dist/appSlice/*.js"
     },
     "./deploymentsSlice": {
       "types": "./dist/deploymentsSlice/index.d.ts",
-      "import": "./dist/deploymentsSlice/index.js",
-      "require": "./dist/deploymentsSlice/index.cjs"
+      "import": "./dist/deploymentsSlice/index.js"
     },
     "./deploymentsSlice/*": {
       "types": "./dist/deploymentsSlice/*.d.ts",
-      "import": "./dist/deploymentsSlice/*.js",
-      "require": "./dist/deploymentsSlice/*.cjs"
+      "import": "./dist/deploymentsSlice/*.js"
     },
     "./devicesSlice": {
       "types": "./dist/devicesSlice/index.d.ts",
-      "import": "./dist/devicesSlice/index.js",
-      "require": "./dist/devicesSlice/index.cjs"
+      "import": "./dist/devicesSlice/index.js"
     },
     "./devicesSlice/*": {
       "types": "./dist/devicesSlice/*.d.ts",
-      "import": "./dist/devicesSlice/*.js",
-      "require": "./dist/devicesSlice/*.cjs"
+      "import": "./dist/devicesSlice/*.js"
     },
     "./monitorSlice": {
       "types": "./dist/monitorSlice/index.d.ts",
-      "import": "./dist/monitorSlice/index.js",
-      "require": "./dist/monitorSlice/index.cjs"
+      "import": "./dist/monitorSlice/index.js"
     },
     "./monitorSlice/*": {
       "types": "./dist/monitorSlice/*.d.ts",
-      "import": "./dist/monitorSlice/*.js",
-      "require": "./dist/monitorSlice/*.cjs"
+      "import": "./dist/monitorSlice/*.js"
     },
     "./onboardingSlice": {
       "types": "./dist/onboardingSlice/index.d.ts",
-      "import": "./dist/onboardingSlice/index.js",
-      "require": "./dist/onboardingSlice/index.cjs"
+      "import": "./dist/onboardingSlice/index.js"
     },
     "./onboardingSlice/*": {
       "types": "./dist/onboardingSlice/*.d.ts",
-      "import": "./dist/onboardingSlice/*.js",
-      "require": "./dist/onboardingSlice/*.cjs"
+      "import": "./dist/onboardingSlice/*.js"
     },
     "./organizationSlice": {
       "types": "./dist/organizationSlice/index.d.ts",
-      "import": "./dist/organizationSlice/index.js",
-      "require": "./dist/organizationSlice/index.cjs"
+      "import": "./dist/organizationSlice/index.js"
     },
     "./organizationSlice/*": {
       "types": "./dist/organizationSlice/*.d.ts",
-      "import": "./dist/organizationSlice/*.js",
-      "require": "./dist/organizationSlice/*.cjs"
+      "import": "./dist/organizationSlice/*.js"
     },
     "./releasesSlice": {
       "types": "./dist/releasesSlice/index.d.ts",
-      "import": "./dist/releasesSlice/index.js",
-      "require": "./dist/releasesSlice/index.cjs"
+      "import": "./dist/releasesSlice/index.js"
     },
     "./releasesSlice/*": {
       "types": "./dist/releasesSlice/*.d.ts",
-      "import": "./dist/releasesSlice/*.js",
-      "require": "./dist/releasesSlice/*.cjs"
+      "import": "./dist/releasesSlice/*.js"
     },
     "./usersSlice": {
       "types": "./dist/usersSlice/index.d.ts",
-      "import": "./dist/usersSlice/index.js",
-      "require": "./dist/usersSlice/index.cjs"
+      "import": "./dist/usersSlice/index.js"
     },
     "./usersSlice/*": {
       "types": "./dist/usersSlice/*.d.ts",
-      "import": "./dist/usersSlice/*.js",
-      "require": "./dist/usersSlice/*.cjs"
+      "import": "./dist/usersSlice/*.js"
     },
     "./**/*": {
       "types": "./dist/*.d.ts",
-      "import": "./dist/*.js",
-      "require": "./dist/*.cjs"
+      "import": "./dist/*.js"
     },
     "./*": {
       "types": "./dist/*.d.ts",
-      "import": "./dist/*.js",
-      "require": "./dist/*.cjs"
+      "import": "./dist/*.js"
     }
   },
   "files": [
