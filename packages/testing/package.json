@@ -14,13 +14,11 @@
     "./baseTestConfig.json": "./dist/public/baseTestConfig.json",
     "./**/*": {
       "types": "./dist/*.d.ts",
-      "import": "./dist/*.js",
-      "require": "./dist/*.cjs"
+      "import": "./dist/*.js"
     },
     "./*": {
       "types": "./dist/*.d.ts",
-      "import": "./dist/*.js",
-      "require": "./dist/*.cjs"
+      "import": "./dist/*.js"
     }
   },
   "files": [
