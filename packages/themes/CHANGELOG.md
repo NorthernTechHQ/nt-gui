@@ -1,5 +1,29 @@
 ---
-## 0.18.1 - 2026-10-15
+## 0.18.2 - 2026-10-27
+
+
+
+### Improvements
+
+#### themes
+
+- Extracted shared theme definitions ([aa5bca6](https://github.com/NorthernTechHQ/nt-gui/commit/aa5bca697a7580133bc306ac6c2ff44cd77f7302)) by @mzedel
+- Let mender theme rely on shared theme definitions ([dc984d8](https://github.com/NorthernTechHQ/nt-gui/commit/dc984d89d53fe42889ab68a187cd60f51169b4af)) by @mzedel
+- Aligned alvaldi theme w/ updated mender theme by reusing shared defs ([c55aefb](https://github.com/NorthernTechHQ/nt-gui/commit/c55aefb4b04b4186211bed934bdc050adbebe447)) by @mzedel
+
+### Bug fixes
+
+#### themes
+
+- Made package esm only ([316dbd2](https://github.com/NorthernTechHQ/nt-gui/commit/316dbd2f3fde763a4972af1810e0920996eb51ec)) by @mzedel
+- Let cfengine theme depend on common theme definitions ([b17dc67](https://github.com/NorthernTechHQ/nt-gui/commit/b17dc671487282e0e9649ce189c90f9a51c28e15)) by @mzedel
+
+### Dependency updates
+
+#### deps
+
+- Update development-dependencies ([3a9c99a](https://github.com/NorthernTechHQ/nt-gui/commit/3a9c99a31e2ed28685662f20e24603eead2bb6d9)) by @renovate-ring[bot]
+## @northern.tech/themes-0.18.1 - 2026-10-15
 
 
 
