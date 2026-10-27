@@ -1,5 +1,14 @@
 ---
-## 0.15.2 - 2026-10-19
+## 0.15.3 - 2026-10-27
+
+
+
+### Bug fixes
+
+#### utils
+
+- Made package esm only ([6457b21](https://github.com/NorthernTechHQ/nt-gui/commit/6457b21ae49bc6af16113501ce334f4559bbe5eb)) by @mzedel
+## @northern.tech/utils-0.15.2 - 2026-10-19
 
 
 

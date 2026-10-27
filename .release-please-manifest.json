@@ -8,5 +8,5 @@
   "packages/themes": "0.18.2",
   "packages/types": "0.7.11",
   "packages/typescript-config": "0.3.3",
-  "packages/utils": "0.15.2"
+  "packages/utils": "0.15.3"
 }
