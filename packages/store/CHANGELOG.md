@@ -1,5 +1,22 @@
 ---
-## 0.49.4 - 2026-10-23
+## 0.49.5 - 2026-10-27
+
+
+
+### Bug fixes
+
+#### store
+
+- Fixed an issue that prevented group removal requests to be awaited ([5145fc7](https://github.com/NorthernTechHQ/nt-gui/commit/5145fc7c18edc2d71ca0fdf47859a2755a9bd2ca)) by @mzedel
+- Made package esm only ([e4d94ae](https://github.com/NorthernTechHQ/nt-gui/commit/e4d94ae3b25fd5bf64c242f804aa6acd58677d13)) by @mzedel
+- Allowed targeted software retrieval ([c444808](https://github.com/NorthernTechHQ/nt-gui/commit/c44480810c2c693664c8798f759d2bfed899ceec)) by @mzedel
+
+### Dependency updates
+
+#### deps
+
+- Update dependency @sentry/react to v11 ([54044a4](https://github.com/NorthernTechHQ/nt-gui/commit/54044a4abdc456e305388a1b3e4190802996bf63)) by @renovate-ring[bot]
+## @northern.tech/store-0.49.4 - 2026-10-23
 
 
 
