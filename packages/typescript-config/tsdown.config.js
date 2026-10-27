@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsdown';
 
 export const config = {
-  format: ['cjs', 'esm'],
+  format: ['esm'],
   dts: true,
   entry: ['src/**/*.{js,jsx,ts,tsx}', '!src/**/*.test.{js,jsx,ts,tsx}', '!src/**/*.stories.{js,jsx,ts,tsx}'],
   sourcemap: true,
@@ -16,7 +16,7 @@ export const config = {
     '.jpg': 'dataurl',
     '.gif': 'dataurl'
   },
-  outExtensions: ({ format }) => ({ js: format === 'es' ? `.js` : '.cjs' })
+  outExtensions: () => ({ js: '.js' })
 };
 
 export default (options = {}) => defineConfig({ ...config, ...options });

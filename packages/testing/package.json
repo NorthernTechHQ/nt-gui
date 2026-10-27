@@ -14,13 +14,11 @@
     "./baseTestConfig.json": "./dist/public/baseTestConfig.json",
     "./**/*": {
       "types": "./dist/*.d.ts",
-      "import": "./dist/*.js",
-      "require": "./dist/*.cjs"
+      "import": "./dist/*.js"
     },
     "./*": {
       "types": "./dist/*.d.ts",
-      "import": "./dist/*.js",
-      "require": "./dist/*.cjs"
+      "import": "./dist/*.js"
     }
   },
   "files": [
@@ -53,10 +51,10 @@
     "@northern.tech/utils": "*",
     "@reduxjs/toolkit": "^2.x",
     "@testing-library/react": "^16.x",
-    "msw": "^2.x",
+    "msw": "^3.x",
     "react": "^19.x",
     "react-redux": "^9.x",
     "react-router": "^8.x",
-    "vitest": "^4.0.0 || ^5.0.0"
+    "vitest": "^5.x"
   }
 }

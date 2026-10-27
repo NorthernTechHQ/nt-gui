@@ -13,7 +13,7 @@
 //    limitations under the License.
 import { defaultState, render } from '@/testUtils';
 import { undefineds } from '@northern.tech/testing/mockData';
-import { act, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import PortForward from './PortForward';
@@ -39,6 +39,8 @@ describe('PortForward Component', () => {
       }
     });
     await waitFor(() => rerender(ui));
+    // let the session & device retrieval settle before running timers, as those would otherwise trigger the request timeouts
+    await waitFor(() => expect(screen.queryByText(/Device type/i)).toBeVisible());
     await act(async () => {
       vi.runOnlyPendingTimers();
       vi.runAllTicks();

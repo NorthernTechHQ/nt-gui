@@ -33,11 +33,6 @@ expect.addSnapshotSerializer(createSerializer({ includeStyles: true }));
 
 export const TEST_LOCATION = 'localhost';
 
-export const mockAbortController: { abort: () => void; signal: { addEventListener: () => void; removeEventListener: () => void } } = {
-  abort: vi.fn(),
-  signal: { addEventListener: () => {}, removeEventListener: () => {} }
-};
-
 const oldWindowLocalStorage = window.localStorage;
 const oldWindowLocation = window.location;
 const oldWindowSessionStorage = window.sessionStorage;
@@ -81,9 +76,6 @@ export const beforeAll = async () => {
   };
   window.mender_environment = menderEnvironment;
   window.ENV = 'test';
-  global.AbortController = vi.fn().mockImplementation(function () {
-    return mockAbortController;
-  });
   global.MessageChannel = MessageChannel;
   global.ResizeObserver = vi.fn().mockImplementation(function () {
     return {

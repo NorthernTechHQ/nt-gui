@@ -13,6 +13,7 @@
 //    limitations under the License.
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
+import { msw } from 'msw/vite';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vitest/config';
@@ -22,17 +23,17 @@ const baseConfig = JSON.parse(fs.readFileSync(fileURLToPath(baseConfigPath), 'ut
 
 export default defineConfig({
   ...baseConfig,
-  plugins: [react()],
+  plugins: [react(), msw()],
   resolve: {
     alias: [
       {
         find: '@/testUtils',
-        replacement: path.resolve(__dirname, 'testUtils')
+        replacement: path.resolve(import.meta.dirname, 'testUtils')
       }
     ]
   },
   test: {
     ...baseConfig.test,
-    setupFiles: path.resolve(__dirname, 'setupTests.ts')
+    setupFiles: path.resolve(import.meta.dirname, 'setupTests.ts')
   }
 });

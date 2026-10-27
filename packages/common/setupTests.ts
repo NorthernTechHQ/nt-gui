@@ -15,7 +15,7 @@ import handlers from '@northern.tech/testing/requestHandlers/requestHandlers';
 import { afterAll as ntAfterAll, afterEach as ntAfterEach, beforeAll as ntBeforeAll, beforeEach as ntBeforeEach } from '@northern.tech/testing/setupTests';
 import '@testing-library/jest-dom/vitest';
 import { setupServer } from 'msw/node';
-import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest';
 
 process.on('unhandledRejection', err => {
   throw err;
@@ -28,8 +28,24 @@ const server = setupServer(...handlers);
 // - module loading order prevents this from fitting into the regular hooks
 Object.defineProperty(process, 'platform', { value: 'linux', writable: true });
 
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation(function (query) {
+    return {
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn()
+    };
+  })
+});
+
 beforeAll(async () => {
-  await server.listen({ onUnhandledRequest: 'error' });
+  await server.listen({ onUnhandledFrame: 'error' });
   await ntBeforeAll();
 });
 

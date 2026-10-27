@@ -84,6 +84,8 @@ describe('Auditlogs Component', () => {
     await user.click(screen.getByText(/clear filter/i));
     await user.click(screen.getByRole('button', { name: /Download results as csv/i }));
     await user.click(screen.getByText(/open_terminal/i));
+    // let the session details load, as flushing the timers after the test would otherwise time out their retrieval
+    await waitFor(() => expect(screen.queryByText(/Device type/i)).toBeVisible());
   });
 
   it('allows navigating by url as expected', async () => {

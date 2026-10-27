@@ -23,6 +23,6 @@ export default defineConfig({
   ...baseConfig,
   test: {
     ...baseConfig.test,
-    setupFiles: path.resolve(__dirname, 'setupTests.ts')
+    setupFiles: path.resolve(import.meta.dirname, 'setupTests.ts')
   }
 });
