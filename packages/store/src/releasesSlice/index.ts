@@ -74,6 +74,7 @@ export type ManifestsList = {
 export type SoftwareList = {
   isLoading?: boolean;
   kind: SoftwareKind | undefined;
+  name?: string;
   page: number;
   perPage: number;
   searchTerm: string;

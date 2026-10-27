@@ -757,15 +757,25 @@ export const setManifestsListState = createAppAsyncThunk(
 const softwareSortingDefaults = { direction: SORTING_OPTIONS.desc, key: 'modified' };
 
 const softwareListRetrieval = (config: Partial<SoftwareList>) => {
-  const { searchTerm = '', kind, page = defaultPage, perPage = defaultPerPage, sort = softwareSortingDefaults, selectedTags = [], type = '' } = config;
+  const {
+    name = '',
+    searchTerm = '',
+    kind,
+    page = defaultPage,
+    perPage = defaultPerPage,
+    sort = softwareSortingDefaults,
+    selectedTags = [],
+    type = ''
+  } = config;
   const { key: attribute, direction } = sort;
   const filterQuery = formatReleases({ pageState: { selectedTags } });
   const sorting = attribute ? `sort=${attribute}:${direction}`.toLowerCase() : '';
   const kindQuery = kind ? `kind=${encodeURIComponent(kind)}` : '';
   const updateTypeQuery = type ? `update_type=${encodeURIComponent(type)}` : '';
+  const nameQuery = name && !searchTerm ? `name=${encodeURIComponent(name)}` : '';
   const namePrefixQuery = searchTerm ? `name_prefix=${encodeURIComponent(searchTerm)}` : '';
   return GeneralApi.get<Array<Software>>(
-    `${deploymentsApiUrl}/software?${[`page=${page}`, `per_page=${perPage}`, namePrefixQuery, kindQuery, filterQuery, updateTypeQuery, sorting].filter(i => i).join('&')}`
+    `${deploymentsApiUrl}/software?${[`page=${page}`, `per_page=${perPage}`, nameQuery, namePrefixQuery, kindQuery, filterQuery, updateTypeQuery, sorting].filter(i => i).join('&')}`
   );
 };
 
