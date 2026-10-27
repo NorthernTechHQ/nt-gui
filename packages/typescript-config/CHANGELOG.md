@@ -1,5 +1,14 @@
 ---
-## 0.3.2 - 2026-10-06
+## 0.3.3 - 2026-10-27
+
+
+
+### Bug fixes
+
+#### typescript-config
+
+- Made package esm only ([ae5d945](https://github.com/NorthernTechHQ/nt-gui/commit/ae5d9450b717e38287be97aecb837ebbbea9ccad)) by @mzedel
+## @northern.tech/typescript-config-0.3.1 - 2026-10-06
 
 
 
