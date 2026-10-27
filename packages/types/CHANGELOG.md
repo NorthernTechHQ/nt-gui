@@ -1,5 +1,14 @@
 ---
-## 0.7.11 - 2026-10-23
+## 0.7.12 - 2026-10-27
+
+
+
+### Bug fixes
+
+#### types
+
+- Made package esm only ([0f70d1b](https://github.com/NorthernTechHQ/nt-gui/commit/0f70d1bcf2b923e4c096566a6dee945a85e85400)) by @mzedel
+## @northern.tech/types-0.7.11 - 2026-10-23
 
 
 
