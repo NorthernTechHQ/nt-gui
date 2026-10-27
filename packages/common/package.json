@@ -38,6 +38,7 @@
     "@mui/x-date-pickers": "^9.10.1",
     "@northern.tech/eslint-config": "*",
     "@northern.tech/testing": "*",
+    "@northern.tech/types": "*",
     "@northern.tech/typescript-config": "*",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",

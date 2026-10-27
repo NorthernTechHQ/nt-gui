@@ -18,6 +18,7 @@ import { makeStyles } from 'tss-react/mui';
 import EnterpriseNotification, { DefaultUpgradeNotification } from '@northern.tech/common-ui/EnterpriseNotification';
 import { AUDIT_LOGS_TYPES, BEGINNING_OF_TIME, BENEFITS, SP_AUDIT_LOGS_TYPES } from '@northern.tech/store/constants';
 import { useLocationParams } from '@northern.tech/store/liststatehook';
+import type { ParseAuditlogsResult } from '@northern.tech/store/locationutils';
 import {
   getAuditLog,
   getAuditLogEntry,
@@ -30,6 +31,8 @@ import {
 } from '@northern.tech/store/selectors';
 import { useAppDispatch, useAppSelector } from '@northern.tech/store/store';
 import { getAuditLogs, getAuditLogsCsvLink, getUserList, setAuditlogsState } from '@northern.tech/store/thunks';
+import type { UserSession } from '@northern.tech/store/usersSlice';
+import type { AuditLog } from '@northern.tech/types/MenderTypes';
 import { SORTING_OPTIONS, TIMEOUTS } from '@northern.tech/utils/constants';
 import { createDownload, getISOStringBoundaries } from '@northern.tech/utils/helpers';
 import dayjs from 'dayjs';
@@ -57,7 +60,7 @@ export const AuditLogs = () => {
   const [date] = useState(getISOStringBoundaries(new Date()));
   const { start: today, end: tonight } = date;
 
-  const isInitialized = useRef();
+  const isInitialized = useRef<boolean>(undefined);
   const [locationParams, setLocationParams] = useLocationParams('auditlogs', { today, tonight, defaults: locationDefaults });
   const { classes } = useStyles();
   const dispatch = useAppDispatch();
@@ -76,7 +79,11 @@ export const AuditLogs = () => {
   const isSP = useAppSelector(getIsServiceProvider);
   const { detail, perPage, endDate, user, sort, startDate, type, total, isLoading } = selectionState;
   const [auditLogsTypes, setAuditLogsTypes] = useState(AUDIT_LOGS_TYPES);
-  const timers = useRef({ init: null, detailsReset: null, dirtyField: null });
+  const timers = useRef<Record<'init' | 'detailsReset' | 'dirtyField', ReturnType<typeof setTimeout> | undefined>>({
+    init: undefined,
+    detailsReset: undefined,
+    dirtyField: undefined
+  });
   const eventsString = JSON.stringify(events);
   const usersString = JSON.stringify(users);
 
@@ -90,7 +97,7 @@ export const AuditLogs = () => {
     if (!hasAuditlogs || !isInitialized.current) {
       return;
     }
-    setLocationParams({ pageState: selectionState });
+    setLocationParams({ pageState: { ...selectionState } });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [detail, endDate, hasAuditlogs, perPage, selectionState.page, selectionState.selectedId, setLocationParams, startDate, type, user]);
 
@@ -110,7 +117,7 @@ export const AuditLogs = () => {
   }, [canReadUsers, dispatch]);
 
   const initAuditlogState = useCallback(
-    (result, state) => {
+    (result: { events: AuditLog[] } | undefined, state) => {
       const { detail, endDate, startDate, type, user } = state;
       const resultList = result ? Object.values(result.events) : [];
       if (resultList.length && startDate === today) {
@@ -164,15 +171,25 @@ export const AuditLogs = () => {
       return;
     }
     isInitialized.current = false;
-    const { id, open, detail, endDate, startDate, type, user } = locationParams;
+    const { id, open, detail, endDate, startDate, type, user } = locationParams as typeof locationParams & ParseAuditlogsResult;
     const state = { ...locationParams };
     if (id && Boolean(open)) {
       updateState(state);
       return;
     }
-    dispatch(getAuditLogs({ page: state.page ?? 1, perPage: 50, startDate: startDate !== today ? startDate : BEGINNING_OF_TIME, endDate, user, type, detail }))
+    dispatch(
+      getAuditLogs({
+        page: state.page ?? 1,
+        perPage: 50,
+        startDate: startDate !== today ? startDate : BEGINNING_OF_TIME,
+        endDate,
+        user: user ?? undefined,
+        type,
+        detail: detail ?? undefined
+      })
+    )
       .unwrap()
-      .then(({ payload: result }) => initAuditlogState(result, state));
+      .then(action => initAuditlogState(action?.payload, state));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, hasAuditlogs, eventsString, JSON.stringify(locationParams), initAuditlogState, updateState, today, tonight]);
 
@@ -200,7 +217,7 @@ export const AuditLogs = () => {
 
   const onChangePagination = (page, currentPerPage = perPage) => dispatch(setAuditlogsState({ page, perPage: currentPerPage }));
 
-  const onIssueSelection = selectedIssue =>
+  const onIssueSelection = (selectedIssue?) =>
     dispatch(setAuditlogsState({ selectedId: selectedIssue ? btoa(`${selectedIssue.action}|${selectedIssue.time}`) : undefined }));
 
   const onFiltersChange = useCallback(
