@@ -107,6 +107,7 @@ changelog:
   variables:
     GIT_DEPTH: 0 # Always get the full history
     GIT_STRATEGY: clone
+    GIT_CLIFF_VERSION: '2.14.2'
   rules:
     - if: '$CI_COMMIT_MESSAGE =~ /^Merge pull request #\d+ from NorthernTechHQ\/release-please--branches--/'
       when: never
@@ -118,6 +119,8 @@ changelog:
     - git config --global user.name "${GITHUB_USER_NAME}"
     # GITHUB_TOKEN for Github cli authentication
     - export GITHUB_TOKEN=${GITHUB_CLI_TOKEN}
+    - npm install -g git-cliff@${GIT_CLIFF_VERSION}
+    - wget --output-document /tmp/cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml.scoped
   script:
     - release-please release-pr
       --token=${GITHUB_BOT_TOKEN_REPO_FULL}
@@ -129,12 +132,29 @@ changelog:
     - test $GIT_CLIFF == "false" && echo "INFO - Skipping git-cliff" && exit 0
     - git remote add github-${CI_JOB_ID} https://${GITHUB_USER_NAME}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL} || true # Ignore already existing remote
     - gh repo set-default https://${GITHUB_USER_NAME}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL}
+    # look up all release PRs at once instead of once per component
+    - RELEASE_PLEASE_PRS=$(gh pr list --author "${GITHUB_USER_NAME}" --state open --limit 100 --json number,headRefName)
+    - test "$(echo "${RELEASE_PLEASE_PRS}" | jq 'length')" == "0" && echo "INFO - no release PRs found" && exit 0
+    # each git-cliff run pages through the full commit & pull request history -> store it & use it as cliff context instead
+    - |
+      git cliff --config /tmp/cliff.toml --github-repo ${GITHUB_REPO_URL} --context -o /tmp/cliff-context.json || {
+        echo "WARN - could not collect remote data, changelogs will be generated without commit authors";
+        echo '[]' > /tmp/cliff-context.json;
+      }
+    - |
+      jq '[.[].commits[] | select(.remote) | {key: .id, value: .remote}] | from_entries' /tmp/cliff-context.json > /tmp/cliff-remote.json
     # deal with the component's changelogs
     - |
+      cliff_render() {
+        local output="$1"; shift;
+        git cliff --offline --config /tmp/cliff.toml --github-repo ${GITHUB_REPO_URL} "$@" --context -o /tmp/cliff-component.json;
+        jq --slurpfile remote /tmp/cliff-remote.json 'map(.commits |= map(.remote = $remote[0][.id]))' /tmp/cliff-component.json > /tmp/cliff-component-remote.json;
+        git cliff --offline --config /tmp/cliff.toml --github-repo ${GITHUB_REPO_URL} --from-context /tmp/cliff-component-remote.json -o "$output";
+      }
       for component in $(jq -r 'keys[] | select(. != ".")' .release-please-manifest.json); do
         component_name=$(echo "$component" | cut -d'/' -f2);
         # Use exact branch name match for the specific component's release PR
-        RELEASE_PLEASE_PR=$(gh pr list --author "${GITHUB_USER_NAME}" --head "release-please--branches--${CI_COMMIT_REF_NAME}--components--@northern.tech/${component_name}" --json number --jq '.[0].number');
+        RELEASE_PLEASE_PR=$(echo "${RELEASE_PLEASE_PRS}" | jq -r --arg head "release-please--branches--${CI_COMMIT_REF_NAME}--components--@northern.tech/${component_name}" '.[] | select(.headRefName == $head) | .number');
         if [[ -z "$RELEASE_PLEASE_PR" ]]; then
           echo "INFO - no PR found for @northern.tech/$component_name";
           continue;
@@ -143,8 +163,7 @@ changelog:
         COMPONENT_VERSION=$(jq -r ".\"${component}\"" .release-please-manifest.json);
         cd $component;
           echo "INFO - generating git cliff for $component_name version $COMPONENT_VERSION"
-          wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml.scoped;
-          git cliff --tag ${COMPONENT_VERSION} --output ./CHANGELOG.md --repository "../../" --include-path "${component}/**/*" --github-repo ${GITHUB_REPO_URL} --tag-pattern "@northern.tech/${component_name}-.*";
+          cliff_render ./CHANGELOG.md --tag ${COMPONENT_VERSION} --repository "../../" --include-path "${component}/**/*" --tag-pattern "@northern.tech/${component_name}-.*";
           cat CHANGELOG.md;
           if git diff --quiet CHANGELOG.md; then
             echo "INFO - no CHANGELOG changes for @northern.tech/$component_name, skipping";
@@ -154,7 +173,7 @@ changelog:
           git add CHANGELOG.md;
           git commit --amend -s --no-edit;
           git push github-${CI_JOB_ID} --force;
-          git cliff --unreleased --tag ${COMPONENT_VERSION} -o tmp_pr_body.md --repository "../../" --include-path "${component}/**/*" --github-repo ${GITHUB_REPO_URL} --tag-pattern "@northern.tech/${component_name}-.*";
+          cliff_render tmp_pr_body.md --unreleased --tag ${COMPONENT_VERSION} --repository "../../" --include-path "${component}/**/*" --tag-pattern "@northern.tech/${component_name}-.*";
           gh pr edit $RELEASE_PLEASE_PR --body-file tmp_pr_body.md;
           rm tmp_pr_body.md;
         cd ../..;
