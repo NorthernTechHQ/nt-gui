@@ -803,6 +803,18 @@ describe('software actions', () => {
     const storeActions = store.getActions();
     expect(storeActions.map(({ type }) => type)).toEqual([getSoftwareList.pending.type, getSoftwareList.fulfilled.type]);
   });
+  it('should retrieve a name filtered list of software', async () => {
+    const store = mockStore({ ...defaultState });
+    const { software, total } = await store.dispatch(getSoftwareList({ name: 'release-500' })).unwrap();
+    expect(software.map(({ name }) => name)).toEqual(['release-500']);
+    expect(total).toEqual(1);
+  });
+  it('should prefer the search term over the name filter when retrieving software', async () => {
+    const store = mockStore({ ...defaultState });
+    const { software, total } = await store.dispatch(getSoftwareList({ name: 'release-500', searchTerm: 'release' })).unwrap();
+    expect(software.every(({ name }) => name.startsWith('release'))).toBeTruthy();
+    expect(total).toEqual(500);
+  });
   it('should update software list state and trigger fetch on change', async () => {
     const store = mockStore({ ...defaultState });
     await store.dispatch(setSoftwareListState({ page: 2 }));
