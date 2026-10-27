@@ -123,7 +123,7 @@
     "@northern.tech/types": "*",
     "@northern.tech/utils": "*",
     "@reduxjs/toolkit": "^2.x",
-    "@sentry/react": "^10.x",
+    "@sentry/react": "^11.0.0",
     "axios": "^1.x",
     "dayjs": "^1.x",
     "md5": "^2.x",

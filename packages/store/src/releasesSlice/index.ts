@@ -42,48 +42,36 @@ export const sliceName = 'releases';
 
 type EnhancedJobDetailsItem = DeltaJobDetailsItem & DeltaJobsListItem;
 
-export type ReleasesList = {
-  isLoading?: boolean;
+export type CommonSoftwareList = {
   page: number;
   perPage: number;
+  searchTerm: string;
+  searchTotal: number;
+  selectedTags: string[];
+  sort?: SortOptions;
+  total: number;
+  type?: string;
+};
+
+export type ReleasesList = CommonSoftwareList & {
+  isLoading?: boolean;
   releaseIds: string[];
   searchedIds: string[];
   searchOnly?: boolean;
-  searchTerm: string;
-  searchTotal: number;
-  selectedTags: string[];
   selection: number[];
-  sort?: SortOptions;
-  total: number;
-  type: string;
 };
 
-export type ManifestsList = {
+export type ManifestsList = CommonSoftwareList & {
   isLoading?: boolean;
   manifestIds: string[];
-  page: number;
-  perPage: number;
-  searchTerm: string;
-  searchTotal: number;
-  selectedTags: string[];
   selection: number[];
-  sort?: SortOptions;
-  total: number;
 };
 
-export type SoftwareList = {
+export type SoftwareList = CommonSoftwareList & {
   isLoading?: boolean;
   kind: SoftwareKind | undefined;
   name?: string;
-  page: number;
-  perPage: number;
-  searchTerm: string;
-  searchTotal: number;
-  selectedTags: string[];
   softwareIds: string[];
-  sort?: SortOptions;
-  total: number;
-  type: string;
 };
 
 export type ReleaseSliceType = {
