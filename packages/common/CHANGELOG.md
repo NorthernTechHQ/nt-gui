@@ -1,4 +1,13 @@
 ---
+## 0.6.0 - 2026-10-27
+
+
+
+### Bug fixes
+
+#### common
+
+- Made package esm only ([08959ae](https://github.com/NorthernTechHQ/nt-gui/commit/08959aec750dd7979a030bb7a57cf384605431c3)) by @mzedel
 ## @northern.tech/common-ui-0.10.1 - 2026-10-23
 
 

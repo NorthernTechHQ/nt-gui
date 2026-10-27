@@ -1,5 +1,26 @@
 ---
-## 0.10.2 - 2026-10-26
+## 0.11.0 - 2026-10-27
+
+
+
+### Breaking changes
+
+- *(common-ui)* Let form inputs rely on name to align w/ react-hook-form ([MEN-7269](https://northerntech.atlassian.net/browse/MEN-7269)) ([7551fac](https://github.com/NorthernTechHQ/nt-gui/commit/7551fac1711affade507368e6bd7e73c92415fa6)) by @mzedel
+
+### Bug fixes
+
+#### common-ui
+
+- Made package esm only ([1b89fcb](https://github.com/NorthernTechHQ/nt-gui/commit/1b89fcbc725dedaae242221ba755889c4fb7e924)) by @mzedel
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-7269](https://northerntech.atlassian.net/browse/MEN-7269) |
+
+## @northern.tech/common-ui-0.10.2 - 2026-10-26
 
 
 
