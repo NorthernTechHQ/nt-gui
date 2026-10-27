@@ -1,5 +1,20 @@
 ---
-## 0.7.2 - 2026-09-24
+## 0.7.3 - 2026-10-27
+
+
+
+### Bug fixes
+
+#### eslint-config
+
+- Made package esm only ([5271b5b](https://github.com/NorthernTechHQ/nt-gui/commit/5271b5b6ee47941cc3936857043cefbb63998626)) by @mzedel
+
+### Dependency updates
+
+#### deps
+
+- Update development-dependencies ([5df5f93](https://github.com/NorthernTechHQ/nt-gui/commit/5df5f93d2f0648c4f67526025637ac7d4fe31fd1)) by @mender-test-bot
+## @northern.tech/eslint-config-0.7.2 - 2026-09-28
 
 
 
