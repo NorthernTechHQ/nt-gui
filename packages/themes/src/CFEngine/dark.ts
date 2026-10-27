@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { Palette, ThemeOptions, autocompleteClasses, inputBaseClasses, tableCellClasses } from '@mui/material';
+import { ThemeOptions, autocompleteClasses, inputBaseClasses, tableCellClasses } from '@mui/material';
 import { buttonClasses } from '@mui/material/Button';
 
 import {
@@ -64,8 +64,8 @@ const palette = {
     main: 'rgba(255, 255, 255, 0.38)',
     secondary: 'rgba(255, 255, 255, 0.2)'
   },
-  mode: 'dark'
-} as Palette;
+  mode: 'dark' as const
+};
 
 export const dark: ThemeOptions = {
   palette,
@@ -137,24 +137,29 @@ export const dark: ThemeOptions = {
           },
           [`&.${buttonClasses.disabled}`]: {
             color: 'rgba(255, 255, 255, 0.6)'
-          }
-        },
-        // Outlined "error" buttons (e.g. Remove selected hosts) — keep red
-        // text + red border in dark mode; otherwise dark theme's default text
-        // color overrides MUI's error color and we end up with white text on
-        // a red-bordered button.
-        outlinedError: {
-          color: `${red[600]} !important`,
-          borderColor: `${red[600]} !important`,
-          '&:hover': {
-            color: red[600],
-            borderColor: red[600],
-            backgroundColor: 'rgba(215, 73, 54, 0.08)'
           },
-          '&.Mui-disabled': {
-            color: 'rgba(215, 73, 54, 0.4) !important',
-            borderColor: 'rgba(215, 73, 54, 0.4) !important'
-          }
+          variants: [
+            {
+              // Outlined "error" buttons (e.g. Remove selected hosts) — keep red
+              // text + red border in dark mode; otherwise dark theme's default text
+              // color overrides MUI's error color and we end up with white text on
+              // a red-bordered button.
+              props: { variant: 'outlined', color: 'error' },
+              style: {
+                color: `${red[600]} !important`,
+                borderColor: `${red[600]} !important`,
+                '&:hover': {
+                  color: red[600],
+                  borderColor: red[600],
+                  backgroundColor: 'rgba(215, 73, 54, 0.08)'
+                },
+                '&.Mui-disabled': {
+                  color: 'rgba(215, 73, 54, 0.4) !important',
+                  borderColor: 'rgba(215, 73, 54, 0.4) !important'
+                }
+              }
+            }
+          ]
         }
       }
     },
@@ -243,7 +248,6 @@ export const dark: ThemeOptions = {
       styleOverrides: {
         root: {
           ...overrides.MuiTab.styleOverrides.root,
-          color: palette.text.secondary,
           '&:focus-visible': { outline: `2px solid ${palette.primary.light}`, outlineOffset: -2 },
           '&.Mui-selected': {
             ...overrides.MuiTab.styleOverrides.root['&.Mui-selected'],
