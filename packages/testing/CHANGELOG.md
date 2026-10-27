@@ -1,5 +1,21 @@
 ---
-## 0.19.2 - 2026-10-23
+## 0.19.3 - 2026-10-27
+
+
+
+### Bug fixes
+
+#### testing
+
+- Migrated test config to msw expectations ([5cf071b](https://github.com/NorthernTechHQ/nt-gui/commit/5cf071bfef97f99ce53bc4729727cb3d3961e157)) by @mzedel
+- Made package esm only ([f2ceba6](https://github.com/NorthernTechHQ/nt-gui/commit/f2ceba6f6d494220b8cfdcdcbe2509e14a960422)) by @mzedel
+
+### Dependency updates
+
+#### deps
+
+- Update dependency msw to v3 ([011ded8](https://github.com/NorthernTechHQ/nt-gui/commit/011ded8502a3d0913f78b1b0b156119274655f4f)) by @renovate-ring[bot]
+## @northern.tech/testing-0.19.2 - 2026-10-23
 
 
 
