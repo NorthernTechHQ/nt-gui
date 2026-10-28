@@ -72,6 +72,11 @@
     {
       "matchPackageNames": ["/^@northern\\.tech//"],
       "enabled": false
+    },
+    // Drop this rule once the frontend toolchain supports ts 7.
+    {
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "!/^7\\.0\\./"
     }
   ]
 }
