@@ -1,4 +1,11 @@
 ---
+## [0.49.6](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.49.5...@northern.tech/store-0.49.6) (2026-10-30)
+
+
+### Bug Fixes
+
+* **store:** also notify users on successful updates to a dynamic group ([84a6e61](https://github.com/NorthernTechHQ/nt-gui/commit/84a6e61e1d45782655e3f3ce3b3835f5fbd6d648))
+
 ## 0.49.5 - 2026-10-27
 
 
