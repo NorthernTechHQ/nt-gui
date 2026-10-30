@@ -11,15 +11,14 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { useTheme } from '@mui/material/styles';
 
 import Loader from '@northern.tech/common-ui/Loader';
 import Time from '@northern.tech/common-ui/Time';
 import { getAuditlogDevice, getIdAttribute, getUserCapabilities } from '@northern.tech/store/selectors';
+import { useAppDispatch, useAppSelector } from '@northern.tech/store/store';
 import { getDeviceById, getSessionDetails } from '@northern.tech/store/thunks';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration.js';
@@ -30,12 +29,12 @@ dayjs.extend(duration);
 
 export const PortForward = ({ item, onClose }) => {
   const theme = useTheme();
-  const [sessionDetails, setSessionDetails] = useState();
-  const dispatch = useDispatch();
+  const [sessionDetails, setSessionDetails] = useState<{ end: string; start: string }>();
+  const dispatch = useAppDispatch();
   const { action, actor, meta, object = {}, time } = item;
-  const { canReadDevices } = useSelector(getUserCapabilities);
-  const device = useSelector(getAuditlogDevice);
-  const idAttribute = useSelector(getIdAttribute);
+  const { canReadDevices } = useAppSelector(getUserCapabilities);
+  const device = useAppSelector(getAuditlogDevice);
+  const idAttribute = useAppSelector(getIdAttribute);
 
   useEffect(() => {
     if (canReadDevices) {

@@ -11,18 +11,28 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { ReactElement } from 'react';
+
 import { defaultState } from '@northern.tech/store/mockState';
 import { getConfiguredStore } from '@northern.tech/store/store';
 import { token as mockToken } from '@northern.tech/testing/mockData';
 import { render } from '@northern.tech/testing/setupTests';
 
-const customRender = (ui, options = {}) => {
+type PreloadedState = NonNullable<Parameters<typeof getConfiguredStore>[0]>['preloadedState'];
+
+interface CustomRenderOptions {
+  [key: string]: unknown;
+  preloadedState?: PreloadedState;
+  store?: ReturnType<typeof getConfiguredStore>;
+}
+
+const customRender = (ui: ReactElement, options: CustomRenderOptions = {}) => {
   const {
     preloadedState = { ...defaultState, users: { ...defaultState.users, currentSession: { token: mockToken, expiresAt: undefined } } },
     store = getConfiguredStore({ preloadedState }),
     ...remainder
   } = options;
-  return { store, ...render(ui, { preloadedState, store, ...remainder }) };
+  return { ...render(ui, { preloadedState, store, ...remainder }), store };
 };
 
 export * from '@northern.tech/testing/setupTests';
