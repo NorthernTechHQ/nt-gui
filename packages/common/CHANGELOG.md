@@ -1,4 +1,13 @@
 ---
+## [0.6.1](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/common-0.6.0...@northern.tech/common-0.6.1) (2026-10-30)
+
+
+### Bug Fixes
+
+* **common-ui:** ensure details indicator always invites to be interacted with ([9ccd863](https://github.com/NorthernTechHQ/nt-gui/commit/9ccd863da5d426f319325570b83faf35031716ab))
+* **common:** made package esm only ([08959ae](https://github.com/NorthernTechHQ/nt-gui/commit/08959aec750dd7979a030bb7a57cf384605431c3))
+* **common:** made the auditlog list & details work with mui v9 themes ([330398f](https://github.com/NorthernTechHQ/nt-gui/commit/330398fbfdbe8d8c0797f6249f7b3f64e747ffb4))
+
 ## 0.6.0 - 2026-10-27
 
 
