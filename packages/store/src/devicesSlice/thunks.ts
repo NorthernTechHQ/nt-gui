@@ -268,7 +268,9 @@ export const updateDynamicGroup = createAppAsyncThunk(
   `${sliceName}/updateDynamicGroup`,
   ({ groupName, filterPredicates }: { filterPredicates: DeviceFilter[]; groupName: string }, { dispatch, getState }) => {
     const filterId = getState().devices.groups.byId[groupName].id;
-    return GeneralApi.delete(`${inventoryApiUrlV2}/filters/${filterId}`).then(() => dispatch(addDynamicGroup({ groupName, filterPredicates })).unwrap());
+    return GeneralApi.delete(`${inventoryApiUrlV2}/filters/${filterId}`)
+      .then(() => dispatch(addDynamicGroup({ groupName, filterPredicates })).unwrap())
+      .then(() => dispatch(setSnackbar({ message: 'Group was updated successfully', autoHideDuration: TIMEOUTS.fiveSeconds })));
   }
 );
 
