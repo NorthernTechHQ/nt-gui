@@ -25,7 +25,7 @@ export const EventDetailsDrawer = ({ eventItem = {}, onClose, open, mapChangeToC
       <DrawerTitle title={<div className="capitalized-start">{title}</div>} onClose={onClose} />
       <Divider />
       <Component item={eventItem} onClose={onClose} />
-      <Divider light style={{ marginTop: theme.spacing(2) }} />
+      <Divider style={{ marginTop: theme.spacing(2) }} />
     </Drawer>
   );
 };

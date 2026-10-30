@@ -790,6 +790,7 @@ describe('dynamic grouping related actions', () => {
       defaultResults.receivedDynamicGroups,
       { type: getDynamicGroups.fulfilled.type },
       { type: addDynamicGroup.fulfilled.type },
+      { type: appActions.setSnackbar.type, payload: { autoHideDuration: 5000, message: 'Group was updated successfully' } },
       { type: updateDynamicGroup.fulfilled.type }
     ];
     await store.dispatch(updateDynamicGroup({ groupName, filterPredicates: [] }));

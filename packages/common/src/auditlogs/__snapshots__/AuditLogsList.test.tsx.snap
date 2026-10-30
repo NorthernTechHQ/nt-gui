@@ -3,7 +3,7 @@
 exports[`Auditlogs Component > renders correctly 1`] = `
 "<div>
   <div
-    class="fadeIn deploy-table-contain auditlogs-list css-1yc7te8-auditlogsList"
+    class="fadeIn deploy-table-contain auditlogs-list css-gkinoc-auditlogsList"
   >
     <div
       class="auditlogs-list-item auditlogs-list-item-header muted"
