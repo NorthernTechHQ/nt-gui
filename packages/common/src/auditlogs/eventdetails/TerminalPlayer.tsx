@@ -11,14 +11,13 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { CloudDownload, Pause, PlayArrow, Refresh } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
-import XTerm from '@northern.tech/common-ui/xterm';
+import XTerm, { type XtermRefContent } from '@northern.tech/common-ui/xterm';
 import { DEVICE_MESSAGE_PROTOCOLS as MessageProtocols, DEVICE_MESSAGE_TYPES as MessageTypes } from '@northern.tech/store/constants';
 import { TIMEOUTS, deviceConnect } from '@northern.tech/utils/constants';
 import { blobToString, byteArrayToString, createFileDownload, toggle } from '@northern.tech/utils/helpers';
@@ -27,19 +26,23 @@ import Cookies from 'universal-cookie';
 
 const cookies = new Cookies();
 // plain maps + omitted undefined fields keep the wire format compatible with the deviceconnect backend
-const MessagePack = new Packr({ skipValues: [undefined], useRecords: false });
+// skipValues is supported by msgpackr, but missing from its type definitions
+const packrOptions = { skipValues: [undefined], useRecords: false };
+const MessagePack = new Packr(packrOptions);
 
-let socket = null;
-let buffer = [];
-let timer;
+type BufferEntry = { content?: Buffer; delay?: number };
+
+let socket: WebSocket | null = null;
+let buffer: BufferEntry[] = [];
+let timer: ReturnType<typeof setTimeout> | undefined;
 
 const useStyles = makeStyles()(theme => ({
   playArrow: { fontSize: '7rem', color: theme.palette.text.disabled }
 }));
 
-const generateHtml = (versions, content) => {
-  const { fit, search, xterm } = Object.entries(versions).reduce((accu, [key, version]) => {
-    accu[key] = version.match(/(?<version>\d.*)/).groups.version;
+const generateHtml = (versions: Record<'fit' | 'search' | 'xterm', string>, content: BufferEntry[]) => {
+  const { fit, search, xterm } = Object.entries(versions).reduce<Record<string, string>>((accu, [key, version]) => {
+    accu[key] = version.match(/(?<version>\d.*)/)?.groups?.version ?? version;
     return accu;
   }, {});
   return `
@@ -164,7 +167,7 @@ const generateHtml = (versions, content) => {
 };
 
 export const TerminalPlayer = ({ className, item, sessionInitialized, token }) => {
-  const xtermRef = useRef({ terminal: React.createRef(), terminalRef: React.createRef() });
+  const xtermRef = useRef<XtermRefContent>({ terminal: React.createRef(), terminalRef: React.createRef() });
   const [socketInitialized, setSocketInitialized] = useState(false);
   const [bufferIndex, setBufferIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -185,12 +188,13 @@ export const TerminalPlayer = ({ className, item, sessionInitialized, token }) =
       return;
     }
     cookies.set('JWT', token, { path: '/', secure: true, sameSite: 'strict', maxAge: 5 });
-    socket = new WebSocket(`wss://${window.location.host}${deviceConnect}/sessions/${item.meta.session_id[0]}/playback`);
-    socket.onopen = () => setSocketInitialized(true);
+    const playbackSocket = new WebSocket(`wss://${window.location.host}${deviceConnect}/sessions/${item.meta.session_id[0]}/playback`);
+    playbackSocket.onopen = () => setSocketInitialized(true);
+    socket = playbackSocket;
   }, [item.meta.session_id, sessionInitialized, token]);
 
   useEffect(() => {
-    if (!socketInitialized) {
+    if (!socketInitialized || !socket) {
       return;
     }
     buffer = [];
@@ -199,7 +203,7 @@ export const TerminalPlayer = ({ className, item, sessionInitialized, token }) =
         const {
           hdr: { proto, typ, props = {} },
           body
-        } = MessagePack.unpack(new Uint8Array(data));
+        } = MessagePack.unpack(new Uint8Array(data as ArrayBuffer));
         if (proto !== MessageProtocols.Shell) {
           return;
         }
@@ -219,10 +223,10 @@ export const TerminalPlayer = ({ className, item, sessionInitialized, token }) =
   useEffect(() => {
     if (isPlaying && bufferIndex < buffer.length) {
       if (bufferIndex === 0) {
-        xtermRef.current.terminal.current.reset();
+        xtermRef.current.terminal.current?.reset();
       }
       if (buffer[bufferIndex].content) {
-        xtermRef.current.terminal.current.write(byteArrayToString(buffer[bufferIndex].content));
+        xtermRef.current.terminal.current?.write(byteArrayToString(buffer[bufferIndex].content));
         setTimeout(() => setBufferIndex(bufferIndex + 1), 20);
       }
       if (buffer[bufferIndex].delay) {
@@ -240,7 +244,7 @@ export const TerminalPlayer = ({ className, item, sessionInitialized, token }) =
       setWasStarted(true);
       return setTimeout(() => {
         setFitTrigger(toggle);
-        xtermRef.current.terminal.current.focus();
+        xtermRef.current.terminal.current?.focus();
         setIsPlaying(!isPlaying);
       }, TIMEOUTS.debounceShort);
     }

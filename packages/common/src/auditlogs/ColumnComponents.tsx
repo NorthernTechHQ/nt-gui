@@ -11,13 +11,13 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { Link } from 'react-router';
 
 import DetailsIndicator from '@northern.tech/common-ui/DetailsIndicator';
 import DeviceIdentityDisplay from '@northern.tech/common-ui/DeviceIdentity';
 import Time from '@northern.tech/common-ui/Time';
 import { AUDIT_LOGS_TYPES, DEPLOYMENT_ROUTES, canAccess } from '@northern.tech/store/constants';
+import type { Device } from '@northern.tech/store/devicesSlice';
 
 const ArtifactLink = ({ item }) => <Link to={`/releases/${item.object.artifact.name}`}>View artifact</Link>;
 const DeploymentLink = ({ item }) => <Link to={`${DEPLOYMENT_ROUTES.finished.route}?open=true&id=${item.object.id}`}>View deployment</Link>;
@@ -43,7 +43,7 @@ const FallbackFormatter = props => {
 
 const ArtifactFormatter = ({ artifact }) => <div>{artifact.name}</div>;
 const DeploymentFormatter = ({ deployment }) => <div>{deployment.name}</div>;
-const DeviceFormatter = ({ id }) => <DeviceIdentityDisplay device={{ id }} />;
+const DeviceFormatter = ({ id }) => <DeviceIdentityDisplay device={{ id } as Device} />;
 const UserFormatter = ({ user }) => <div>{user.email}</div>;
 const TenantFormatter = ({ tenant }) => <div>{tenant.name}</div>;
 
@@ -112,7 +112,7 @@ export const ChangeDetailsDescriptor = (item, index, userCapabilities) => {
 };
 export const TimeWrapper = (item, index) => <Time key={generateKey(item, index)} value={item.time} />;
 
-export const ViewDetails = ({ item, index, onIssueSelection = () => {}, ViewComponent = DetailsIndicator }) => (
+export const ViewDetails = ({ item, index, onIssueSelection = _item => {}, ViewComponent = DetailsIndicator }) => (
   <div className="clickable" key={generateKey(item, index)} onClick={() => onIssueSelection(item)}>
     <ViewComponent />
   </div>

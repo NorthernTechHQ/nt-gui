@@ -11,24 +11,23 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { useTheme } from '@mui/material/styles';
 
 import Loader from '@northern.tech/common-ui/Loader';
 import { getAuditlogDevice, getIdAttribute, getUserCapabilities } from '@northern.tech/store/selectors';
+import { useAppDispatch, useAppSelector } from '@northern.tech/store/store';
 import { getDeviceById } from '@northern.tech/store/thunks';
 
 import DeviceDetails, { DetailInformation } from './DeviceDetails';
 
 export const DeviceConfiguration = ({ item, onClose }) => {
   const { object = {} } = item;
-  const { canReadDevices } = useSelector(getUserCapabilities);
-  const device = useSelector(getAuditlogDevice);
-  const idAttribute = useSelector(getIdAttribute);
-  const dispatch = useDispatch();
+  const { canReadDevices } = useAppSelector(getUserCapabilities);
+  const device = useAppSelector(getAuditlogDevice);
+  const idAttribute = useAppSelector(getIdAttribute);
+  const dispatch = useAppDispatch();
 
   const theme = useTheme();
   useEffect(() => {

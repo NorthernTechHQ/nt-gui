@@ -97,8 +97,8 @@ const MuiComponents = () => {
   const [ratingValue, setRatingValue] = useState(4);
   const [selectValue, setSelectValue] = useState('option1');
 
-  const buttonVariants = ['contained', 'outlined', 'text'];
-  const buttonColors = ['primary', 'secondary', 'error', 'warning', 'info'];
+  const buttonVariants = ['contained', 'outlined', 'text'] as const;
+  const buttonColors = ['primary', 'secondary', 'error', 'warning', 'info'] as const;
 
   return (
     <Stack spacing={4} sx={{ p: 3, maxWidth: '100%', overflow: 'auto' }}>
@@ -134,18 +134,18 @@ const MuiComponents = () => {
         </Typography>
         <Stack spacing={2}>
           <Grid container>
-            <Grid item>
-              <Stack direction="column" spacing={2} marginRight={2}>
+            <Grid>
+              <Stack direction="column" spacing={2} sx={{ marginRight: 2 }}>
                 {buttonColors.map(color => (
-                  <Typography className="capitalized-start" key={color} p={0.75}>
+                  <Typography className="capitalized-start" key={color} sx={{ p: 0.75 }}>
                     {color}:
                   </Typography>
                 ))}
               </Stack>
             </Grid>
             {buttonVariants.map(variant => (
-              <Grid item xs={12} sm={6} spacing={2} key={variant}>
-                <Stack direction="column" spacing={2} marginRight={2}>
+              <Grid size={{ xs: 12, sm: 6 }} key={variant}>
+                <Stack direction="column" spacing={2} sx={{ marginRight: 2 }}>
                   {buttonColors.map(color => (
                     <Button color={color} key={color} variant={variant}>
                       <span className="capitalized-start">{variant}</span>
@@ -155,7 +155,7 @@ const MuiComponents = () => {
               </Grid>
             ))}
           </Grid>
-          <Stack direction="row" spacing={2} flexWrap="wrap">
+          <Stack direction="row" spacing={2} sx={{ flexWrap: 'wrap' }}>
             <Button variant="contained" size="small">
               Small
             </Button>
@@ -186,24 +186,26 @@ const MuiComponents = () => {
           Form Controls
         </Typography>
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField fullWidth label="Standard TextField" variant="outlined" defaultValue="Default value" />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth
               label="With Icon"
               variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search />
-                  </InputAdornment>
-                )
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search />
+                    </InputAdornment>
+                  )
+                }
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <FormControl fullWidth>
               <InputLabel>Select Option</InputLabel>
               <Select value={selectValue} onChange={e => setSelectValue(e.target.value)} label="Select Option">
@@ -213,7 +215,7 @@ const MuiComponents = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField fullWidth multiline rows={4} label="Multiline TextField" variant="outlined" />
           </Grid>
         </Grid>
@@ -266,7 +268,7 @@ const MuiComponents = () => {
           Data Display
         </Typography>
         <Stack spacing={3}>
-          <Stack direction="row" spacing={2} flexWrap="wrap">
+          <Stack direction="row" spacing={2} sx={{ flexWrap: 'wrap' }}>
             <Avatar>A</Avatar>
             <Avatar sx={{ bgcolor: 'secondary.main' }}>B</Avatar>
             <Badge badgeContent={4} color="primary">
@@ -274,7 +276,7 @@ const MuiComponents = () => {
             </Badge>
           </Stack>
 
-          <Stack direction="row" spacing={1} flexWrap="wrap">
+          <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
             <Chip label="Default Chip" />
             <Chip label="Clickable" onClick={() => {}} />
             <Chip label="Deletable" onDelete={() => {}} />
@@ -384,7 +386,7 @@ const MuiComponents = () => {
             </Alert>
           </Stack>
 
-          <Stack direction="row" spacing={2} alignItems="center">
+          <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
             <CircularProgress />
             <CircularProgress color="secondary" />
             <CircularProgress variant="determinate" value={75} />
@@ -407,7 +409,7 @@ const MuiComponents = () => {
           Surfaces
         </Typography>
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <Card>
               <CardHeader title="Card Title" subheader="Card Subtitle" />
               <CardMedia
@@ -434,7 +436,7 @@ const MuiComponents = () => {
             </Card>
           </Grid>
 
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <Paper elevation={3} sx={{ p: 2 }}>
               <Typography variant="h6" gutterBottom>
                 Paper Component
@@ -443,7 +445,7 @@ const MuiComponents = () => {
             </Paper>
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Accordion>
               <AccordionSummary expandIcon={<ExpandMore />}>
                 <Typography>Accordion 1</Typography>
@@ -469,7 +471,7 @@ const MuiComponents = () => {
         <Typography variant="h4" gutterBottom>
           Interactive Components
         </Typography>
-        <Stack direction="row" spacing={2} flexWrap="wrap">
+        <Stack direction="row" spacing={2} sx={{ flexWrap: 'wrap' }}>
           <IconButton color="primary">
             <Edit />
           </IconButton>

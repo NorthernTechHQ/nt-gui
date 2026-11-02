@@ -25,12 +25,11 @@ describe('Auditlogs Component', () => {
     const { baseElement } = render(
       <AuditLogsList
         items={defaultState.organization.auditlog.events}
-        loading={false}
         onChangeRowsPerPage={vi.fn}
         onChangePage={vi.fn}
         onChangeSorting={vi.fn}
+        onIssueSelection={undefined}
         selectionState={defaultState.organization.auditlog.selectionState}
-        setAuditlogsState={vi.fn}
         userCapabilities={adminUserCapabilities}
         auditLogColumns={[
           { title: 'Performed by', sortable: false, render: UserDescriptor },
@@ -44,7 +43,7 @@ describe('Auditlogs Component', () => {
       { state }
     );
 
-    const view = prettyDOM(baseElement.firstChild, 100000, { highlight: false })
+    const view = (prettyDOM(baseElement.firstChild as Element, 100000, { highlight: false }) as string)
       .replace(/id="mui-[0-9]*"/g, '')
       .replace(/aria-labelledby="(mui-[0-9]* *)*"/g, '')
       .replace(/\\/g, '');

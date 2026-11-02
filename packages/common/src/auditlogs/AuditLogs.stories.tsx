@@ -11,7 +11,6 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 
@@ -64,7 +63,7 @@ const getPaginatedItems = (page: number, perPage: number, total: number): number
 const mswHandlers = logsNumber => [
   http.get('/api/management/v1/auditlogs/logs', ({ request }) => {
     const queryParams = Object.fromEntries(new URL(request.url).searchParams.entries());
-    const paginatedItems = getPaginatedItems(queryParams.page, queryParams.per_page, logsNumber);
+    const paginatedItems = getPaginatedItems(Number(queryParams.page), Number(queryParams.per_page), logsNumber);
     const mockedEventsLength = defaultState.organization.auditlog.events.length;
     const mockedEvents = defaultState.organization.auditlog.events;
     const events =

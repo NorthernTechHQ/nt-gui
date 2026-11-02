@@ -11,7 +11,8 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
+import type { ComponentType } from 'react';
+
 import DeviceConfiguration from './eventdetails/DeviceConfiguration';
 import EventDetailsFallbackComponent from './eventdetails/FallbackComponent';
 import FileTransfer from './eventdetails/FileTransfer';
@@ -32,7 +33,7 @@ const configChangeDescriptor = {
 
 const EventDetailsDrawerContentMap = (item, FallbackComponent = EventDetailsFallbackComponent) => {
   const { type } = item.object || {};
-  let content = { title: 'Entry details', content: FallbackComponent };
+  let content: { content: ComponentType<{ item; onClose }>; title: string } = { title: 'Entry details', content: FallbackComponent };
   if (type === changeTypes.user) {
     content = { title: `${item.action}d user`, content: UserChange };
   } else if (type === changeTypes.device && item.action.includes('terminal')) {

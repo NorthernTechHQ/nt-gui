@@ -41,6 +41,10 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
+    "@northern.tech/common#typecheck": {
+      "dependsOn": ["^build", "@northern.tech/common-ui#build"],
+      "outputs": []
+    },
     "@northern.tech/common-ui#typecheck": {
       "dependsOn": ["^build", "@northern.tech/store#build", "@northern.tech/types#build", "@northern.tech/utils#build"],
       "outputs": []

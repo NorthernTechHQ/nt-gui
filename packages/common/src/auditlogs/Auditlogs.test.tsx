@@ -62,7 +62,7 @@ describe('Auditlogs Component', () => {
       </LocalizationProvider>,
       { preloadedState: preloadedStateNoAuditlogs }
     );
-    const view = prettyDOM(baseElement.firstChild, 100000, { highlight: false })
+    const view = (prettyDOM(baseElement.firstChild as Element, 100000, { highlight: false }) as string)
       .replace(/id="mui-[0-9]*"/g, '')
       .replace(/aria-labelledby="(mui-[0-9]* *)*"/g, '')
       .replace(/\\/g, '');

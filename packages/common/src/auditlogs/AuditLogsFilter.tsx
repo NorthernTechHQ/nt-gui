@@ -11,14 +11,13 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { useState } from 'react';
 
 import { TextField } from '@mui/material';
 
 import { ControlledAutoComplete } from '@northern.tech/common-ui/forms/Autocomplete';
 import ClickFilter from '@northern.tech/common-ui/forms/ClickFilter';
-import Filters from '@northern.tech/common-ui/forms/Filters';
+import Filters, { type FilterDefinition } from '@northern.tech/common-ui/forms/Filters';
 import TimeframePicker from '@northern.tech/common-ui/forms/TimeframePicker';
 import { getISOStringBoundaries } from '@northern.tech/utils/helpers';
 
@@ -39,6 +38,10 @@ const renderOption = (props, option) => {
 };
 
 const isUserOptionEqualToValue = ({ email, id }, value) => id === value || email === value || email === value?.email;
+
+// the filter components receive their required props via componentProps, which FilterDefinition can't express
+const AutoCompleteFilter = ControlledAutoComplete as FilterDefinition['Component'];
+const TimeframeFilter = TimeframePicker as unknown as FilterDefinition['Component'];
 
 const autoSelectProps = {
   autoSelect: true,
@@ -71,7 +74,7 @@ export const AuditLogsFilter = ({ groups, users, selectionState, disabled, onFil
           {
             key: 'user',
             title: 'Performed by',
-            Component: ControlledAutoComplete,
+            Component: AutoCompleteFilter,
             componentProps: {
               ...autoSelectProps,
               freeSolo: true,
@@ -83,7 +86,7 @@ export const AuditLogsFilter = ({ groups, users, selectionState, disabled, onFil
           {
             key: 'type',
             title: 'Filter by changes',
-            Component: ControlledAutoComplete,
+            Component: AutoCompleteFilter,
             componentProps: {
               ...autoSelectProps,
               options: auditLogsTypes,
@@ -94,7 +97,7 @@ export const AuditLogsFilter = ({ groups, users, selectionState, disabled, onFil
           {
             key: 'detail',
             title: '',
-            Component: ControlledAutoComplete,
+            Component: AutoCompleteFilter,
             componentProps: {
               ...autoSelectProps,
               freeSolo: true,
@@ -106,7 +109,7 @@ export const AuditLogsFilter = ({ groups, users, selectionState, disabled, onFil
           {
             key: 'timeframe',
             title: 'Start time',
-            Component: TimeframePicker,
+            Component: TimeframeFilter,
             componentProps: {
               tonight
             }

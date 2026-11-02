@@ -11,13 +11,23 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
+import type { ReactNode } from 'react';
+
 import { Button } from '@mui/material';
 
 import { InfoHintContainer } from '@northern.tech/common-ui/InfoHint';
 import Loader from '@northern.tech/common-ui/Loader';
 
-export const AuditlogsView = ({ total, csvLoading, createCsvDownload, infoHintComponent = null, auditLogsFilter, children }) => (
+interface AuditlogsViewProps {
+  auditLogsFilter: ReactNode;
+  children?: ReactNode;
+  createCsvDownload: () => void;
+  csvLoading: boolean;
+  infoHintComponent?: ReactNode;
+  total: number;
+}
+
+export const AuditlogsView = ({ total, csvLoading, createCsvDownload, infoHintComponent = null, auditLogsFilter, children }: AuditlogsViewProps) => (
   <div className="fadeIn margin-left flexbox column" style={{ marginRight: '5%' }}>
     <div className="flexbox center-aligned">
       <h3 className="margin-right-small">Audit log</h3>

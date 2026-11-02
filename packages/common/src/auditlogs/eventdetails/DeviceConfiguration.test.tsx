@@ -45,7 +45,7 @@ describe('DeviceConfiguration Component', () => {
       }
     );
 
-    const view = baseElement.firstChild.firstChild;
+    const view = baseElement.firstChild?.firstChild;
     expect(view).toMatchSnapshot();
     expect(view).toEqual(expect.not.stringMatching(undefineds));
   });
