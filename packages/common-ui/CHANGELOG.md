@@ -1,4 +1,12 @@
 ---
+## [0.11.1](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/common-ui-0.11.0...@northern.tech/common-ui-0.11.1) (2026-11-03)
+
+
+### Bug Fixes
+
+* **common-ui:** add critical variant for ConfirmModal ([3b98f1e](https://github.com/NorthernTechHQ/nt-gui/commit/3b98f1e4a43bc60b98efdbbf22a122f2d76a463b))
+* **common-ui:** add critical variant for ConfirmModal ([e7c1e27](https://github.com/NorthernTechHQ/nt-gui/commit/e7c1e274e6106e0eecbd2be1559684dbec733591))
+
 ## 0.11.0 - 2026-10-27
 
 
