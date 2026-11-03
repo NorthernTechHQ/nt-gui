@@ -25,6 +25,7 @@ export interface ConfirmModalProps {
   confirmButtonText?: string;
   description: ReactNode;
   header: string;
+  isCritical?: boolean;
   isDanger?: boolean;
   maxWidth?: DialogProps['maxWidth'];
   onConfirm: () => void | Promise<unknown>;
@@ -33,7 +34,19 @@ export interface ConfirmModalProps {
 }
 
 export const ConfirmModal = (props: ConfirmModalProps) => {
-  const { close, onConfirm, className = '', toType, header, description, open, maxWidth = 'xs', confirmButtonText = 'Confirm', isDanger = true } = props;
+  const {
+    close,
+    onConfirm,
+    className = '',
+    toType,
+    header,
+    description,
+    open,
+    maxWidth = 'xs',
+    confirmButtonText = 'Confirm',
+    isDanger = true,
+    isCritical = false
+  } = props;
   const [inputValue, setInputValue] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const onSubmit = async (event: SubmitEvent<HTMLDivElement>) => {
@@ -82,7 +95,13 @@ export const ConfirmModal = (props: ConfirmModalProps) => {
         <Button onClick={close} disabled={isSubmitting}>
           Cancel
         </Button>
-        <Button color={isDanger ? 'error' : 'primary'} type="submit" variant="contained" loading={isSubmitting} disabled={!!toType && inputValue !== toType}>
+        <Button
+          color={isDanger ? 'error' : 'primary'}
+          type="submit"
+          variant={isDanger && !isCritical ? 'outlined' : 'contained'}
+          loading={isSubmitting}
+          disabled={!!toType && inputValue !== toType}
+        >
           {confirmButtonText}
         </Button>
       </DialogActions>
