@@ -87,7 +87,6 @@ export {
   type AttributeFilterPredicate,
   type AttributeRequest,
   type AttributeResponse,
-  type AttributeValueRequest,
   type AttributeValueResponse,
   type AuditLog,
   type AuditlogsArtifact,

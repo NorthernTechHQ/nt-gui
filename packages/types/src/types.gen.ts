@@ -2732,9 +2732,10 @@ export type DBusSubsystem = {
  *
  * Supported types: number, string, array of numbers, array of strings.
  * Mixed arrays are not allowed.
+ * For $exists type, a boolean is required.
  *
  */
-export type AttributeValueRequest = string | number | Array<string> | Array<number>;
+export type FilterValue = string | number | Array<string> | Array<number> | boolean;
 
 /**
  * Attribute descriptor.
@@ -2749,7 +2750,7 @@ export type DeviceAttributeRequest = {
    * Attribute description.
    */
   description?: string;
-  value: AttributeValueRequest;
+  value: FilterValue;
 };
 
 export type DeviceNew = {
@@ -2843,18 +2844,6 @@ export type DeviceStatusStatistics = {
   accepted: DeviceCountByTier;
   pending: DeviceCountByTier;
 };
-
-/**
- * The filter value.
- *
- * Attribute type is implicit, inferred from the JSON type.
- *
- * Supported types: number, string, array of numbers, array of strings.
- * Mixed arrays are not allowed.
- * For $exists type, a boolean is required.
- *
- */
-export type FilterValue = string | number | Array<string> | Array<number> | boolean;
 
 /**
  * Attribute filter predicate
