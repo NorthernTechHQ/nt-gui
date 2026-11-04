@@ -30,7 +30,6 @@ import { getIssueCountsByType } from './monitorSlice/selectors';
 import { onboardingSteps } from './onboardingSlice/constants';
 import { getOnboarding } from './onboardingSlice/selectors';
 import { getAuditLogEntry, getIsServiceProvider, getOrganization } from './organizationSlice/selectors';
-import { getReleasesById } from './releasesSlice/selectors';
 import {
   getCurrentUser,
   getGlobalSettings,
@@ -204,14 +203,6 @@ export const getDeviceConfigDeployment = createSelector([getDeviceById, getDeplo
   const deviceConfigDeployment = deploymentsById[configDeploymentId] ?? {};
   return { device, deviceConfigDeployment };
 });
-
-export const getDeploymentRelease = createSelector(
-  [getDeploymentsById, getDeploymentsSelectionState, getReleasesById],
-  (deploymentsById, { selectedId = '' }, releasesById) => {
-    const deployment = deploymentsById[selectedId] ?? {};
-    return deployment?.artifact_name && releasesById[deployment.artifact_name] ? releasesById[deployment.artifact_name] : { device_types_compatible: [] };
-  }
-);
 
 export const getSelectedDeploymentData = createSelector(
   [getDeploymentsById, getDeploymentsSelectionState, getDevicesById, getSelectedDeploymentDeviceIds],
