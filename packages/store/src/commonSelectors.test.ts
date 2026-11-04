@@ -11,11 +11,11 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import { defaultState } from '@/testUtils';
 import { describe, expect, it } from 'vitest';
 
 import { getFilterAttributes } from './commonSelectors';
+import { DEVICE_FILTERING_OPTIONS } from './constants';
 
 describe('getFilterAttributes selector', () => {
   const state = {
@@ -33,7 +33,7 @@ describe('getFilterAttributes selector', () => {
       ...defaultState.users,
       globalSettings: {
         ...defaultState.users.globalSettings,
-        previousFilters: [{ key: 'mender-orchestrator-manifest.version', operator: '$eq', scope: 'inventory', value: 'v1' }]
+        previousFilters: [{ key: 'mender-orchestrator-manifest.version', operator: DEVICE_FILTERING_OPTIONS.$eq.key, scope: 'inventory', value: 'v1' }]
       }
     }
   };

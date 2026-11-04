@@ -187,8 +187,7 @@ describe('deployment actions', () => {
       .dispatch(
         createDeployment({
           ...newDeployment,
-          newDeployment: { ...newDeployment.newDeployment, devices: [Object.keys(defaultState.devices.byId)[0]] },
-          hasNewRetryDefault: false
+          newDeployment: { ...newDeployment.newDeployment, devices: [Object.keys(defaultState.devices.byId)[0]] }
         })
       )
       .then(() => {

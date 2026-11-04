@@ -11,9 +11,8 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
 import { mdiAws as AWS, mdiMicrosoftAzure as Azure } from '@mdi/js';
-import type { Integration } from '@northern.tech/types/MenderTypes';
+import type { Credentials, Integration } from '@northern.tech/types/MenderTypes';
 import { TIMEOUTS, countries } from '@northern.tech/utils/constants';
 import type { CountryType } from '@northern.tech/utils/constants';
 
@@ -57,9 +56,8 @@ export const productOrder = ['micro', 'standard', 'system'];
 export const credentialTypes = {
   aws: 'aws',
   http: 'http',
-  sas: 'sas',
-  x509: 'x509'
-};
+  sas: 'sas'
+} as const satisfies Record<string, Credentials['type']>;
 export const EXTERNAL_PROVIDER = {
   'iot-core': {
     credentialsType: credentialTypes.aws,

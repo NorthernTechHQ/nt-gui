@@ -289,7 +289,7 @@ type DeviceAttributeMap = {
   tags: Record<string, string>;
 };
 
-export const mapDeviceAttributes = (attributes: AttributeResponse[] = []): DeviceAttributeMap =>
+export const mapDeviceAttributes = (attributes: Partial<AttributeResponse>[] = []): DeviceAttributeMap =>
   attributes.reduce<DeviceAttributeMap>(
     (accu, attribute) => {
       if (!(attribute.value && attribute.name) && attribute.scope === ATTRIBUTE_SCOPES.inventory) {
@@ -298,7 +298,7 @@ export const mapDeviceAttributes = (attributes: AttributeResponse[] = []): Devic
       const scope = (attribute.scope || ATTRIBUTE_SCOPES.inventory) as keyof DeviceAttributeMap;
       (accu[scope] as Record<string, unknown>) = {
         ...accu[scope],
-        [attribute.name]: attribute.value
+        [attribute.name!]: attribute.value
       };
       if (attribute.name === 'device_type' && attribute.scope === ATTRIBUTE_SCOPES.inventory) {
         accu.inventory.device_type = ([] as string[]).concat(attribute.value as string | string[]);

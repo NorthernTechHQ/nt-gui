@@ -11,10 +11,9 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
 import { describe, expect, it } from 'vitest';
 
-import { AUDIT_LOGS_TYPES, DEPLOYMENT_ROUTES, DEPLOYMENT_STATES, DEVICE_STATES, UNGROUPED_GROUP, listDefaultsByState } from './constants';
+import { AUDIT_LOGS_TYPES, DEPLOYMENT_ROUTES, DEPLOYMENT_STATES, DEVICE_STATES, SORTING_OPTIONS, UNGROUPED_GROUP, listDefaultsByState } from './constants';
 import {
   commonProcessor,
   formatAuditlogs,
@@ -34,7 +33,7 @@ import {
 const today = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
 const tonight = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
 
-const sortDefaults = { sort: { direction: 'asc' } };
+const sortDefaults = { sort: { direction: SORTING_OPTIONS.asc } };
 
 describe('locationutils', () => {
   describe('common', () => {
@@ -47,7 +46,7 @@ describe('locationutils', () => {
     });
     it('uses working utilities - formatPageState', () => {
       const search = formatPageState(
-        { selectedId: 123, selectedIssues: ['1243', 'qweioqwei'], page: 1234, perPage: 1000, sort: { direction: 'desc', key: 'someKey' } },
+        { selectedId: '123', selectedIssues: ['1243', 'qweioqwei'], page: 1234, perPage: 1000, sort: { direction: 'desc', key: 'someKey' } },
         { defaults: sortDefaults }
       );
       expect(search).toEqual('sort=someKey:desc&page=1234&perPage=1000&id=123&issues=1243&issues=qweioqwei&open=true');
@@ -63,7 +62,7 @@ describe('locationutils', () => {
             endDate: new Date().toISOString(),
             startDate,
             type: AUDIT_LOGS_TYPES[1],
-            user: { id: 1 }
+            user: { id: '1' }
           }
         },
         { today, tonight }
@@ -180,7 +179,7 @@ describe('locationutils', () => {
           selectedId: 'testId'
         };
         const pathname = generateDeploymentsPath({ pageState });
-        const search = formatDeployments({ pageState }, { defaults: listDefaultsByState, today, tonight });
+        const search = formatDeployments({ deploymentObject: {}, pageState }, { defaults: listDefaultsByState, today, tonight });
         expect(pathname).toEqual('/deployments/active');
         expect(search).toEqual('inprogress=1:60&pending=2:40');
       });
@@ -192,7 +191,7 @@ describe('locationutils', () => {
         };
         const pathname = generateDeploymentsPath({ pageState });
         const search = formatDeployments(
-          { pageState },
+          { deploymentObject: {}, pageState },
           {
             defaults: listDefaultsByState,
             today,
@@ -208,7 +207,7 @@ describe('locationutils', () => {
           general: { state: DEPLOYMENT_ROUTES.finished.key },
           [DEPLOYMENT_STATES.finished]: { page: 4, search: 'something', type: 'deployment' }
         };
-        const search = formatDeployments({ pageState }, { defaults: listDefaultsByState, today, tonight });
+        const search = formatDeployments({ deploymentObject: {}, pageState }, { defaults: listDefaultsByState, today, tonight });
         const pathname = generateDeploymentsPath({ pageState });
         expect(pathname).toEqual('/deployments/finished');
         expect(search).toEqual('page=4&search=something&type=deployment');
@@ -251,7 +250,7 @@ describe('locationutils', () => {
     it('uses working utilties - formatDeviceSearch', () => {
       const pageState = {
         pageState: { state: DEVICE_STATES.pending },
-        filters: [{ key: 'some', value: 'thing' }],
+        filters: [{ key: 'some', operator: '$eq' as const, scope: 'inventory' as const, value: 'thing' }],
         selectedGroup: 'testgroup',
         location: { pathname: devicesPath, search: devicesSearch }
       };
@@ -264,7 +263,7 @@ describe('locationutils', () => {
     it('uses working utilties - formatDeviceSearch - on init', () => {
       const pageState = {
         pageState: { state: DEVICE_STATES.accepted },
-        filters: [{ key: 'some', value: 'thing' }],
+        filters: [{ key: 'some', operator: '$eq' as const, scope: 'inventory' as const, value: 'thing' }],
         selectedGroup: 'testgroup',
         location: { pathname: devicesPath, search: devicesSearch }
       };
@@ -276,7 +275,7 @@ describe('locationutils', () => {
 
     it('uses working utilties - formatDeviceSearch - with ungrouped selected', () => {
       const search = formatDeviceSearch({
-        filters: [{ key: 'some', value: 'thing' }],
+        filters: [{ key: 'some', operator: '$eq' as const, scope: 'inventory' as const, value: 'thing' }],
         pageState: {},
         selectedGroup: UNGROUPED_GROUP.id
       });

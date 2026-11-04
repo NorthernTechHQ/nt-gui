@@ -13,7 +13,7 @@
 //    limitations under the License.
 import { act, defaultState } from '@/testUtils';
 import { deviceComponents, inventoryDevice } from '@northern.tech/testing/requestHandlers/deviceHandlers';
-import type { Credentials, Integration, Status } from '@northern.tech/types/MenderTypes';
+import type { Credentials, Integration, PreAuthSet, Status } from '@northern.tech/types/MenderTypes';
 import { TIMEOUTS } from '@northern.tech/utils/constants';
 import configureMockStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
@@ -251,7 +251,7 @@ describe('selecting things', () => {
     await store.dispatch(
       selectGroup({
         group: 'testGroupDynamic',
-        filters: [...defaultState.devices.groups.byId.testGroupDynamic.filters, { scope: 'system', key: 'group2', operator: '$eq', value: 'things2' }]
+        filters: [...defaultState.devices.groups.byId.testGroupDynamic.filters!, { scope: 'system', key: 'group2', operator: '$eq', value: 'things2' }]
       })
     );
     const storeActions = store.getActions();
@@ -428,7 +428,7 @@ describe('device auth handling', () => {
     await store.dispatch(
       updateDeviceAuth({
         deviceId: defaultState.devices.byId.a1.id,
-        authId: defaultState.devices.byId.a1.auth_sets[0].id,
+        authId: defaultState.devices.byId.a1.auth_sets![0].id!,
         status: DEVICE_STATES.pending as Status['status']
       })
     );
@@ -494,7 +494,7 @@ describe('device auth handling', () => {
       { type: appActions.setSnackbar.type, payload: { message: 'Device was successfully added to the preauthorization list', autoHideDuration: 5000 } },
       { type: preauthDevice.fulfilled.type }
     ];
-    const { id: _id, ts: _ts, status: _status, ...deviceAuthSet } = defaultState.devices.byId.a1.auth_sets[0];
+    const { id: _id, ts: _ts, status: _status, ...deviceAuthSet } = defaultState.devices.byId.a1.auth_sets![0];
     await store.dispatch(
       preauthDevice({
         ...deviceAuthSet,
@@ -507,11 +507,11 @@ describe('device auth handling', () => {
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
   it('should notify about duplicate device preauthorization attempts', async () => {
-    const { id: _id, ts: _ts, status: _status, ...deviceAuthSet } = defaultState.devices.byId.a1.auth_sets[0];
+    const { id: _id, ts: _ts, status: _status, ...deviceAuthSet } = defaultState.devices.byId.a1.auth_sets![0];
 
     const store = mockStore({ ...defaultState });
     await store
-      .dispatch(preauthDevice(deviceAuthSet))
+      .dispatch(preauthDevice(deviceAuthSet as PreAuthSet))
       .unwrap()
       .catch(message => expect(message).toContain('identity data set already exists'));
   });
@@ -524,7 +524,7 @@ describe('device auth handling', () => {
       ...defaultResults.postDeviceAuthActions,
       { type: deleteAuthset.fulfilled.type }
     ];
-    await store.dispatch(deleteAuthset({ deviceId: defaultState.devices.byId.a1.id, authId: defaultState.devices.byId.a1.auth_sets[0].id }));
+    await store.dispatch(deleteAuthset({ deviceId: defaultState.devices.byId.a1.id, authId: defaultState.devices.byId.a1.auth_sets![0].id! }));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -704,7 +704,7 @@ describe('static grouping related actions', () => {
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
     const devicesById = storeActions.find(item => item.type === actions.receivedDevices.type).payload;
     expect(devicesById[defaultState.devices.byId.a1.id]).toBeTruthy();
-    expect(new Date(devicesById[defaultState.devices.byId.a1.id].updated_ts).getTime()).toBeGreaterThanOrEqual(new Date(updated_ts).getTime());
+    expect(new Date(devicesById[defaultState.devices.byId.a1.id].updated_ts).getTime()).toBeGreaterThanOrEqual(new Date(updated_ts!).getTime());
   });
   it('should allow complete device retrieval for static groups', async () => {
     const store = mockStore({ ...defaultState });
@@ -1093,7 +1093,7 @@ describe('troubleshooting related actions', () => {
         getSessionDetails({
           sessionId,
           deviceId: defaultState.devices.byId.a1.id,
-          userId: defaultState.users.currentUser,
+          userId: defaultState.users.currentUser!,
           endDate,
           startDate: ''
         })

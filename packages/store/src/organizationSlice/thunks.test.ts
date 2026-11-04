@@ -226,7 +226,7 @@ describe('organization actions', () => {
     await store
       .dispatch(
         requestPlanChange({
-          tenantId: defaultState.organization.organization.id,
+          tenantId: defaultState.organization.organization.id!,
           content: {
             current_plan: 'Basic',
             requested_plan: 'Enterprise',
@@ -257,7 +257,7 @@ describe('organization actions', () => {
   it('should handle account upgrade init', async () => {
     const store = mockStore({ ...defaultState });
     const expectedActions = [{ type: startUpgrade.pending.type }, { type: startUpgrade.fulfilled.type }];
-    const secret = await store.dispatch(startUpgrade(defaultState.organization.organization.id)).unwrap();
+    const secret = await store.dispatch(startUpgrade(defaultState.organization.organization.id!)).unwrap();
     const storeActions = store.getActions();
     expect(storeActions).toHaveLength(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -267,7 +267,7 @@ describe('organization actions', () => {
   it('should handle account upgrade cancelling', async () => {
     const store = mockStore({ ...defaultState });
     const expectedActions = [{ type: cancelUpgrade.pending.type }, { type: cancelUpgrade.fulfilled.type }];
-    await store.dispatch(cancelUpgrade(defaultState.organization.organization.id));
+    await store.dispatch(cancelUpgrade(defaultState.organization.organization.id!));
     const storeActions = store.getActions();
     expect(storeActions).toHaveLength(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
@@ -294,7 +294,7 @@ describe('organization actions', () => {
     ];
     await store.dispatch(
       completeUpgrade({
-        tenantId: defaultState.organization.organization.id,
+        tenantId: defaultState.organization.organization.id!,
         plan: 'enterprise',
         billing_profile: { address: {}, shipping: {}, email: 'test@example.com', name: 'business' }
       })
