@@ -12,7 +12,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { Scope } from '@northern.tech/types/MenderTypes';
+import type { FilterPredicate, Scope } from '@northern.tech/types/MenderTypes';
 import { Scope as AttributeScope } from '@northern.tech/types/MenderTypes';
 
 export const DEVICE_STATES = {
@@ -23,7 +23,7 @@ export const DEVICE_STATES = {
 };
 export const ALL_DEVICE_STATES = 'any';
 
-type FilterOperator = '$eq' | '$ne' | '$gt' | '$gte' | '$lt' | '$lte' | '$ltne' | '$in' | '$nin' | '$exists' | '$nexists' | '$regex';
+type FilterOperator = FilterPredicate['type'] | '$nexists';
 
 type FilterOption = {
   help?: string;

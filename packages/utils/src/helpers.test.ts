@@ -51,7 +51,7 @@ const mockDevices = {
 describe('getFormattedSize function', () => {
   it('converts correctly', async () => {
     expect(getFormattedSize()).toEqual('0 Bytes');
-    expect(getFormattedSize(null)).toEqual('0 Bytes');
+    expect(getFormattedSize(undefined)).toEqual('0 Bytes');
     expect(getFormattedSize(0)).toEqual('0 Bytes');
     expect(getFormattedSize(31)).toEqual('31.00 Bytes');
     expect(getFormattedSize(1024)).toEqual('1.00 KB');
@@ -164,6 +164,7 @@ describe('deepCompare function', () => {
 describe('detectOsIdentifier function', () => {
   it('works as expected', async () => {
     expect(detectOsIdentifier()).toEqual('Linux');
+    //@ts-ignore
     navigator.appVersion = '5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.67 Safari/537.36';
     expect(detectOsIdentifier()).toEqual('MacOs');
   });
