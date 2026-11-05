@@ -104,6 +104,7 @@ build:
     paths:
       - .turbo/cache
       - node_modules
+      - packages/*/dist
       - packages/*/node_modules
 
 changelog:
@@ -198,20 +199,33 @@ release:
       optional: true
     - job: build
       artifacts: true
-  id_tokens:
-    NPM_ID_TOKEN:
-      aud: "npm:registry.npmjs.org"
-  before_script:
-    - apt-get update && apt-get install -y jq
   script:
-    - npm ci # the release image differs from the rest, so we need to reinstall here
-    - npm run build
     - release-please github-release
       --token=${GITHUB_BOT_TOKEN_REPO_FULL}
       --repo-url=${GITHUB_REPO_URL}
       --target-branch=${CI_COMMIT_REF_NAME}
       --config-file=release-please-config.json
       --manifest-file=.release-please-manifest.json
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - packages/*/dist
+
+# npm rejects the GitLab ID token once it is older than ~5 minutes & it can't be refreshed within a job,
+# so publishing has to happen in a separate, short job that only pulls the (small) build output
+publish:
+  stage: release
+  image: 'registry.gitlab.com/northern.tech/mender/mender-test-containers/release-please:master'
+  rules:
+    - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH
+  # helps to skip node_modules to not risk timed out OIDC tokens
+  needs:
+    - job: release
+      artifacts: true
+  id_tokens:
+    NPM_ID_TOKEN:
+      aud: "npm:registry.npmjs.org"
+  script:
     - |
       # keep publishing the remaining packages if one fails, but fail the job afterwards
       FAILED_PACKAGES="";
