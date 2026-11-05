@@ -13,14 +13,12 @@
 //    limitations under the License.
 import type { CSSProperties } from 'react';
 
-import type { PaletteOptions as MuiPaletteOptions } from '@mui/material';
-
 // Re-exported from index to force the bundler to keep a type-level reference
 // to this module. Otherwise the module augmentations below would not reach consumers.
 export type DummyType = never;
 
 declare module '@mui/material' {
-  interface PaletteOptions extends MuiPaletteOptions {
+  interface PaletteOptions {
     highlight?: {
       main: string;
     };
