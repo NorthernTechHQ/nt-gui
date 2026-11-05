@@ -58,46 +58,53 @@ include:
 
 lint:
   stage: test
-  needs: []
+  needs:
+    - job: build
+      artifacts: true
   script:
-    - npm ci
     - npm run lint
 
 format:
   stage: test
-  needs: []
+  needs:
+    - job: build
+      artifacts: true
   script:
-    - npm ci
     - npm run format:check
 
 typecheck:
   stage: test
-  needs: []
+  needs:
+    - job: build
+      artifacts: true
+  tags:
+    - k8s
   script:
-    - npm ci
     - npm run typecheck
 
 test:
   stage: test
-  needs: []
+  needs:
+    - job: build
+      artifacts: true
   tags:
     - k8s
   script:
-    - npm ci
     - npm run test
 
 build:
-  stage: build
-  needs: []
+  stage: test
   tags:
     - k8s
   script:
     - npm ci
     - npm run build
-    - npm run build-storybook
   artifacts:
+    expire_in: 1 day
     paths:
-      - storybook-static
+      - .turbo/cache
+      - node_modules
+      - packages/*/node_modules
 
 changelog:
   stage: changelog
@@ -189,13 +196,15 @@ release:
   needs:
     - job: changelog
       optional: true
+    - job: build
+      artifacts: true
   id_tokens:
     NPM_ID_TOKEN:
       aud: "npm:registry.npmjs.org"
   before_script:
     - apt-get update && apt-get install -y jq
   script:
-    - npm ci
+    - npm ci # the release image differs from the rest, so we need to reinstall here
     - npm run build
     - release-please github-release
       --token=${GITHUB_BOT_TOKEN_REPO_FULL}
@@ -229,6 +238,8 @@ pages:
     GITHUB_STATUS_API_JSON_F: '{"state": "%s", "context": "ci/storybook", "target_url": "%s", "description": "%s"}'
     PAGES_PREFIX: ''
   script:
+    - npm run build
+    - npm run build-storybook
     - json="$(printf "$GITHUB_STATUS_API_JSON_F" "success" "${CI_PAGES_URL}" "Storybook deployed")"
     - curl -f -H "$GITHUB_AUTH" -d "$json" "$GITHUB_STATUS_API_URL"
   pages:
