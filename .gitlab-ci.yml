@@ -121,6 +121,7 @@ changelog:
       when: never
     - if: $CI_COMMIT_BRANCH =~ "/^\d+\.\d+\.x$/"
     - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH
+  needs: []
   before_script:
     # Setting up git
     - git config --global user.email "${GITHUB_USER_EMAIL}"
