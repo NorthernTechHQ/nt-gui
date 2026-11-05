@@ -77,6 +77,8 @@ typecheck:
   needs:
     - job: build
       artifacts: true
+  tags:
+    - k8s
   script:
     - npm run typecheck
 
