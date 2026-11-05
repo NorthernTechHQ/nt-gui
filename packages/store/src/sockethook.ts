@@ -16,6 +16,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { TIMEOUTS } from '@northern.tech/utils/constants';
 import { blobToString, byteArrayToString } from '@northern.tech/utils/helpers';
 import { Packr } from 'msgpackr';
+import type { Options as PackrOptions } from 'msgpackr';
 import Cookies from 'universal-cookie';
 
 import { DEVICE_MESSAGE_PROTOCOLS as MessageProtocols, DEVICE_MESSAGE_TYPES as MessageTypes, apiUrl } from './constants';
@@ -23,7 +24,8 @@ import { DEVICE_MESSAGE_PROTOCOLS as MessageProtocols, DEVICE_MESSAGE_TYPES as M
 const cookies = new Cookies();
 
 // plain maps + omitted undefined fields keep the wire format compatible with the deviceconnect backend
-const MessagePack = new Packr({ skipValues: [undefined], useRecords: false });
+// `skipValues` is supported at runtime but missing from the msgpackr type definitions
+const MessagePack = new Packr({ skipValues: [undefined], useRecords: false } as PackrOptions & { skipValues: unknown[] });
 
 type UseSessionProps = {
   onClose: (event: CloseEvent) => void;
@@ -60,7 +62,7 @@ export const useSession = ({ onClose, onHealthCheckFailed, onMessageReceived, on
     }
     const proto_header = { proto: MessageProtocols.Shell, typ, sid: socketRef.current.sessionId, props };
     const encodedData = MessagePack.pack({ hdr: proto_header, body });
-    socketRef.current.send(encodedData);
+    socketRef.current.send(encodedData as Uint8Array<ArrayBuffer>);
   }, []);
 
   const close = useCallback((): void => {

@@ -53,6 +53,10 @@
       "dependsOn": ["^build", "@northern.tech/utils#build"],
       "outputs": []
     },
+    "@northern.tech/utils#typecheck": {
+      "dependsOn": ["^build", "@northern.tech/types#build"],
+      "outputs": []
+    },
     "dev": {
       "cache": false,
       "persistent": true

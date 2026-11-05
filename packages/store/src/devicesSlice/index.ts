@@ -23,7 +23,6 @@ import type {
   SortCriteria,
   Status
 } from '@northern.tech/types/MenderTypes';
-// @ts-nocheck
 import { deepCompare, duplicateFilter } from '@northern.tech/utils/helpers';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';

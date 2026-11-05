@@ -50,6 +50,7 @@ import type { SortOptions } from '../constants';
 import { formatReleases } from '../locationutils';
 import type { AppDispatch } from '../store';
 import { commonErrorFallback, commonErrorHandler, createAppAsyncThunk } from '../store';
+import type { ErrorWithResponse } from '../utils';
 import { convertDeviceListStateToFilters, dispatchDelayed, progress } from '../utils';
 import { ARTIFACT_GENERATION_TYPE } from './constants';
 import { getManifestsById, getManifestsListState, getReleasesById, getSoftwareListState } from './selectors';
@@ -114,7 +115,7 @@ export const getArtifactInstallCount = createAppAsyncThunk(`${sliceName}/getArti
   const { key, name, version } = extractSoftwareItem(artifact.artifact_provides) ?? {};
   const attribute = `${key}${name ? `.${name}` : ''}${softwareIndicator}`;
   const { filterTerms } = convertDeviceListStateToFilters({
-    filters: [{ ...emptyFilter, key: attribute, value: version!, scope: 'inventory' }]
+    filters: [{ ...emptyFilter, key: attribute, value: version as string, scope: 'inventory' }]
   });
   return GeneralApi.post<DeviceInventoryResponse[]>(`${inventoryApiUrlV2}/filters/search`, {
     page: 1,
@@ -614,7 +615,7 @@ export const uploadManifest = createAppAsyncThunk(
       if (isCancel(err)) {
         return dispatch(setSnackbar({ message: 'The upload has been cancelled', autoHideDuration: TIMEOUTS.fiveSeconds }));
       }
-      return commonErrorHandler(err, `Manifest couldn't be uploaded.`, dispatch).catch(e => rejectWithValue(extractErrorMessage(e)));
+      return commonErrorHandler(err as ErrorWithResponse, `Manifest couldn't be uploaded.`, dispatch).catch(e => rejectWithValue(extractErrorMessage(e)));
     } finally {
       dispatch(cleanUpUpload(uploadId));
     }
@@ -643,7 +644,7 @@ export const generateManifest = createAppAsyncThunk(`${sliceName}/generateManife
     if (isCancel(err)) {
       return dispatch(setSnackbar({ message: 'The manifest generation has been cancelled', autoHideDuration: TIMEOUTS.fiveSeconds }));
     }
-    return commonErrorHandler(err, `Manifest couldn't be generated.`, dispatch);
+    return commonErrorHandler(err as ErrorWithResponse, `Manifest couldn't be generated.`, dispatch);
   } finally {
     dispatch(cleanUpUpload(uploadId));
   }

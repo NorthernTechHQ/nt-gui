@@ -11,7 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { DeploymentUniformPhase, NewDeploymentPhaseTypeManagement as NewDeploymentPhase } from '@northern.tech/types/MenderTypes';
+import type {
+  AttributeResponse,
+  AttributeValueResponse,
+  DeploymentUniformPhase,
+  NewDeploymentPhaseTypeManagement as NewDeploymentPhase
+} from '@northern.tech/types/MenderTypes';
 import dayjs from 'dayjs';
 import durationPlugin from 'dayjs/plugin/duration.js';
 import type { DurationUnitType } from 'dayjs/plugin/duration.js';
@@ -229,12 +234,12 @@ export const unionizeStrings = (someStrings: string[], someOtherStrings: string[
   return [...uniqueStrings];
 };
 
-export const getFormattedSize = (bytes: number) => {
+export const getFormattedSize = (bytes?: number) => {
   const suffixes = ['Bytes', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
   if (!bytes) {
     return '0 Bytes';
   }
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
   return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${suffixes[i]}`;
 };
 
@@ -343,14 +348,14 @@ export const standardizePhases = (phases: NewDeploymentPhase[] | UiDeploymentPha
     return standardizedPhase;
   });
 
-type SoftwareInformationEntry = [string, DeviceAttribute];
+type SoftwareInformationEntry = [string, AttributeValueResponse];
 
 interface SoftwareInformation {
   nonSoftware: SoftwareInformationEntry[];
   software: SoftwareInformationEntry[];
 }
 
-export const extractSoftware = (attributes: DeviceAttributes = {}) => {
+export const extractSoftware = (attributes: { [key: string]: AttributeValueResponse } | AttributeResponse = {}) => {
   const softwareKeys = Object.keys(attributes).reduce<string[]>((accu, item) => {
     if (item.endsWith(softwareIndicator)) {
       accu.push(item.substring(0, item.lastIndexOf('.')));
@@ -374,10 +379,10 @@ interface SoftwareItem {
   key: string;
   name: string;
   nestingLevel: number;
-  version: DeviceAttribute;
+  version: AttributeValueResponse;
 }
 
-export const extractSoftwareItem = (artifactProvides: DeviceAttributes = {}) => {
+export const extractSoftwareItem = (artifactProvides: { [key: string]: AttributeValueResponse } = {}) => {
   const { software } = extractSoftware(artifactProvides);
   return (
     software

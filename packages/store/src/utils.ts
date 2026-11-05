@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { AttributeFilterPredicate, AttributeResponse, DeviceWithImage, FilterV2, InvoiceLineItem, Scope } from '@northern.tech/types/MenderTypes';
+import type { AttributeResponse, DeviceWithImage, InvoiceLineItem, Scope } from '@northern.tech/types/MenderTypes';
 import { TIMEOUTS } from '@northern.tech/utils/constants';
 import { duplicateFilter, isDarkMode, yes } from '@northern.tech/utils/helpers';
 import type { AxiosError } from 'axios';
@@ -281,22 +281,6 @@ export const getDeploymentState = (deployment: Partial<Deployment>): string => {
   return status;
 };
 
-type DeploymentFilter =
-  | FilterV2
-  | {
-      terms?: Array<AttributeFilterPredicate | { key: string }>;
-    };
-
-export const generateDeploymentGroupDetails = (filter: DeploymentFilter | undefined, groupName: string): string =>
-  filter && filter.terms?.length
-    ? `${groupName} (${filter.terms
-        .map(
-          filter =>
-            `${filter.attribute || filter.key} ${DEVICE_FILTERING_OPTIONS[filter.type || filter.operator || DEVICE_FILTERING_OPTIONS.$eq.key].shortform} ${filter.value}`
-        )
-        .join(', ')})`
-    : groupName;
-
 type DeviceAttributeMap = {
   identity: Record<string, string>;
   inventory: InventoryAttributes;
@@ -305,7 +289,7 @@ type DeviceAttributeMap = {
   tags: Record<string, string>;
 };
 
-export const mapDeviceAttributes = (attributes: AttributeResponse[] = []): DeviceAttributeMap =>
+export const mapDeviceAttributes = (attributes: Partial<AttributeResponse>[] = []): DeviceAttributeMap =>
   attributes.reduce<DeviceAttributeMap>(
     (accu, attribute) => {
       if (!(attribute.value && attribute.name) && attribute.scope === ATTRIBUTE_SCOPES.inventory) {
@@ -314,7 +298,7 @@ export const mapDeviceAttributes = (attributes: AttributeResponse[] = []): Devic
       const scope = (attribute.scope || ATTRIBUTE_SCOPES.inventory) as keyof DeviceAttributeMap;
       (accu[scope] as Record<string, unknown>) = {
         ...accu[scope],
-        [attribute.name]: attribute.value
+        [attribute.name!]: attribute.value
       };
       if (attribute.name === 'device_type' && attribute.scope === ATTRIBUTE_SCOPES.inventory) {
         accu.inventory.device_type = ([] as string[]).concat(attribute.value as string | string[]);

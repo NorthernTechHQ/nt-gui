@@ -11,13 +11,14 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-// @ts-nocheck
-import { defaultState } from '@/testUtils';
+import type { Scope } from '@northern.tech/types/MenderTypes';
+import { ProductName } from '@northern.tech/types/MenderTypes';
 import { describe, expect, it } from 'vitest';
 
+import type { Deployment } from './deploymentsSlice';
+import type { DeviceFilter } from './devicesSlice';
 import {
   convertDeviceListStateToFilters,
-  generateDeploymentGroupDetails,
   getAttributeScopeLabel,
   groupDeploymentDevicesStats,
   groupDeploymentStats,
@@ -66,7 +67,7 @@ describe('mapDeviceAttributes function', () => {
     });
   });
   it('handles scoped attributes', async () => {
-    const testAttributesObject1 = { name: 'this1', value: 'that1', scope: 'inventory' };
+    const testAttributesObject1 = { name: 'this1', value: 'that1', scope: 'inventory' as Scope };
     expect(mapDeviceAttributes([testAttributesObject1])).toEqual({
       ...defaultAttributes,
       inventory: {
@@ -74,7 +75,7 @@ describe('mapDeviceAttributes function', () => {
         this1: 'that1'
       }
     });
-    const testAttributesObject2 = { name: 'this2', value: 'that2', scope: 'identity' };
+    const testAttributesObject2 = { name: 'this2', value: 'that2', scope: 'identity' as Scope };
     expect(mapDeviceAttributes([testAttributesObject1, testAttributesObject2])).toEqual({
       ...defaultAttributes,
       identity: {
@@ -100,30 +101,9 @@ describe('mapDeviceAttributes function', () => {
   });
 });
 
-describe('generateDeploymentGroupDetails function', () => {
-  it('works as expected', async () => {
-    expect(generateDeploymentGroupDetails({ terms: defaultState.devices.groups.byId.testGroupDynamic.filters }, 'testGroupDynamic')).toEqual(
-      'testGroupDynamic (group = things)'
-    );
-    expect(
-      generateDeploymentGroupDetails(
-        {
-          terms: [
-            { scope: 'system', key: 'group', operator: '$eq', value: 'things' },
-            { scope: 'system', key: 'group', operator: '$nexists', value: 'otherThings' },
-            { scope: 'system', key: 'group', operator: '$nin', value: 'a,small,list' }
-          ]
-        },
-        'testGroupDynamic'
-      )
-    ).toEqual(`testGroupDynamic (group = things, group doesn't exist otherThings, group not in a,small,list)`);
-    expect(generateDeploymentGroupDetails({ terms: undefined }, 'testGroupDynamic')).toEqual('testGroupDynamic');
-  });
-});
-
 describe('deployment stats grouping functions', () => {
   it('groups correctly based on deployment stats', async () => {
-    const deployment = {
+    const deployment: Partial<Deployment> = {
       statistics: {
         status: {
           aborted: 2,
@@ -134,27 +114,31 @@ describe('deployment stats grouping functions', () => {
           installing: 1,
           noartifact: 1,
           pending: 2,
-          paused: 0,
           rebooting: 1,
-          success: 1
+          success: 1,
+          artifact_too_big: 0,
+          pause_before_installing: 0,
+          pause_before_rebooting: 0,
+          pause_before_committing: 0,
+          incompatible_tier: 0
         }
       }
     };
     expect(groupDeploymentStats(deployment)).toEqual({ inprogress: 5, paused: 0, pending: 2, successes: 3, failures: 4 });
   });
   it('groups correctly based on deployment devices states', async () => {
-    const deployment = {
+    const deployment: Pick<Deployment, 'devices'> = {
       devices: {
-        a: { status: 'aborted' },
-        b: { status: 'already-installed' },
-        c: { status: 'decommissioned' },
-        d: { status: 'downloading' },
-        e: { status: 'failure' },
-        f: { status: 'installing' },
-        g: { status: 'noartifact' },
-        h: { status: 'pending' },
-        i: { status: 'rebooting' },
-        j: { status: 'success' }
+        a: { id: 'a', log: false, status: 'aborted' },
+        b: { id: 'b', log: false, status: 'already-installed' },
+        c: { id: 'c', log: false, status: 'decommissioned' },
+        d: { id: 'd', log: false, status: 'downloading' },
+        e: { id: 'e', log: false, status: 'failure' },
+        f: { id: 'f', log: false, status: 'installing' },
+        g: { id: 'g', log: false, status: 'noartifact' },
+        h: { id: 'h', log: false, status: 'pending' },
+        i: { id: 'i', log: false, status: 'rebooting' },
+        j: { id: 'j', log: false, status: 'success' }
       }
     };
     expect(groupDeploymentDevicesStats(deployment)).toEqual({ inprogress: 3, paused: 0, pending: 1, successes: 3, failures: 3 });
@@ -173,7 +157,7 @@ const stripePreview = {
       amount: 0,
       currency: 'usd',
       quantity: 100,
-      product: 'mender_micro',
+      product: ProductName.MENDER_MICRO,
       proration: false
     },
     {
@@ -181,7 +165,7 @@ const stripePreview = {
       amount: 3200,
       currency: 'usd',
       quantity: 0,
-      product: 'mender_micro',
+      product: ProductName.MENDER_MICRO,
       proration: false
     },
     {
@@ -189,7 +173,7 @@ const stripePreview = {
       amount: 0,
       currency: 'usd',
       quantity: 50,
-      product: 'mender_standard',
+      product: ProductName.MENDER_STANDARD,
       proration: false
     },
     {
@@ -197,7 +181,7 @@ const stripePreview = {
       amount: 3200,
       currency: 'usd',
       quantity: 0,
-      product: 'mender_standard',
+      product: ProductName.MENDER_STANDARD,
       proration: false
     },
     {
@@ -205,7 +189,7 @@ const stripePreview = {
       amount: 0,
       currency: 'usd',
       quantity: 50,
-      product: 'mender_standard',
+      product: ProductName.MENDER_STANDARD,
       addon: 'configure',
       proration: false
     },
@@ -214,7 +198,7 @@ const stripePreview = {
       amount: 1000,
       currency: 'usd',
       quantity: 0,
-      product: 'mender_standard',
+      product: ProductName.MENDER_STANDARD,
       addon: 'configure',
       proration: false
     },
@@ -223,7 +207,7 @@ const stripePreview = {
       amount: 0,
       currency: 'usd',
       quantity: 50,
-      product: 'mender_standard',
+      product: ProductName.MENDER_STANDARD,
       addon: 'troubleshoot',
       proration: false
     },
@@ -232,7 +216,7 @@ const stripePreview = {
       amount: 2000,
       currency: 'usd',
       quantity: 0,
-      product: 'mender_standard',
+      product: ProductName.MENDER_STANDARD,
       addon: 'troubleshoot',
       proration: false
     }
@@ -271,7 +255,7 @@ describe('getAttributeScopeLabel function', () => {
 });
 describe('convertDeviceListStateToFilters function', () => {
   const offlineThreshold = '2026-10-06T12:00:00.000Z';
-  const checkInFilter = { key: 'check_in_time', operator: '$lte', scope: 'system', value: '2026-01-01T00:00:00.000Z' };
+  const checkInFilter: DeviceFilter = { key: 'check_in_time', operator: '$lte', scope: 'system', value: '2026-01-01T00:00:00.000Z' };
   it('keeps user defined filters on attributes also used by issue filters', () => {
     const { applicableFilters, filterTerms } = convertDeviceListStateToFilters({ filters: [checkInFilter], offlineThreshold });
     expect(applicableFilters).toEqual([checkInFilter]);
@@ -286,8 +270,8 @@ describe('convertDeviceListStateToFilters function', () => {
     ]);
   });
   it('drops filters duplicating a selected issue filter', () => {
-    const offlineFilter = { key: 'check_in_time', operator: '$ltne', scope: 'system', value: offlineThreshold };
-    const alertFilter = { key: 'alerts', operator: '$eq', scope: 'monitor', value: 'true' };
+    const offlineFilter: DeviceFilter = { key: 'check_in_time', operator: '$ltne', scope: 'system', value: offlineThreshold };
+    const alertFilter: DeviceFilter = { key: 'alerts', operator: '$eq', scope: 'monitor', value: 'true' };
     const { applicableFilters, filterTerms } = convertDeviceListStateToFilters({
       filters: [offlineFilter, alertFilter],
       offlineThreshold,

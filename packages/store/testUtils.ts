@@ -11,20 +11,22 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//@ts-nocheck
+import type { ReactNode } from 'react';
+
 import { token as mockToken } from '@northern.tech/testing/mockData';
 import { render } from '@northern.tech/testing/setupTests';
+import type { CustomRenderOptions } from '@northern.tech/testing/setupTests';
 
 import { defaultState } from './src/mockState';
 import { getConfiguredStore } from './src/store';
 
-const customRender = (ui, options = {}) => {
+const customRender = (ui: ReactNode, options: CustomRenderOptions = {}) => {
   const {
     preloadedState = { ...defaultState, users: { ...defaultState.users, currentSession: { token: mockToken, expiresAt: undefined } } },
     store = getConfiguredStore({ preloadedState }),
     ...remainder
   } = options;
-  return { store, ...render(ui, { preloadedState, store, ...remainder }) };
+  return render(ui, { preloadedState, store, ...remainder });
 };
 
 export * from '@northern.tech/testing/setupTests';

@@ -33,9 +33,9 @@ describe('device reducer', () => {
     expect(
       reducer(state, {
         type: actions.removeFromGroup.type,
-        payload: { group: 'testGroup', deviceIds: [defaultState.devices.groups.byId.testGroup.deviceIds[0]] }
+        payload: { group: 'testGroup', deviceIds: [defaultState.devices.groups.byId.testGroup.deviceIds![0]] }
       }).groups.byId.testGroup.deviceIds
-    ).toHaveLength(defaultState.devices.groups.byId.testGroup.deviceIds.length - 1);
+    ).toHaveLength(defaultState.devices.groups.byId.testGroup.deviceIds!.length - 1);
     expect(
       reducer(state, { type: actions.removeFromGroup.type, payload: { group: 'testGroup', deviceIds: defaultState.devices.groups.byId.testGroup.deviceIds } })
         .groups.byId.testGroup

@@ -13,6 +13,7 @@
 //    limitations under the License.
 //@ts-nocheck
 import React from 'react';
+import type { ReactNode } from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 
@@ -20,9 +21,9 @@ import { createSerializer } from '@emotion/jest';
 import { ThemeProvider } from '@mui/material/styles';
 
 import { yes } from '@northern.tech/utils/helpers';
-import { configureStore } from '@reduxjs/toolkit';
+import { ConfigureStoreOptions, EnhancedStore, configureStore } from '@reduxjs/toolkit';
 import '@testing-library/jest-dom/vitest';
-import { cleanup, render } from '@testing-library/react';
+import { RenderOptions, cleanup, render } from '@testing-library/react';
 import { expect, vi } from 'vitest';
 import { MessageChannel } from 'worker_threads';
 
@@ -134,7 +135,9 @@ export const afterAll = async () => {
   vi.unstubAllGlobals();
 };
 
-const customRender = (ui, options = {}) => {
+export type CustomRenderOptions = RenderOptions & { preloadedState?: ConfigureStoreOptions['preloadedState']; store?: EnhancedStore };
+
+const customRender = (ui: ReactNode, options: CustomRenderOptions = {}) => {
   const { preloadedState = { users: { currentSession: { token: mockToken, expiresAt: undefined } } }, ...remainder } = options;
   const store = options.store ?? configureStore({ preloadedState });
   const AllTheProviders = ({ children }) => (
