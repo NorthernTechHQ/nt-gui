@@ -106,10 +106,8 @@ export const initialState: AppSliceType = {
     hasMultitenancy: false,
     hasDeviceConfig: false,
     hasDeviceConnect: false,
-    hasDeviceFlags: false,
     hasFeedbackEnabled: false,
     hasMonitor: false,
-    hasMCUEnabled: false,
     isHosted: true,
     isEnterprise: false
   },
