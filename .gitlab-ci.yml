@@ -121,6 +121,7 @@ changelog:
       when: never
     - if: $CI_COMMIT_BRANCH =~ "/^\d+\.\d+\.x$/"
     - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH
+  needs: []
   before_script:
     # Setting up git
     - git config --global user.email "${GITHUB_USER_EMAIL}"
@@ -199,6 +200,10 @@ release:
       optional: true
     - job: build
       artifacts: true
+    - job: format
+    - job: lint
+    - job: test
+    - job: typecheck
   script:
     - release-please github-release
       --token=${GITHUB_BOT_TOKEN_REPO_FULL}
