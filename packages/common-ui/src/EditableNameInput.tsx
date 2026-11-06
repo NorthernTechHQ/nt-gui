@@ -83,7 +83,7 @@ export const EditableNameInput = ({ id, name, placeholder, isHovered, onSave }: 
       endAdornment={
         (isHovered || isEditing) && (
           <InputAdornment position="end">
-            {isEditing ? <ConfirmationButtons onCancel={onCancel} onConfirm={onSubmit} /> : <EditButton label="" onClick={onStartEdit} />}
+            {isEditing ? <ConfirmationButtons onCancel={onCancel} onConfirm={onSubmit} size="small" /> : <EditButton label="" onClick={onStartEdit} />}
           </InputAdornment>
         )
       }
