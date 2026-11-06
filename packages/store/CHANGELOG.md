@@ -1,4 +1,12 @@
 ---
+## [0.49.7](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.49.6...@northern.tech/store-0.49.7) (2026-11-06)
+
+
+### Bug Fixes
+
+* **store:** remove obsolete flags ([5fbdd77](https://github.com/NorthernTechHQ/nt-gui/commit/5fbdd77b4dce6bc5ba3f1c13499eb975d6cb984b))
+* **store:** remove obsolete flags ([06f7410](https://github.com/NorthernTechHQ/nt-gui/commit/06f74105af375b170c9ba1346644d0ca4706c677))
+
 ## [0.49.6](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.49.5...@northern.tech/store-0.49.6) (2026-10-30)
 
 
