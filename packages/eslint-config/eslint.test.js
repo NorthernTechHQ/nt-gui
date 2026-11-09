@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import libraryConfig from './library';
 import reactConfig from './react';
-import storybookConfig from './storybook';
 
 const getCleanSnapshot = configStack => {
   return configStack
@@ -19,9 +18,5 @@ describe('ESLint Config Integrity', () => {
   });
   it('react config matches snapshot', () => {
     expect(getCleanSnapshot(reactConfig)).toMatchSnapshot();
-  });
-
-  it('storybook config matches snapshot', () => {
-    expect(getCleanSnapshot(storybookConfig)).toMatchSnapshot();
   });
 });

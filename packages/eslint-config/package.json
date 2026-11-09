@@ -13,7 +13,6 @@
   "files": [
     "library.js",
     "react.js",
-    "storybook.js",
     "base.js"
   ],
   "dependencies": {
@@ -23,11 +22,9 @@
     "eslint-config-prettier": "^10.x",
     "eslint-import-resolver-typescript": "^4.x",
     "eslint-plugin-import": "^2.x",
-    "eslint-plugin-mdx": "^3.x",
     "eslint-plugin-react": "^7.x",
     "eslint-plugin-react-hooks": "^7.x",
     "eslint-plugin-sonarjs": "^4.x",
-    "eslint-plugin-storybook": "^10.x",
     "globals": "^17.x",
     "typescript-eslint": "^8.x"
   },
@@ -41,7 +38,7 @@
   "scripts": {
     "test": "vitest eslint.test.js",
     "test-ci": "vitest eslint.test.js",
-    "build": "tsdown library.js react.js storybook.js",
+    "build": "tsdown library.js react.js",
     "yalc:publish": "yalc publish --no-script --push"
   }
 }
