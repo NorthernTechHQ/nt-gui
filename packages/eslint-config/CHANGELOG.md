@@ -1,5 +1,14 @@
 ---
-## 0.7.3 - 2026-10-27
+## 0.7.4 - 2026-11-09
+
+
+
+### Bug fixes
+
+#### eslint-config
+
+- Move storybook eslint config out of shared package ([e1e5119](https://github.com/NorthernTechHQ/nt-gui/commit/e1e51191b1e0ac6713ffa1dc57fa7f83d87157bb)) by @mineralsfree
+## @northern.tech/eslint-config-0.7.3 - 2026-10-27
 
 
 
