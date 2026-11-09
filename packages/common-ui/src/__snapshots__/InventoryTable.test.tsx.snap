@@ -353,7 +353,7 @@ exports[`InventoryTable Component > renders correctly 1`] = `
         >
           <p
             class="MuiTypography-root MuiTypography-body2 emotion-13"
-            style="display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
+            style="display: -webkit-box; line-clamp: 5 -webkit-legacy; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
             title="hostname"
           >
             hostname
@@ -381,7 +381,7 @@ exports[`InventoryTable Component > renders correctly 1`] = `
         >
           <p
             class="MuiTypography-root MuiTypography-body2 emotion-17"
-            style="display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
+            style="display: -webkit-box; line-clamp: 5 -webkit-legacy; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
             title="device-001"
           >
             device-001
@@ -413,7 +413,7 @@ exports[`InventoryTable Component > renders correctly 1`] = `
         >
           <p
             class="MuiTypography-root MuiTypography-body2 emotion-13"
-            style="display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
+            style="display: -webkit-box; line-clamp: 5 -webkit-legacy; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
             title="ipAddress"
           >
             ipAddress
@@ -441,7 +441,7 @@ exports[`InventoryTable Component > renders correctly 1`] = `
         >
           <p
             class="MuiTypography-root MuiTypography-body2 emotion-17"
-            style="display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
+            style="display: -webkit-box; line-clamp: 5 -webkit-legacy; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
             title="192.168.1.100"
           >
             192.168.1.100
@@ -473,7 +473,7 @@ exports[`InventoryTable Component > renders correctly 1`] = `
         >
           <p
             class="MuiTypography-root MuiTypography-body2 emotion-13"
-            style="display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
+            style="display: -webkit-box; line-clamp: 5 -webkit-legacy; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
             title="macAddress"
           >
             macAddress
@@ -501,7 +501,7 @@ exports[`InventoryTable Component > renders correctly 1`] = `
         >
           <p
             class="MuiTypography-root MuiTypography-body2 emotion-17"
-            style="display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
+            style="display: -webkit-box; line-clamp: 5 -webkit-legacy; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
             title="aa:bb:cc:dd:ee:ff"
           >
             aa:bb:cc:dd:ee:ff
