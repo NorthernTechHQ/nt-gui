@@ -39,7 +39,7 @@ exports[`TwoColumnData Component > renders correctly 1`] = `
   >
     <p
       class="MuiTypography-root MuiTypography-body2 emotion-2"
-      style="display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
+      style="display: -webkit-box; line-clamp: 5 -webkit-legacy; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
       title="true"
     />
   </div>
@@ -54,7 +54,7 @@ exports[`TwoColumnData Component > renders correctly 1`] = `
   >
     <p
       class="MuiTypography-root MuiTypography-body2 emotion-2"
-      style="display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
+      style="display: -webkit-box; line-clamp: 5 -webkit-legacy; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
       title="bar"
     >
       bar
@@ -71,7 +71,7 @@ exports[`TwoColumnData Component > renders correctly 1`] = `
   >
     <p
       class="MuiTypography-root MuiTypography-body2 emotion-2"
-      style="display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
+      style="display: -webkit-box; line-clamp: 5 -webkit-legacy; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
       title="GMT+2"
     >
       GMT+2
@@ -88,7 +88,7 @@ exports[`TwoColumnData Component > renders correctly 1`] = `
   >
     <p
       class="MuiTypography-root MuiTypography-body2 emotion-2"
-      style="display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
+      style="display: -webkit-box; line-clamp: 5 -webkit-legacy; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
       title="something,else"
     >
       something, else
@@ -231,7 +231,7 @@ exports[`TwoColumnData Component > renders with chipLikeKey prop 1`] = `
   >
     <p
       class="MuiTypography-root MuiTypography-body2 emotion-3"
-      style="display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
+      style="display: -webkit-box; line-clamp: 5 -webkit-legacy; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
       title="value"
     >
       value
@@ -252,7 +252,7 @@ exports[`TwoColumnData Component > renders with chipLikeKey prop 1`] = `
   >
     <p
       class="MuiTypography-root MuiTypography-body2 emotion-3"
-      style="display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
+      style="display: -webkit-box; line-clamp: 5 -webkit-legacy; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; text-overflow: ellipsis;"
       title="item"
     >
       item
