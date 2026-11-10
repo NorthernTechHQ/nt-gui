@@ -76,7 +76,7 @@
       "eslint": "$eslint"
     }
   },
-  "packageManager": "npm@12.2.1",
+  "packageManager": "npm@12.2.2",
   "type": "module",
   "workspaces": [
     "apps/*",
