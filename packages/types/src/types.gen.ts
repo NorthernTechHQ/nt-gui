@@ -186,6 +186,29 @@ export type DeviceLimitTenantPut = {
 };
 
 /**
+ * Identifier consisting of up to 256 characters from the set
+ * `[A-Za-z0-9._-]`.
+ *
+ */
+export type Identifier = string;
+
+/**
+ * Human-readable name consisting of up to 256 valid UTF-8 encoded,
+ * graphic Unicode characters (letters, marks, numbers, punctuation,
+ * symbols and spaces).
+ *
+ */
+export type Name = string;
+
+/**
+ * Free-form text consisting of up to 4096 valid UTF-8 encoded,
+ * graphic Unicode characters (letters, marks, numbers, punctuation,
+ * symbols and spaces), tabs and line breaks.
+ *
+ */
+export type Text = string;
+
+/**
  * The actor may be a user or device.
  * Depending on the type of the actor different information will be available.
  *
@@ -1024,15 +1047,15 @@ export type DeploymentV1 = {
   /**
    * Deployment identifier
    */
-  id: string;
+  id: Identifier;
   /**
    * Name of the deployment
    */
-  name: string;
+  name: Name;
   /**
    * Name of the artifact to deploy
    */
-  artifact_name: string;
+  artifact_name: Text;
   /**
    * Deployment's creation date and time
    */
