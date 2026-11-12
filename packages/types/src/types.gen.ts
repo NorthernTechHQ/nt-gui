@@ -186,7 +186,41 @@ export type DeviceLimitTenantPut = {
 };
 
 /**
- * The actor may be a user or device.
+ * Identifier consisting of up to 256 characters from the set
+ * `[A-Za-z0-9._-]`.
+ *
+ */
+export type Identifier = string;
+
+/**
+ * Human-readable name consisting of up to 256 valid UTF-8 encoded,
+ * graphic Unicode characters (letters, marks, numbers, punctuation,
+ * symbols and spaces).
+ *
+ */
+export type Name = string;
+
+/**
+ * Free-form text consisting of up to 4096 valid UTF-8 encoded,
+ * graphic Unicode characters (letters, marks, numbers, punctuation,
+ * symbols and spaces), tabs and line breaks.
+ *
+ */
+export type Text = string;
+
+/**
+ * Audit log entry along with the tenant it was recorded for.
+ */
+export type TenantAuditLog = AuditLog & {
+  /**
+   * ID of the tenant the entry was recorded for.
+   */
+  tenant_id: string;
+};
+
+/**
+ * The actor may be a user, a device or an admin - a Northern.tech operator acting
+ * on the tenant through the admin panel.
  * Depending on the type of the actor different information will be available.
  *
  */
@@ -200,9 +234,9 @@ export type Actor = {
    * The type of the actor.
    *
    */
-  type: 'user' | 'device';
+  type: 'user' | 'device' | 'admin';
   /**
-   * The email address of the user.
+   * The email address of the user. Admins all go by the same generic name.
    *
    */
   email?: string;
@@ -1024,15 +1058,15 @@ export type DeploymentV1 = {
   /**
    * Deployment identifier
    */
-  id: string;
+  id: Identifier;
   /**
    * Name of the deployment
    */
-  name: string;
+  name: Name;
   /**
    * Name of the artifact to deploy
    */
-  artifact_name: string;
+  artifact_name: Text;
   /**
    * Deployment's creation date and time
    */
@@ -4766,6 +4800,88 @@ export type AuditlogsInternalCheckHealthResponses = {
 
 export type AuditlogsInternalCheckHealthResponse = AuditlogsInternalCheckHealthResponses[keyof AuditlogsInternalCheckHealthResponses];
 
+export type ListAuditLogsAcrossTenantsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * If present, limits the results only to logs of the given tenant.
+     */
+    tenant_id?: string;
+    /**
+     * Starting page.
+     */
+    page?: number;
+    /**
+     * Number of results per page.
+     */
+    per_page?: number;
+    /**
+     * List only log entries created before and equal to Unix timestamp (UTC)
+     */
+    created_before?: number;
+    /**
+     * List only log entries created after and equal to Unix timestamp (UTC)
+     */
+    created_after?: number;
+    /**
+     * If present, limits the results only to logs of the given action.
+     */
+    action?: string;
+    /**
+     * If present, limits the results only to logs where actor has given id.
+     */
+    actor_id?: string;
+    /**
+     * If present, limits the results only to logs where actor is of a given type.
+     */
+    actor_type?: 'user' | 'device' | 'admin';
+    /**
+     * If present, limits the results only to logs where the recorded actor email matches. With `actor_type=admin` it matches the operator behind an admin actor, otherwise admin actors share a generic email.
+     */
+    actor_email?: string;
+    /**
+     * If present, limits the results only to logs where object has given id.
+     */
+    object_id?: string;
+    /**
+     * If present, limits the results only to logs where object is of a given type.
+     */
+    object_type?: 'tenant' | 'user' | 'user_access_token' | 'deployment' | 'artifact' | 'device' | 'software';
+    /**
+     * Supports sorting the log list by creation date.
+     * By default logs are sorted by creation date in descending order (newest first).
+     *
+     */
+    sort?: 'asc' | 'desc';
+  };
+  url: '/api/internal/v1/auditlogs/logs';
+};
+
+export type ListAuditLogsAcrossTenantsErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type ListAuditLogsAcrossTenantsError = ListAuditLogsAcrossTenantsErrors[keyof ListAuditLogsAcrossTenantsErrors];
+
+export type ListAuditLogsAcrossTenantsResponses = {
+  /**
+   * ListOfTenantLogs
+   *
+   * Successful response.
+   */
+  200: Array<TenantAuditLog>;
+};
+
+export type ListAuditLogsAcrossTenantsResponse = ListAuditLogsAcrossTenantsResponses[keyof ListAuditLogsAcrossTenantsResponses];
+
 export type DeleteAuditLogsData = {
   body?: never;
   path: {
@@ -4828,7 +4944,7 @@ export type GetAuditLogsInternalData = {
     /**
      * If present, limits the results only to logs where actor is of a given type.
      */
-    actor_type?: 'user' | 'device';
+    actor_type?: 'user' | 'device' | 'admin';
     /**
      * If present, limits the results only to logs where actors has given email address.
      */
@@ -4930,7 +5046,7 @@ export type GetAuditLogsData = {
     /**
      * If present, limits the results only to logs where the actor is of a given type.
      */
-    actor_type?: 'user' | 'device';
+    actor_type?: 'user' | 'device' | 'admin';
     /**
      * If present, limits the results only to logs where the actor has a given email address.
      */
@@ -5009,7 +5125,7 @@ export type ExportAuditLogsData = {
     /**
      * If present, limits the results only to logs where the actor is of a given type.
      */
-    actor_type?: 'user' | 'device';
+    actor_type?: 'user' | 'device' | 'admin';
     /**
      * If present, limits the results only to logs where the actors has a given email address.
      */
