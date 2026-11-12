@@ -11,10 +11,12 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { AttributeResponse, DeviceWithImage, InvoiceLineItem, Scope } from '@northern.tech/types/MenderTypes';
+import type { AttributeResponse, DeviceWithImage, FilterValue, InvoiceLineItem, Scope } from '@northern.tech/types/MenderTypes';
 import { TIMEOUTS } from '@northern.tech/utils/constants';
 import { duplicateFilter, isDarkMode, yes } from '@northern.tech/utils/helpers';
 import type { AxiosError } from 'axios';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 
 import type { DeviceIssueOptionKey, FilterOperator, Role } from './constants';
 import {
@@ -25,6 +27,7 @@ import {
   DEVICE_ISSUE_OPTIONS,
   DEVICE_LIST_MAXIMUM_LENGTH,
   ORCHESTRATOR_MANIFEST_ATTRIBUTE_PREFIX,
+  dateTimeAttributes,
   defaultStats,
   deploymentDisplayStates,
   deploymentStatesToSubstates,
@@ -38,8 +41,9 @@ import type { DeviceFilter, DeviceGroup, InventoryAttributes } from './devicesSl
 import type { PricePreview } from './organizationSlice/types';
 import type { AppDispatch } from './store';
 
-type FilterProcessorValue = string | string[] | number | boolean; // this aligns with a API compatible `FilterPredicate.value`
-type FilterProcessor = (val: string) => FilterProcessorValue;
+dayjs.extend(customParseFormat);
+
+type FilterProcessor = (val: string) => FilterValue;
 
 // for some reason these functions can not be stored in the deviceConstants...
 const filterProcessors: Record<string, FilterProcessor> = {
@@ -58,7 +62,41 @@ export type FilterTerm = {
   attribute: string;
   scope: Scope;
   type: FilterOperator;
-  value: FilterProcessorValue;
+  value: FilterValue;
+};
+
+const dateTimeFilterFormats = [
+  'YYYY-MM',
+  'YYYY-MM-DD',
+  ...['HH', 'HH:mm', 'HH:mm:ss', 'HH:mm:ss.SSS'].flatMap(time => [`YYYY-MM-DD ${time}`, `YYYY-MM-DD[T]${time}`])
+];
+
+const timezoneSuffix = /(Z|[+-]\d{2}:\d{2})$/i;
+
+export const tryParseDate = (dateTime: string) => {
+  const value = dateTime.trim().replace(timezoneSuffix, '');
+  const parsed = dayjs(value, dateTimeFilterFormats, true);
+  return parsed.isValid() ? parsed : null;
+};
+
+// best effort conversion of user input of datelike values to server compatible variant w/ timezone
+export const normalizeDateTimeFilterValue = (value: FilterValue): string | undefined => {
+  const trimmedValue = `${value}`.trim();
+  const timezone = trimmedValue.match(timezoneSuffix)?.[0];
+  const dateTime = timezone ? trimmedValue.slice(0, -timezone.length) : trimmedValue;
+  const parsed = tryParseDate(dateTime);
+  if (!parsed) {
+    return;
+  }
+  return `${dateTime.replace(' ', 'T')}${timezone ? timezone.toUpperCase() : parsed.format('Z')}`; // uses the browser timezone if none was specified
+};
+
+const normalizeFilterValue = (filter: DeviceFilter, value: FilterValue): FilterValue => {
+  if (!dateTimeAttributes.some(({ attribute, scope: attributeScope }) => attribute === filter.key && attributeScope === filter.scope)) {
+    return value;
+  }
+  const normalize = item => normalizeDateTimeFilterValue(item) ?? item;
+  return Array.isArray(value) ? value.map(normalize) : normalize(value);
 };
 
 export const mapFiltersToTerms = (filters: DeviceFilter[]): FilterTerm[] =>
@@ -66,7 +104,10 @@ export const mapFiltersToTerms = (filters: DeviceFilter[]): FilterTerm[] =>
     scope: filter.scope,
     attribute: filter.key,
     type: filterAliases[filter.operator]?.alias || filter.operator,
-    value: Object.hasOwn(filterProcessors, filter.operator) ? filterProcessors[filter.operator](filter.value as string) : '' + filter.value
+    value: normalizeFilterValue(
+      filter,
+      Object.hasOwn(filterProcessors, filter.operator) ? filterProcessors[filter.operator](filter.value as string) : '' + filter.value
+    )
   }));
 export const mapTermsToFilters = (terms: FilterTerm[]): DeviceFilter[] =>
   terms.map(term => {
