@@ -53,6 +53,7 @@ import {
   SORTING_OPTIONS,
   UNGROUPED_GROUP,
   auditLogsApiUrl,
+  dateTimeAttributes,
   deviceAuthV2,
   deviceConfig,
   deviceConnect,
@@ -108,9 +109,7 @@ const defaultAttributes: SelectAttribute[] = [
   { scope: 'inventory', attribute: 'device_type' },
   { scope: 'inventory', attribute: rootfsImageVersion },
   { scope: 'monitor', attribute: 'alerts' },
-  { scope: 'system', attribute: 'created_ts' },
-  { scope: 'system', attribute: 'updated_ts' },
-  { scope: 'system', attribute: 'check_in_time' },
+  ...dateTimeAttributes,
   { scope: 'system', attribute: 'group' },
   { scope: 'tags', attribute: 'name' }
 ];
