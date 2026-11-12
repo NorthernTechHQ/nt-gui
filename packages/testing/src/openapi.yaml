@@ -124,6 +124,122 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /api/internal/v1/auditlogs/logs:
+    get:
+      tags:
+        - Audit_Logs_Auditlogs Internal
+      summary: Returns a list of audit log objects across all tenants.
+      description: |
+        Lists the logs of all tenants, each along with the tenant it was recorded for.
+        Unlike the tenant scoped listing, the entries are returned as stored, without
+        resolving missing actor or object details.
+
+        Listing the actions of the `admin` actor type is index backed; other queries
+        across tenants have to scan the logs and are best narrowed down to a tenant.
+
+        Admin actors carry the email address of the operator behind them, where the
+        management API only shows a generic name.
+      operationId: List Audit Logs Across Tenants
+      parameters:
+        - name: tenant_id
+          in: query
+          description: If present, limits the results only to logs of the given tenant.
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Starting page.
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          description: Number of results per page.
+          schema:
+            type: integer
+            default: 10
+            maximum: 500
+        - name: created_before
+          in: query
+          description: List only log entries created before and equal to Unix timestamp (UTC)
+          schema:
+            type: integer
+        - name: created_after
+          in: query
+          description: List only log entries created after and equal to Unix timestamp (UTC)
+          schema:
+            type: integer
+        - name: action
+          in: query
+          description: If present, limits the results only to logs of the given action.
+          schema:
+            type: string
+        - name: actor_id
+          in: query
+          description: If present, limits the results only to logs where actor has given id.
+          schema:
+            type: string
+        - name: actor_type
+          in: query
+          description: If present, limits the results only to logs where actor is of a given type.
+          schema:
+            type: string
+            enum:
+              - user
+              - device
+              - admin
+        - name: actor_email
+          in: query
+          description: If present, limits the results only to logs where the recorded actor email matches. With `actor_type=admin` it matches the operator behind an admin actor, otherwise admin actors share a generic email.
+          schema:
+            type: string
+        - name: object_id
+          in: query
+          description: If present, limits the results only to logs where object has given id.
+          schema:
+            type: string
+        - name: object_type
+          in: query
+          description: If present, limits the results only to logs where object is of a given type.
+          schema:
+            type: string
+            enum:
+              - tenant
+              - user
+              - user_access_token
+              - deployment
+              - artifact
+              - device
+              - software
+        - name: sort
+          in: query
+          description: |
+            Supports sorting the log list by creation date.
+            By default logs are sorted by creation date in descending order (newest first).
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+      responses:
+        '200':
+          description: Successful response.
+          headers:
+            X-Total-Count:
+              description: Total number of logs matching the query.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                title: ListOfTenantLogs
+                type: array
+                items:
+                  $ref: '#/components/schemas/TenantAuditLog'
+        '400':
+          $ref: '#/components/responses/InvalidRequestError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /api/internal/v1/auditlogs/tenants/{tenant_id}:
     delete:
       tags:
@@ -148,6 +264,9 @@ paths:
       tags:
         - Audit_Logs_Auditlogs Internal
       summary: Returns a list of audit log objects.
+      description: |
+        Admin actors carry the email address of the operator behind them, where the
+        management API only shows a generic name.
       operationId: Get Audit Logs (internal)
       parameters:
         - name: tenant_id
@@ -191,6 +310,7 @@ paths:
             enum:
               - user
               - device
+              - admin
         - name: actor_email
           in: query
           description: If present, limits the results only to logs where actors has given email address.
@@ -253,6 +373,9 @@ paths:
       tags:
         - Audit_Logs_Auditlogs Internal
       summary: Log event.
+      description: |
+        Admin actors are expected to carry the email address of the operator behind
+        them. Externally the actor goes by a generic name.
       operationId: Save Audit Log
       parameters:
         - name: tenant_id
@@ -315,6 +438,7 @@ paths:
             enum:
               - user
               - device
+              - admin
         - name: actor_email
           in: query
           description: If present, limits the results only to logs where the actor has a given email address.
@@ -423,6 +547,7 @@ paths:
             enum:
               - user
               - device
+              - admin
         - name: actor_email
           in: query
           description: If present, limits the results only to logs where the actors has a given email address.
@@ -12921,6 +13046,8 @@ paths:
                 $ref: '#/components/schemas/Error'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      security:
+        - ManagementJWT: []
       x-mender-plan:
         - enterprise
   /api/management/v1/useradm/sso/sp/metadata/{id}:
@@ -14104,6 +14231,43 @@ components:
       example:
         name: max_micro_devices
         value: 1024
+    Identifier:
+      description: |
+        Identifier consisting of up to 256 characters from the set
+        `[A-Za-z0-9._-]`.
+      type: string
+      minLength: 0
+      maxLength: 256
+      pattern: ^[A-Za-z0-9._-]*$
+    Name:
+      description: |
+        Human-readable name consisting of up to 256 valid UTF-8 encoded,
+        graphic Unicode characters (letters, marks, numbers, punctuation,
+        symbols and spaces).
+      type: string
+      minLength: 0
+      maxLength: 256
+      pattern: ^[^\x00-\x1F\x7F-\x9F]*$
+    Text:
+      description: |
+        Free-form text consisting of up to 4096 valid UTF-8 encoded,
+        graphic Unicode characters (letters, marks, numbers, punctuation,
+        symbols and spaces), tabs and line breaks.
+      type: string
+      minLength: 0
+      maxLength: 4096
+      pattern: ^[^\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]*$
+    TenantAuditLog:
+      description: Audit log entry along with the tenant it was recorded for.
+      allOf:
+        - $ref: '#/components/schemas/AuditLog'
+        - type: object
+          required:
+            - tenant_id
+          properties:
+            tenant_id:
+              type: string
+              description: ID of the tenant the entry was recorded for.
     Actor:
       required:
         - id
@@ -14121,16 +14285,18 @@ components:
           enum:
             - user
             - device
+            - admin
         email:
           type: string
           description: |
-            The email address of the user.
+            The email address of the user. Admins all go by the same generic name.
         identity_data:
           type: string
           description: |
             The identity data of the device.
       description: |
-        The actor may be a user or device.
+        The actor may be a user, a device or an admin - a Northern.tech operator acting
+        on the tenant through the admin panel.
         Depending on the type of the actor different information will be available.
     AuditlogsTenant:
       required:
@@ -15451,13 +15617,16 @@ components:
       properties:
         id:
           description: Deployment identifier
-          type: string
+          allOf:
+            - $ref: '#/components/schemas/Identifier'
         name:
           description: Name of the deployment
-          type: string
+          allOf:
+            - $ref: '#/components/schemas/Name'
         artifact_name:
           description: Name of the artifact to deploy
-          type: string
+          allOf:
+            - $ref: '#/components/schemas/Text'
         created:
           description: Deployment's creation date and time
           format: date-time
