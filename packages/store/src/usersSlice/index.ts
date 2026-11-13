@@ -26,13 +26,6 @@ export type UserSession = {
   expiresAt?: string;
   token: string;
 };
-export type CustomColumn = {
-  attribute: {
-    name: string;
-    scope: string;
-  };
-  size: number;
-};
 
 type FilterOption = {
   key: string;
@@ -82,7 +75,6 @@ export type UserSliceType = {
   byId: Record<string, User>;
   currentSession?: UserSession | object;
   currentUser: string | null;
-  customColumns: CustomColumn[];
   globalSettings: GlobalSettings;
   permissionSetsById: Record<string, PermissionSet>;
   qrCode: string | null;
@@ -105,7 +97,6 @@ export const initialState: UserSliceType = {
   currentSession: {
     // { token: window.localStorage.getItem('JWT'), expiresAt: '2023-01-01T00:15:00.000Z' | undefined }, // expiresAt depending on the stay logged in setting
   },
-  customColumns: [],
   qrCode: null,
   globalSettings: {
     id_attribute: undefined,
@@ -187,9 +178,6 @@ export const usersSlice = createSlice({
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [action.payload]: toBeRemoved, ...rolesById } = state.rolesById;
       state.rolesById = rolesById;
-    },
-    setCustomColumns: (state, action: PayloadAction<CustomColumn[]>) => {
-      state.customColumns = action.payload;
     },
     setGlobalSettings: (state, action: PayloadAction<GlobalSettings>) => {
       state.settingsInitialized = true;
