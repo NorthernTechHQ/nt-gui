@@ -13,7 +13,7 @@
 //    limitations under the License.
 import type { Scope } from '@northern.tech/types/MenderTypes';
 import { ProductName } from '@northern.tech/types/MenderTypes';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Deployment } from './deploymentsSlice';
 import type { DeviceFilter } from './devicesSlice';
@@ -23,6 +23,8 @@ import {
   groupDeploymentDevicesStats,
   groupDeploymentStats,
   mapDeviceAttributes,
+  mapFiltersToTerms,
+  normalizeDateTimeFilterValue,
   parseSubscriptionPreview,
   stripOrchestratorManifestPrefix
 } from './utils';
@@ -281,6 +283,89 @@ describe('convertDeviceListStateToFilters function', () => {
     expect(filterTerms).toEqual([
       { attribute: 'check_in_time', scope: 'system', type: '$ltne', value: offlineThreshold },
       { attribute: 'alerts', scope: 'monitor', type: '$eq', value: 'true' }
+    ]);
+  });
+});
+
+describe('datetime filter values', () => {
+  let timezoneSpy;
+  beforeEach(() => {
+    // simulate central european time, with daylight saving time from April to September for simplicity
+    timezoneSpy = vi.spyOn(Date.prototype, 'getTimezoneOffset').mockImplementation(function (this: Date) {
+      return this.getMonth() >= 3 && this.getMonth() < 9 ? -120 : -60;
+    });
+  });
+  afterEach(() => {
+    timezoneSpy.mockRestore();
+  });
+
+  it.each([
+    ['2025-01', '2025-01+01:00'],
+    ['2025-07', '2025-07+02:00'],
+    ['2025-01-15', '2025-01-15+01:00'],
+    ['2025-07-15', '2025-07-15+02:00'],
+    [' 2025-01-15 ', '2025-01-15+01:00'],
+    ['2025-01-15T10', '2025-01-15T10+01:00'],
+    ['2025-01-15 10:30', '2025-01-15T10:30+01:00'],
+    ['2025-01-15T10:30:15', '2025-01-15T10:30:15+01:00'],
+    ['2025-07-15T10:30:15.250', '2025-07-15T10:30:15.250+02:00'],
+    ['2025-07-15 10:30:15', '2025-07-15T10:30:15+02:00'],
+    ['2025-01-15T10:30-05:00', '2025-01-15T10:30-05:00'],
+    ['2025-01Z', '2025-01Z'],
+    ['2025-01-15-05:00', '2025-01-15-05:00'],
+    ['2025-01-15 10:30z', '2025-01-15T10:30Z'],
+    ['2026-10-06T12:00:00.000Z', '2026-10-06T12:00:00.000Z']
+  ])('interprets %s as %s', (value, expected) => {
+    expect(normalizeDateTimeFilterValue(value)).toEqual(expected);
+  });
+
+  it.each([
+    '',
+    'yesterday',
+    '2025',
+    '2025-1-5',
+    '2025-13',
+    '2025-02-30',
+    '2025-01-15T24:00',
+    '2025-01-15T10:60',
+    '2025-01-15+1',
+    '2025-01-15T10:30:15.25',
+    '2025-01-15T10:30:15.123456'
+  ])('rejects %s', value => {
+    expect(normalizeDateTimeFilterValue(value)).toBeUndefined();
+  });
+
+  it('converts datetime filter values in search terms', () => {
+    const terms = mapFiltersToTerms([
+      { key: 'check_in_time', operator: '$gte', scope: 'system', value: '2025-01-15' },
+      { key: 'created_ts', operator: '$in', scope: 'system', value: '2025-01, 2025-07-15 08:00, soon' },
+      { key: 'updated_ts', operator: '$nexists', scope: 'system', value: '' },
+      { key: 'check_in_time', operator: '$regex', scope: 'system', value: '2025-01' },
+      { key: 'build_date', operator: '$eq', scope: 'inventory', value: '2025-01-15' }
+    ]);
+    expect(terms).toEqual([
+      { attribute: 'check_in_time', scope: 'system', type: '$gte', value: '2025-01-15+01:00' },
+      { attribute: 'created_ts', scope: 'system', type: '$in', value: ['2025-01+01:00', '2025-07-15T08:00+02:00', 'soon'] },
+      { attribute: 'updated_ts', scope: 'system', type: '$exists', value: false },
+      { attribute: 'check_in_time', scope: 'system', type: '$regex', value: '2025-01+01:00' },
+      { attribute: 'build_date', scope: 'inventory', type: '$eq', value: '2025-01-15' }
+    ]);
+  });
+
+  it('keeps the value types of processed operators for non datetime attributes', () => {
+    const terms = mapFiltersToTerms([
+      { key: 'name', operator: '$in', scope: 'tags', value: 'a, b' },
+      { key: 'name', operator: '$nin', scope: 'tags', value: 'c' },
+      { key: 'mac', operator: '$exists', scope: 'identity', value: '' },
+      { key: 'mac', operator: '$nexists', scope: 'identity', value: '' },
+      { key: 'cpu_count', operator: '$eq', scope: 'inventory', value: 4 }
+    ] as DeviceFilter[]);
+    expect(terms).toEqual([
+      { attribute: 'name', scope: 'tags', type: '$in', value: ['a', 'b'] },
+      { attribute: 'name', scope: 'tags', type: '$nin', value: ['c'] },
+      { attribute: 'mac', scope: 'identity', type: '$exists', value: true },
+      { attribute: 'mac', scope: 'identity', type: '$exists', value: false },
+      { attribute: 'cpu_count', scope: 'inventory', type: '$eq', value: '4' }
     ]);
   });
 });

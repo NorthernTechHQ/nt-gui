@@ -11,8 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
+import type { SelectAttribute } from '@northern.tech/types/MenderTypes';
+
 import type { DEVICE_STATES, FilterOperator } from '../constants';
-import { DEVICE_FILTERING_OPTIONS } from '../constants';
+import { ATTRIBUTE_SCOPES, DEVICE_FILTERING_OPTIONS } from '../constants';
 
 export const emptyFilter = { key: null, value: '', operator: DEVICE_FILTERING_OPTIONS.$eq.key as FilterOperator, scope: 'inventory' };
 
@@ -42,6 +44,11 @@ export const DEVICE_CONNECT_STATES = {
   disconnected: 'disconnected',
   unknown: 'unknown'
 };
+
+export const dateTimeAttributes: SelectAttribute[] = ['check_in_time', 'created_ts', 'updated_ts'].map(attribute => ({
+  attribute,
+  scope: ATTRIBUTE_SCOPES.system
+}));
 
 export const geoAttributes = ['geo-lat', 'geo-lon'].map(attribute => ({ attribute, scope: 'inventory' }));
 
