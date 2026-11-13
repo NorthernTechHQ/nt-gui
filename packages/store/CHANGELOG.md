@@ -1,4 +1,11 @@
 ---
+## [0.50.0](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.49.7...@northern.tech/store-0.50.0) (2026-11-13)
+
+
+### Features
+
+* **store:** added datelike handling to allow date range based filters ([9f0c928](https://github.com/NorthernTechHQ/nt-gui/commit/9f0c928668a094386ff50d3db8348eccb526fd4c))
+
 ## [0.49.7](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.49.6...@northern.tech/store-0.49.7) (2026-11-06)
 
 
