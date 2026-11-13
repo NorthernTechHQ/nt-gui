@@ -83,6 +83,7 @@
     "@monaco-editor/react": "^4.x",
     "@mui/icons-material": "^9.x",
     "@mui/material": "^9.x",
+    "@mui/x-data-grid": "^9.x",
     "@mui/x-date-pickers": "^9.x",
     "@northern.tech/store": "*",
     "@northern.tech/types": "*",

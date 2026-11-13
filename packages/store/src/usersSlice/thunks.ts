@@ -25,7 +25,7 @@ import dayjs from 'dayjs';
 import hashString from 'md5';
 import Cookies from 'universal-cookie';
 
-import type { CustomColumn, GlobalSettings, User, UserSettings } from '.';
+import type { GlobalSettings, User, UserSettings } from '.';
 import { actions, sliceName } from '.';
 import storeActions from '../actions';
 import GeneralApi from '../api/general-api';
@@ -299,43 +299,11 @@ export const getUserList = createAppAsyncThunk(`${sliceName}/getUserList`, (_, {
 
 export const getUser = createAppAsyncThunk(`${sliceName}/getUser`, (id: string, { dispatch, rejectWithValue }) =>
   GeneralApi.get<User>(`${useradmApiUrl}/users/${id}`)
-    .then(({ data: user }) =>
-      Promise.all([
-        dispatch(actions.receivedUser(user)),
-        dispatch(setHideAnnouncement({ shouldHide: false, userId: user.id })),
-        dispatch(updateUserColumnSettings({ currentUserId: user.id })),
-        user
-      ])
-    )
+    .then(({ data: user }) => Promise.all([dispatch(actions.receivedUser(user)), dispatch(setHideAnnouncement({ shouldHide: false, userId: user.id })), user]))
     .catch(e => rejectWithValue(e))
 );
 
 export const initializeSelf = createAppAsyncThunk(`${sliceName}/initializeSelf`, (_, { dispatch }) => dispatch(getUser(OWN_USER_ID)));
-
-interface UpdateColumnSettingsPayload {
-  columns?: CustomColumn[];
-  currentUserId?: string;
-}
-
-export const updateUserColumnSettings = createAppAsyncThunk(
-  `${sliceName}/updateUserColumnSettings`,
-  ({ columns, currentUserId }: UpdateColumnSettingsPayload, { dispatch, getState }) => {
-    const userId = currentUserId ?? getCurrentUser(getState()).id;
-    const storageKey = `${userId}-column-widths`;
-    let customColumns: CustomColumn[] = [];
-    if (!columns) {
-      try {
-        customColumns = JSON.parse(window.localStorage.getItem(storageKey) || '') || customColumns;
-      } catch {
-        // most likely the column info doesn't exist yet or is lost - continue
-      }
-    } else {
-      customColumns = columns;
-    }
-    window.localStorage.setItem(storageKey, JSON.stringify(customColumns));
-    return Promise.resolve(dispatch(actions.setCustomColumns(customColumns)));
-  }
-);
 
 const userActions = {
   add: {

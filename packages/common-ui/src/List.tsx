@@ -11,22 +11,19 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { CSSProperties, ComponentType, MutableRefObject, ReactElement, MouseEvent as ReactMouseEvent } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import type { ComponentType, ReactElement, MouseEvent as ReactMouseEvent } from 'react';
+import { useMemo, useState } from 'react';
 
-import { Settings as SettingsIcon, Sort as SortIcon } from '@mui/icons-material';
-import { Checkbox, Typography, typographyClasses } from '@mui/material';
-import { makeStyles } from 'tss-react/mui';
+import { Settings as SettingsIcon } from '@mui/icons-material';
+import { typographyClasses } from '@mui/material';
+import type { GridColDef, GridColumnResizeParams, GridRowParams, GridRowSelectionModel, GridSortModel, GridValidRowModel } from '@mui/x-data-grid';
+import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, gridClasses } from '@mui/x-data-grid';
 
-import type { IdAttribute } from '@northern.tech/store/constants';
 import type { SortOptions } from '@northern.tech/utils/constants';
-import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS, TIMEOUTS } from '@northern.tech/utils/constants';
-import { isDarkMode, toggle } from '@northern.tech/utils/helpers';
-import { useWindowSize } from '@northern.tech/utils/resizehook';
+import { DEVICE_LIST_DEFAULTS, SORTING_OPTIONS } from '@northern.tech/utils/constants';
 
 import Loader from './Loader';
 import Pagination from './Pagination';
-import MenderTooltip from './helptips/MenderTooltip';
 
 const { page: defaultPage, perPage: defaultPerPage } = DEVICE_LIST_DEFAULTS;
 
@@ -40,19 +37,16 @@ export interface RendererProp<T> {
   item?: T;
 }
 
-export interface ClassesOverrides {
-  classes: Record<string, string>;
-}
 export interface ColumnHeader<T> {
   attribute: Attribute;
-  classes?: ClassesOverrides;
-  component: ComponentType<RendererProp<T> & ClassesOverrides>;
+  component?: ComponentType<RendererProp<T>>;
   customize?: () => void;
   sortable: boolean;
-  style?: CSSProperties;
   textRender?: (props: RendererProp<T>) => string | ReactElement;
   title: string;
 }
+
+export type ColumnWidths = Record<string, number>;
 
 interface ListState {
   page?: number;
@@ -66,256 +60,171 @@ type wID = { id: string };
 
 interface CommonListProps<T extends wID> {
   columnHeaders: ColumnHeader<T>[];
-  customColumnSizes?: Attribute[];
-  idAttribute?: IdAttribute;
-  ListItemComponent: ComponentType<ListItemComponentProps<T>>;
+  columnWidths?: ColumnWidths;
   listItems: T[];
   listState: ListState;
   onChangeRowsPerPage: (perPage: number) => void;
   onExpandClick: (item: T) => void;
   onPageChange: (page: number) => void;
-  onResizeColumns: ((columns: ColumnSize[]) => void) | false;
+  onResizeColumns: ((columnWidths: ColumnWidths) => void) | false;
   onSelect: ((rows: number[]) => void) | false;
-  onSort?: (attr: Attribute | object) => void;
+  onSort?: (attr: Attribute) => void;
   pageLoading: boolean;
   PaginationProps?: object;
-  sortingNotes?: { [key: string]: string };
 }
-export interface ListItemComponentProps<T> {
-  columnHeaders: ColumnHeader<T>[];
-  idAttribute?: IdAttribute;
-  index: number;
-  listItem: T;
-  listState: ListState;
-  onClick: (item: T) => void;
-  onRowSelect: (selectedRow: number) => void;
-  selectable: boolean;
-  selected: boolean;
-}
-
-const useStyles = makeStyles()(theme => ({
-  header: {
-    [`.${typographyClasses.body1}`]: { fontWeight: theme.typography.fontWeightMedium }
-  },
-  resizer: {
-    cursor: 'col-resize',
-    paddingLeft: 5,
-    paddingRight: 5
-  },
-  resizeHandle: {
-    width: 4,
-    background: 'initial',
-    ['&.hovering']: {
-      background: theme.palette.grey[600]
-    },
-    ['&.resizing']: {
-      background: isDarkMode(theme.palette.mode) ? theme.palette.grey[200] : theme.palette.grey[900]
-    }
-  }
-}));
 
 export const minCellWidth = 150;
+const checkboxColumnWidth = GRID_CHECKBOX_SELECTION_COL_DEF.width ?? 50;
+// the community grid refuses larger pages
+const maxPageSize = 100;
+const sortingOrder = [SORTING_OPTIONS.desc, SORTING_OPTIONS.asc] as const;
 
-interface ColumnSize {
-  attribute: Attribute;
-  size: number;
-}
-
-interface ResizeChangeOptions<T> {
-  columnElements: Element[] | HTMLCollection;
-  columnHeaders: ColumnHeader<T>[];
-  e: Pick<MouseEvent, 'clientX'>;
-  index: number;
-  prev: number;
-  selectable: boolean;
-}
-
-export const calculateResizeChange = <T,>({ columnElements, columnHeaders, e, index, prev, selectable }: ResizeChangeOptions<T>): ColumnSize[] => {
-  const isShrinkage = prev > e.clientX ? -1 : 1;
-  const columnDelta = Math.abs(e.clientX - prev) * isShrinkage;
-  const relevantColumns = getRelevantColumns(columnElements, selectable);
-  const canModifyNextColumn = index + 1 < columnHeaders.length - 1;
-
-  return relevantColumns.reduce((accu: ColumnSize[], element, columnIndex) => {
-    const currentWidth = (element as HTMLElement).offsetWidth;
-    const column = { attribute: columnHeaders[columnIndex + 1].attribute, size: currentWidth };
-    if (canModifyNextColumn && index === columnIndex) {
-      column.size = currentWidth + columnDelta;
-    } else if (canModifyNextColumn && index + 1 === columnIndex) {
-      column.size = currentWidth - columnDelta;
-    }
-    accu.push(column);
-    return accu;
-  }, []);
+const getColumnFields = <T,>(columnHeaders: ColumnHeader<T>[]) => {
+  const fields = columnHeaders.map(({ attribute: { name, scope } }) => [scope, name].filter(Boolean).join(':'));
+  return fields.map((field, index) => (!field || fields.indexOf(field) !== index ? `${field}-column-${index}` : field));
 };
-const getRelevantColumns = (columnElements: Element[] | HTMLCollection | undefined, selectable: boolean): Element[] =>
-  [...(columnElements ?? [])].slice(selectable ? 1 : 0, (columnElements?.length ?? 0) - 1);
-const getTemplateColumns = (columns: string, selectable: boolean) =>
-  selectable ? `52px ${columns} minmax(${minCellWidth}px, 1fr)` : `${columns} minmax(${minCellWidth}px, 1fr)`;
 
-const getColumnsStyle = (columns: Partial<ColumnSize>[], defaultSize: string | undefined, selectable: boolean) => {
-  const template = columns.map(({ size }) => `minmax(${minCellWidth}px, ${size ? `${size}px` : defaultSize})`);
-  // applying styles via state changes would lead to less smooth changes, so we set the style directly on the components
-  return getTemplateColumns(template.join(' '), selectable);
+const textOverflow = { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
+
+const gridStyle = {
+  border: 'none',
+  [`.${gridClasses.row}`]: { cursor: 'pointer' },
+  [`.${gridClasses.cell} > *`]: { ...textOverflow, minWidth: 0 },
+  [`.${gridClasses.cell} .${typographyClasses.root}`]: textOverflow
+};
+
+interface CustomizableHeaderProps {
+  customize: () => void;
+  title: string;
+}
+
+const CustomizableHeader = ({ customize, title }: CustomizableHeaderProps) => {
+  const onCustomizeClick = (e: ReactMouseEvent) => {
+    e.stopPropagation();
+    customize();
+  };
+  return (
+    <div className={`flexbox align-items-center ${gridClasses.columnHeaderTitle}`}>
+      {title}
+      <SettingsIcon className="margin-left-x-small" onClick={onCustomizeClick} style={{ fontSize: 16 }} data-testid="column-configuration" />
+    </div>
+  );
 };
 export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
   const {
     columnHeaders,
-    customColumnSizes = [],
+    columnWidths,
     listItems,
     listState,
-    idAttribute,
     onChangeRowsPerPage,
     PaginationProps = {},
     onExpandClick,
     onResizeColumns,
     onPageChange,
     onSelect,
-    onSort = () => {},
-    pageLoading,
-    sortingNotes,
-    ListItemComponent
+    onSort,
+    pageLoading
   } = props;
-  const { page: pageNo = defaultPage, perPage: pageLength = defaultPerPage, selection: selectedRows = [], sort = {}, total: pageTotal = 1 } = listState;
-  const { direction: sortDown = SORTING_OPTIONS.desc, key: sortCol } = sort as SortOptions;
-  const listRef = useRef<HTMLDivElement | null>(null);
-  const selectedRowsRef = useRef(selectedRows);
-  const initRef = useRef<number | null>(null);
-  const [resizeTrigger, setResizeTrigger] = useState(false);
-
-  const size = useWindowSize();
+  const { page: pageNo = defaultPage, perPage: pageLength = defaultPerPage, selection: selectedRows, sort = {}, total: pageTotal = 1 } = listState;
+  const { direction: sortDown = SORTING_OPTIONS.desc, key: sortCol, scope: sortScope } = sort as SortOptions;
   const selectable = !!onSelect;
-  const { classes } = useStyles();
+  const resizable = !!onResizeColumns;
+  const [gridWidth, setGridWidth] = useState(0);
+  const fields = useMemo(() => getColumnFields(columnHeaders), [columnHeaders]);
 
-  useEffect(() => {
-    selectedRowsRef.current = selectedRows;
-  }, [selectedRows]);
+  const columns = useMemo<GridColDef<T>[]>(() => {
+    const lastIndex = columnHeaders.length - 1;
+    // the last column always takes up the remaining space, just like the columns without a custom size
+    const sizes = fields.map((field, index) => (index === lastIndex ? undefined : columnWidths?.[field]));
+    // the space the columns need at the very least: the custom sized ones can't shrink, the others only down to their minimum
+    const occupiedWidth = sizes.reduce<number>((accu, size) => accu + (size ?? minCellWidth), selectable ? checkboxColumnWidth : 0);
+    return columnHeaders.map((column, index) => {
+      const { component: Component, customize, sortable, textRender, title } = column;
+      const size = sizes[index];
+      const ownWidth = size ?? minCellWidth;
+      return {
+        // the cells contain elements instead of plain text
+        display: 'flex' as const,
+        field: fields[index],
+        headerName: title,
+        // a column can only grow as far as the other columns can make room for it, to keep the list from outgrowing the available space
+        maxWidth: gridWidth ? Math.max(ownWidth, gridWidth - (occupiedWidth - ownWidth)) : undefined,
+        minWidth: minCellWidth,
+        resizable: resizable && index !== lastIndex,
+        sortable,
+        ...(size ? { width: size } : { flex: 1 }),
+        ...(customize ? { renderHeader: () => <CustomizableHeader customize={customize} title={title} /> } : {}),
+        renderCell: ({ row }) => (Component ? <Component column={column} item={row} /> : (textRender?.({ column, item: row }) ?? null))
+      };
+    });
+  }, [columnHeaders, columnWidths, fields, gridWidth, resizable, selectable]);
 
-  useEffect(() => {
-    if (!listRef.current) {
+  const sortModel = useMemo<GridSortModel>(() => {
+    const index = columnHeaders.findIndex(({ attribute, sortable }) => sortable && attribute.name === sortCol && (!sortScope || attribute.scope === sortScope));
+    return index === -1 ? [] : [{ field: fields[index], sort: sortDown }];
+  }, [columnHeaders, fields, sortCol, sortDown, sortScope]);
+
+  const rowSelectionModel = useMemo<GridRowSelectionModel>(
+    () => ({ type: 'include', ids: new Set((selectedRows ?? []).filter(index => listItems[index]).map(index => listItems[index].id)) }),
+    [listItems, selectedRows]
+  );
+
+  const onSortModelChange = (model: GridSortModel) => {
+    const field = model[0]?.field ?? sortModel[0]?.field;
+    const column = columnHeaders[fields.indexOf(field)];
+    if (column && onSort) {
+      onSort(column.attribute);
+    }
+  };
+
+  const onRowSelectionModelChange = ({ ids, type }: GridRowSelectionModel) => {
+    if (!onSelect) {
       return;
     }
-    const relevantColumns = getRelevantColumns(listRef.current?.querySelector('.deviceListRow')?.children, selectable);
-    listRef.current.style.gridTemplateColumns = getColumnsStyle(
-      (customColumnSizes.length && customColumnSizes.length === relevantColumns.length ? customColumnSizes : relevantColumns) as Partial<ColumnSize>[],
-      '1.5fr',
-      selectable
-    );
-  }, [customColumnSizes, columnHeaders, selectable, resizeTrigger, size.width]);
-
-  useEffect(() => {
-    clearTimeout(initRef.current || undefined);
-    initRef.current = setTimeout(() => setResizeTrigger(toggle), TIMEOUTS.debounceDefault) as unknown as number;
-    return () => {
-      clearTimeout(initRef?.current || undefined);
-    };
-  }, [customColumnSizes.length]);
-
-  const onRowSelection = (selectedRow: number) => {
-    const updatedSelection = [...selectedRowsRef.current];
-    const selectedIndex = updatedSelection.indexOf(selectedRow);
-    if (selectedIndex === -1) {
-      updatedSelection.push(selectedRow);
-    } else {
-      updatedSelection.splice(selectedIndex, 1);
-    }
-    if (onSelect) {
-      onSelect(updatedSelection);
-    }
+    const isIncluding = type === 'include';
+    const selectedIndices = listItems.flatMap(({ id }, index) => (ids.has(id) === isIncluding ? [index] : []));
+    onSelect(selectedIndices);
   };
 
-  const onSelectAllClick = () => {
-    let newSelectedRows: number[] = Array.from({ length: listItems.length }, (_, i) => i);
-    if (selectedRows.length && selectedRows.length <= listItems.length) {
-      newSelectedRows = [];
+  const onColumnWidthChange = ({ colDef: { field }, width }: GridColumnResizeParams) => {
+    if (!onResizeColumns || !fields.includes(field)) {
+      return;
     }
-    if (onSelect) {
-      onSelect(newSelectedRows);
-    }
+    // only the explicitly resized columns get a fixed size, the others stay flexible to keep the list from outgrowing the available space
+    onResizeColumns({ ...columnWidths, [field]: Math.round(width) });
   };
 
-  const handleResizeChange = useCallback(
-    (e: MouseEvent, { index, prev, ref }: ResizeEventData) => {
-      const changedColumns = calculateResizeChange({
-        columnElements: [...(ref.current?.parentElement?.children ?? [])],
-        columnHeaders,
-        e,
-        index,
-        prev,
-        selectable
-      });
-      // applying styles via state changes would lead to less smooth changes, so we set the style directly on the components
-      if (listRef.current) listRef.current.style.gridTemplateColumns = getColumnsStyle(changedColumns, undefined, selectable);
-    },
-    [columnHeaders, selectable]
-  );
+  const onRowClick = ({ row }: GridRowParams<T>, event: ReactMouseEvent<HTMLElement>) => {
+    if (event.defaultPrevented || (event.target as HTMLElement).closest(`.${gridClasses.cellCheckbox}`)) {
+      return;
+    }
+    onExpandClick(row);
+  };
 
-  const handleResizeFinish = useCallback(
-    (e: MouseEvent, { index, prev, ref }: ResizeEventData) => {
-      const changedColumns = calculateResizeChange({
-        columnElements: [...(ref.current?.parentElement?.children ?? [])],
-        columnHeaders,
-        e,
-        index,
-        prev,
-        selectable
-      });
-      if (onResizeColumns) {
-        onResizeColumns(changedColumns);
-      }
-    },
-    [columnHeaders, onResizeColumns, selectable]
-  );
-
-  const numSelected = (selectedRows || []).length;
   return (
     <>
-      <div className={`deviceList ${selectable ? 'selectable' : ''}`} ref={listRef}>
-        <div className={`header ${classes.header}`}>
-          <div className="deviceListRow">
-            {selectable && (
-              <div>
-                <Checkbox
-                  indeterminate={numSelected > 0 && numSelected < listItems.length}
-                  checked={numSelected === listItems.length}
-                  onChange={onSelectAllClick}
-                />
-              </div>
-            )}
-            {columnHeaders.map((item, index) => (
-              <HeaderItem
-                column={item}
-                columnCount={columnHeaders.length}
-                index={index}
-                key={`columnHeader-${index}`}
-                onSort={onSort}
-                resizable={!!onResizeColumns}
-                sortCol={sortCol}
-                sortDown={sortDown}
-                onResizeChange={handleResizeChange}
-                onResizeFinish={handleResizeFinish}
-                sortingNotes={sortingNotes}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="body">
-          {listItems.map((item, index) => (
-            <ListItemComponent
-              columnHeaders={columnHeaders}
-              listItem={item}
-              listState={listState}
-              idAttribute={idAttribute}
-              index={index}
-              key={item.id}
-              onClick={onExpandClick}
-              onRowSelect={onRowSelection}
-              selectable={selectable}
-              selected={selectedRows.indexOf(index) !== -1}
-            />
-          ))}
-        </div>
-      </div>
+      <DataGrid<T & GridValidRowModel>
+        checkboxSelection={selectable}
+        columns={columns as GridColDef<T & GridValidRowModel>[]}
+        disableColumnMenu
+        disableColumnResize={!resizable}
+        disableRowSelectionOnClick
+        hideFooter
+        onColumnWidthChange={onColumnWidthChange}
+        onResize={({ width }) => setGridWidth(width)}
+        onRowClick={onRowClick}
+        onRowSelectionModelChange={onRowSelectionModelChange}
+        onSortModelChange={onSortModelChange}
+        paginationMode="server"
+        paginationModel={{ page: Math.max(pageNo - 1, 0), pageSize: Math.min(pageLength, maxPageSize) }}
+        rowCount={pageTotal}
+        rows={listItems}
+        rowSelectionModel={rowSelectionModel}
+        sortingMode="server"
+        sortingOrder={sortingOrder}
+        sortModel={sortModel}
+        sx={gridStyle}
+      />
       <div className="flexbox margin-top-small">
         <Pagination
           className="margin-top-none"
@@ -329,108 +238,5 @@ export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
         <Loader show={pageLoading} small />
       </div>
     </>
-  );
-};
-
-interface ResizeEventData {
-  index: number;
-  prev: number;
-  ref: MutableRefObject<HTMLDivElement | null>;
-}
-
-interface HeaderItemProps<T> {
-  column: ColumnHeader<T>;
-  columnCount: number;
-  index: number;
-  onResizeChange: (e: MouseEvent, eventData: ResizeEventData) => void;
-  onResizeFinish: (e: MouseEvent, eventData: ResizeEventData) => void;
-  onSort: (attr: Attribute | object) => void;
-  resizable: boolean;
-  sortCol?: string;
-  sortDown?: string;
-  sortingNotes?: { [key: string]: string };
-}
-
-const HeaderItem = <T extends wID>(props: HeaderItemProps<T>) => {
-  const { sortingNotes, column, columnCount, index, sortCol, sortDown = undefined, onSort, onResizeChange, onResizeFinish, resizable } = props;
-  const [isHovering, setIsHovering] = useState(false);
-  const [shouldRemoveListeners, setShouldRemoveListeners] = useState(false);
-  const resizeRef = useRef<null | number>(null);
-  const ref = useRef<HTMLDivElement | null>(null);
-  const { classes } = useStyles();
-
-  const onMouseOut = () => setIsHovering(false);
-
-  const onMouseOver = () => setIsHovering(true);
-
-  const mouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (resizable && resizeRef.current) {
-        onResizeChange(e, { index, prev: resizeRef.current, ref });
-        resizeRef.current = e.clientX;
-      }
-    },
-    [index, onResizeChange, resizable]
-  );
-
-  const mouseUp = useCallback(
-    (e: MouseEvent) => {
-      if (resizeRef.current) {
-        onResizeFinish(e, { index, prev: resizeRef.current, ref });
-        resizeRef.current = null;
-        setShouldRemoveListeners(true);
-      }
-    },
-    [index, onResizeFinish]
-  );
-
-  const mouseDown = (e: ReactMouseEvent<HTMLDivElement>) => (resizeRef.current = e.clientX);
-
-  useEffect(() => {
-    window.addEventListener('mousemove', mouseMove);
-    window.addEventListener('mouseup', mouseUp);
-    return () => {
-      setShouldRemoveListeners(!!resizeRef.current);
-    };
-  }, [mouseMove, mouseUp]);
-
-  useEffect(() => {
-    if (shouldRemoveListeners) {
-      window.removeEventListener('mousemove', mouseMove);
-      window.removeEventListener('mouseup', mouseUp);
-      setShouldRemoveListeners(false);
-    }
-  }, [shouldRemoveListeners, mouseMove, mouseUp]);
-
-  let resizeHandleClassName = resizable && isHovering ? 'hovering' : '';
-  // eslint-disable-next-line react-hooks/refs
-  resizeHandleClassName = resizeRef.current ? 'resizing' : resizeHandleClassName;
-  const header = (
-    <div className="columnHeader flexbox space-between relative" style={column.style} onMouseEnter={onMouseOver} onMouseLeave={onMouseOut} ref={ref}>
-      <Typography className="flexbox align-items-center" onClick={() => onSort(column.attribute ? column.attribute : {})}>
-        {column.title}
-        {column.sortable && (
-          <SortIcon
-            className={`sortIcon ${sortCol === column.attribute.name ? 'selected' : ''} ${(sortDown === SORTING_OPTIONS.desc).toString()}`}
-            style={{ fontSize: 16 }}
-          />
-        )}
-      </Typography>
-      <div className="flexbox align-items-center full-height">
-        {column.customize && <SettingsIcon onClick={column.customize} style={{ fontSize: 16 }} data-testid="column-configuration" />}
-        {index < columnCount - 2 && resizable && (
-          <div onMouseDown={mouseDown} className={`${classes.resizer} full-height`}>
-            <div className={`full-height ${classes.resizeHandle} ${resizeHandleClassName}`} />
-          </div>
-        )}
-      </div>
-    </div>
-  );
-  return column.sortable && sortingNotes && sortingNotes[column.attribute.name] ? (
-    <MenderTooltip title={sortingNotes[column.attribute.name]} placement="top-start">
-      {header}
-    </MenderTooltip>
-  ) : (
-    header
   );
 };
