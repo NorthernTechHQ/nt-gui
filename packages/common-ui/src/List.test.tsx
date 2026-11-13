@@ -19,7 +19,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import DetailsIndicator from './DetailsIndicator';
-import type { ColumnHeader, ListItemComponentProps, RendererProp } from './List';
+import type { ColumnHeader, RendererProp } from './List';
 import { CommonList } from './List';
 
 interface TestItem {
@@ -38,17 +38,9 @@ const DetailsButtonRenderer = () => (
 );
 
 const columnHeaders: ColumnHeader<TestItem>[] = [
-  { attribute: { name: 'name', scope: '' }, component: NameRenderer, sortable: false, title: 'Name' },
+  { attribute: { name: 'name', scope: '' }, component: NameRenderer, sortable: true, title: 'Name' },
   { attribute: { name: '', scope: '' }, component: DetailsButtonRenderer, sortable: false, title: '' }
 ];
-
-const TestListItem = ({ columnHeaders, listItem, onClick }: ListItemComponentProps<TestItem>) => (
-  <div className="deviceListRow clickable" onClick={() => onClick(listItem)}>
-    {columnHeaders.map(({ component: Component, ...column }, index) => (
-      <Component key={`column-${index}`} column={{ component: Component, ...column }} item={listItem} classes={{}} />
-    ))}
-  </div>
-);
 
 describe('List component', () => {
   it('renders correctly', () => {
@@ -60,7 +52,6 @@ describe('List component', () => {
     const onChangeRowsPerPage = vi.fn();
     const { baseElement } = render(
       <CommonList
-        ListItemComponent={TestListItem}
         listItems={tenants as TestItem[]}
         listState={listState}
         columnHeaders={columnHeaders}
@@ -87,7 +78,6 @@ describe('List component', () => {
     const onChangeRowsPerPage = vi.fn();
     render(
       <CommonList
-        ListItemComponent={TestListItem}
         listItems={tenants as TestItem[]}
         listState={listState}
         columnHeaders={columnHeaders}
@@ -102,6 +92,25 @@ describe('List component', () => {
     );
 
     await user.click(screen.getAllByText('View details')[0]);
-    expect(onExpandClickMock).toHaveBeenCalled();
+    expect(onExpandClickMock).toHaveBeenCalledWith(tenants[0]);
+
+    await user.click(screen.getByText('Name'));
+    expect(onSort).toHaveBeenCalledWith({ name: 'name', scope: '' });
+
+    await user.click(screen.getByRole('checkbox', { name: /select row/i }));
+    expect(onSelect).toHaveBeenCalledWith([0]);
+    expect(onExpandClickMock).toHaveBeenCalledTimes(1);
+  });
+  it('keeps columns showing the same attribute apart', () => {
+    const props = { listItems: tenants as TestItem[], listState, onChangeRowsPerPage: vi.fn(), onExpandClick: vi.fn(), onPageChange: vi.fn() };
+    const ui = (headers: ColumnHeader<TestItem>[]) => (
+      <CommonList {...props} columnHeaders={headers} onResizeColumns={false} onSelect={() => undefined} pageLoading={false} />
+    );
+    const duplicated = [columnHeaders[0], columnHeaders[0], columnHeaders[1]];
+    const { rerender } = render(ui(duplicated));
+    // new header objects lead to an update of the columns
+    rerender(ui(duplicated.map(header => ({ ...header }))));
+    rerender(ui(duplicated.map(header => ({ ...header }))));
+    expect(screen.getAllByRole('columnheader').filter(header => header.textContent === 'Name')).toHaveLength(2);
   });
 });
