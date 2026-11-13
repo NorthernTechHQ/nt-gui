@@ -46,10 +46,7 @@ export interface ColumnHeader<T> {
   title: string;
 }
 
-export interface ColumnSize {
-  attribute: Attribute;
-  size: number;
-}
+export type ColumnWidths = Record<string, number>;
 
 interface ListState {
   page?: number;
@@ -63,13 +60,13 @@ type wID = { id: string };
 
 interface CommonListProps<T extends wID> {
   columnHeaders: ColumnHeader<T>[];
-  customColumnSizes?: ColumnSize[];
+  columnWidths?: ColumnWidths;
   listItems: T[];
   listState: ListState;
   onChangeRowsPerPage: (perPage: number) => void;
   onExpandClick: (item: T) => void;
   onPageChange: (page: number) => void;
-  onResizeColumns: ((columns: ColumnSize[]) => void) | false;
+  onResizeColumns: ((columnWidths: ColumnWidths) => void) | false;
   onSelect: ((rows: number[]) => void) | false;
   onSort?: (attr: Attribute) => void;
   pageLoading: boolean;
@@ -86,8 +83,6 @@ const getColumnFields = <T,>(columnHeaders: ColumnHeader<T>[]) => {
   const fields = columnHeaders.map(({ attribute: { name, scope } }) => [scope, name].filter(Boolean).join(':'));
   return fields.map((field, index) => (!field || fields.indexOf(field) !== index ? `${field}-column-${index}` : field));
 };
-
-const isSameAttribute = (a: Attribute, b: Attribute) => a.name === b.name && a.scope === b.scope;
 
 const textOverflow = { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
 
@@ -118,7 +113,7 @@ const CustomizableHeader = ({ customize, title }: CustomizableHeaderProps) => {
 export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
   const {
     columnHeaders,
-    customColumnSizes,
+    columnWidths,
     listItems,
     listState,
     onChangeRowsPerPage,
@@ -140,9 +135,7 @@ export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
   const columns = useMemo<GridColDef<T>[]>(() => {
     const lastIndex = columnHeaders.length - 1;
     // the last column always takes up the remaining space, just like the columns without a custom size
-    const sizes = columnHeaders.map(({ attribute }, index) =>
-      index === lastIndex ? undefined : customColumnSizes?.find(columnSize => columnSize.attribute && isSameAttribute(columnSize.attribute, attribute))?.size
-    );
+    const sizes = fields.map((field, index) => (index === lastIndex ? undefined : columnWidths?.[field]));
     // the space the columns need at the very least: the custom sized ones can't shrink, the others only down to their minimum
     const occupiedWidth = sizes.reduce<number>((accu, size) => accu + (size ?? minCellWidth), selectable ? checkboxColumnWidth : 0);
     return columnHeaders.map((column, index) => {
@@ -164,7 +157,7 @@ export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
         renderCell: ({ row }) => (Component ? <Component column={column} item={row} /> : (textRender?.({ column, item: row }) ?? null))
       };
     });
-  }, [columnHeaders, customColumnSizes, fields, gridWidth, resizable, selectable]);
+  }, [columnHeaders, columnWidths, fields, gridWidth, resizable, selectable]);
 
   const sortModel = useMemo<GridSortModel>(() => {
     const index = columnHeaders.findIndex(({ attribute, sortable }) => sortable && attribute.name === sortCol && (!sortScope || attribute.scope === sortScope));
@@ -194,14 +187,11 @@ export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
   };
 
   const onColumnWidthChange = ({ colDef: { field }, width }: GridColumnResizeParams) => {
-    const resizedColumn = columnHeaders[fields.indexOf(field)];
-    if (!onResizeColumns || !resizedColumn) {
+    if (!onResizeColumns || !fields.includes(field)) {
       return;
     }
-    const { attribute } = resizedColumn;
     // only the explicitly resized columns get a fixed size, the others stay flexible to keep the list from outgrowing the available space
-    const unchangedSizes = (customColumnSizes ?? []).filter(columnSize => columnSize.attribute && !isSameAttribute(columnSize.attribute, attribute));
-    onResizeColumns([...unchangedSizes, { attribute, size: Math.round(width) }]);
+    onResizeColumns({ ...columnWidths, [field]: Math.round(width) });
   };
 
   const onRowClick = ({ row }: GridRowParams<T>, event: ReactMouseEvent<HTMLElement>) => {
