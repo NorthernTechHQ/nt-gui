@@ -1,4 +1,11 @@
 ---
+## [0.7.14](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/types-0.7.13...@northern.tech/types-0.7.14) (2026-11-13)
+
+
+### Bug Fixes
+
+* **types:** types update ([de28e03](https://github.com/NorthernTechHQ/nt-gui/commit/de28e0334c260f78ba23907417f6e8fbacb97ba2))
+
 ## 0.7.13 - 2026-11-04
 
 
