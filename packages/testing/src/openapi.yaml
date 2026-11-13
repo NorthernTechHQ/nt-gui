@@ -13,6 +13,10 @@ servers:
 tags:
   - name: Mender_API_Mender API
     x-displayName: Mender API
+  - name: Admin_Panel_Internal API
+    x-displayName: Internal API
+  - name: Admin_Panel_Sudo API
+    x-displayName: Sudo API
   - name: Audit_Logs_Internal API
     x-displayName: Internal API
   - name: Audit_Logs_Auditlogs Internal
@@ -94,6 +98,705 @@ tags:
   - name: Workflows_other
     x-displayName: other
 paths:
+  /api/internal/v1/admin-panel/alive:
+    get:
+      operationId: Admin Panel Internal Check Liveliness
+      tags:
+        - Admin_Panel_Internal API
+      summary: Liveness probe endpoint.
+      responses:
+        '204':
+          description: Service is alive.
+  /api/internal/v1/admin-panel/health:
+    get:
+      operationId: Admin Panel Internal Check Health
+      tags:
+        - Admin_Panel_Internal API
+      summary: Health check endpoint.
+      responses:
+        '204':
+          description: Service is healthy.
+        '503':
+          description: Service is unhealthy.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/sudo/v1/admin-panel/auth/login:
+    get:
+      operationId: Admin Panel Start Login
+      tags:
+        - Admin_Panel_Sudo API
+      summary: Start the OAuth2 sign in flow.
+      description: |
+        Redirects to the identity provider. Meant to be opened by the browser rather than called from script - the response sets the state cookie the callback validates against.
+      responses:
+        '307':
+          description: Redirect to the identity provider.
+        '500':
+          description: The state token could not be generated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/sudo/v1/admin-panel/auth/callback:
+    get:
+      operationId: Admin Panel Complete Login
+      tags:
+        - Admin_Panel_Sudo API
+      summary: Complete the OAuth2 sign in flow.
+      description: |
+        Called by the identity provider. Always redirects back to the panel, on failure to `/login` with an `error` query parameter naming the reason.
+      parameters:
+        - name: code
+          in: query
+          description: Authorization code issued by the identity provider.
+          required: false
+          schema:
+            type: string
+        - name: state
+          in: query
+          description: State token to match against the cookie set when the flow started.
+          required: false
+          schema:
+            type: string
+      responses:
+        '307':
+          description: Redirect to the panel, or to the login page on failure.
+  /api/sudo/v1/admin-panel/auth/logout:
+    post:
+      operationId: Admin Panel Logout
+      tags:
+        - Admin_Panel_Sudo API
+      summary: Clear the session cookie.
+      responses:
+        '204':
+          description: Session cleared.
+  /api/sudo/v1/admin-panel/auth/me:
+    get:
+      operationId: Admin Panel Get Current User
+      tags:
+        - Admin_Panel_Sudo API
+      summary: Identity behind the current session.
+      description: |
+        Answers with `auth_enabled: false` when the service runs without authentication, so that a missing session is never indistinguishable from a misrouted request.
+      responses:
+        '200':
+          description: The signed in user, or the marker that authentication is disabled.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUser'
+        '401':
+          description: No valid session.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/sudo/v1/admin-panel/tenants:
+    get:
+      operationId: Admin Panel List Tenants
+      tags:
+        - Admin_Panel_Sudo API
+      summary: List tenants with optional search and pagination.
+      parameters:
+        - name: q
+          in: query
+          description: Search string to filter tenants.
+          required: false
+          schema:
+            type: string
+        - name: plan
+          in: query
+          description: Filter by plan.
+          required: false
+          schema:
+            type: string
+            enum:
+              - os
+              - professional
+              - enterprise
+        - name: trial
+          in: query
+          description: Filter by trial status.
+          required: false
+          schema:
+            type: boolean
+        - name: page
+          in: query
+          description: Page number for pagination.
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: per_page
+          in: query
+          description: Number of results per page.
+          required: false
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+      responses:
+        '200':
+          description: A list of tenants.
+          headers:
+            X-Total-Count:
+              description: Total number of tenants matching the query.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminPanelTenant'
+        '400':
+          description: Invalid query parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/sudo/v1/admin-panel/tenants/{id}:
+    get:
+      operationId: Admin Panel Get Tenant Detail
+      tags:
+        - Admin_Panel_Sudo API
+      summary: Get aggregated tenant detail.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Aggregated tenant detail.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantDetail'
+        '404':
+          description: Tenant not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      operationId: Admin Panel Update Tenant
+      tags:
+        - Admin_Panel_Sudo API
+      summary: Update a tenant.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantUpdateInternal'
+      responses:
+        '204':
+          description: Tenant updated successfully.
+        '400':
+          description: Invalid request body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Tenant not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/sudo/v1/admin-panel/tenants/{id}/status:
+    put:
+      operationId: Admin Panel Update Tenant Status
+      tags:
+        - Admin_Panel_Sudo API
+      summary: Update tenant status.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                cancelled_at:
+                  type: string
+                  format: date-time
+      responses:
+        '204':
+          description: Tenant status updated successfully.
+        '400':
+          description: Invalid request body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Tenant not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/sudo/v1/admin-panel/tenants/{id}/device-limits:
+    put:
+      operationId: Admin Panel Set Device Limits
+      tags:
+        - Admin_Panel_Sudo API
+      summary: Set device limits for a tenant.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/DeviceLimitTenantPut'
+      responses:
+        '204':
+          description: Device limits updated successfully.
+        '400':
+          description: Invalid request body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Tenant not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/sudo/v1/admin-panel/tenants/{id}/artifact-limits/micro:
+    put:
+      operationId: Admin Panel Set Micro Artifact Size Limit
+      tags:
+        - Admin_Panel_Sudo API
+      summary: Set the micro artifact size limit for a tenant.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - limit
+              properties:
+                limit:
+                  description: Size in bytes, or -1 for unlimited.
+                  type: integer
+                  format: int32
+                  minimum: -1
+      responses:
+        '204':
+          description: Micro artifact size limit updated successfully.
+        '400':
+          description: Invalid request body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Tenant not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/sudo/v1/admin-panel/tenants/{id}/delta-config:
+    put:
+      operationId: Admin Panel Set Delta Config
+      tags:
+        - Admin_Panel_Sudo API
+      summary: Set delta configuration for a tenant.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: If-Match
+          in: header
+          description: ETag value for optimistic concurrency control.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeltaConfigUpdate'
+      responses:
+        '204':
+          description: Delta configuration updated successfully.
+        '400':
+          description: Invalid request body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Tenant not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '412':
+          description: ETag mismatch (precondition failed).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/sudo/v1/admin-panel/tenants/{id}/schedule-deletion:
+    post:
+      operationId: Admin Panel Schedule Tenant Deletion
+      tags:
+        - Admin_Panel_Sudo API
+      summary: Schedule a tenant for deletion.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Tenant scheduled for deletion.
+        '404':
+          description: Tenant not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/sudo/v1/admin-panel/tenants/{id}/children:
+    post:
+      operationId: Admin Panel Assign Children Tenants
+      tags:
+        - Admin_Panel_Sudo API
+      summary: Assign child tenants to a parent tenant.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tenant_ids
+              properties:
+                tenant_ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '204':
+          description: Children assigned successfully.
+        '400':
+          description: Invalid request body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Tenant not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/sudo/v1/admin-panel/tenants/{parent_id}/children/{id}:
+    delete:
+      operationId: Admin Panel Remove Child Tenant
+      tags:
+        - Admin_Panel_Sudo API
+      summary: Remove a child tenant from a parent tenant.
+      parameters:
+        - name: parent_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Child tenant removed successfully.
+        '404':
+          description: Tenant not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/sudo/v1/admin-panel/auditlogs:
+    get:
+      operationId: Admin Panel List Audit Logs
+      tags:
+        - Admin_Panel_Sudo API
+      summary: List the actions taken through the admin panel.
+      description: |
+        The actions are recorded in the audit logs of the tenants they changed, so their users can see them too. This lists them across all tenants, newest first unless sorted otherwise.
+      parameters:
+        - name: tenant_id
+          in: query
+          description: Only list the actions recorded for this tenant.
+          required: false
+          schema:
+            type: string
+        - name: actor_email
+          in: query
+          description: |
+            Only list the actions taken by the admin with this email address. Tenants see a generic name in its place.
+          required: false
+          schema:
+            type: string
+        - name: created_after
+          in: query
+          description: Only list the actions taken at or after this time.
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: created_before
+          in: query
+          description: Only list the actions taken at or before this time.
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: sort
+          in: query
+          description: Sort order of the actions by the time they were taken.
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+        - name: page
+          in: query
+          description: Page number for pagination.
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: per_page
+          in: query
+          description: Number of results per page.
+          required: false
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 500
+      responses:
+        '200':
+          description: A list of audit log entries.
+          headers:
+            X-Total-Count:
+              description: Total number of entries matching the query.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TenantAuditLog'
+        '400':
+          description: Invalid query parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/sudo/v1/admin-panel/users:
+    get:
+      operationId: Admin Panel List Users
+      tags:
+        - Admin_Panel_Sudo API
+      summary: List users with optional filters and pagination.
+      parameters:
+        - name: email
+          in: query
+          description: Filter by email address.
+          required: false
+          schema:
+            type: string
+        - name: tenant_id
+          in: query
+          description: Filter by tenant ID.
+          required: false
+          schema:
+            type: string
+        - name: sso_provider
+          in: query
+          description: Filter by SSO provider.
+          required: false
+          schema:
+            type: string
+        - name: sso_subject
+          in: query
+          description: Filter by SSO subject.
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number for pagination.
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: per_page
+          in: query
+          description: Number of results per page.
+          required: false
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+      responses:
+        '200':
+          description: A list of users.
+          headers:
+            X-Total-Count:
+              description: Total number of users matching the query.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  /api/sudo/v1/admin-panel/users/{id}:
+    get:
+      operationId: Admin Panel Get User Detail
+      tags:
+        - Admin_Panel_Sudo API
+      summary: Get aggregated user detail.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Aggregated user detail.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/sudo/v1/admin-panel/users/{id}/assign:
+    post:
+      operationId: Admin Panel Assign User To Tenant
+      tags:
+        - Admin_Panel_Sudo API
+      summary: Assign a user to a tenant.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tenant_id
+              properties:
+                tenant_id:
+                  type: string
+      responses:
+        '204':
+          description: User assigned to tenant successfully.
+        '400':
+          description: Invalid request body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/sudo/v1/admin-panel/users/{id}/tenants/{tenant_id}:
+    delete:
+      operationId: Admin Panel Remove User From Tenant
+      tags:
+        - Admin_Panel_Sudo API
+      summary: Remove a user from a tenant.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User removed from tenant successfully.
+        '404':
+          description: User or tenant not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /api/internal/v1/auditlogs/alive:
     get:
       tags:
@@ -124,6 +827,122 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /api/internal/v1/auditlogs/logs:
+    get:
+      tags:
+        - Audit_Logs_Auditlogs Internal
+      summary: Returns a list of audit log objects across all tenants.
+      description: |
+        Lists the logs of all tenants, each along with the tenant it was recorded for.
+        Unlike the tenant scoped listing, the entries are returned as stored, without
+        resolving missing actor or object details.
+
+        Listing the actions of the `admin` actor type is index backed; other queries
+        across tenants have to scan the logs and are best narrowed down to a tenant.
+
+        Admin actors carry the email address of the operator behind them, where the
+        management API only shows a generic name.
+      operationId: List Audit Logs Across Tenants
+      parameters:
+        - name: tenant_id
+          in: query
+          description: If present, limits the results only to logs of the given tenant.
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Starting page.
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          description: Number of results per page.
+          schema:
+            type: integer
+            default: 10
+            maximum: 500
+        - name: created_before
+          in: query
+          description: List only log entries created before and equal to Unix timestamp (UTC)
+          schema:
+            type: integer
+        - name: created_after
+          in: query
+          description: List only log entries created after and equal to Unix timestamp (UTC)
+          schema:
+            type: integer
+        - name: action
+          in: query
+          description: If present, limits the results only to logs of the given action.
+          schema:
+            type: string
+        - name: actor_id
+          in: query
+          description: If present, limits the results only to logs where actor has given id.
+          schema:
+            type: string
+        - name: actor_type
+          in: query
+          description: If present, limits the results only to logs where actor is of a given type.
+          schema:
+            type: string
+            enum:
+              - user
+              - device
+              - admin
+        - name: actor_email
+          in: query
+          description: If present, limits the results only to logs where the recorded actor email matches. With `actor_type=admin` it matches the operator behind an admin actor, otherwise admin actors share a generic email.
+          schema:
+            type: string
+        - name: object_id
+          in: query
+          description: If present, limits the results only to logs where object has given id.
+          schema:
+            type: string
+        - name: object_type
+          in: query
+          description: If present, limits the results only to logs where object is of a given type.
+          schema:
+            type: string
+            enum:
+              - tenant
+              - user
+              - user_access_token
+              - deployment
+              - artifact
+              - device
+              - software
+        - name: sort
+          in: query
+          description: |
+            Supports sorting the log list by creation date.
+            By default logs are sorted by creation date in descending order (newest first).
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+      responses:
+        '200':
+          description: Successful response.
+          headers:
+            X-Total-Count:
+              description: Total number of logs matching the query.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                title: ListOfTenantLogs
+                type: array
+                items:
+                  $ref: '#/components/schemas/TenantAuditLog'
+        '400':
+          $ref: '#/components/responses/InvalidRequestError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /api/internal/v1/auditlogs/tenants/{tenant_id}:
     delete:
       tags:
@@ -148,6 +967,9 @@ paths:
       tags:
         - Audit_Logs_Auditlogs Internal
       summary: Returns a list of audit log objects.
+      description: |
+        Admin actors carry the email address of the operator behind them, where the
+        management API only shows a generic name.
       operationId: Get Audit Logs (internal)
       parameters:
         - name: tenant_id
@@ -191,6 +1013,7 @@ paths:
             enum:
               - user
               - device
+              - admin
         - name: actor_email
           in: query
           description: If present, limits the results only to logs where actors has given email address.
@@ -253,6 +1076,9 @@ paths:
       tags:
         - Audit_Logs_Auditlogs Internal
       summary: Log event.
+      description: |
+        Admin actors are expected to carry the email address of the operator behind
+        them. Externally the actor goes by a generic name.
       operationId: Save Audit Log
       parameters:
         - name: tenant_id
@@ -315,6 +1141,7 @@ paths:
             enum:
               - user
               - device
+              - admin
         - name: actor_email
           in: query
           description: If present, limits the results only to logs where the actor has a given email address.
@@ -337,6 +1164,7 @@ paths:
               - artifact
               - device
               - software
+              - integration
         - name: object_deployment_name
           in: query
           description: If present, limits the results only to logs where the object is a deployment and has a given name.
@@ -423,6 +1251,7 @@ paths:
             enum:
               - user
               - device
+              - admin
         - name: actor_email
           in: query
           description: If present, limits the results only to logs where the actors has a given email address.
@@ -12921,6 +13750,8 @@ paths:
                 $ref: '#/components/schemas/Error'
         '500':
           $ref: '#/components/responses/InternalServerError'
+      security:
+        - ManagementJWT: []
       x-mender-plan:
         - enterprise
   /api/management/v1/useradm/sso/sp/metadata/{id}:
@@ -14104,6 +14935,497 @@ components:
       example:
         name: max_micro_devices
         value: 1024
+    Identifier:
+      description: |
+        Identifier consisting of up to 256 characters from the set
+        `[A-Za-z0-9._-]`.
+      type: string
+      minLength: 0
+      maxLength: 256
+      pattern: ^[A-Za-z0-9._-]*$
+    Name:
+      description: |
+        Human-readable name consisting of up to 256 valid UTF-8 encoded,
+        graphic Unicode characters (letters, marks, numbers, punctuation,
+        symbols and spaces).
+      type: string
+      minLength: 0
+      maxLength: 256
+      pattern: ^[^\x00-\x1F\x7F-\x9F]*$
+    Text:
+      description: |
+        Free-form text consisting of up to 4096 valid UTF-8 encoded,
+        graphic Unicode characters (letters, marks, numbers, punctuation,
+        symbols and spaces), tabs and line breaks.
+      type: string
+      minLength: 0
+      maxLength: 4096
+      pattern: ^[^\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]*$
+    CurrentUser:
+      type: object
+      properties:
+        auth_enabled:
+          type: boolean
+          description: Whether the service enforces authentication at all.
+        email:
+          type: string
+          description: Email address the session was issued for, absent when authentication is disabled.
+      required:
+        - auth_enabled
+    AdminPanelTenant:
+      allOf:
+        - $ref: '#/components/schemas/TenantInternal'
+    DeviceCounts:
+      type: object
+      required:
+        - total
+        - accepted
+        - pending
+        - preauthorized
+        - rejected
+        - noauth
+      properties:
+        total:
+          type: integer
+        accepted:
+          type: integer
+        pending:
+          type: integer
+        preauthorized:
+          type: integer
+        rejected:
+          type: integer
+        noauth:
+          type: integer
+    BinaryDeltaLimitParams:
+      type: object
+      properties:
+        min:
+          type: integer
+        default:
+          type: integer
+        max:
+          type: integer
+    AdminPanelBinaryDeltaLimits:
+      type: object
+      properties:
+        jobs_in_parallel:
+          $ref: '#/components/schemas/BinaryDeltaLimitParams'
+        queue_length:
+          $ref: '#/components/schemas/BinaryDeltaLimitParams'
+        timeout:
+          $ref: '#/components/schemas/BinaryDeltaLimitParams'
+    AdminPanelXDeltaArgs:
+      type: object
+      properties:
+        disable_checksum:
+          type: boolean
+        disable_external_decompression:
+          type: boolean
+        compression_level:
+          type: integer
+        source_window_size:
+          type: integer
+        input_window_size:
+          type: integer
+        compression_duplicates_window:
+          type: integer
+        instruction_buffer_size:
+          type: integer
+    BinaryDelta:
+      type: object
+      properties:
+        xdelta_args:
+          $ref: '#/components/schemas/AdminPanelXDeltaArgs'
+    DeltaConfig:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        binary_delta_limits:
+          $ref: '#/components/schemas/AdminPanelBinaryDeltaLimits'
+        binary_delta:
+          $ref: '#/components/schemas/BinaryDelta'
+    DeltaConfigUpdate:
+      $ref: '#/components/schemas/DeltaConfig'
+    TenantDetail:
+      allOf:
+        - $ref: '#/components/schemas/AdminPanelTenant'
+        - type: object
+          properties:
+            device_counts:
+              $ref: '#/components/schemas/DeviceCounts'
+            delta_config:
+              $ref: '#/components/schemas/DeltaConfig'
+            delta_config_etag:
+              type: string
+            artifact_size_limit_micro:
+              type: integer
+            children:
+              type: array
+              items:
+                $ref: '#/components/schemas/ChildTenant'
+            parent:
+              $ref: '#/components/schemas/AdminPanelTenant'
+            warnings:
+              type: array
+              items:
+                type: string
+              description: Warnings generated when downstream services fail to respond, resulting in partial data.
+    ChildDeviceCounts:
+      type: object
+      description: Accepted and pending devices of a child tenant, summed over all device tiers. Only resolved for the first 10 children, absent on the rest or when inventory fails to respond.
+      required:
+        - accepted
+        - pending
+      properties:
+        accepted:
+          type: integer
+        pending:
+          type: integer
+    ChildTenant:
+      allOf:
+        - $ref: '#/components/schemas/AdminPanelTenant'
+        - type: object
+          properties:
+            device_counts:
+              $ref: '#/components/schemas/ChildDeviceCounts'
+    UserTenantAssociation:
+      allOf:
+        - $ref: '#/components/schemas/TenantIdName'
+        - type: object
+          properties:
+            roles:
+              type: array
+              items:
+                type: string
+            plan:
+              type: string
+            trial:
+              type: boolean
+            status:
+              type: string
+    UserDetail:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            tenants:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserTenantAssociation'
+    Addon:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the addon (one of ['configure', 'troubleshoot']).
+        enabled:
+          type: boolean
+          description: Enabled/disabled flag.
+      description: Mender addon definition.
+      example:
+        name: troubleshoot
+        enabled: true
+    TenantAdditionalInfo:
+      type: object
+      properties:
+        marketing:
+          type: boolean
+          description: Marketing
+        campaign:
+          type: string
+          description: Campaign
+      description: Additional information about a tenant.
+      example:
+        marketing: true
+        campaign: Campaign
+    ApiBurst:
+      type: object
+      properties:
+        action:
+          type: string
+          description: HTTP verb.
+        uri:
+          type: string
+          description: URI of the resource subject to the limit.
+        min_interval_sec:
+          type: integer
+          description: Minimum allowed interval, in seconds, between subsequent calls to 'action' on 'uri' (10 = one call every 10 seconds, etc.)
+      description: API burst limit definition.
+      example:
+        action: PATCH
+        uri: /api/devices/v1/inventory/device/attributes
+        min_interval_sec: 10
+    ApiQuota:
+      type: object
+      properties:
+        max_calls:
+          type: integer
+          description: |
+            Maximum allowed number of calls within 'interval'.
+            A value of 0 means 'no limit'.
+        interval_sec:
+          type: integer
+          description: Interval definition, in seconds (60 = 1 minute, 3600 = 1 hour, etc.).
+      description: API usage quota definition.
+      example:
+        max_calls: 100
+        interval_sec: 3600
+    ApiLimits:
+      type: object
+      properties:
+        bursts:
+          type: array
+          description: Collection of api burst limit definitions over specified API resources.
+          items:
+            $ref: '#/components/schemas/ApiBurst'
+        quota:
+          $ref: '#/components/schemas/ApiQuota'
+      description: Usage quota and burst limit definitions for an API type.
+      example:
+        bursts:
+          - action: PATCH
+            uri: /api/devices/v1/inventory/device/attributes
+            min_interval_sec: 10
+          - action: POST
+            uri: /api/devices/v1/deployments/device/deployments/next
+            min_interval_sec: 60
+        quota:
+          max_calls: 100
+          interval_sec: 60
+    TenantApiLimits:
+      type: object
+      properties:
+        management:
+          $ref: '#/components/schemas/ApiLimits'
+        devices:
+          $ref: '#/components/schemas/ApiLimits'
+      description: API usage quota and burst limit definitions for a tenant - per API type.
+      example:
+        management:
+          quota:
+            max_calls: 100
+            interval_sec: 60
+        devices:
+          quota:
+            max_calls: 1000
+            interval_sec: 60
+          bursts:
+            - action: PATCH
+              uri: /api/devices/v1/inventory/device/attributes
+              min_interval_sec: 10
+            - action: POST
+              uri: /api/devices/v1/deployments/device/deployments/next
+              min_interval_sec: 60
+    Tenant:
+      description: Tenant descriptor.
+      required:
+        - id
+        - name
+      type: object
+      properties:
+        id:
+          type: string
+          description: Tenant ID.
+        name:
+          type: string
+          description: Name of the tenant's organization.
+        tenant_token:
+          type: string
+          description: Currently used tenant token.
+        status:
+          type: string
+          description: Status of the tenant account.
+          enum:
+            - active
+            - suspended
+        plan:
+          type: string
+          description: Plan assigned to the tenant account.
+          enum:
+            - os
+            - enterprise
+            - professional
+        trial:
+          type: boolean
+          description: Whether this account is free trial.
+        trial_expiration:
+          type: string
+          description: When trial evaluation expires.
+          format: date-time
+        addons:
+          type: array
+          description: Addons configuration.
+          items:
+            $ref: '#/components/schemas/Addon'
+        service_provider:
+          type: boolean
+          description: Whether this account is a service provider.
+        additional_info:
+          $ref: '#/components/schemas/TenantAdditionalInfo'
+        api_limits:
+          $ref: '#/components/schemas/TenantApiLimits'
+        created_at:
+          type: string
+          description: Creation date and time, in ISO8601 format.
+        updated_at:
+          type: string
+          description: Last update date and time, in ISO8601 format.
+        device_count:
+          type: integer
+          description: Count of accepted devices for the tenant.
+        device_limit:
+          type: integer
+          description: Device limit for the tenant.
+        device_limits:
+          type: object
+          properties:
+            max_devices:
+              $ref: '#/components/schemas/DeviceLimitTenant'
+            max_micro_devices:
+              $ref: '#/components/schemas/DeviceLimitTenant'
+            max_system_devices:
+              $ref: '#/components/schemas/DeviceLimitTenant'
+      example:
+        id: 507f191e810c19729de860ea
+        name: Acme
+        status: active
+        plan: os
+        api_limits:
+          management:
+            quota:
+              max_calls: 100
+              interval_sec: 60
+          devices:
+            quota:
+              max_calls: 1000
+              interval_sec: 60
+            bursts:
+              - action: PATCH
+                uri: /api/devices/v1/inventory/device/attributes
+                min_interval_sec: 10
+              - action: POST
+                uri: /api/devices/v1/deployments/device/deployments/next
+                min_interval_sec: 60
+        created_at: '2019-12-12T12:00:00Z'
+        updated_at: '2023-11-10T15:15:00Z'
+    Ratelimits:
+      type: object
+      properties:
+        weight_devices:
+          type: number
+          format: double
+          description: Per-request cost multiplier for device API ratelimit groups.
+          default: 1
+        weight_management:
+          type: number
+          format: double
+          description: Per-request cost multiplier for management API ratelimit groups.
+          default: 1
+    TenantInternal:
+      allOf:
+        - $ref: '#/components/schemas/Tenant'
+        - type: object
+          properties:
+            ratelimits:
+              $ref: '#/components/schemas/Ratelimits'
+            cancelled_at:
+              type: string
+              format: date-time
+              description: Timestamp when user requested account cancellation.
+            suspend_at:
+              type: string
+              format: date-time
+              description: Suspension date for the tenant.
+            suspend_at_last_warn:
+              type: string
+              format: date-time
+            subscription_type:
+              type: string
+              description: Subscription type
+              enum:
+                - trial
+                - stripe
+            subscription_id:
+              type: string
+              description: Stripe subscription ID
+            customer_id:
+              type: string
+              description: Stripe customer ID
+            parent_tenant_id:
+              type: string
+              description: The ID of the service provider tenant managing this tenant.
+            max_child_tenants:
+              type: number
+              description: Maximum number of children tenants
+    TenantUpdateInternal:
+      type: object
+      description: Update tenant information.
+      properties:
+        name:
+          type: string
+          description: Name of the tenant's organization.
+        plan:
+          type: string
+          description: Plan assigned to the tenant account.
+          enum:
+            - os
+            - enterprise
+            - professional
+        trial:
+          type: boolean
+          description: Whether this account is free trial.
+        trial_expiration:
+          type: string
+          description: When trial evaluation expires.
+          format: date-time
+        addons:
+          type: array
+          description: Addons configuration.
+          items:
+            $ref: '#/components/schemas/Addon'
+        api_limits:
+          $ref: '#/components/schemas/TenantApiLimits'
+        service_provider:
+          type: boolean
+          description: True if the tenant is a service provider tenant.
+        max_child_tenants:
+          type: string
+          description: Maximum number of allowed child tenants
+        suspend_at:
+          type: string
+          description: Planned suspension date and time, in ISO8601 format.
+        customer_id:
+          type: string
+        ratelimits:
+          $ref: '#/components/schemas/Ratelimits'
+        subscription_id:
+          type: string
+        subscription_type:
+          type: string
+      example:
+        name: Acme
+        plan: os
+        trial: true
+        trial_expiration: '2021-01-01T00:00:00Z'
+        suspend_at: '2021-01-01T00:00:00Z'
+        api_limits:
+          management:
+            quota:
+              max_calls: 100
+              interval_sec: 60
+          devices:
+            quota:
+              max_calls: 1000
+              interval_sec: 60
+            bursts:
+              - action: PATCH
+                uri: /api/devices/v1/inventory/device/attributes
+                min_interval_sec: 10
+              - action: POST
+                uri: /api/devices/v1/deployments/device/deployments/next
+                min_interval_sec: 60
     Actor:
       required:
         - id
@@ -14121,16 +15443,18 @@ components:
           enum:
             - user
             - device
+            - admin
         email:
           type: string
           description: |
-            The email address of the user.
+            The email address of the user. Admins all go by the same generic name.
         identity_data:
           type: string
           description: |
             The identity data of the device.
       description: |
-        The actor may be a user or device.
+        The actor may be a user, a device or an admin - a Northern.tech operator acting
+        on the tenant through the admin panel.
         Depending on the type of the actor different information will be available.
     AuditlogsTenant:
       required:
@@ -14215,6 +15539,17 @@ components:
       description: The software descriptor.
       example:
         kind: manifest
+    AuditlogsIntegration:
+      required:
+        - provider
+      type: object
+      properties:
+        provider:
+          type: string
+          description: The provider of the integration.
+      description: The integration descriptor.
+      example:
+        provider: webhook
     Object:
       required:
         - id
@@ -14236,6 +15571,7 @@ components:
             - artifact
             - device
             - software
+            - integration
         tenant:
           $ref: '#/components/schemas/AuditlogsTenant'
         user:
@@ -14248,6 +15584,8 @@ components:
           $ref: '#/components/schemas/AuditlogsDevice'
         software:
           $ref: '#/components/schemas/AuditlogsSoftware'
+        integration:
+          $ref: '#/components/schemas/AuditlogsIntegration'
       description: |
         Various types of objects are supported.
         Depending on the type of object different information will be available.
@@ -14291,6 +15629,113 @@ components:
         change:
           type: string
       description: Audit log entry
+    TenantAuditLog:
+      description: Audit log entry along with the tenant it was recorded for.
+      allOf:
+        - $ref: '#/components/schemas/AuditLog'
+        - type: object
+          required:
+            - tenant_id
+          properties:
+            tenant_id:
+              type: string
+              description: ID of the tenant the entry was recorded for.
+    SsoObject:
+      required:
+        - id
+        - kind
+      type: object
+      properties:
+        id:
+          type: string
+          description: An id of the identity provider.
+          format: uuid
+        kind:
+          type: string
+          description: Single Sign On provider kind.
+        subject:
+          type: string
+          description: Single Sign On subject.
+      description: Single Sign On descriptor.
+      example:
+        id: 84430f18-d464-5194-b8ef-b1a15161bb4c
+        kind: sso/saml
+    User:
+      required:
+        - email
+        - id
+      type: object
+      properties:
+        email:
+          type: string
+          description: A unique email address.
+        id:
+          type: string
+          description: User Id.
+        created_ts:
+          type: string
+          description: |
+            Server-side timestamp of the user creation.
+          format: date-time
+        updated_ts:
+          type: string
+          description: |
+            Server-side timestamp of the last user information update.
+          format: date-time
+        login_ts:
+          type: string
+          description: Timestamp the of last successful login.
+          format: date-time
+        verified:
+          type: boolean
+          description: |
+            Indicates if the user's email address has been verified.
+        tfa_status:
+          type: string
+          description: User Two Factor Authentication status.
+        roles:
+          type: array
+          description: List of user roles.
+          items:
+            title: ListOfRoles
+            type: string
+            description: Role name
+            maxLength: 256
+            pattern: ^[A-Za-z0-9._-]+$
+        send_reset_password:
+          type: boolean
+          description: Flag indicating whether to trigger password reset on user creation.
+        sso:
+          type: array
+          description: SSO login schemes.
+          items:
+            $ref: '#/components/schemas/SsoObject'
+        tenant_id:
+          type: string
+          description: Tenant identifier of a tenant, user will log in to by default.
+        tenant_ids:
+          type: array
+          description: List of tenant Ids user can login to.
+          items:
+            type: string
+      description: User descriptor.
+      example:
+        email: user@acme.com
+        id: 806603def19d417d004a4b67e
+        created_ts: '2020-07-06T15:04:49.114046203+02:00'
+        updated_ts: '2020-07-07T01:04:49.114046203+02:00'
+    TenantIdName:
+      required:
+        - id
+        - name
+      type: object
+      properties:
+        id:
+          type: string
+          description: Tenant identifier.
+        name:
+          type: string
+          description: Tenant name.
     Artifact:
       description: Detailed artifact.
       example:
@@ -15451,13 +16896,16 @@ components:
       properties:
         id:
           description: Deployment identifier
-          type: string
+          allOf:
+            - $ref: '#/components/schemas/Identifier'
         name:
           description: Name of the deployment
-          type: string
+          allOf:
+            - $ref: '#/components/schemas/Name'
         artifact_name:
           description: Name of the artifact to deploy
-          type: string
+          allOf:
+            - $ref: '#/components/schemas/Text'
         created:
           description: Deployment's creation date and time
           format: date-time
@@ -18166,6 +19614,22 @@ components:
                 the filter will produce no results. If you need to specify options and flags,
                 you can provide the full regex in the format of /regex/flags, for example
                 `/[a-z]+/i`.
+
+                The datetime attributes `created_ts`, `updated_ts` and `check_in_time` in
+                the `system` scope expect a month, a date or an RFC 3339 timestamp that may
+                be truncated after the minutes as a string, or an array of them for $in and
+                $nin: `2025-01`, `2025-01-15`, `2025-01-15T10:30`, `2025-01-15T10:30:15`
+                or `2025-01-15T10:30:15.250`, with fractions of a second in 3, 6 or 9
+                digits. Each may be followed by a UTC offset (`Z`, `+02:00`), and is
+                interpreted in UTC if none is given.
+
+                A value covers the period its precision implies, so $eq `2025-01-15`
+                matches any time on that day, $gt `2025-01-15` matches from 2025-01-16
+                onwards, $lte `2025-01` matches up to the end of January and
+                $eq `2025-01-15T10:30+02:00` matches any time within that minute. Dates are
+                stored to the millisecond, so finer fractions of a second are truncated.
+
+                Other values are rejected with 400 Bad Request.
       description: Attribute filter predicate
       example:
         attribute: serial_no
@@ -18635,8 +20099,7 @@ components:
               description: The destination URL for the webhook. The webhook will send POST requests with event details to this target URL.
             secret:
               type: string
-              description: An optional secret used to verify the integrity of the payload. The string must be in hexadecimal format.
-              pattern: '[0-9a-f]{1,64}'
+              description: An optional secret used to verify the integrity of the payload. The string must be in hexadecimal format of the form '[0-9a-f]{1,64}'.
           required:
             - url
       required:
@@ -18729,122 +20192,6 @@ components:
         - device_id
         - tenant_id
         - inventory
-    Ratelimits:
-      type: object
-      properties:
-        weight_devices:
-          type: number
-          format: double
-          description: Per-request cost multiplier for device API ratelimit groups.
-          default: 1
-        weight_management:
-          type: number
-          format: double
-          description: Per-request cost multiplier for management API ratelimit groups.
-          default: 1
-    TenantInternal:
-      allOf:
-        - $ref: '#/components/schemas/Tenant'
-        - type: object
-          properties:
-            ratelimits:
-              $ref: '#/components/schemas/Ratelimits'
-            cancelled_at:
-              type: string
-              format: date-time
-              description: Timestamp when user requested account cancellation.
-            suspend_at:
-              type: string
-              format: date-time
-              description: Suspension date for the tenant.
-            suspend_at_last_warn:
-              type: string
-              format: date-time
-            subscription_type:
-              type: string
-              description: Subscription type
-              enum:
-                - trial
-                - stripe
-            subscription_id:
-              type: string
-              description: Stripe subscription ID
-            customer_id:
-              type: string
-              description: Stripe customer ID
-            parent_tenant_id:
-              type: string
-              description: The ID of the service provider tenant managing this tenant.
-            max_child_tenants:
-              type: number
-              description: Maximum number of children tenants
-    TenantUpdateInternal:
-      type: object
-      description: Update tenant information.
-      properties:
-        name:
-          type: string
-          description: Name of the tenant's organization.
-        plan:
-          type: string
-          description: Plan assigned to the tenant account.
-          enum:
-            - os
-            - enterprise
-            - professional
-        trial:
-          type: boolean
-          description: Whether this account is free trial.
-        trial_expiration:
-          type: string
-          description: When trial evaluation expires.
-          format: date-time
-        addons:
-          type: array
-          description: Addons configuration.
-          items:
-            $ref: '#/components/schemas/Addon'
-        api_limits:
-          $ref: '#/components/schemas/TenantApiLimits'
-        service_provider:
-          type: boolean
-          description: True if the tenant is a service provider tenant.
-        max_child_tenants:
-          type: string
-          description: Maximum number of allowed child tenants
-        suspend_at:
-          type: string
-          description: Planned suspension date and time, in ISO8601 format.
-        customer_id:
-          type: string
-        ratelimits:
-          $ref: '#/components/schemas/Ratelimits'
-        subscription_id:
-          type: string
-        subscription_type:
-          type: string
-      example:
-        name: Acme
-        plan: os
-        trial: true
-        trial_expiration: '2021-01-01T00:00:00Z'
-        suspend_at: '2021-01-01T00:00:00Z'
-        api_limits:
-          management:
-            quota:
-              max_calls: 100
-              interval_sec: 60
-          devices:
-            quota:
-              max_calls: 1000
-              interval_sec: 60
-            bursts:
-              - action: PATCH
-                uri: /api/devices/v1/inventory/device/attributes
-                min_interval_sec: 10
-              - action: POST
-                uri: /api/devices/v1/deployments/device/deployments/next
-                min_interval_sec: 60
     TenantSubscriptionUpgradeInternal:
       type: object
       description: Upgrade tenant subscription.
@@ -18860,202 +20207,6 @@ components:
         subscription_token:
           type: string
           description: Subscription token.
-    Addon:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Name of the addon (one of ['configure', 'troubleshoot']).
-        enabled:
-          type: boolean
-          description: Enabled/disabled flag.
-      description: Mender addon definition.
-      example:
-        name: troubleshoot
-        enabled: true
-    TenantAdditionalInfo:
-      type: object
-      properties:
-        marketing:
-          type: boolean
-          description: Marketing
-        campaign:
-          type: string
-          description: Campaign
-      description: Additional information about a tenant.
-      example:
-        marketing: true
-        campaign: Campaign
-    ApiBurst:
-      type: object
-      properties:
-        action:
-          type: string
-          description: HTTP verb.
-        uri:
-          type: string
-          description: URI of the resource subject to the limit.
-        min_interval_sec:
-          type: integer
-          description: Minimum allowed interval, in seconds, between subsequent calls to 'action' on 'uri' (10 = one call every 10 seconds, etc.)
-      description: API burst limit definition.
-      example:
-        action: PATCH
-        uri: /api/devices/v1/inventory/device/attributes
-        min_interval_sec: 10
-    ApiQuota:
-      type: object
-      properties:
-        max_calls:
-          type: integer
-          description: |
-            Maximum allowed number of calls within 'interval'.
-            A value of 0 means 'no limit'.
-        interval_sec:
-          type: integer
-          description: Interval definition, in seconds (60 = 1 minute, 3600 = 1 hour, etc.).
-      description: API usage quota definition.
-      example:
-        max_calls: 100
-        interval_sec: 3600
-    ApiLimits:
-      type: object
-      properties:
-        bursts:
-          type: array
-          description: Collection of api burst limit definitions over specified API resources.
-          items:
-            $ref: '#/components/schemas/ApiBurst'
-        quota:
-          $ref: '#/components/schemas/ApiQuota'
-      description: Usage quota and burst limit definitions for an API type.
-      example:
-        bursts:
-          - action: PATCH
-            uri: /api/devices/v1/inventory/device/attributes
-            min_interval_sec: 10
-          - action: POST
-            uri: /api/devices/v1/deployments/device/deployments/next
-            min_interval_sec: 60
-        quota:
-          max_calls: 100
-          interval_sec: 60
-    TenantApiLimits:
-      type: object
-      properties:
-        management:
-          $ref: '#/components/schemas/ApiLimits'
-        devices:
-          $ref: '#/components/schemas/ApiLimits'
-      description: API usage quota and burst limit definitions for a tenant - per API type.
-      example:
-        management:
-          quota:
-            max_calls: 100
-            interval_sec: 60
-        devices:
-          quota:
-            max_calls: 1000
-            interval_sec: 60
-          bursts:
-            - action: PATCH
-              uri: /api/devices/v1/inventory/device/attributes
-              min_interval_sec: 10
-            - action: POST
-              uri: /api/devices/v1/deployments/device/deployments/next
-              min_interval_sec: 60
-    Tenant:
-      description: Tenant descriptor.
-      required:
-        - id
-        - name
-      type: object
-      properties:
-        id:
-          type: string
-          description: Tenant ID.
-        name:
-          type: string
-          description: Name of the tenant's organization.
-        tenant_token:
-          type: string
-          description: Currently used tenant token.
-        status:
-          type: string
-          description: Status of the tenant account.
-          enum:
-            - active
-            - suspended
-        plan:
-          type: string
-          description: Plan assigned to the tenant account.
-          enum:
-            - os
-            - enterprise
-            - professional
-        trial:
-          type: boolean
-          description: Whether this account is free trial.
-        trial_expiration:
-          type: string
-          description: When trial evaluation expires.
-          format: date-time
-        addons:
-          type: array
-          description: Addons configuration.
-          items:
-            $ref: '#/components/schemas/Addon'
-        service_provider:
-          type: boolean
-          description: Whether this account is a service provider.
-        additional_info:
-          $ref: '#/components/schemas/TenantAdditionalInfo'
-        api_limits:
-          $ref: '#/components/schemas/TenantApiLimits'
-        created_at:
-          type: string
-          description: Creation date and time, in ISO8601 format.
-        updated_at:
-          type: string
-          description: Last update date and time, in ISO8601 format.
-        device_count:
-          type: integer
-          description: Count of accepted devices for the tenant.
-        device_limit:
-          type: integer
-          description: Device limit for the tenant.
-        device_limits:
-          type: object
-          properties:
-            max_devices:
-              $ref: '#/components/schemas/DeviceLimitTenant'
-            max_micro_devices:
-              $ref: '#/components/schemas/DeviceLimitTenant'
-            max_system_devices:
-              $ref: '#/components/schemas/DeviceLimitTenant'
-      example:
-        id: 507f191e810c19729de860ea
-        name: Acme
-        status: active
-        plan: os
-        api_limits:
-          management:
-            quota:
-              max_calls: 100
-              interval_sec: 60
-          devices:
-            quota:
-              max_calls: 1000
-              interval_sec: 60
-            bursts:
-              - action: PATCH
-                uri: /api/devices/v1/inventory/device/attributes
-                min_interval_sec: 10
-              - action: POST
-                uri: /api/devices/v1/deployments/device/deployments/next
-                min_interval_sec: 60
-        created_at: '2019-12-12T12:00:00Z'
-        updated_at: '2023-11-10T15:15:00Z'
     TenantStatusTypeManagement:
       required:
         - status
@@ -19796,90 +20947,6 @@ components:
       example:
         type: POST
         value: /api/v1/endpoint
-    SsoObject:
-      required:
-        - id
-        - kind
-      type: object
-      properties:
-        id:
-          type: string
-          description: An id of the identity provider.
-          format: uuid
-        kind:
-          type: string
-          description: Single Sign On provider kind.
-        subject:
-          type: string
-          description: Single Sign On subject.
-      description: Single Sign On descriptor.
-      example:
-        id: 84430f18-d464-5194-b8ef-b1a15161bb4c
-        kind: sso/saml
-    User:
-      required:
-        - email
-        - id
-      type: object
-      properties:
-        email:
-          type: string
-          description: A unique email address.
-        id:
-          type: string
-          description: User Id.
-        created_ts:
-          type: string
-          description: |
-            Server-side timestamp of the user creation.
-          format: date-time
-        updated_ts:
-          type: string
-          description: |
-            Server-side timestamp of the last user information update.
-          format: date-time
-        login_ts:
-          type: string
-          description: Timestamp the of last successful login.
-          format: date-time
-        verified:
-          type: boolean
-          description: |
-            Indicates if the user's email address has been verified.
-        tfa_status:
-          type: string
-          description: User Two Factor Authentication status.
-        roles:
-          type: array
-          description: List of user roles.
-          items:
-            title: ListOfRoles
-            type: string
-            description: Role name
-            maxLength: 256
-            pattern: ^[A-Za-z0-9._-]+$
-        send_reset_password:
-          type: boolean
-          description: Flag indicating whether to trigger password reset on user creation.
-        sso:
-          type: array
-          description: SSO login schemes.
-          items:
-            $ref: '#/components/schemas/SsoObject'
-        tenant_id:
-          type: string
-          description: Tenant identifier of a tenant, user will log in to by default.
-        tenant_ids:
-          type: array
-          description: List of tenant Ids user can login to.
-          items:
-            type: string
-      description: User descriptor.
-      example:
-        email: user@acme.com
-        id: 806603def19d417d004a4b67e
-        created_ts: '2020-07-06T15:04:49.114046203+02:00'
-        updated_ts: '2020-07-07T01:04:49.114046203+02:00'
     TenantInfo:
       type: object
       properties:
@@ -19891,18 +20958,6 @@ components:
           description: List of tenant Ids user can login to.
           items:
             type: string
-    TenantIdName:
-      required:
-        - id
-        - name
-      type: object
-      properties:
-        id:
-          type: string
-          description: Tenant identifier.
-        name:
-          type: string
-          description: Tenant name.
     TenantsIdName:
       type: array
       items:
@@ -20714,6 +21769,10 @@ x-tagGroups:
   - name: Mender API
     tags:
       - Mender_API_Mender API
+  - name: Admin Panel
+    tags:
+      - Admin_Panel_Internal API
+      - Admin_Panel_Sudo API
   - name: Audit Logs
     tags:
       - Audit_Logs_Internal API

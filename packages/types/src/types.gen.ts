@@ -186,7 +186,356 @@ export type DeviceLimitTenantPut = {
 };
 
 /**
- * The actor may be a user or device.
+ * Identifier consisting of up to 256 characters from the set
+ * `[A-Za-z0-9._-]`.
+ *
+ */
+export type Identifier = string;
+
+/**
+ * Human-readable name consisting of up to 256 valid UTF-8 encoded,
+ * graphic Unicode characters (letters, marks, numbers, punctuation,
+ * symbols and spaces).
+ *
+ */
+export type Name = string;
+
+/**
+ * Free-form text consisting of up to 4096 valid UTF-8 encoded,
+ * graphic Unicode characters (letters, marks, numbers, punctuation,
+ * symbols and spaces), tabs and line breaks.
+ *
+ */
+export type Text = string;
+
+export type CurrentUser = {
+  /**
+   * Whether the service enforces authentication at all.
+   */
+  auth_enabled: boolean;
+  /**
+   * Email address the session was issued for, absent when authentication is disabled.
+   */
+  email?: string;
+};
+
+export type AdminPanelTenant = TenantInternal;
+
+export type DeviceCounts = {
+  total: number;
+  accepted: number;
+  pending: number;
+  preauthorized: number;
+  rejected: number;
+  noauth: number;
+};
+
+export type BinaryDeltaLimitParams = {
+  min?: number;
+  default?: number;
+  max?: number;
+};
+
+export type AdminPanelBinaryDeltaLimits = {
+  jobs_in_parallel?: BinaryDeltaLimitParams;
+  queue_length?: BinaryDeltaLimitParams;
+  timeout?: BinaryDeltaLimitParams;
+};
+
+export type AdminPanelXDeltaArgs = {
+  disable_checksum?: boolean;
+  disable_external_decompression?: boolean;
+  compression_level?: number;
+  source_window_size?: number;
+  input_window_size?: number;
+  compression_duplicates_window?: number;
+  instruction_buffer_size?: number;
+};
+
+export type BinaryDelta = {
+  xdelta_args?: AdminPanelXDeltaArgs;
+};
+
+export type DeltaConfig = {
+  enabled?: boolean;
+  binary_delta_limits?: AdminPanelBinaryDeltaLimits;
+  binary_delta?: BinaryDelta;
+};
+
+export type DeltaConfigUpdate = DeltaConfig;
+
+export type TenantDetail = AdminPanelTenant & {
+  device_counts?: DeviceCounts;
+  delta_config?: DeltaConfig;
+  delta_config_etag?: string;
+  artifact_size_limit_micro?: number;
+  children?: Array<ChildTenant>;
+  parent?: AdminPanelTenant;
+  /**
+   * Warnings generated when downstream services fail to respond, resulting in partial data.
+   */
+  warnings?: Array<string>;
+};
+
+/**
+ * Accepted and pending devices of a child tenant, summed over all device tiers. Only resolved for the first 10 children, absent on the rest or when inventory fails to respond.
+ */
+export type ChildDeviceCounts = {
+  accepted: number;
+  pending: number;
+};
+
+export type ChildTenant = AdminPanelTenant & {
+  device_counts?: ChildDeviceCounts;
+};
+
+export type UserTenantAssociation = TenantIdName & {
+  roles?: Array<string>;
+  plan?: string;
+  trial?: boolean;
+  status?: string;
+};
+
+export type UserDetail = User & {
+  tenants?: Array<UserTenantAssociation>;
+};
+
+/**
+ * Mender addon definition.
+ */
+export type Addon = {
+  /**
+   * Name of the addon (one of ['configure', 'troubleshoot']).
+   */
+  name?: string;
+  /**
+   * Enabled/disabled flag.
+   */
+  enabled?: boolean;
+};
+
+/**
+ * Additional information about a tenant.
+ */
+export type TenantAdditionalInfo = {
+  /**
+   * Marketing
+   */
+  marketing?: boolean;
+  /**
+   * Campaign
+   */
+  campaign?: string;
+};
+
+/**
+ * API burst limit definition.
+ */
+export type ApiBurst = {
+  /**
+   * HTTP verb.
+   */
+  action?: string;
+  /**
+   * URI of the resource subject to the limit.
+   */
+  uri?: string;
+  /**
+   * Minimum allowed interval, in seconds, between subsequent calls to 'action' on 'uri' (10 = one call every 10 seconds, etc.)
+   */
+  min_interval_sec?: number;
+};
+
+/**
+ * API usage quota definition.
+ */
+export type ApiQuota = {
+  /**
+   * Maximum allowed number of calls within 'interval'.
+   * A value of 0 means 'no limit'.
+   *
+   */
+  max_calls?: number;
+  /**
+   * Interval definition, in seconds (60 = 1 minute, 3600 = 1 hour, etc.).
+   */
+  interval_sec?: number;
+};
+
+/**
+ * Usage quota and burst limit definitions for an API type.
+ */
+export type ApiLimits = {
+  /**
+   * Collection of api burst limit definitions over specified API resources.
+   */
+  bursts?: Array<ApiBurst>;
+  quota?: ApiQuota;
+};
+
+/**
+ * API usage quota and burst limit definitions for a tenant - per API type.
+ */
+export type TenantApiLimits = {
+  management?: ApiLimits;
+  devices?: ApiLimits;
+};
+
+/**
+ * Tenant descriptor.
+ */
+export type Tenant = {
+  /**
+   * Tenant ID.
+   */
+  id: string;
+  /**
+   * Name of the tenant's organization.
+   */
+  name: string;
+  /**
+   * Currently used tenant token.
+   */
+  tenant_token?: string;
+  /**
+   * Status of the tenant account.
+   */
+  status?: 'active' | 'suspended';
+  /**
+   * Plan assigned to the tenant account.
+   */
+  plan?: 'os' | 'enterprise' | 'professional';
+  /**
+   * Whether this account is free trial.
+   */
+  trial?: boolean;
+  /**
+   * When trial evaluation expires.
+   */
+  trial_expiration?: string;
+  /**
+   * Addons configuration.
+   */
+  addons?: Array<Addon>;
+  /**
+   * Whether this account is a service provider.
+   */
+  service_provider?: boolean;
+  additional_info?: TenantAdditionalInfo;
+  api_limits?: TenantApiLimits;
+  /**
+   * Creation date and time, in ISO8601 format.
+   */
+  created_at?: string;
+  /**
+   * Last update date and time, in ISO8601 format.
+   */
+  updated_at?: string;
+  /**
+   * Count of accepted devices for the tenant.
+   */
+  device_count?: number;
+  /**
+   * Device limit for the tenant.
+   */
+  device_limit?: number;
+  device_limits?: {
+    max_devices?: DeviceLimitTenant;
+    max_micro_devices?: DeviceLimitTenant;
+    max_system_devices?: DeviceLimitTenant;
+  };
+};
+
+export type Ratelimits = {
+  /**
+   * Per-request cost multiplier for device API ratelimit groups.
+   */
+  weight_devices?: number;
+  /**
+   * Per-request cost multiplier for management API ratelimit groups.
+   */
+  weight_management?: number;
+};
+
+export type TenantInternal = Tenant & {
+  ratelimits?: Ratelimits;
+  /**
+   * Timestamp when user requested account cancellation.
+   */
+  cancelled_at?: string;
+  /**
+   * Suspension date for the tenant.
+   */
+  suspend_at?: string;
+  suspend_at_last_warn?: string;
+  /**
+   * Subscription type
+   */
+  subscription_type?: 'trial' | 'stripe';
+  /**
+   * Stripe subscription ID
+   */
+  subscription_id?: string;
+  /**
+   * Stripe customer ID
+   */
+  customer_id?: string;
+  /**
+   * The ID of the service provider tenant managing this tenant.
+   */
+  parent_tenant_id?: string;
+  /**
+   * Maximum number of children tenants
+   */
+  max_child_tenants?: number;
+};
+
+/**
+ * Update tenant information.
+ */
+export type TenantUpdateInternal = {
+  /**
+   * Name of the tenant's organization.
+   */
+  name?: string;
+  /**
+   * Plan assigned to the tenant account.
+   */
+  plan?: 'os' | 'enterprise' | 'professional';
+  /**
+   * Whether this account is free trial.
+   */
+  trial?: boolean;
+  /**
+   * When trial evaluation expires.
+   */
+  trial_expiration?: string;
+  /**
+   * Addons configuration.
+   */
+  addons?: Array<Addon>;
+  api_limits?: TenantApiLimits;
+  /**
+   * True if the tenant is a service provider tenant.
+   */
+  service_provider?: boolean;
+  /**
+   * Maximum number of allowed child tenants
+   */
+  max_child_tenants?: string;
+  /**
+   * Planned suspension date and time, in ISO8601 format.
+   */
+  suspend_at?: string;
+  customer_id?: string;
+  ratelimits?: Ratelimits;
+  subscription_id?: string;
+  subscription_type?: string;
+};
+
+/**
+ * The actor may be a user, a device or an admin - a Northern.tech operator acting
+ * on the tenant through the admin panel.
  * Depending on the type of the actor different information will be available.
  *
  */
@@ -200,9 +549,9 @@ export type Actor = {
    * The type of the actor.
    *
    */
-  type: 'user' | 'device';
+  type: 'user' | 'device' | 'admin';
   /**
-   * The email address of the user.
+   * The email address of the user. Admins all go by the same generic name.
    *
    */
   email?: string;
@@ -281,6 +630,16 @@ export type AuditlogsSoftware = {
 };
 
 /**
+ * The integration descriptor.
+ */
+export type AuditlogsIntegration = {
+  /**
+   * The provider of the integration.
+   */
+  provider: string;
+};
+
+/**
  * Various types of objects are supported.
  * Depending on the type of object different information will be available.
  *
@@ -295,13 +654,14 @@ export type Object = {
    * The type of the object.
    *
    */
-  type: 'tenant' | 'user' | 'deployment' | 'artifact' | 'device' | 'software';
+  type: 'tenant' | 'user' | 'deployment' | 'artifact' | 'device' | 'software' | 'integration';
   tenant?: AuditlogsTenant;
   user?: AuditlogsUser;
   deployment?: AuditlogsDeployment;
   artifact?: AuditlogsArtifact;
   device?: AuditlogsDevice;
   software?: AuditlogsSoftware;
+  integration?: AuditlogsIntegration;
 };
 
 /**
@@ -332,6 +692,102 @@ export type AuditLog = {
     | 'preauthorize';
   object: Object;
   change?: string;
+};
+
+/**
+ * Audit log entry along with the tenant it was recorded for.
+ */
+export type TenantAuditLog = AuditLog & {
+  /**
+   * ID of the tenant the entry was recorded for.
+   */
+  tenant_id: string;
+};
+
+/**
+ * Single Sign On descriptor.
+ */
+export type SsoObject = {
+  /**
+   * An id of the identity provider.
+   */
+  id: string;
+  /**
+   * Single Sign On provider kind.
+   */
+  kind: string;
+  /**
+   * Single Sign On subject.
+   */
+  subject?: string;
+};
+
+/**
+ * User descriptor.
+ */
+export type User = {
+  /**
+   * A unique email address.
+   */
+  email: string;
+  /**
+   * User Id.
+   */
+  id: string;
+  /**
+   * Server-side timestamp of the user creation.
+   *
+   */
+  created_ts?: string;
+  /**
+   * Server-side timestamp of the last user information update.
+   *
+   */
+  updated_ts?: string;
+  /**
+   * Timestamp the of last successful login.
+   */
+  login_ts?: string;
+  /**
+   * Indicates if the user's email address has been verified.
+   *
+   */
+  verified?: boolean;
+  /**
+   * User Two Factor Authentication status.
+   */
+  tfa_status?: string;
+  /**
+   * List of user roles.
+   */
+  roles?: Array<string>;
+  /**
+   * Flag indicating whether to trigger password reset on user creation.
+   */
+  send_reset_password?: boolean;
+  /**
+   * SSO login schemes.
+   */
+  sso?: Array<SsoObject>;
+  /**
+   * Tenant identifier of a tenant, user will log in to by default.
+   */
+  tenant_id?: string;
+  /**
+   * List of tenant Ids user can login to.
+   */
+  tenant_ids?: Array<string>;
+};
+
+export type TenantIdName = {
+  /**
+   * Tenant identifier.
+   */
+  id: string;
+  /**
+   * Tenant name.
+   */
+  name: string;
 };
 
 /**
@@ -1024,15 +1480,15 @@ export type DeploymentV1 = {
   /**
    * Deployment identifier
    */
-  id: string;
+  id: Identifier;
   /**
    * Name of the deployment
    */
-  name: string;
+  name: Name;
   /**
    * Name of the artifact to deploy
    */
-  artifact_name: string;
+  artifact_name: Text;
   /**
    * Deployment's creation date and time
    */
@@ -3219,7 +3675,7 @@ export type Http = {
      */
     url: string;
     /**
-     * An optional secret used to verify the integrity of the payload. The string must be in hexadecimal format.
+     * An optional secret used to verify the integrity of the payload. The string must be in hexadecimal format of the form '[0-9a-f]{1,64}'.
      */
     secret?: string;
   };
@@ -3304,93 +3760,6 @@ export type DeviceInventoryEvent = {
   };
 };
 
-export type Ratelimits = {
-  /**
-   * Per-request cost multiplier for device API ratelimit groups.
-   */
-  weight_devices?: number;
-  /**
-   * Per-request cost multiplier for management API ratelimit groups.
-   */
-  weight_management?: number;
-};
-
-export type TenantInternal = Tenant & {
-  ratelimits?: Ratelimits;
-  /**
-   * Timestamp when user requested account cancellation.
-   */
-  cancelled_at?: string;
-  /**
-   * Suspension date for the tenant.
-   */
-  suspend_at?: string;
-  suspend_at_last_warn?: string;
-  /**
-   * Subscription type
-   */
-  subscription_type?: 'trial' | 'stripe';
-  /**
-   * Stripe subscription ID
-   */
-  subscription_id?: string;
-  /**
-   * Stripe customer ID
-   */
-  customer_id?: string;
-  /**
-   * The ID of the service provider tenant managing this tenant.
-   */
-  parent_tenant_id?: string;
-  /**
-   * Maximum number of children tenants
-   */
-  max_child_tenants?: number;
-};
-
-/**
- * Update tenant information.
- */
-export type TenantUpdateInternal = {
-  /**
-   * Name of the tenant's organization.
-   */
-  name?: string;
-  /**
-   * Plan assigned to the tenant account.
-   */
-  plan?: 'os' | 'enterprise' | 'professional';
-  /**
-   * Whether this account is free trial.
-   */
-  trial?: boolean;
-  /**
-   * When trial evaluation expires.
-   */
-  trial_expiration?: string;
-  /**
-   * Addons configuration.
-   */
-  addons?: Array<Addon>;
-  api_limits?: TenantApiLimits;
-  /**
-   * True if the tenant is a service provider tenant.
-   */
-  service_provider?: boolean;
-  /**
-   * Maximum number of allowed child tenants
-   */
-  max_child_tenants?: string;
-  /**
-   * Planned suspension date and time, in ISO8601 format.
-   */
-  suspend_at?: string;
-  customer_id?: string;
-  ratelimits?: Ratelimits;
-  subscription_id?: string;
-  subscription_type?: string;
-};
-
 /**
  * Upgrade tenant subscription.
  */
@@ -3403,152 +3772,6 @@ export type TenantSubscriptionUpgradeInternal = {
    * Subscription token.
    */
   subscription_token: string;
-};
-
-/**
- * Mender addon definition.
- */
-export type Addon = {
-  /**
-   * Name of the addon (one of ['configure', 'troubleshoot']).
-   */
-  name?: string;
-  /**
-   * Enabled/disabled flag.
-   */
-  enabled?: boolean;
-};
-
-/**
- * Additional information about a tenant.
- */
-export type TenantAdditionalInfo = {
-  /**
-   * Marketing
-   */
-  marketing?: boolean;
-  /**
-   * Campaign
-   */
-  campaign?: string;
-};
-
-/**
- * API burst limit definition.
- */
-export type ApiBurst = {
-  /**
-   * HTTP verb.
-   */
-  action?: string;
-  /**
-   * URI of the resource subject to the limit.
-   */
-  uri?: string;
-  /**
-   * Minimum allowed interval, in seconds, between subsequent calls to 'action' on 'uri' (10 = one call every 10 seconds, etc.)
-   */
-  min_interval_sec?: number;
-};
-
-/**
- * API usage quota definition.
- */
-export type ApiQuota = {
-  /**
-   * Maximum allowed number of calls within 'interval'.
-   * A value of 0 means 'no limit'.
-   *
-   */
-  max_calls?: number;
-  /**
-   * Interval definition, in seconds (60 = 1 minute, 3600 = 1 hour, etc.).
-   */
-  interval_sec?: number;
-};
-
-/**
- * Usage quota and burst limit definitions for an API type.
- */
-export type ApiLimits = {
-  /**
-   * Collection of api burst limit definitions over specified API resources.
-   */
-  bursts?: Array<ApiBurst>;
-  quota?: ApiQuota;
-};
-
-/**
- * API usage quota and burst limit definitions for a tenant - per API type.
- */
-export type TenantApiLimits = {
-  management?: ApiLimits;
-  devices?: ApiLimits;
-};
-
-/**
- * Tenant descriptor.
- */
-export type Tenant = {
-  /**
-   * Tenant ID.
-   */
-  id: string;
-  /**
-   * Name of the tenant's organization.
-   */
-  name: string;
-  /**
-   * Currently used tenant token.
-   */
-  tenant_token?: string;
-  /**
-   * Status of the tenant account.
-   */
-  status?: 'active' | 'suspended';
-  /**
-   * Plan assigned to the tenant account.
-   */
-  plan?: 'os' | 'enterprise' | 'professional';
-  /**
-   * Whether this account is free trial.
-   */
-  trial?: boolean;
-  /**
-   * When trial evaluation expires.
-   */
-  trial_expiration?: string;
-  /**
-   * Addons configuration.
-   */
-  addons?: Array<Addon>;
-  /**
-   * Whether this account is a service provider.
-   */
-  service_provider?: boolean;
-  additional_info?: TenantAdditionalInfo;
-  api_limits?: TenantApiLimits;
-  /**
-   * Creation date and time, in ISO8601 format.
-   */
-  created_at?: string;
-  /**
-   * Last update date and time, in ISO8601 format.
-   */
-  updated_at?: string;
-  /**
-   * Count of accepted devices for the tenant.
-   */
-  device_count?: number;
-  /**
-   * Device limit for the tenant.
-   */
-  device_limit?: number;
-  device_limits?: {
-    max_devices?: DeviceLimitTenant;
-    max_micro_devices?: DeviceLimitTenant;
-    max_system_devices?: DeviceLimitTenant;
-  };
 };
 
 /**
@@ -4047,81 +4270,6 @@ export type PermissionObject = {
   value: string;
 };
 
-/**
- * Single Sign On descriptor.
- */
-export type SsoObject = {
-  /**
-   * An id of the identity provider.
-   */
-  id: string;
-  /**
-   * Single Sign On provider kind.
-   */
-  kind: string;
-  /**
-   * Single Sign On subject.
-   */
-  subject?: string;
-};
-
-/**
- * User descriptor.
- */
-export type User = {
-  /**
-   * A unique email address.
-   */
-  email: string;
-  /**
-   * User Id.
-   */
-  id: string;
-  /**
-   * Server-side timestamp of the user creation.
-   *
-   */
-  created_ts?: string;
-  /**
-   * Server-side timestamp of the last user information update.
-   *
-   */
-  updated_ts?: string;
-  /**
-   * Timestamp the of last successful login.
-   */
-  login_ts?: string;
-  /**
-   * Indicates if the user's email address has been verified.
-   *
-   */
-  verified?: boolean;
-  /**
-   * User Two Factor Authentication status.
-   */
-  tfa_status?: string;
-  /**
-   * List of user roles.
-   */
-  roles?: Array<string>;
-  /**
-   * Flag indicating whether to trigger password reset on user creation.
-   */
-  send_reset_password?: boolean;
-  /**
-   * SSO login schemes.
-   */
-  sso?: Array<SsoObject>;
-  /**
-   * Tenant identifier of a tenant, user will log in to by default.
-   */
-  tenant_id?: string;
-  /**
-   * List of tenant Ids user can login to.
-   */
-  tenant_ids?: Array<string>;
-};
-
 export type TenantInfo = {
   /**
    * Tenant identifier of a tenant, user will log in to by default.
@@ -4131,17 +4279,6 @@ export type TenantInfo = {
    * List of tenant Ids user can login to.
    */
   tenant_ids?: Array<string>;
-};
-
-export type TenantIdName = {
-  /**
-   * Tenant identifier.
-   */
-  id: string;
-  /**
-   * Tenant name.
-   */
-  name: string;
 };
 
 export type TenantsIdName = Array<TenantIdName>;
@@ -4712,6 +4849,638 @@ export type Authentication = string;
  */
 export type RequestId = string;
 
+export type AdminPanelInternalCheckLivelinessData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/internal/v1/admin-panel/alive';
+};
+
+export type AdminPanelInternalCheckLivelinessResponses = {
+  /**
+   * Service is alive.
+   */
+  204: void;
+};
+
+export type AdminPanelInternalCheckLivelinessResponse = AdminPanelInternalCheckLivelinessResponses[keyof AdminPanelInternalCheckLivelinessResponses];
+
+export type AdminPanelInternalCheckHealthData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/internal/v1/admin-panel/health';
+};
+
+export type AdminPanelInternalCheckHealthErrors = {
+  /**
+   * Service is unhealthy.
+   */
+  503: Error;
+};
+
+export type AdminPanelInternalCheckHealthError = AdminPanelInternalCheckHealthErrors[keyof AdminPanelInternalCheckHealthErrors];
+
+export type AdminPanelInternalCheckHealthResponses = {
+  /**
+   * Service is healthy.
+   */
+  204: void;
+};
+
+export type AdminPanelInternalCheckHealthResponse = AdminPanelInternalCheckHealthResponses[keyof AdminPanelInternalCheckHealthResponses];
+
+export type AdminPanelStartLoginData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/sudo/v1/admin-panel/auth/login';
+};
+
+export type AdminPanelStartLoginErrors = {
+  /**
+   * The state token could not be generated.
+   */
+  500: Error;
+};
+
+export type AdminPanelStartLoginError = AdminPanelStartLoginErrors[keyof AdminPanelStartLoginErrors];
+
+export type AdminPanelCompleteLoginData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Authorization code issued by the identity provider.
+     */
+    code?: string;
+    /**
+     * State token to match against the cookie set when the flow started.
+     */
+    state?: string;
+  };
+  url: '/api/sudo/v1/admin-panel/auth/callback';
+};
+
+export type AdminPanelLogoutData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/sudo/v1/admin-panel/auth/logout';
+};
+
+export type AdminPanelLogoutResponses = {
+  /**
+   * Session cleared.
+   */
+  204: void;
+};
+
+export type AdminPanelLogoutResponse = AdminPanelLogoutResponses[keyof AdminPanelLogoutResponses];
+
+export type AdminPanelGetCurrentUserData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/sudo/v1/admin-panel/auth/me';
+};
+
+export type AdminPanelGetCurrentUserErrors = {
+  /**
+   * No valid session.
+   */
+  401: Error;
+};
+
+export type AdminPanelGetCurrentUserError = AdminPanelGetCurrentUserErrors[keyof AdminPanelGetCurrentUserErrors];
+
+export type AdminPanelGetCurrentUserResponses = {
+  /**
+   * The signed in user, or the marker that authentication is disabled.
+   */
+  200: CurrentUser;
+};
+
+export type AdminPanelGetCurrentUserResponse = AdminPanelGetCurrentUserResponses[keyof AdminPanelGetCurrentUserResponses];
+
+export type AdminPanelListTenantsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Search string to filter tenants.
+     */
+    q?: string;
+    /**
+     * Filter by plan.
+     */
+    plan?: 'os' | 'professional' | 'enterprise';
+    /**
+     * Filter by trial status.
+     */
+    trial?: boolean;
+    /**
+     * Page number for pagination.
+     */
+    page?: number;
+    /**
+     * Number of results per page.
+     */
+    per_page?: number;
+  };
+  url: '/api/sudo/v1/admin-panel/tenants';
+};
+
+export type AdminPanelListTenantsErrors = {
+  /**
+   * Invalid query parameters.
+   */
+  400: Error;
+};
+
+export type AdminPanelListTenantsError = AdminPanelListTenantsErrors[keyof AdminPanelListTenantsErrors];
+
+export type AdminPanelListTenantsResponses = {
+  /**
+   * A list of tenants.
+   */
+  200: Array<AdminPanelTenant>;
+};
+
+export type AdminPanelListTenantsResponse = AdminPanelListTenantsResponses[keyof AdminPanelListTenantsResponses];
+
+export type AdminPanelGetTenantDetailData = {
+  body?: never;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/api/sudo/v1/admin-panel/tenants/{id}';
+};
+
+export type AdminPanelGetTenantDetailErrors = {
+  /**
+   * Tenant not found.
+   */
+  404: Error;
+};
+
+export type AdminPanelGetTenantDetailError = AdminPanelGetTenantDetailErrors[keyof AdminPanelGetTenantDetailErrors];
+
+export type AdminPanelGetTenantDetailResponses = {
+  /**
+   * Aggregated tenant detail.
+   */
+  200: TenantDetail;
+};
+
+export type AdminPanelGetTenantDetailResponse = AdminPanelGetTenantDetailResponses[keyof AdminPanelGetTenantDetailResponses];
+
+export type AdminPanelUpdateTenantData = {
+  body: TenantUpdateInternal;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/api/sudo/v1/admin-panel/tenants/{id}';
+};
+
+export type AdminPanelUpdateTenantErrors = {
+  /**
+   * Invalid request body.
+   */
+  400: Error;
+  /**
+   * Tenant not found.
+   */
+  404: Error;
+};
+
+export type AdminPanelUpdateTenantError = AdminPanelUpdateTenantErrors[keyof AdminPanelUpdateTenantErrors];
+
+export type AdminPanelUpdateTenantResponses = {
+  /**
+   * Tenant updated successfully.
+   */
+  204: void;
+};
+
+export type AdminPanelUpdateTenantResponse = AdminPanelUpdateTenantResponses[keyof AdminPanelUpdateTenantResponses];
+
+export type AdminPanelUpdateTenantStatusData = {
+  body: {
+    status: string;
+    cancelled_at?: string;
+  };
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/api/sudo/v1/admin-panel/tenants/{id}/status';
+};
+
+export type AdminPanelUpdateTenantStatusErrors = {
+  /**
+   * Invalid request body.
+   */
+  400: Error;
+  /**
+   * Tenant not found.
+   */
+  404: Error;
+};
+
+export type AdminPanelUpdateTenantStatusError = AdminPanelUpdateTenantStatusErrors[keyof AdminPanelUpdateTenantStatusErrors];
+
+export type AdminPanelUpdateTenantStatusResponses = {
+  /**
+   * Tenant status updated successfully.
+   */
+  204: void;
+};
+
+export type AdminPanelUpdateTenantStatusResponse = AdminPanelUpdateTenantStatusResponses[keyof AdminPanelUpdateTenantStatusResponses];
+
+export type AdminPanelSetDeviceLimitsData = {
+  body: Array<DeviceLimitTenantPut>;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/api/sudo/v1/admin-panel/tenants/{id}/device-limits';
+};
+
+export type AdminPanelSetDeviceLimitsErrors = {
+  /**
+   * Invalid request body.
+   */
+  400: Error;
+  /**
+   * Tenant not found.
+   */
+  404: Error;
+};
+
+export type AdminPanelSetDeviceLimitsError = AdminPanelSetDeviceLimitsErrors[keyof AdminPanelSetDeviceLimitsErrors];
+
+export type AdminPanelSetDeviceLimitsResponses = {
+  /**
+   * Device limits updated successfully.
+   */
+  204: void;
+};
+
+export type AdminPanelSetDeviceLimitsResponse = AdminPanelSetDeviceLimitsResponses[keyof AdminPanelSetDeviceLimitsResponses];
+
+export type AdminPanelSetMicroArtifactSizeLimitData = {
+  body: {
+    /**
+     * Size in bytes, or -1 for unlimited.
+     */
+    limit: number;
+  };
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/api/sudo/v1/admin-panel/tenants/{id}/artifact-limits/micro';
+};
+
+export type AdminPanelSetMicroArtifactSizeLimitErrors = {
+  /**
+   * Invalid request body.
+   */
+  400: Error;
+  /**
+   * Tenant not found.
+   */
+  404: Error;
+};
+
+export type AdminPanelSetMicroArtifactSizeLimitError = AdminPanelSetMicroArtifactSizeLimitErrors[keyof AdminPanelSetMicroArtifactSizeLimitErrors];
+
+export type AdminPanelSetMicroArtifactSizeLimitResponses = {
+  /**
+   * Micro artifact size limit updated successfully.
+   */
+  204: void;
+};
+
+export type AdminPanelSetMicroArtifactSizeLimitResponse = AdminPanelSetMicroArtifactSizeLimitResponses[keyof AdminPanelSetMicroArtifactSizeLimitResponses];
+
+export type AdminPanelSetDeltaConfigData = {
+  body: DeltaConfig;
+  headers?: {
+    /**
+     * ETag value for optimistic concurrency control.
+     */
+    'If-Match'?: string;
+  };
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/api/sudo/v1/admin-panel/tenants/{id}/delta-config';
+};
+
+export type AdminPanelSetDeltaConfigErrors = {
+  /**
+   * Invalid request body.
+   */
+  400: Error;
+  /**
+   * Tenant not found.
+   */
+  404: Error;
+  /**
+   * ETag mismatch (precondition failed).
+   */
+  412: Error;
+};
+
+export type AdminPanelSetDeltaConfigError = AdminPanelSetDeltaConfigErrors[keyof AdminPanelSetDeltaConfigErrors];
+
+export type AdminPanelSetDeltaConfigResponses = {
+  /**
+   * Delta configuration updated successfully.
+   */
+  204: void;
+};
+
+export type AdminPanelSetDeltaConfigResponse = AdminPanelSetDeltaConfigResponses[keyof AdminPanelSetDeltaConfigResponses];
+
+export type AdminPanelScheduleTenantDeletionData = {
+  body?: never;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/api/sudo/v1/admin-panel/tenants/{id}/schedule-deletion';
+};
+
+export type AdminPanelScheduleTenantDeletionErrors = {
+  /**
+   * Tenant not found.
+   */
+  404: Error;
+};
+
+export type AdminPanelScheduleTenantDeletionError = AdminPanelScheduleTenantDeletionErrors[keyof AdminPanelScheduleTenantDeletionErrors];
+
+export type AdminPanelScheduleTenantDeletionResponses = {
+  /**
+   * Tenant scheduled for deletion.
+   */
+  204: void;
+};
+
+export type AdminPanelScheduleTenantDeletionResponse = AdminPanelScheduleTenantDeletionResponses[keyof AdminPanelScheduleTenantDeletionResponses];
+
+export type AdminPanelAssignChildrenTenantsData = {
+  body: {
+    tenant_ids: Array<string>;
+  };
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/api/sudo/v1/admin-panel/tenants/{id}/children';
+};
+
+export type AdminPanelAssignChildrenTenantsErrors = {
+  /**
+   * Invalid request body.
+   */
+  400: Error;
+  /**
+   * Tenant not found.
+   */
+  404: Error;
+};
+
+export type AdminPanelAssignChildrenTenantsError = AdminPanelAssignChildrenTenantsErrors[keyof AdminPanelAssignChildrenTenantsErrors];
+
+export type AdminPanelAssignChildrenTenantsResponses = {
+  /**
+   * Children assigned successfully.
+   */
+  204: void;
+};
+
+export type AdminPanelAssignChildrenTenantsResponse = AdminPanelAssignChildrenTenantsResponses[keyof AdminPanelAssignChildrenTenantsResponses];
+
+export type AdminPanelRemoveChildTenantData = {
+  body?: never;
+  path: {
+    parent_id: string;
+    id: string;
+  };
+  query?: never;
+  url: '/api/sudo/v1/admin-panel/tenants/{parent_id}/children/{id}';
+};
+
+export type AdminPanelRemoveChildTenantErrors = {
+  /**
+   * Tenant not found.
+   */
+  404: Error;
+};
+
+export type AdminPanelRemoveChildTenantError = AdminPanelRemoveChildTenantErrors[keyof AdminPanelRemoveChildTenantErrors];
+
+export type AdminPanelRemoveChildTenantResponses = {
+  /**
+   * Child tenant removed successfully.
+   */
+  204: void;
+};
+
+export type AdminPanelRemoveChildTenantResponse = AdminPanelRemoveChildTenantResponses[keyof AdminPanelRemoveChildTenantResponses];
+
+export type AdminPanelListAuditLogsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Only list the actions recorded for this tenant.
+     */
+    tenant_id?: string;
+    /**
+     * Only list the actions taken by the admin with this email address. Tenants see a generic name in its place.
+     *
+     */
+    actor_email?: string;
+    /**
+     * Only list the actions taken at or after this time.
+     */
+    created_after?: string;
+    /**
+     * Only list the actions taken at or before this time.
+     */
+    created_before?: string;
+    /**
+     * Sort order of the actions by the time they were taken.
+     */
+    sort?: 'asc' | 'desc';
+    /**
+     * Page number for pagination.
+     */
+    page?: number;
+    /**
+     * Number of results per page.
+     */
+    per_page?: number;
+  };
+  url: '/api/sudo/v1/admin-panel/auditlogs';
+};
+
+export type AdminPanelListAuditLogsErrors = {
+  /**
+   * Invalid query parameters.
+   */
+  400: Error;
+};
+
+export type AdminPanelListAuditLogsError = AdminPanelListAuditLogsErrors[keyof AdminPanelListAuditLogsErrors];
+
+export type AdminPanelListAuditLogsResponses = {
+  /**
+   * A list of audit log entries.
+   */
+  200: Array<TenantAuditLog>;
+};
+
+export type AdminPanelListAuditLogsResponse = AdminPanelListAuditLogsResponses[keyof AdminPanelListAuditLogsResponses];
+
+export type AdminPanelListUsersData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Filter by email address.
+     */
+    email?: string;
+    /**
+     * Filter by tenant ID.
+     */
+    tenant_id?: string;
+    /**
+     * Filter by SSO provider.
+     */
+    sso_provider?: string;
+    /**
+     * Filter by SSO subject.
+     */
+    sso_subject?: string;
+    /**
+     * Page number for pagination.
+     */
+    page?: number;
+    /**
+     * Number of results per page.
+     */
+    per_page?: number;
+  };
+  url: '/api/sudo/v1/admin-panel/users';
+};
+
+export type AdminPanelListUsersResponses = {
+  /**
+   * A list of users.
+   */
+  200: Array<User>;
+};
+
+export type AdminPanelListUsersResponse = AdminPanelListUsersResponses[keyof AdminPanelListUsersResponses];
+
+export type AdminPanelGetUserDetailData = {
+  body?: never;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/api/sudo/v1/admin-panel/users/{id}';
+};
+
+export type AdminPanelGetUserDetailErrors = {
+  /**
+   * User not found.
+   */
+  404: Error;
+};
+
+export type AdminPanelGetUserDetailError = AdminPanelGetUserDetailErrors[keyof AdminPanelGetUserDetailErrors];
+
+export type AdminPanelGetUserDetailResponses = {
+  /**
+   * Aggregated user detail.
+   */
+  200: UserDetail;
+};
+
+export type AdminPanelGetUserDetailResponse = AdminPanelGetUserDetailResponses[keyof AdminPanelGetUserDetailResponses];
+
+export type AdminPanelAssignUserToTenantData = {
+  body: {
+    tenant_id: string;
+  };
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/api/sudo/v1/admin-panel/users/{id}/assign';
+};
+
+export type AdminPanelAssignUserToTenantErrors = {
+  /**
+   * Invalid request body.
+   */
+  400: Error;
+  /**
+   * User not found.
+   */
+  404: Error;
+};
+
+export type AdminPanelAssignUserToTenantError = AdminPanelAssignUserToTenantErrors[keyof AdminPanelAssignUserToTenantErrors];
+
+export type AdminPanelAssignUserToTenantResponses = {
+  /**
+   * User assigned to tenant successfully.
+   */
+  204: void;
+};
+
+export type AdminPanelAssignUserToTenantResponse = AdminPanelAssignUserToTenantResponses[keyof AdminPanelAssignUserToTenantResponses];
+
+export type AdminPanelRemoveUserFromTenantData = {
+  body?: never;
+  path: {
+    id: string;
+    tenant_id: string;
+  };
+  query?: never;
+  url: '/api/sudo/v1/admin-panel/users/{id}/tenants/{tenant_id}';
+};
+
+export type AdminPanelRemoveUserFromTenantErrors = {
+  /**
+   * User or tenant not found.
+   */
+  404: Error;
+};
+
+export type AdminPanelRemoveUserFromTenantError = AdminPanelRemoveUserFromTenantErrors[keyof AdminPanelRemoveUserFromTenantErrors];
+
+export type AdminPanelRemoveUserFromTenantResponses = {
+  /**
+   * User removed from tenant successfully.
+   */
+  204: void;
+};
+
+export type AdminPanelRemoveUserFromTenantResponse = AdminPanelRemoveUserFromTenantResponses[keyof AdminPanelRemoveUserFromTenantResponses];
+
 export type PingData = {
   body?: never;
   path?: never;
@@ -4765,6 +5534,88 @@ export type AuditlogsInternalCheckHealthResponses = {
 };
 
 export type AuditlogsInternalCheckHealthResponse = AuditlogsInternalCheckHealthResponses[keyof AuditlogsInternalCheckHealthResponses];
+
+export type ListAuditLogsAcrossTenantsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * If present, limits the results only to logs of the given tenant.
+     */
+    tenant_id?: string;
+    /**
+     * Starting page.
+     */
+    page?: number;
+    /**
+     * Number of results per page.
+     */
+    per_page?: number;
+    /**
+     * List only log entries created before and equal to Unix timestamp (UTC)
+     */
+    created_before?: number;
+    /**
+     * List only log entries created after and equal to Unix timestamp (UTC)
+     */
+    created_after?: number;
+    /**
+     * If present, limits the results only to logs of the given action.
+     */
+    action?: string;
+    /**
+     * If present, limits the results only to logs where actor has given id.
+     */
+    actor_id?: string;
+    /**
+     * If present, limits the results only to logs where actor is of a given type.
+     */
+    actor_type?: 'user' | 'device' | 'admin';
+    /**
+     * If present, limits the results only to logs where the recorded actor email matches. With `actor_type=admin` it matches the operator behind an admin actor, otherwise admin actors share a generic email.
+     */
+    actor_email?: string;
+    /**
+     * If present, limits the results only to logs where object has given id.
+     */
+    object_id?: string;
+    /**
+     * If present, limits the results only to logs where object is of a given type.
+     */
+    object_type?: 'tenant' | 'user' | 'user_access_token' | 'deployment' | 'artifact' | 'device' | 'software';
+    /**
+     * Supports sorting the log list by creation date.
+     * By default logs are sorted by creation date in descending order (newest first).
+     *
+     */
+    sort?: 'asc' | 'desc';
+  };
+  url: '/api/internal/v1/auditlogs/logs';
+};
+
+export type ListAuditLogsAcrossTenantsErrors = {
+  /**
+   * Invalid Request.
+   */
+  400: Error;
+  /**
+   * Internal Server Error.
+   */
+  500: Error;
+};
+
+export type ListAuditLogsAcrossTenantsError = ListAuditLogsAcrossTenantsErrors[keyof ListAuditLogsAcrossTenantsErrors];
+
+export type ListAuditLogsAcrossTenantsResponses = {
+  /**
+   * ListOfTenantLogs
+   *
+   * Successful response.
+   */
+  200: Array<TenantAuditLog>;
+};
+
+export type ListAuditLogsAcrossTenantsResponse = ListAuditLogsAcrossTenantsResponses[keyof ListAuditLogsAcrossTenantsResponses];
 
 export type DeleteAuditLogsData = {
   body?: never;
@@ -4828,7 +5679,7 @@ export type GetAuditLogsInternalData = {
     /**
      * If present, limits the results only to logs where actor is of a given type.
      */
-    actor_type?: 'user' | 'device';
+    actor_type?: 'user' | 'device' | 'admin';
     /**
      * If present, limits the results only to logs where actors has given email address.
      */
@@ -4930,7 +5781,7 @@ export type GetAuditLogsData = {
     /**
      * If present, limits the results only to logs where the actor is of a given type.
      */
-    actor_type?: 'user' | 'device';
+    actor_type?: 'user' | 'device' | 'admin';
     /**
      * If present, limits the results only to logs where the actor has a given email address.
      */
@@ -4942,7 +5793,7 @@ export type GetAuditLogsData = {
     /**
      * If present, limits the results only to logs where the object is of a given type.
      */
-    object_type?: 'tenant' | 'user' | 'deployment' | 'artifact' | 'device' | 'software';
+    object_type?: 'tenant' | 'user' | 'deployment' | 'artifact' | 'device' | 'software' | 'integration';
     /**
      * If present, limits the results only to logs where the object is a deployment and has a given name.
      */
@@ -5009,7 +5860,7 @@ export type ExportAuditLogsData = {
     /**
      * If present, limits the results only to logs where the actor is of a given type.
      */
-    actor_type?: 'user' | 'device';
+    actor_type?: 'user' | 'device' | 'admin';
     /**
      * If present, limits the results only to logs where the actors has a given email address.
      */
