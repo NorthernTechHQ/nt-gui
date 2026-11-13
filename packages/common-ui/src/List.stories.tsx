@@ -11,12 +11,10 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import { Checkbox } from '@mui/material';
-
 import { SORTING_OPTIONS } from '@northern.tech/utils/constants';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import type { ColumnHeader, ListItemComponentProps } from './List';
+import type { ColumnHeader } from './List';
 import { CommonList } from './List';
 
 // Sample data type
@@ -26,21 +24,6 @@ interface SampleItem {
   name: string;
   status: string;
 }
-
-// Sample ListItem component
-const SampleListItem = ({ columnHeaders, index, listItem, onClick, onRowSelect, selectable, selected }: ListItemComponentProps<SampleItem>) => (
-  <div className="deviceListRow" onClick={() => onClick(listItem)}>
-    {selectable && (
-      <div>
-        <Checkbox checked={selected} onChange={() => onRowSelect(index)} />
-      </div>
-    )}
-    {columnHeaders.map((column, index) => {
-      const { component: Component } = column;
-      return <Component key={`col-${index}`} column={column} item={listItem} classes={{}} />;
-    })}
-  </div>
-);
 
 // Sample cell renderers
 const NameCell = ({ item }: { item?: SampleItem }) => <div>{item?.name || ''}</div>;
@@ -98,8 +81,6 @@ export const Primary: Story = {
     columnHeaders: sampleColumns,
     listItems: sampleItems,
     listState,
-    idAttribute: { attribute: 'id', scope: 'identity' },
-    ListItemComponent: SampleListItem,
     onChangeRowsPerPage: (perPage: number) => console.log('Rows per page:', perPage),
     onExpandClick: (item: SampleItem) => console.log('Clicked:', item),
     onPageChange: (page: number) => console.log('Page:', page),
@@ -124,18 +105,10 @@ export const ResizableColumns: Story = {
   args: {
     ...Primary.args,
     customColumnSizes: [
-      { name: 'status', scope: 'system' },
-      { name: 'created', scope: 'system' }
+      { attribute: { name: 'name', scope: 'identity' }, size: 300 },
+      { attribute: { name: 'status', scope: 'system' }, size: 200 }
     ],
     onResizeColumns: (columns: { attribute: { name: string; scope: string }; size: number }[]) => console.log('Resized columns:', columns)
-  }
-};
-
-export const WithSortingNotes: Story = {
-  name: 'With Sorting Notes',
-  args: {
-    ...Primary.args,
-    sortingNotes: { name: 'Sorting by Name will only work properly with items that already have a name defined' }
   }
 };
 
