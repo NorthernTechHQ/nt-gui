@@ -104,11 +104,8 @@ export const ResizableColumns: Story = {
   name: 'Resizable Columns',
   args: {
     ...Primary.args,
-    customColumnSizes: [
-      { attribute: { name: 'name', scope: 'identity' }, size: 300 },
-      { attribute: { name: 'status', scope: 'system' }, size: 200 }
-    ],
-    onResizeColumns: (columns: { attribute: { name: string; scope: string }; size: number }[]) => console.log('Resized columns:', columns)
+    columnWidths: { 'identity:name': 300, 'system:status': 200 },
+    onResizeColumns: (columnWidths: Record<string, number>) => console.log('Resized columns:', columnWidths)
   }
 };
 
