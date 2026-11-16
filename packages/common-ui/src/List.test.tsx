@@ -101,6 +101,26 @@ describe('List component', () => {
     expect(onSelect).toHaveBeenCalledWith([0]);
     expect(onExpandClickMock).toHaveBeenCalledTimes(1);
   });
+  it('leaves the keyboard handling to inputs within a cell', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    const InputRenderer = ({ item }: RendererProp<TestItem>) => <input aria-label={`rename ${item?.id}`} defaultValue="" />;
+    render(
+      <CommonList
+        listItems={tenants as TestItem[]}
+        listState={listState}
+        columnHeaders={[{ attribute: { name: 'name', scope: '' }, component: InputRenderer, sortable: true, title: 'Name' }]}
+        onExpandClick={vi.fn()}
+        onChangeRowsPerPage={vi.fn()}
+        onPageChange={vi.fn()}
+        onResizeColumns={false}
+        onSelect={false}
+        pageLoading={false}
+      />
+    );
+    const input = screen.getByRole('textbox', { name: `rename ${tenants[0].id}` });
+    await user.type(input, 'my device');
+    expect(input).toHaveValue('my device');
+  });
   it('keeps columns showing the same attribute apart', () => {
     const props = { listItems: tenants as TestItem[], listState, onChangeRowsPerPage: vi.fn(), onExpandClick: vi.fn(), onPageChange: vi.fn() };
     const ui = (headers: ColumnHeader<TestItem>[]) => (

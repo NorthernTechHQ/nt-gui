@@ -1193,6 +1193,10 @@ exports[`List component > renders correctly 1`] = `
   white-space: nowrap;
 }
 
+.emotion-0 .MuiDataGrid-cell input:disabled {
+  caret-color: transparent;
+}
+
 .emotion-1 {
   -webkit-box-flex: 1;
   -webkit-flex-grow: 1;

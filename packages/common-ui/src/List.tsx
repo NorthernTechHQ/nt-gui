@@ -11,12 +11,21 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { ComponentType, ReactElement, MouseEvent as ReactMouseEvent } from 'react';
+import type { ComponentType, ReactElement, KeyboardEvent as ReactKeyboardEvent, MouseEvent as ReactMouseEvent } from 'react';
 import { useMemo, useState } from 'react';
 
 import { Settings as SettingsIcon } from '@mui/icons-material';
 import { typographyClasses } from '@mui/material';
-import type { GridColDef, GridColumnResizeParams, GridRowParams, GridRowSelectionModel, GridSortModel, GridValidRowModel } from '@mui/x-data-grid';
+import type {
+  GridCellParams,
+  GridColDef,
+  GridColumnResizeParams,
+  GridRowParams,
+  GridRowSelectionModel,
+  GridSortModel,
+  GridValidRowModel,
+  MuiEvent
+} from '@mui/x-data-grid';
 import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, gridClasses } from '@mui/x-data-grid';
 
 import type { SortOptions } from '@northern.tech/utils/constants';
@@ -90,7 +99,8 @@ const gridStyle = {
   border: 'none',
   [`.${gridClasses.row}`]: { cursor: 'pointer' },
   [`.${gridClasses.cell} > *`]: { ...textOverflow, minWidth: 0 },
-  [`.${gridClasses.cell} .${typographyClasses.root}`]: textOverflow
+  [`.${gridClasses.cell} .${typographyClasses.root}`]: textOverflow,
+  [`.${gridClasses.cell} input:disabled`]: { caretColor: 'transparent' }
 };
 
 interface CustomizableHeaderProps {
@@ -194,6 +204,13 @@ export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
     onResizeColumns({ ...columnWidths, [field]: Math.round(width) });
   };
 
+  // the grid uses the space, arrow & similar keys for navigating between cells, which would keep them from working in inputs rendered within a cell
+  const onCellKeyDown = (_: GridCellParams<T>, event: MuiEvent<ReactKeyboardEvent<HTMLElement>>) => {
+    if ((event.target as HTMLElement).closest('input, textarea, select, [contenteditable="true"]')) {
+      event.defaultMuiPrevented = true;
+    }
+  };
+
   const onRowClick = ({ row }: GridRowParams<T>, event: ReactMouseEvent<HTMLElement>) => {
     if (event.defaultPrevented || (event.target as HTMLElement).closest(`.${gridClasses.cellCheckbox}`)) {
       return;
@@ -210,6 +227,7 @@ export const CommonList = <T extends wID>(props: CommonListProps<T>) => {
         disableColumnResize={!resizable}
         disableRowSelectionOnClick
         hideFooter
+        onCellKeyDown={onCellKeyDown}
         onColumnWidthChange={onColumnWidthChange}
         onResize={({ width }) => setGridWidth(width)}
         onRowClick={onRowClick}
