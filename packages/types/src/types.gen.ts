@@ -1260,11 +1260,11 @@ export type DeviceWithImageImageMetaArtifact = {
   /**
    * List of Artifact depends.
    *
-   * Map of key/value pairs, where keys are strings and values are lists of strings.
+   * Map of key/value pairs, where keys are strings and values are strings or lists of strings.
    *
    */
   artifact_depends?: {
-    [key: string]: Array<string>;
+    [key: string]: Array<string> | string;
   };
   /**
    * List of Clear Artifact provides.
@@ -2333,11 +2333,11 @@ export type ArtifactV2 = {
   /**
    * List of Artifact depends.
    *
-   * Map of key/value pairs, where keys are strings and values are lists of strings.
+   * Map of key/value pairs, where keys are strings and values are strings or lists of strings.
    *
    */
   artifact_depends?: {
-    [key: string]: Array<string>;
+    [key: string]: Array<string> | string;
   };
   /**
    * List of Clear Artifact provides.
