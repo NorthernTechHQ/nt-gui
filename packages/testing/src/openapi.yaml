@@ -16510,13 +16510,15 @@ components:
           type: object
         artifact_depends:
           additionalProperties:
-            items:
-              type: string
-            type: array
+            anyOf:
+              - type: array
+                items:
+                  type: string
+              - type: string
           description: |
             List of Artifact depends.
 
-            Map of key/value pairs, where keys are strings and values are lists of strings.
+            Map of key/value pairs, where keys are strings and values are strings or lists of strings.
           type: object
         clears_artifact_provides:
           description: List of Clear Artifact provides.
@@ -18155,13 +18157,15 @@ components:
           type: object
         artifact_depends:
           additionalProperties:
-            items:
-              type: string
-            type: array
+            anyOf:
+              - type: array
+                items:
+                  type: string
+              - type: string
           description: |
             List of Artifact depends.
 
-            Map of key/value pairs, where keys are strings and values are lists of strings.
+            Map of key/value pairs, where keys are strings and values are strings or lists of strings.
           type: object
         clears_artifact_provides:
           description: List of Clear Artifact provides.
