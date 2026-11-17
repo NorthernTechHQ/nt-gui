@@ -65,7 +65,7 @@ const flattenRelease = (release: ReceivedRelease, stateRelease: Release): Releas
   const updatedArtifacts = release.artifacts?.sort(customSort(true, 'modified')) || [];
   const { artifacts, deviceTypes, modified } = updatedArtifacts.reduce<{ artifacts: Artifact[]; deviceTypes: string[]; modified: undefined | string }>(
     (accu, item) => {
-      accu.deviceTypes.push(...item.device_types_compatible);
+      accu.deviceTypes.push(...item.device_types_compatible!);
       const stateArtifact = stateRelease.artifacts?.find(releaseArtifact => releaseArtifact.id === item.id) || {};
       accu.modified = accu.modified ? accu.modified : item.modified;
       accu.artifacts.push({
