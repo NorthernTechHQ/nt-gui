@@ -793,42 +793,9 @@ export type TenantIdName = {
 /**
  * Detailed artifact.
  */
-export type Artifact = {
+export type DeviceArtifact = Artifact & {
   id: string;
-  name: string;
   description?: string;
-  /**
-   * An array of compatible device types.
-   */
-  device_types_compatible: Array<string>;
-  info?: ArtifactInfo;
-  /**
-   * Indicates if artifact is signed or not.
-   */
-  signed?: boolean;
-  updates?: Array<Update>;
-  /**
-   * List of Artifact provides.
-   *
-   * Map of key/value pairs, where both keys and values are strings.
-   *
-   */
-  artifact_provides?: {
-    [key: string]: string;
-  };
-  /**
-   * List of Artifact depends.
-   *
-   * Map of key/value pairs, where keys are strings and values are lists of strings.
-   *
-   */
-  artifact_depends?: {
-    [key: string]: Array<string>;
-  };
-  /**
-   * List of Clear Artifact provides.
-   */
-  clears_artifact_provides?: Array<string>;
   /**
    * Artifact total size in bytes - the size of the actual file that will be transferred to the device (compressed).
    *
@@ -970,6 +937,47 @@ export type Update = {
   files?: Array<UpdateFile>;
   metadata?: MetadataAny;
   meta_data?: MetadataAnyDeprecated;
+};
+
+/**
+ * Properties common to all artifact representations, as read from the
+ * artifact's header.
+ *
+ */
+export type Artifact = {
+  name?: string;
+  /**
+   * An array of compatible device types.
+   */
+  device_types_compatible?: Array<string>;
+  info?: ArtifactInfo;
+  /**
+   * Indicates if artifact is signed or not.
+   */
+  signed?: boolean;
+  updates?: Array<Update>;
+  /**
+   * List of Artifact provides.
+   *
+   * Map of key/value pairs, where both keys and values are strings.
+   *
+   */
+  artifact_provides?: {
+    [key: string]: string;
+  };
+  /**
+   * List of Artifact depends.
+   *
+   * Map of key/value pairs, where keys are strings and values are strings or lists of strings.
+   *
+   */
+  artifact_depends?: {
+    [key: string]: Array<string> | string;
+  };
+  /**
+   * List of Clear Artifact provides.
+   */
+  clears_artifact_provides?: Array<string>;
 };
 
 export type DeploymentInstructionsArtifactSourceV2 = {
@@ -1236,49 +1244,13 @@ export type DeviceWithImageImageMeta = {
   description?: string;
 };
 
-export type DeviceWithImageImageMetaArtifact = {
-  name?: string;
-  /**
-   * An array of compatible device types.
-   */
-  device_types_compatible?: Array<string>;
-  info?: ArtifactInfo;
-  /**
-   * Indicates if artifact is signed or not.
-   */
-  signed?: boolean;
-  updates?: Array<Update>;
-  /**
-   * List of Artifact provides.
-   *
-   * Map of key/value pairs, where both keys and values are strings.
-   *
-   */
-  artifact_provides?: {
-    [key: string]: string;
-  };
-  /**
-   * List of Artifact depends.
-   *
-   * Map of key/value pairs, where keys are strings and values are lists of strings.
-   *
-   */
-  artifact_depends?: {
-    [key: string]: Array<string>;
-  };
-  /**
-   * List of Clear Artifact provides.
-   */
-  clears_artifact_provides?: Array<string>;
-};
-
 export type DeviceWithImageImage = {
   /**
    * Image ID
    */
   id?: string;
   meta?: DeviceWithImageImageMeta;
-  meta_artifact?: DeviceWithImageImageMetaArtifact;
+  meta_artifact?: Artifact;
   /**
    * Image size in bytes
    */
@@ -1594,42 +1566,9 @@ export type ArtifactUpdateV1 = {
 /**
  * Detailed artifact.
  */
-export type ArtifactV1 = {
+export type ArtifactV1 = Artifact & {
   id: string;
-  name: string;
   description?: string;
-  /**
-   * An array of compatible device types.
-   */
-  device_types_compatible: Array<string>;
-  info?: ArtifactInfo;
-  /**
-   * Indicates if artifact is signed or not.
-   */
-  signed?: boolean;
-  updates?: Array<Update>;
-  /**
-   * List of Artifact provides.
-   *
-   * Map of key/value pairs, where both keys and values are strings.
-   *
-   */
-  artifact_provides?: {
-    [key: string]: string;
-  };
-  /**
-   * List of Artifact depends.
-   *
-   * Map of key/value pairs, where keys are strings and values are lists of strings.
-   *
-   */
-  artifact_depends?: {
-    [key: string]: Array<string>;
-  };
-  /**
-   * List of Clear Artifact provides.
-   */
-  clears_artifact_provides?: Array<string>;
   /**
    * Artifact total size in bytes - the size of the actual file that will be transferred to the device (compressed).
    *
@@ -2307,42 +2246,9 @@ export type Tags = Array<string>;
 /**
  * Detailed artifact.
  */
-export type ArtifactV2 = {
+export type ArtifactV2 = Artifact & {
   id: string;
-  name: string;
   description: string;
-  /**
-   * An array of compatible device types.
-   */
-  device_types_compatible: Array<string>;
-  info?: ArtifactInfo;
-  /**
-   * Indicates if artifact is signed or not.
-   */
-  signed?: boolean;
-  updates?: Array<Update>;
-  /**
-   * List of Artifact provides.
-   *
-   * Map of key/value pairs, where both keys and values are strings.
-   *
-   */
-  artifact_provides?: {
-    [key: string]: string;
-  };
-  /**
-   * List of Artifact depends.
-   *
-   * Map of key/value pairs, where keys are strings and values are lists of strings.
-   *
-   */
-  artifact_depends?: {
-    [key: string]: Array<string>;
-  };
-  /**
-   * List of Clear Artifact provides.
-   */
-  clears_artifact_provides?: Array<string>;
   /**
    * Artifact total size in bytes - the size of the actual file that will be transferred to the device (compressed).
    *
@@ -5968,7 +5874,7 @@ export type DeviceListArtifactsResponses = {
   /**
    * Successful response.
    */
-  200: Array<Artifact>;
+  200: Array<DeviceArtifact>;
 };
 
 export type DeviceListArtifactsResponse = DeviceListArtifactsResponses[keyof DeviceListArtifactsResponses];
@@ -6010,7 +5916,7 @@ export type DeviceShowArtifactResponses = {
   /**
    * Successful response.
    */
-  200: Artifact;
+  200: DeviceArtifact;
 };
 
 export type DeviceShowArtifactResponse = DeviceShowArtifactResponses[keyof DeviceShowArtifactResponses];
