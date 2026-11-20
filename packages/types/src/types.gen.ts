@@ -230,6 +230,28 @@ export type DeviceCounts = {
   noauth: number;
 };
 
+/**
+ * Deployment activity of the tenant, absent when deployments fails to respond.
+ */
+export type DeploymentStats = {
+  /**
+   * Deployments created in the last 12 months.
+   */
+  last_12_months: number;
+  /**
+   * Deployments currently in progress.
+   */
+  in_progress: number;
+  /**
+   * Deployments waiting to start.
+   */
+  pending: number;
+  /**
+   * Creation time of the most recent deployment, absent when the tenant has never deployed.
+   */
+  last_created_at?: string;
+};
+
 export type BinaryDeltaLimitParams = {
   min?: number;
   default?: number;
@@ -266,6 +288,11 @@ export type DeltaConfigUpdate = DeltaConfig;
 
 export type TenantDetail = AdminPanelTenant & {
   device_counts?: DeviceCounts;
+  deployment_stats?: DeploymentStats;
+  /**
+   * Number of users in the tenant, absent when useradm fails to respond.
+   */
+  user_count?: number;
   delta_config?: DeltaConfig;
   delta_config_etag?: string;
   artifact_size_limit_micro?: number;
