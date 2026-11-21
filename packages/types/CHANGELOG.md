@@ -1,12 +1,28 @@
 ---
-## [0.7.14](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/types-0.7.13...@northern.tech/types-0.7.14) (2026-11-13)
+## 0.7.15 - 2026-11-21
 
 
-### Bug Fixes
 
-* **types:** types update ([de28e03](https://github.com/NorthernTechHQ/nt-gui/commit/de28e0334c260f78ba23907417f6e8fbacb97ba2))
+### Bug fixes
 
-## 0.7.13 - 2026-11-04
+#### types
+
+- Types update ([b358801](https://github.com/NorthernTechHQ/nt-gui/commit/b35880196079d9dc9b5df8326bc1bc6b5548961a)) by @mender-test-bot
+## @northern.tech/types-0.7.14 - 2026-11-13
+
+
+
+### Bug fixes
+
+#### types
+
+- Types update ([de28e03](https://github.com/NorthernTechHQ/nt-gui/commit/de28e0334c260f78ba23907417f6e8fbacb97ba2)) by @mender-test-bot
+
+### Dependency updates
+
+
+- Bumped typescript to v7 to speed up checks ([6256a74](https://github.com/NorthernTechHQ/nt-gui/commit/6256a74bf75b85eb66954b577006a3791872434a)) by @mzedel
+## @northern.tech/types-0.7.13 - 2026-11-04
 
 
 
