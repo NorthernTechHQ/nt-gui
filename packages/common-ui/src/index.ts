@@ -54,4 +54,5 @@ export * from './SupportLink';
 export * from './TextOverflowMultiline';
 export * from './Time';
 export * from './TwoColumnData';
+export * from './useColumnWidths';
 export * from './xterm';

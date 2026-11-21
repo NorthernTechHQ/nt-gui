@@ -534,59 +534,6 @@ div:focus {
   border-radius: 4px;
 }
 
-/* tables */
-.deviceListRow,
-.deviceListItem {
-  border-bottom: 1px solid @bordercolor;
-  height: 3 * @defaultGutterWidth;
-  min-height: 3 * @defaultGutterWidth;
-  max-height: 3 * @defaultGutterWidth;
-  align-items: center;
-  &:last-of-type {
-    border-bottom: transparent;
-  }
-}
-
-.deviceList {
-  min-width: 1000px;
-  padding-left: 5px;
-  display: grid;
-  grid-template-columns: minmax(250px, max-content) minmax(90px, 1fr) minmax(350px, 1.5fr) minmax(105px, 1fr) minmax(110px, max-content);
-  &.selectable {
-    grid-template-columns: 52px minmax(250px, max-content) minmax(90px, 1fr) minmax(350px, 1.5fr) minmax(105px, 1fr) minmax(110px, max-content);
-  }
-  .footer {
-    grid-column-start: 1;
-    grid-column-end: 4;
-  }
-  .header,
-  .body {
-    display: contents;
-    .deviceListRow {
-      display: contents;
-      & > * {
-        align-items: center;
-        height: 3 * @defaultGutterWidth;
-        min-height: 3 * @defaultGutterWidth;
-        max-height: 3 * @defaultGutterWidth;
-        border-bottom: 1px solid @bordercolor;
-        display: flex;
-        padding-left: 1.5 * @defaultGutterWidth;
-        overflow: hidden;
-        white-space: nowrap;
-        &:first-of-type {
-          padding-left: 9px;
-        }
-      }
-    }
-  }
-  .header {
-    height: 56px;
-    font-size: 0.8rem;
-    user-select: none;
-  }
-}
-
 .expandedDevice {
   padding-left: 48px;
   padding-right: 35px;
