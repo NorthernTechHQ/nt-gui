@@ -535,6 +535,7 @@ export {
   type DeploymentsListDeploymentsForADeviceResponse,
   type DeploymentsListDeploymentsForADeviceResponses,
   type DeploymentStatistics,
+  type DeploymentStats,
   type DeploymentStatus,
   type DeploymentStatusStatisticsData,
   type DeploymentStatusStatisticsError,

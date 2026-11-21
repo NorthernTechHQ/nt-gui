@@ -14997,6 +14997,27 @@ components:
           type: integer
         noauth:
           type: integer
+    DeploymentStats:
+      type: object
+      description: Deployment activity of the tenant, absent when deployments fails to respond.
+      required:
+        - last_12_months
+        - in_progress
+        - pending
+      properties:
+        last_12_months:
+          type: integer
+          description: Deployments created in the last 12 months.
+        in_progress:
+          type: integer
+          description: Deployments currently in progress.
+        pending:
+          type: integer
+          description: Deployments waiting to start.
+        last_created_at:
+          type: string
+          format: date-time
+          description: Creation time of the most recent deployment, absent when the tenant has never deployed.
     BinaryDeltaLimitParams:
       type: object
       properties:
@@ -15055,6 +15076,11 @@ components:
           properties:
             device_counts:
               $ref: '#/components/schemas/DeviceCounts'
+            deployment_stats:
+              $ref: '#/components/schemas/DeploymentStats'
+            user_count:
+              type: integer
+              description: Number of users in the tenant, absent when useradm fails to respond.
             delta_config:
               $ref: '#/components/schemas/DeltaConfig'
             delta_config_etag:
