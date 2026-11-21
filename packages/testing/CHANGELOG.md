@@ -1,12 +1,28 @@
 ---
-## [0.19.5](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/testing-0.19.4...@northern.tech/testing-0.19.5) (2026-11-13)
+## 0.19.6 - 2026-11-21
 
 
-### Bug Fixes
 
-* **testing:** openapi spec update ([37ec1bb](https://github.com/NorthernTechHQ/nt-gui/commit/37ec1bb52e0cc69b378fed9aa2ab4b32ed26a88a))
+### Bug fixes
 
-## 0.19.4 - 2026-11-04
+#### testing
+
+- Openapi spec update ([f1f25a1](https://github.com/NorthernTechHQ/nt-gui/commit/f1f25a19007db92bde527fc2007d9de21ba28882)) by @mender-test-bot
+## @northern.tech/testing-0.19.5 - 2026-11-13
+
+
+
+### Bug fixes
+
+#### testing
+
+- Openapi spec update ([37ec1bb](https://github.com/NorthernTechHQ/nt-gui/commit/37ec1bb52e0cc69b378fed9aa2ab4b32ed26a88a)) by @mender-test-bot
+
+### Dependency updates
+
+
+- Bumped typescript to v7 to speed up checks ([6256a74](https://github.com/NorthernTechHQ/nt-gui/commit/6256a74bf75b85eb66954b577006a3791872434a)) by @mzedel
+## @northern.tech/testing-0.19.4 - 2026-11-04
 
 
 
