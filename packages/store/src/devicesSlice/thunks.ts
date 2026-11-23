@@ -864,7 +864,7 @@ export const deviceFileUpload = createAppAsyncThunk(
     const cancelSource = new AbortController();
     return Promise.all([
       dispatch(setSnackbar('Uploading file')),
-      dispatch(initUpload({ id: uploadId, upload: { progress: 0, cancelSource } })),
+      dispatch(initUpload({ id: uploadId, upload: { name: file.name, size: file.size, progress: 0, cancelSource } })),
       GeneralApi.uploadPut(
         `${deviceConnect}/devices/${deviceId}/upload`,
         formData,
