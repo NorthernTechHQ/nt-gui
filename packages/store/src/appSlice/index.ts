@@ -44,9 +44,9 @@ export interface SearchState {
 export interface Upload {
   cancelSource: any;
   inprogress?: boolean;
-  name?: string;
+  name: string;
   progress: number;
-  size?: number;
+  size: number;
 }
 
 type VersionInformation = {
