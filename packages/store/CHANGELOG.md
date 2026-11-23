@@ -1,4 +1,12 @@
 ---
+## [0.50.1](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.50.0...@northern.tech/store-0.50.1) (2026-11-23)
+
+
+### Bug Fixes
+
+* **store:** show filesize and name when uploading file ([9959178](https://github.com/NorthernTechHQ/nt-gui/commit/995917811de2f20c633b0052b5488d08e832eff4))
+* **store:** show filesize and name when uploading file ([2e7152c](https://github.com/NorthernTechHQ/nt-gui/commit/2e7152c6fd61d02baf832e72cc9352dafd6eef35))
+
 ## [0.50.0](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.49.7...@northern.tech/store-0.50.0) (2026-11-13)
 
 
