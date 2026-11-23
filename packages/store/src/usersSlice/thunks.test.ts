@@ -63,7 +63,6 @@ import {
   setHideAnnouncement,
   setTooltipReadState,
   switchUserOrganization,
-  updateUserColumnSettings,
   verify2FA,
   verifyEmailComplete,
   verifyEmailStart
@@ -115,10 +114,7 @@ describe('user actions', () => {
 
   const commonUserRetrievalActions = [
     { type: setHideAnnouncement.pending.type },
-    { type: updateUserColumnSettings.pending.type },
-    { type: actions.setCustomColumns.type, payload: [] },
     { type: setHideAnnouncement.fulfilled.type },
-    { type: updateUserColumnSettings.fulfilled.type },
     { type: getUser.fulfilled.type }
   ];
 
@@ -359,8 +355,6 @@ describe('user actions', () => {
     await store.dispatch(getUser('a1'));
     const storeActions = store.getActions();
     expect(storeActions.length).toEqual(expectedActions.length);
-    // we can't check for the correct value here as the localstorage is (ab)used by msw to track state during req/res cycles, thus the localStorage expectation
-    expect(window.localStorage.getItem).toHaveBeenCalledWith(`a1-column-widths`);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
   it('should allow current user initialization', async () => {
@@ -664,27 +658,6 @@ describe('user actions', () => {
     expect(storeActions.length).toEqual(expectedActions.length);
     expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
   });
-  it('should store the sizes of columns in local storage', async () => {
-    vi.clearAllMocks();
-    const expectedActions = [
-      { type: updateUserColumnSettings.pending.type },
-      { type: actions.setCustomColumns.type, payload: [{ attribute: { name: 'asd', scope: '' }, size: 123 }] },
-      { type: updateUserColumnSettings.fulfilled.type }
-    ];
-    const store = mockStore({ ...defaultState, users: { ...defaultState.users, customColumns: [{ asd: 'asd' }] } });
-    await store.dispatch(updateUserColumnSettings({ columns: [{ attribute: { name: 'asd', scope: '' }, size: 123 }] }));
-    const storeActions = store.getActions();
-    expect(localStorage.getItem).not.toHaveBeenCalled();
-    expect(localStorage.setItem).toHaveBeenCalled();
-    expect(storeActions.length).toEqual(expectedActions.length);
-    expectedActions.forEach((action, index) => expect(storeActions[index]).toMatchObject(action));
-
-    vi.clearAllMocks();
-    await store.dispatch(updateUserColumnSettings({}));
-    expect(localStorage.getItem).toHaveBeenCalledTimes(1);
-    expect(localStorage.setItem).toHaveBeenCalledTimes(1);
-  });
-
   it('should allow token list retrieval', async () => {
     vi.clearAllMocks();
     const expectedActions = [
