@@ -1537,6 +1537,7 @@ export {
   type NewDeviceInternalProvisionTypeInternal,
   type NewTenantTypeManagement,
   type Object,
+  type ObjectId,
   type OwnUserUpdate,
   type OwnUserUpdateV2,
   type PasswordResetCompletion,

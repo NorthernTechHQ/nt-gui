@@ -168,6 +168,12 @@ export const Scope = {
 export type Scope = (typeof Scope)[keyof typeof Scope];
 
 /**
+ * Identifier of an object.
+ *
+ */
+export type ObjectId = string;
+
+/**
  * Tenant device limits per tier.
  */
 export type DeviceLimitTenant = {
@@ -16462,7 +16468,7 @@ export type CreateUserInternalData = {
     /**
      * Tenant ID.
      */
-    tenant_id: string;
+    tenant_id: ObjectId;
   };
   query?: never;
   url: '/api/internal/v1/useradm/tenants/{tenant_id}/users';
