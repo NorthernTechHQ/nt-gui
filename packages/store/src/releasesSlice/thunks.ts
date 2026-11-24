@@ -169,7 +169,7 @@ export const getArtifactUrl = createAppAsyncThunk(`${sliceName}/getArtifactUrl`,
   return response.data.uri;
 });
 
-const pollLocation = async (location, attempt = 1, maxAttempts = 5, delay = TIMEOUTS.oneSecond) => {
+const pollLocation = async (location, attempt = 1, maxAttempts = 10, delay = TIMEOUTS.oneSecond) => {
   try {
     await GeneralApi.get(location);
     return Promise.resolve();
@@ -177,7 +177,7 @@ const pollLocation = async (location, attempt = 1, maxAttempts = 5, delay = TIME
     if (attempt >= maxAttempts) {
       throw new Error(`Couldn't get ${location} after ${maxAttempts} attempts`);
     }
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise(resolve => setTimeout(resolve, delay * attempt));
     return pollLocation(location, attempt + 1, maxAttempts, delay);
   }
 };
