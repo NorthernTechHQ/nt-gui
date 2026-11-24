@@ -15,8 +15,8 @@ import { duplicateFilter } from '@northern.tech/utils/helpers';
 import { createSelector } from '@reduxjs/toolkit';
 
 import type { DeviceFilter, DeviceGroup, DeviceSliceType } from '.';
-import type { DeviceAuthState } from '../constants';
 import { DEVICE_STATES, UNGROUPED_GROUP } from '../constants';
+import type { DeviceAuthState, DeviceTier } from '../constants';
 
 export type DevicesState = { devices: DeviceSliceType };
 
@@ -142,7 +142,7 @@ export const getAttributesList = createSelector(
 );
 const getEnabledTierLimits = createSelector([getDeviceLimits], limits => Object.entries(limits).filter(([, limit]) => limit !== 0));
 
-export const getEnabledTiers = createSelector([getEnabledTierLimits], enabledTierLimits => enabledTierLimits.map(([type]) => type));
+export const getEnabledTiers = createSelector([getEnabledTierLimits], enabledTierLimits => enabledTierLimits.map(([type]) => type as DeviceTier));
 
 export const getDeviceLimitStats = createSelector([getEnabledTierLimits, getAcceptedDevices], (enabledTierLimits, accepted) => {
   const { counts } = accepted;

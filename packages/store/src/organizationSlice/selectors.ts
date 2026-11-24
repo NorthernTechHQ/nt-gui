@@ -15,7 +15,7 @@ import type { Tenant } from '@northern.tech/types/MenderTypes';
 import { createSelector } from '@reduxjs/toolkit';
 
 import type { OrganizationSliceType } from '.';
-import { EXTERNAL_PROVIDER, productOrder } from '../constants';
+import { DEVICE_TIERS, EXTERNAL_PROVIDER, productOrder } from '../constants';
 
 export type OrganizationState = { organization: OrganizationSliceType };
 
@@ -54,7 +54,7 @@ export const getAuditLogEntry = createSelector([getAuditLog, getAuditLogSelectio
   return events.find(item => item.action === eventAction && item.time === eventTime);
 });
 
-const toTierName = (key: string) => key.replace(/max_|_?devices/g, '') || 'standard';
+const toTierName = (key: string) => key.replace(/max_|_?devices/g, '') || DEVICE_TIERS.standard;
 const processDeviceLimits = (deviceLimits: Tenant['device_limits'], skipFilter = false) => {
   const result: { disabled: string[]; limits: Record<string, object> } = { limits: {}, disabled: [] };
   if (!deviceLimits) return result;

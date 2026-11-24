@@ -18,7 +18,7 @@ import Cookies from 'universal-cookie';
 import type { OnboardingApproach } from '.';
 import { actions, sliceName } from '.';
 import type { OnboardingStep } from '../constants';
-import { DEVICE_STATES, onboardingSteps as onboardingStepNames, orderedOnboardingSteps as onboardingSteps } from '../constants';
+import { DEVICE_STATES, DEVICE_TIERS, onboardingSteps as onboardingStepNames, orderedOnboardingSteps as onboardingSteps } from '../constants';
 import { getOnboardingState as getCurrentOnboardingState, getUserCapabilities } from '../selectors';
 import type { AppDispatch } from '../store';
 import { createAppAsyncThunk } from '../store';
@@ -52,7 +52,7 @@ const deductOnboardingState = ({ devicesById, devicesByStatus, onboardingState, 
   let approach: OnboardingApproach | null = null;
   if (deviceType.some(type => type.startsWith('qemu'))) {
     approach = 'virtual';
-  } else if (deviceType.some(type => type.startsWith('esp32')) || deviceTier === 'micro') {
+  } else if (deviceType.some(type => type.startsWith('esp32')) || deviceTier === DEVICE_TIERS.micro) {
     approach = 'mcu';
   } else if (deviceType.length) {
     approach = 'physical';
