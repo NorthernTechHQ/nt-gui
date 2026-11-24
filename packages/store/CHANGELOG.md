@@ -1,4 +1,11 @@
 ---
+## [0.50.2](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.50.1...@northern.tech/store-0.50.2) (2026-11-24)
+
+
+### Bug Fixes
+
+* **store:** give generated artifacts & manifests more time to become available ([308d119](https://github.com/NorthernTechHQ/nt-gui/commit/308d119744e301c5c28c6277686f92e6d4603f05))
+
 ## [0.50.1](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.50.0...@northern.tech/store-0.50.1) (2026-11-23)
 
 
