@@ -1,42 +1,95 @@
 ---
-## [0.50.2](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.50.1...@northern.tech/store-0.50.2) (2026-11-24)
+## 0.51.0 - 2026-11-24
 
 
-### Bug Fixes
 
-* **store:** give generated artifacts & manifests more time to become available ([308d119](https://github.com/NorthernTechHQ/nt-gui/commit/308d119744e301c5c28c6277686f92e6d4603f05))
+### New features
 
-## [0.50.1](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.50.0...@northern.tech/store-0.50.1) (2026-11-23)
+#### store
 
+- Added support for integrations as auditlog object type ([MEN-10429](https://northerntech.atlassian.net/browse/MEN-10429)) ([e8fa7c1](https://github.com/NorthernTechHQ/nt-gui/commit/e8fa7c10a52de6fe2f675e65bac1ca4b737d19a3)) by @mzedel
 
-### Bug Fixes
+---
+### All tickets resolved in this release
 
-* **store:** show filesize and name when uploading file ([9959178](https://github.com/NorthernTechHQ/nt-gui/commit/995917811de2f20c633b0052b5488d08e832eff4))
-* **store:** show filesize and name when uploading file ([2e7152c](https://github.com/NorthernTechHQ/nt-gui/commit/2e7152c6fd61d02baf832e72cc9352dafd6eef35))
+| Ticket |
+|---|
+| [MEN-10429](https://northerntech.atlassian.net/browse/MEN-10429) |
 
-## [0.50.0](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.49.7...@northern.tech/store-0.50.0) (2026-11-13)
-
-
-### Features
-
-* **store:** added datelike handling to allow date range based filters ([9f0c928](https://github.com/NorthernTechHQ/nt-gui/commit/9f0c928668a094386ff50d3db8348eccb526fd4c))
-
-## [0.49.7](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.49.6...@northern.tech/store-0.49.7) (2026-11-06)
+## @northern.tech/store-0.50.2 - 2026-11-24
 
 
-### Bug Fixes
 
-* **store:** remove obsolete flags ([5fbdd77](https://github.com/NorthernTechHQ/nt-gui/commit/5fbdd77b4dce6bc5ba3f1c13499eb975d6cb984b))
-* **store:** remove obsolete flags ([06f7410](https://github.com/NorthernTechHQ/nt-gui/commit/06f74105af375b170c9ba1346644d0ca4706c677))
+### Bug fixes
 
-## [0.49.6](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.49.5...@northern.tech/store-0.49.6) (2026-10-30)
+#### store
+
+- Give generated artifacts & manifests more time to become available ([QA-1871](https://northerntech.atlassian.net/browse/QA-1871)) ([308d119](https://github.com/NorthernTechHQ/nt-gui/commit/308d119744e301c5c28c6277686f92e6d4603f05)) by @mzedel
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [QA-1871](https://northerntech.atlassian.net/browse/QA-1871) |
+
+## @northern.tech/store-0.50.1 - 2026-11-23
 
 
-### Bug Fixes
 
-* **store:** also notify users on successful updates to a dynamic group ([84a6e61](https://github.com/NorthernTechHQ/nt-gui/commit/84a6e61e1d45782655e3f3ce3b3835f5fbd6d648))
+### Bug fixes
 
-## 0.49.5 - 2026-10-27
+#### store
+
+- Show filesize and name when uploading file ([MEN-10426](https://northerntech.atlassian.net/browse/MEN-10426)) ([2e7152c](https://github.com/NorthernTechHQ/nt-gui/commit/2e7152c6fd61d02baf832e72cc9352dafd6eef35)) by @mineralsfree
+
+### Dependency updates
+
+#### deps
+
+- Update development-dependencies ([7315b30](https://github.com/NorthernTechHQ/nt-gui/commit/7315b30678b1288e4625230b9cd7e42fb3229dae)) by @renovate-ring[bot]
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-10426](https://northerntech.atlassian.net/browse/MEN-10426) |
+
+## @northern.tech/store-0.50.0 - 2026-11-13
+
+
+
+### New features
+
+#### store
+
+- Added datelike handling to allow date range based filters ([9f0c928](https://github.com/NorthernTechHQ/nt-gui/commit/9f0c928668a094386ff50d3db8348eccb526fd4c)) by @mzedel
+
+### Dependency updates
+
+#### deps
+
+- Update dependency jsdom to v31 ([539f1d1](https://github.com/NorthernTechHQ/nt-gui/commit/539f1d1f68474197460286d410c6844214bc7c0f)) by @renovate-ring[bot]
+## @northern.tech/store-0.49.7 - 2026-11-06
+
+
+
+### Bug fixes
+
+#### store
+
+- Remove obsolete flags ([06f7410](https://github.com/NorthernTechHQ/nt-gui/commit/06f74105af375b170c9ba1346644d0ca4706c677)) by @mineralsfree
+## @northern.tech/store-0.49.6 - 2026-10-30
+
+
+
+### Bug fixes
+
+#### store
+
+- Also notify users on successful updates to a dynamic group ([84a6e61](https://github.com/NorthernTechHQ/nt-gui/commit/84a6e61e1d45782655e3f3ce3b3835f5fbd6d648)) by @mzedel
+## @northern.tech/store-0.49.5 - 2026-10-27
 
 
 
