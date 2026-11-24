@@ -15,8 +15,8 @@ import { duplicateFilter } from '@northern.tech/utils/helpers';
 import { createSelector } from '@reduxjs/toolkit';
 
 import type { DeviceFilter, DeviceGroup, DeviceSliceType } from '.';
-import { DEVICE_STATES, UNGROUPED_GROUP } from '../constants';
 import type { DeviceAuthState, DeviceTier } from '../constants';
+import { DEVICE_STATES, DEVICE_TIERS, UNGROUPED_GROUP } from '../constants';
 
 export type DevicesState = { devices: DeviceSliceType };
 
@@ -90,16 +90,6 @@ export const getSelectedGroupInfo = createSelector(
   }
 );
 
-export const getCombinedLimit = createSelector(
-  [getDeviceLimits],
-  deviceLimits => Object.values(deviceLimits).reduce((accu, limit) => accu + Math.max(limit ?? 0, 0), 0) // limit might be -1 for unlimited devices
-);
-
-export const getLimitMaxed = createSelector(
-  [getDeviceCountsByStatus, getCombinedLimit],
-  ({ accepted: acceptedDevices }, combinedLimit) => !!combinedLimit && combinedLimit <= acceptedDevices
-);
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getGroupsByIdWithoutUngrouped = createSelector([getGroupsById], ({ [UNGROUPED_GROUP.id]: ungrouped, ...groups }) => groups);
 
@@ -152,6 +142,12 @@ export const getDeviceLimitStats = createSelector([getEnabledTierLimits, getAcce
     total: counts[type] || 0
   }));
 });
+
+export const getReachedTierLimits = createSelector([getDeviceLimitStats], limitStats => limitStats.filter(({ limit, total }) => limit > 0 && total >= limit));
+
+export const getIsTierLimitMaxed = createSelector([getReachedTierLimits, (_, tier?: string) => tier], (reachedTierLimits, tier = DEVICE_TIERS.standard) =>
+  reachedTierLimits.some(({ type }) => type === tier)
+);
 
 export const getDeviceTypes = createSelector([getAcceptedDevices, getDevicesById], ({ deviceIds = [] }, devicesById) =>
   Object.keys(
