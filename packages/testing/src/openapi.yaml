@@ -11764,7 +11764,7 @@ paths:
           description: Tenant ID.
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/ObjectId'
       requestBody:
         description: New user data.
         content:
@@ -14900,6 +14900,14 @@ components:
         - inventory
         - monitor
         - tags
+    ObjectId:
+      type: string
+      description: |
+        Identifier of an object.
+      pattern: ^[0-9a-fA-F]{24}$
+      minLength: 24
+      maxLength: 24
+      example: 6afb62f48cfaf505efbbe6b7
     DeviceLimitTenant:
       description: Tenant device limits per tier.
       type: object
@@ -19294,12 +19302,14 @@ components:
       oneOf:
         - type: string
         - type: number
+          format: double
         - type: array
           items:
             type: string
         - type: array
           items:
             type: number
+            format: double
         - type: boolean
       description: |
         The current value of the attribute.
@@ -19632,12 +19642,14 @@ components:
         - type: boolean
         - type: string
         - type: number
+          format: double
         - type: array
           items:
             type: string
         - type: array
           items:
             type: number
+            format: double
       description: |
         The current value of the attribute.
 
