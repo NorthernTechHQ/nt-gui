@@ -55,6 +55,7 @@ export const auditlogTypes = {
   artifact: { title: 'Artifact', queryParameter: 'object_type', value: 'artifact' },
   deployment: { title: 'Deployment', queryParameter: 'object_deployment_name', value: 'deployment' },
   device: { title: 'Device', queryParameter: 'object_id', value: 'device' },
+  integration: { title: 'Integration', queryParameter: 'object_id', value: 'integration' },
   software: { title: 'Software', queryParameter: 'object_id', value: 'software' },
   user_access_token: { title: 'Personal Access Token', queryParameter: 'user_access_token', value: 'user_access_token' },
   user: { title: 'User', queryParameter: 'object_id', value: 'user' },
@@ -65,6 +66,7 @@ export const AUDIT_LOGS_TYPES = [
   auditlogTypes.artifact,
   auditlogTypes.deployment,
   auditlogTypes.device,
+  auditlogTypes.integration,
   auditlogTypes.software,
   auditlogTypes.user_access_token,
   auditlogTypes.user
