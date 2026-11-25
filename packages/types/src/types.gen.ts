@@ -214,6 +214,14 @@ export type Name = string;
  */
 export type Text = string;
 
+/**
+ * A valid ASCII-only email address.
+ * Must be between 6 and 254 characters in length and conform
+ * to standard email formatting (W3C HTML5 / RFC 5322).
+ *
+ */
+export type Email = string;
+
 export type CurrentUser = {
   /**
    * Whether the service enforces authentication at all.
@@ -17270,7 +17278,7 @@ export type ListUsersManagementData = {
      * Limit result by user email, can be repeated to include multiple users in the query.
      *
      */
-    email?: string;
+    email?: Email;
     /**
      * Filter users created after timestamp (UNIX timestamp).
      *
