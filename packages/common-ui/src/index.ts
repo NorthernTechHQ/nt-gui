@@ -28,7 +28,6 @@ export { default as FileSize } from './FileSize';
 export * from './FileSize';
 export * from './InfoHint';
 export * from './InfoText';
-export * from './InputErrorNotification';
 export * from './InventoryTable';
 export * from './LastChangedNote';
 export * from './LeftNav';
