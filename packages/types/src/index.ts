@@ -907,6 +907,7 @@ export {
   type DownloadArtifactErrors,
   type DownloadArtifactResponse,
   type DownloadArtifactResponses,
+  type Email,
   type EmailChangeCompletion,
   type Emails,
   type EmailUpdateRequest,
