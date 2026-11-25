@@ -48,6 +48,7 @@ import {
   DEVICE_FILTERING_OPTIONS,
   DEVICE_LIST_DEFAULTS,
   DEVICE_STATES,
+  DEVICE_TIERS,
   EXTERNAL_PROVIDER,
   MAX_PAGE_SIZE,
   SORTING_OPTIONS,
@@ -505,7 +506,7 @@ export const getDeviceInfo = createAppAsyncThunk(`${sliceName}/getDeviceInfo`, (
       tasks.push(dispatch(getLatestDeviceAlerts({ id: deviceId })));
       tasks.push(dispatch(getDeviceMonitorConfig(deviceId)));
     }
-    if (device.tier === 'system') {
+    if (device.tier === DEVICE_TIERS.system) {
       tasks.push(dispatch(getDeviceComponents(deviceId)));
     }
   }
