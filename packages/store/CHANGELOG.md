@@ -1,4 +1,11 @@
 ---
+## [0.51.1](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.51.0...@northern.tech/store-0.51.1) (2026-11-25)
+
+
+### Bug Fixes
+
+* **store:** use defined tiers const ([843a07a](https://github.com/NorthernTechHQ/nt-gui/commit/843a07a52341ad82ae925dfbce44c4cf3fbf3b4a))
+
 ## 0.51.0 - 2026-11-24
 
 
