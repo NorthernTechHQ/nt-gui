@@ -28,7 +28,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 import type { ALL_DEVICE_STATES, DeviceIssueOptionKey, FilterOperator, SortOptions } from '../constants';
-import { DEVICE_LIST_DEFAULTS, DEVICE_STATES, SORTING_OPTIONS } from '../constants';
+import { DEVICE_LIST_DEFAULTS, DEVICE_STATES, DEVICE_TIERS, SORTING_OPTIONS } from '../constants';
 import type { DeviceDeployment } from '../deploymentsSlice';
 import type { DeviceAuthState } from './constants';
 
@@ -315,7 +315,7 @@ export const devicesSlice = createSlice({
       const hasMultipleAuthSets = authId && device.auth_sets ? device.auth_sets.filter(authset => authset.id !== authId).length > 0 : false;
       if (!hasMultipleAuthSets && (Object.values(DEVICE_STATES) as string[]).includes(device.status)) {
         const deviceIds = state.byStatus[device.status].deviceIds.filter(id => id !== deviceId);
-        const deviceTier = (device.attributes.tier as string) || 'standard';
+        const deviceTier = (device.attributes.tier as string) || DEVICE_TIERS.standard;
         state.byStatus[device.status] = {
           deviceIds,
           counts: {

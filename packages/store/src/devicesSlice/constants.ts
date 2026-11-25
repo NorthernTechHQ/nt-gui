@@ -11,7 +11,7 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-import type { SelectAttribute } from '@northern.tech/types/MenderTypes';
+import type { PreAuthSet, SelectAttribute } from '@northern.tech/types/MenderTypes';
 
 import type { DEVICE_STATES, FilterOperator } from '../constants';
 import { ATTRIBUTE_SCOPES, DEVICE_FILTERING_OPTIONS } from '../constants';
@@ -38,6 +38,14 @@ export const DEVICE_MESSAGE_TYPES = {
 export const DEVICE_DISMISSAL_STATE = 'dismiss';
 
 export type DeviceAuthState = (typeof DEVICE_STATES)[keyof typeof DEVICE_STATES];
+
+export type DeviceTier = NonNullable<PreAuthSet['tier']>;
+
+export const DEVICE_TIERS = {
+  standard: 'standard',
+  micro: 'micro',
+  system: 'system'
+} as const satisfies Record<DeviceTier, DeviceTier>;
 
 export const DEVICE_CONNECT_STATES = {
   connected: 'connected',
