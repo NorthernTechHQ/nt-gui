@@ -19,7 +19,7 @@ import type {
   RolePermission,
   RolePermissionObject
 } from '@northern.tech/types/MenderTypes';
-import { duplicateFilter, extractErrorMessage, isEmpty } from '@northern.tech/utils/helpers';
+import { duplicateFilter, extractErrorMessage, isEmpty, preformatWithRequestID } from '@northern.tech/utils/helpers';
 import { clearAllRetryTimers } from '@northern.tech/utils/retrytimer';
 import dayjs from 'dayjs';
 import hashString from 'md5';
@@ -227,9 +227,9 @@ export const passwordResetComplete = createAppAsyncThunk(
   `${sliceName}/passwordResetComplete`,
   ({ secretHash, newPassword }: PasswordResetPayload, { dispatch }) =>
     GeneralApi.post(`${useradmApiUrl}/auth/password-reset/complete`, { secret_hash: secretHash, password: newPassword }).catch((err = {}) => {
-      const { error, response = {} } = err;
-      const errorMsg = response.status == 400 ? 'the link you are using expired or the request is not valid, please try again.' : error;
-      dispatch(setSnackbar('The password reset request cannot be processed: ' + errorMsg));
+      const linkError = 'the link you are using expired or the request is not valid, please try again.';
+      const errorMsg = extractErrorMessage({ response: err.response }, err.response?.status == 400 ? linkError : err.message);
+      dispatch(setSnackbar({ message: preformatWithRequestID(err.response, `The password reset request cannot be processed: ${errorMsg}`) }));
       return Promise.reject(err);
     })
 );
