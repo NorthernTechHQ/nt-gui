@@ -1,12 +1,40 @@
 ---
-## [0.51.1](https://github.com/NorthernTechHQ/nt-gui/compare/@northern.tech/store-0.51.0...@northern.tech/store-0.51.1) (2026-11-25)
+## 0.51.2 - 2026-11-28
 
 
-### Bug Fixes
 
-* **store:** use defined tiers const ([843a07a](https://github.com/NorthernTechHQ/nt-gui/commit/843a07a52341ad82ae925dfbce44c4cf3fbf3b4a))
+### Bug fixes
 
-## 0.51.0 - 2026-11-24
+#### store
+
+- Prefer error from backend when resetting password ([MEN-10439](https://northerntech.atlassian.net/browse/MEN-10439)) ([cc8f3b0](https://github.com/NorthernTechHQ/nt-gui/commit/cc8f3b0feec554895e11f2b9f51b37e5ae9f7e6a)) by @mineralsfree
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-10439](https://northerntech.atlassian.net/browse/MEN-10439) |
+
+## @northern.tech/store-0.51.1 - 2026-11-25
+
+
+
+### Bug fixes
+
+#### store
+
+- Stop relying on combined limits for UI ([MEN-10452](https://northerntech.atlassian.net/browse/MEN-10452)) ([708472c](https://github.com/NorthernTechHQ/nt-gui/commit/708472c88b1a5a0b98ab9fd8354dd8fba70571e4)) by @mineralsfree
+- Use defined tiers const ([843a07a](https://github.com/NorthernTechHQ/nt-gui/commit/843a07a52341ad82ae925dfbce44c4cf3fbf3b4a)) by @mineralsfree
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-10452](https://northerntech.atlassian.net/browse/MEN-10452) |
+
+## @northern.tech/store-0.51.0 - 2026-11-24
 
 
 
