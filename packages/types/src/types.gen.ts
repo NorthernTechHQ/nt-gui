@@ -18404,6 +18404,10 @@ export type RevokePersonalAccessTokenErrors = {
    */
   401: Error;
   /**
+   * Not Found.
+   */
+  404: Error;
+  /**
    * Internal Server Error.
    */
   500: Error;
