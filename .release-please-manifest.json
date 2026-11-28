@@ -6,7 +6,7 @@
   "packages/store": "0.51.1",
   "packages/testing": "0.19.6",
   "packages/themes": "0.18.2",
-  "packages/types": "0.7.15",
+  "packages/types": "0.7.16",
   "packages/typescript-config": "0.3.3",
   "packages/utils": "0.15.3"
 }
